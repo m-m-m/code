@@ -15,9 +15,4 @@ import net.sf.mmm.code.api.modifier.CodeElementWithModifiers;
  */
 public abstract interface CodeMember extends CodeElementWithModifiers, CodeElementWithName {
 
-  /**
-   * @return the {@link CodeType} declaring this member.
-   */
-  CodeType getDeclaringType();
-
 }

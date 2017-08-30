@@ -32,6 +32,16 @@ public class JavaPackage extends JavaElementWithQualifiedName implements CodePac
   private static final Logger LOG = LoggerFactory.getLogger(JavaPackage.class);
 
   /**
+   * The constructor for a {@link JavaContext#getRootPackage() root-package}.
+   *
+   * @param context the {@link #getContext() context}.
+   */
+  public JavaPackage(JavaContext context) {
+
+    super(context, null, "");
+  }
+
+  /**
    * The constructor.
    *
    * @param parentPackage the {@link #getParentPackage() parent package}.
@@ -39,7 +49,17 @@ public class JavaPackage extends JavaElementWithQualifiedName implements CodePac
    */
   public JavaPackage(JavaPackage parentPackage, String simpleName) {
 
-    super(parentPackage, simpleName);
+    super(parentPackage.getContext(), parentPackage, simpleName);
+  }
+
+  /**
+   * The copy-constructor.
+   *
+   * @param template the {@link JavaPackage} to copy.
+   */
+  public JavaPackage(JavaPackage template) {
+
+    super(template);
   }
 
   /**
@@ -92,7 +112,7 @@ public class JavaPackage extends JavaElementWithQualifiedName implements CodePac
     if (isDefault()) {
       return;
     }
-    sink.append(defaultIndent);
+    sink.append(currentIndent);
     sink.append("package ");
     sink.append(getQualifiedName());
     sink.append(';');

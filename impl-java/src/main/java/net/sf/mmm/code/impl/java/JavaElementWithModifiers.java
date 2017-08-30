@@ -21,11 +21,12 @@ public abstract class JavaElementWithModifiers extends JavaElement implements Co
   /**
    * The constructor.
    *
+   * @param context the {@link #getContext() context}.
    * @param modifiers the {@link #getModifiers() modifiers}.
    */
-  public JavaElementWithModifiers(CodeModifiers modifiers) {
+  public JavaElementWithModifiers(JavaContext context, CodeModifiers modifiers) {
 
-    super();
+    super(context);
     this.modifiers = modifiers;
   }
 

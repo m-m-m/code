@@ -25,7 +25,7 @@ public abstract class JavaItemWithQualifiedName extends JavaItemWithComment impl
    */
   public JavaItemWithQualifiedName(JavaPackage parentPackage, String simpleName) {
 
-    super();
+    super(parentPackage.getContext());
     this.parentPackage = parentPackage;
     this.simpleName = simpleName;
   }

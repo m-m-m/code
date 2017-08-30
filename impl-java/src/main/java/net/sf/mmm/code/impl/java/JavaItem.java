@@ -11,14 +11,16 @@ import net.sf.mmm.code.base.AbstractCodeItem;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class JavaItem extends AbstractCodeItem {
+public abstract class JavaItem extends AbstractCodeItem<JavaContext> {
 
   /**
    * The constructor.
+   *
+   * @param context the {@link #getContext() context}.
    */
-  public JavaItem() {
+  public JavaItem(JavaContext context) {
 
-    super();
+    super(context);
   }
 
   /**

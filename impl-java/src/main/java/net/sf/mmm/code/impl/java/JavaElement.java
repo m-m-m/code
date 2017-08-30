@@ -4,13 +4,12 @@ package net.sf.mmm.code.impl.java;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import net.sf.mmm.code.api.CodeAnnotation;
 import net.sf.mmm.code.api.CodeElement;
-import net.sf.mmm.code.api.doc.CodeDoc;
 import net.sf.mmm.code.api.statement.CodeComment;
+import net.sf.mmm.code.impl.java.doc.JavaDoc;
 
 /**
  * Implementation of {@link CodeElement} for Java.
@@ -22,16 +21,18 @@ public abstract class JavaElement extends JavaItem implements CodeElement {
 
   private List<CodeAnnotation> annotations;
 
-  private CodeDoc doc;
+  private JavaDoc doc;
 
   private CodeComment comment;
 
   /**
    * The constructor.
+   *
+   * @param context the {@link #getContext() context}.
    */
-  public JavaElement() {
+  public JavaElement(JavaContext context) {
 
-    super();
+    super(context);
     this.annotations = new ArrayList<>();
   }
 
@@ -49,16 +50,12 @@ public abstract class JavaElement extends JavaItem implements CodeElement {
   }
 
   @Override
-  public CodeDoc getDoc() {
+  public JavaDoc getDoc() {
 
+    if (this.doc == null) {
+      this.doc = new JavaDoc(this);
+    }
     return this.doc;
-  }
-
-  @Override
-  public void setDoc(CodeDoc doc) {
-
-    verifyMutalbe();
-    this.doc = doc;
   }
 
   @Override
@@ -81,13 +78,11 @@ public abstract class JavaElement extends JavaItem implements CodeElement {
   }
 
   @Override
-  public void setImmutable() {
+  protected void doSetImmutable() {
 
-    if (isImmutable()) {
-      return;
-    }
-    this.annotations = Collections.unmodifiableList(this.annotations);
-    super.setImmutable();
+    super.doSetImmutable();
+    this.annotations = makeImmutable(this.annotations);
+    getDoc().setImmutable();
   }
 
   /**

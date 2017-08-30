@@ -5,7 +5,6 @@ package net.sf.mmm.code.api;
 import java.util.List;
 
 import net.sf.mmm.code.api.doc.CodeDoc;
-import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
  * {@link CodeItemWithType} that might be {@link #getAnnotations() annotated} or {@link #getDoc() documented}.
@@ -16,19 +15,22 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
 public abstract interface CodeElement extends CodeItemWithComment {
 
   /**
-   * @return the {@link CodeDoc documentation} of this element. May be empty but will never be {@code null}.
+   * @return the {@link CodeDoc documentation} of this element. May be {@link CodeDoc#isEmpty() empty} but
+   *         will never be {@code null}.
    */
   CodeDoc getDoc();
-
-  /**
-   * @param doc the new {@link #getDoc() documentation}.
-   * @throws ReadOnlyException if {@link #isImmutable() immutable}.
-   */
-  void setDoc(CodeDoc doc);
 
   /**
    * @return a {@link List} with the {@link CodeAnnotation}s of this element.
    */
   List<CodeAnnotation> getAnnotations();
+
+  /**
+   * @return the {@link CodeType} declaring this {@link CodeElement}. Here declaring means owning and
+   *         containing. May only be {@code null} for {@link CodeType} and for {@link CodePackage} (where it
+   *         will always be {@code null}).
+   * @see CodeType#getDeclaringType()
+   */
+  CodeType getDeclaringType();
 
 }

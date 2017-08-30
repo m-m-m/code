@@ -154,15 +154,14 @@ public class CodeBeanProperty implements CodeProperty {
   }
 
   @Override
-  public void setDoc(CodeDoc doc) {
-
-    throw new ReadOnlyException(getClass().getSimpleName(), "doc");
-  }
-
-  @Override
   public boolean isImmutable() {
 
     return true;
+  }
+
+  @Override
+  public void setImmutable() {
+
   }
 
   @Override

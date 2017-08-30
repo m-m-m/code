@@ -2,64 +2,92 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.base.doc;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.sf.mmm.code.api.CodeElement;
+import net.sf.mmm.code.api.CodeType;
 import net.sf.mmm.code.api.doc.CodeDoc;
 import net.sf.mmm.code.api.doc.CodeDocDescriptor;
 import net.sf.mmm.code.api.doc.CodeDocFormat;
+import net.sf.mmm.code.api.imports.CodeImport;
+import net.sf.mmm.code.base.AbstractCodeContext;
+import net.sf.mmm.code.base.AbstractCodeItem;
 
 /**
- * Context for conversion of {@link AbstractCodeDoc code documentation}.
+ * Abstract base implementation of {@link CodeDoc}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
+ * @param <C> type of {@link #getContext()}.
  * @since 1.0.0
  */
-public abstract class CodeDocContext {
+public abstract class AbstractCodeDoc<C extends AbstractCodeContext<?, ?>> extends AbstractCodeItem<C> implements CodeDoc {
 
-  private final char separator;
+  private final CodeElement element;
 
-  private final List<CodeDocDescriptor> docDescriptors;
+  private List<String> lines;
 
   /**
    * The constructor.
    *
-   * @param separator the package separator character. For Java use '.'.
-   * @param docDescriptors the {@link List} of {@link CodeDocDescriptor}s.
+   * @param context the {@link #getContext() context}.
+   * @param element the owning {@link CodeElement}.
    */
-  public CodeDocContext(char separator, List<CodeDocDescriptor> docDescriptors) {
+  public AbstractCodeDoc(C context, CodeElement element) {
 
-    super();
-    this.separator = separator;
-    this.docDescriptors = docDescriptors;
+    super(context);
+    this.element = element;
+    this.lines = new ArrayList<>();
   }
 
   /**
-   * @return the {@link Class#getSimpleName() simple name} of the {@link java.lang.reflect.Type} owning the
-   *         {@link CodeDoc}.
+   * @return the owning {@link CodeElement}.
    */
-  protected abstract String getSimpleName();
+  public CodeElement getElement() {
+
+    return this.element;
+  }
+
+  @Override
+  public List<String> getLines() {
+
+    return this.lines;
+  }
+
+  @Override
+  public boolean isEmpty() {
+
+    return this.lines.isEmpty();
+  }
+
+  @Override
+  public String get(CodeDocFormat format) {
+
+    StringBuilder buffer = new StringBuilder();
+    for (String line : this.lines) {
+      buffer.append(line);
+      writeNewline(buffer);
+    }
+    String raw = buffer.toString().trim();
+    if (CodeDocFormat.RAW.equals(format) || (format == null)) {
+      return raw;
+    } else {
+      String comment = raw.replace("\n", " ").replace("\r", "");
+      comment = replaceDocTags(format, comment);
+      comment = replaceXmlTags(format, comment);
+      return comment;
+    }
+  }
 
   /**
    * @return the {@link Pattern} to detect a documentation tag.
    */
   protected abstract Pattern getTagPattern();
-
-  /**
-   * @param doc the {@link CodeDoc}.
-   * @param format the desired format.
-   * @return the documentation converted to the requested format.
-   */
-  public String getConverted(CodeDoc doc, CodeDocFormat format) {
-
-    String comment = doc.get(CodeDocFormat.RAW).trim().replace("\n", " ").replace("\r", "");
-    comment = replaceDocTags(format, comment);
-    comment = replaceXmlTags(format, comment);
-    return comment;
-  }
 
   private String replaceXmlTags(CodeDocFormat format, String comment) {
 
@@ -112,8 +140,10 @@ public abstract class CodeDocContext {
   protected String resolveLink(CodeDocLink link) {
 
     String qualifiedName = link.getQualifiedName();
-    for (CodeDocDescriptor descriptor : this.docDescriptors) {
-      if (qualifiedName.startsWith(descriptor.getPackagePrefix() + this.separator)) {
+    AbstractCodeContext<?, ?> context = getContext();
+    char packageSeparator = context.getPackageSeparator();
+    for (CodeDocDescriptor descriptor : context.getDocDescriptors()) {
+      if (qualifiedName.startsWith(descriptor.getPackagePrefix() + packageSeparator)) {
         return resolveLink(descriptor.getUrl(), link, true);
       }
     }
@@ -135,8 +165,9 @@ public abstract class CodeDocContext {
         buffer.append('/');
       }
       String path = link.getQualifiedName();
-      if (this.separator != '/') {
-        path = path.replace(this.separator, '/');
+      char separator = getContext().getPackageSeparator();
+      if (separator != '/') {
+        path = path.replace(separator, '/');
       }
       buffer.append(path);
       buffer.append(".html");
@@ -155,7 +186,8 @@ public abstract class CodeDocContext {
    */
   protected String resolveLinkRelative(CodeDocLink link) {
 
-    Path qualifiedSource = createPath(qualify(getSimpleName()));
+    CodeType owningType = getOwningType(this.element);
+    Path qualifiedSource = createPath(owningType.getQualifiedName());
     Path qualifiedTarget = createPath(link.getQualifiedName());
     Path relativePath = qualifiedSource.relativize(qualifiedTarget);
     return relativePath.toString();
@@ -168,10 +200,11 @@ public abstract class CodeDocContext {
   private Path createPath(String qualifiedName) {
 
     String separatorString;
-    if (this.separator == '.') {
+    char separator = getContext().getPackageSeparator();
+    if (separator == '.') {
       separatorString = "\\.";
     } else {
-      separatorString = Character.toString(this.separator);
+      separatorString = Character.toString(separator);
     }
     String[] segments = qualifiedName.split(separatorString);
     return Paths.get(".", segments);
@@ -207,10 +240,12 @@ public abstract class CodeDocContext {
     String simpleName;
     String qualifiedName;
     if (type == null) {
-      simpleName = getSimpleName();
-      qualifiedName = qualify(simpleName);
+      CodeType owningType = getOwningType(this.element);
+      simpleName = owningType.getSimpleName();
+      qualifiedName = owningType.getQualifiedName();
     } else {
-      int separatorIndex = type.lastIndexOf(this.separator);
+      char separator = getContext().getPackageSeparator();
+      int separatorIndex = type.lastIndexOf(separator);
       if (separatorIndex > 0) {
         simpleName = type.substring(separatorIndex + 1);
         qualifiedName = type;
@@ -232,6 +267,65 @@ public abstract class CodeDocContext {
    * @param simpleName the simple name to qualify.
    * @return the qualified name.
    */
-  protected abstract String qualify(String simpleName);
+  protected String qualify(String simpleName) {
+
+    CodeType owningType = getOwningType(this.element);
+    if (owningType.getSimpleName().equals(simpleName)) {
+      return owningType.getQualifiedName();
+    }
+    List<CodeImport> imports = owningType.getFile().getImports();
+    char separator = getContext().getPackageSeparator();
+    String suffix = separator + simpleName;
+    for (CodeImport imp : imports) {
+      if (!imp.isStatic()) {
+        String source = imp.getSource();
+        if (source.endsWith(suffix)) {
+          return source;
+        }
+      }
+    }
+    String qname = qualifyStandardType(simpleName);
+    if (qname != null) {
+      return qname;
+    }
+    String pkgName = owningType.getParentPackage().getQualifiedName();
+    if (pkgName.isEmpty()) {
+      return simpleName;
+    }
+    return pkgName + separator + simpleName;
+  }
+
+  /**
+   * @param simpleName the {@link CodeType#getSimpleName() simple name} of the {@link CodeType}.
+   * @return the corresponding {@link CodeType#getQualifiedName() qualified name} or {@code null} if no
+   *         standard type (import is required).
+   */
+  protected abstract String qualifyStandardType(String simpleName);
+
+  @Override
+  protected void doWrite(Appendable sink, String defaultIndent, String currentIndent) throws IOException {
+
+    int size = this.lines.size();
+    if (size == 0) {
+      return;
+    }
+    sink.append(currentIndent);
+    sink.append("/**");
+    if (size == 1) {
+      sink.append(' ');
+      sink.append(this.lines.get(0).trim());
+    } else {
+      writeNewline(sink);
+      for (String line : this.lines) {
+        sink.append(currentIndent);
+        sink.append(" * ");
+        sink.append(line.trim());
+        writeNewline(sink);
+      }
+      sink.append(currentIndent);
+    }
+    sink.append(" */");
+    writeNewline(sink);
+  }
 
 }

@@ -11,4 +11,15 @@ package net.sf.mmm.code.api;
  */
 public interface CodePackage extends CodeElementWithQualifiedName {
 
+  /**
+   * @deprecated a {@link CodePackage} contains {@link CodeType}s and not vice versa. Therefore this method
+   *             will always return {@code null} here.
+   */
+  @Deprecated
+  @Override
+  default CodeType getDeclaringType() {
+
+    return null;
+  }
+
 }

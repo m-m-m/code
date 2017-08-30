@@ -9,6 +9,7 @@ import net.sf.mmm.code.api.CodeType;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
+import net.sf.mmm.code.impl.java.JavaType;
 
 /**
  * Implementation of {@link CodeField} for Java.
@@ -22,10 +23,12 @@ public class JavaField extends JavaProperty implements CodeField {
 
   /**
    * The constructor.
+   *
+   * @param declaringType the {@link #getDeclaringType()}.
    */
-  public JavaField() {
+  public JavaField(JavaType declaringType) {
 
-    super(CodeModifiers.MODIFIERS_PRIVATE);
+    super(declaringType, CodeModifiers.MODIFIERS_PRIVATE);
   }
 
   /**

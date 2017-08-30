@@ -14,10 +14,10 @@ public abstract interface CodeItem {
   String DEFAULT_INDENT = "  ";
 
   /**
-   * By default a {@link CodeItem} retrieved from an existing source (e.g. via {@link Code#getType(String)})
-   * is immutable. Use an according {@code edit()} method to get a new mutable copy of the object before you
-   * do any changes. A newly created {@link CodeItem} will however always be mutable. In case a
-   * {@link CodeItem} is immutable, all setter methods will throw a
+   * By default a {@link CodeItem} retrieved from an existing source (e.g. via
+   * {@link CodeContext#getType(String)}) is immutable. Use an according {@code edit()} method to get a new
+   * mutable copy of the object before you do any changes. A newly created {@link CodeItem} will however
+   * always be mutable. In case a {@link CodeItem} is immutable, all setter methods will throw a
    * {@link net.sf.mmm.util.exception.api.ReadOnlyException} and all {@link java.util.Collection}s returned by
    * getters will be {@link java.util.Collections#unmodifiableCollection(java.util.Collection) unmodifiable}.
    *
@@ -25,6 +25,12 @@ public abstract interface CodeItem {
    *         (setters may be called without getting exceptions), {@code false} otherwise (if mutable).
    */
   boolean isImmutable();
+
+  /**
+   * Makes this item {@link #isImmutable() immutable}. Can not be undone. Multiple calls will have no further
+   * effect.
+   */
+  void setImmutable();
 
   /**
    * @param sink the {@link Appendable} where to {@link Appendable#append(CharSequence) append} the code from

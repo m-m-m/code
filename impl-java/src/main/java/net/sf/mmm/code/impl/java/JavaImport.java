@@ -24,12 +24,13 @@ public class JavaImport extends JavaItem implements CodeImport {
   /**
    * The constructor.
    *
+   * @param context the {@link #getContext() context}.
    * @param source the {@link #getSource() source} to import.
    * @param staticFlag the {@link #isStatic() static} flag.
    */
-  public JavaImport(String source, boolean staticFlag) {
+  public JavaImport(JavaContext context, String source, boolean staticFlag) {
 
-    super();
+    super(context);
     this.source = source;
     this.staticFlag = staticFlag;
   }

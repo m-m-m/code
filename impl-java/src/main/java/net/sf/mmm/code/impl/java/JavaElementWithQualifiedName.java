@@ -20,14 +20,34 @@ public abstract class JavaElementWithQualifiedName extends JavaElement implement
   /**
    * The constructor.
    *
+   * @param context the {@link #getContext() context}.
    * @param parentPackage the {@link #getParentPackage() parent package}.
    * @param simpleName the {@link #getSimpleName() simple name}.
    */
-  public JavaElementWithQualifiedName(JavaPackage parentPackage, String simpleName) {
+  public JavaElementWithQualifiedName(JavaContext context, JavaPackage parentPackage, String simpleName) {
 
-    super();
+    super(context);
     this.parentPackage = parentPackage;
     this.simpleName = simpleName;
+  }
+
+  /**
+   * The copy-constructor.
+   *
+   * @param template the {@link JavaElementWithQualifiedName} to copy.
+   */
+  public JavaElementWithQualifiedName(JavaElementWithQualifiedName template) {
+
+    super(template);
+    this.simpleName = template.simpleName;
+    this.parentPackage = template.parentPackage;
+  }
+
+  @Override
+  public JavaContext getContext() {
+
+    // TODO Auto-generated method stub
+    return super.getContext();
   }
 
   @Override

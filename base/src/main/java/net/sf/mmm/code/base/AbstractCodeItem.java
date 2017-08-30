@@ -3,28 +3,39 @@
 package net.sf.mmm.code.base;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
+import net.sf.mmm.code.api.CodeElement;
 import net.sf.mmm.code.api.CodeItem;
+import net.sf.mmm.code.api.CodeType;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 import net.sf.mmm.util.io.api.IoMode;
 import net.sf.mmm.util.io.api.RuntimeIoException;
 
 /**
- * Implementation of {@link CodeItem}.
+ * Base implementation of {@link CodeItem}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
+ * @param <C> type of {@link #getContext()}.
  * @since 1.0.0
  */
-public abstract class AbstractCodeItem implements CodeItem {
+public abstract class AbstractCodeItem<C extends AbstractCodeContext<?, ?>> implements CodeItem {
+
+  private final C context;
 
   private boolean immutable;
 
   /**
    * The constructor.
+   *
+   * @param context the {@link #getContext() context}.
    */
-  public AbstractCodeItem() {
+  public AbstractCodeItem(C context) {
 
     super();
+    this.context = context;
   }
 
   /**
@@ -32,10 +43,19 @@ public abstract class AbstractCodeItem implements CodeItem {
    *
    * @param template the {@link AbstractCodeItem} to copy.
    */
-  public AbstractCodeItem(AbstractCodeItem template) {
+  public AbstractCodeItem(AbstractCodeItem<C> template) {
 
     super();
     // immutable flag is not copied on purpose
+    this.context = template.context;
+  }
+
+  /**
+   * @return the {@link AbstractCodeContext}.
+   */
+  public C getContext() {
+
+    return this.context;
   }
 
   @Override
@@ -47,9 +67,38 @@ public abstract class AbstractCodeItem implements CodeItem {
   /**
    * Makes this item {@link #isImmutable() immutable}.
    */
-  public void setImmutable() {
+  public final void setImmutable() {
 
-    this.immutable = false;
+    if (this.immutable) {
+      return;
+    }
+    doSetImmutable();
+    this.immutable = true;
+  }
+
+  /**
+   * Called on the first call of {@link #setImmutable()}. Has to be overridden to update
+   * {@link java.util.Collection}s, make child items immutable, etc.
+   */
+  protected void doSetImmutable() {
+
+    // nothing to do here...
+  }
+
+  /**
+   * @param <T> the type of the {@link List} elements.
+   * @param list the {@link List} to make immutable.
+   * @return an immutable copy of the {@link List}.
+   */
+  protected <T extends CodeItem> List<T> makeImmutable(List<T> list) {
+
+    if (list.isEmpty()) {
+      return Collections.emptyList();
+    }
+    for (T element : list) {
+      element.setImmutable();
+    }
+    return Collections.unmodifiableList(new ArrayList<>(list));
   }
 
   /**
@@ -96,7 +145,7 @@ public abstract class AbstractCodeItem implements CodeItem {
   protected final void writeNewline(Appendable sink) {
 
     try {
-      sink.append("\n");
+      sink.append(this.context.getNewline());
     } catch (IOException e) {
       throw new RuntimeIoException(e, IoMode.WRITE);
     }
@@ -111,6 +160,19 @@ public abstract class AbstractCodeItem implements CodeItem {
       return buffer.toString();
     } catch (Exception e) {
       return "<failed: " + e + ">";
+    }
+  }
+
+  /**
+   * @param element the {@link CodeElement}.
+   * @return the owning {@link CodeType}.
+   */
+  protected static CodeType getOwningType(CodeElement element) {
+
+    if (element instanceof CodeType) {
+      return (CodeType) element;
+    } else {
+      return element.getDeclaringType();
     }
   }
 

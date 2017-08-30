@@ -1,6 +1,6 @@
 /* Copyright (c) The m-m-m Team, Licensed under the Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0 */
-package net.sf.mmm.code.base.doc;
+package net.sf.mmm.code.api.doc;
 
 /**
  * Descriptor for URL mapping configuration to resolve links from {@link net.sf.mmm.code.api.doc.CodeDoc}.

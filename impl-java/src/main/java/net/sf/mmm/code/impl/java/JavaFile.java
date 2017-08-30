@@ -4,7 +4,6 @@ package net.sf.mmm.code.impl.java;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import net.sf.mmm.code.api.CodeFile;
@@ -60,14 +59,11 @@ public class JavaFile extends JavaItemWithQualifiedName implements CodeFile {
   }
 
   @Override
-  public void setImmutable() {
+  protected void doSetImmutable() {
 
-    if (isImmutable()) {
-      return;
-    }
-    this.types = Collections.unmodifiableList(this.types);
-    this.imports = Collections.unmodifiableList(this.imports);
-    super.setImmutable();
+    super.doSetImmutable();
+    this.types = makeImmutable(this.types);
+    this.imports = makeImmutable(this.imports);
   }
 
   @Override

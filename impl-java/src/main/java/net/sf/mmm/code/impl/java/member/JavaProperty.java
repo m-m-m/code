@@ -7,6 +7,7 @@ import java.io.IOException;
 import net.sf.mmm.code.api.CodeGenericType;
 import net.sf.mmm.code.api.member.CodeProperty;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
+import net.sf.mmm.code.impl.java.JavaType;
 
 /**
  * Implementation of {@link CodeProperty} for Java.
@@ -21,11 +22,12 @@ public abstract class JavaProperty extends JavaMember implements CodeProperty {
   /**
    * The constructor.
    *
+   * @param declaringType the {@link #getDeclaringType()}.
    * @param modifiers the {@link #getModifiers() modifiers}.
    */
-  public JavaProperty(CodeModifiers modifiers) {
+  public JavaProperty(JavaType declaringType, CodeModifiers modifiers) {
 
-    super(modifiers);
+    super(declaringType, modifiers);
   }
 
   /**

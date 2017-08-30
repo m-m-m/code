@@ -11,7 +11,6 @@ import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import net.sf.mmm.code.api.CodeFile;
 import net.sf.mmm.code.api.CodeGenericType;
 import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.CodeType;
@@ -32,15 +31,17 @@ import net.sf.mmm.code.api.statement.CodeStaticBlock;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaType extends JavaElementWithQualifiedName implements CodeType {
+public class JavaType extends JavaElement implements CodeType {
 
-  private CodeFile file;
+  private final JavaFile file;
+
+  private String simpleName;
 
   private CodeModifiers modifiers;
 
   private CodeTypeCategory category;
 
-  private CodeType declaringType;
+  private JavaType declaringType;
 
   private List<CodeGenericType> superTypes;
 
@@ -59,12 +60,23 @@ public class JavaType extends JavaElementWithQualifiedName implements CodeType {
   /**
    * The constructor.
    *
-   * @param parentPackage the {@link #getParentPackage() parent package}.
+   * @param file the {@link #getFile() file}.
+   */
+  public JavaType(JavaFile file) {
+
+    this(file, null);
+  }
+
+  /**
+   * The constructor for a nested type.
+   *
+   * @param file the {@link #getFile() file}.
    * @param simpleName the {@link #getSimpleName() simple name}.
    */
-  public JavaType(JavaPackage parentPackage, String simpleName) {
+  public JavaType(JavaFile file, String simpleName) {
 
-    super(parentPackage, simpleName);
+    super(file.getContext());
+    this.file = file;
     this.modifiers = CodeModifiers.MODIFIERS_PUBLIC;
     this.category = CodeTypeCategory.CLASS;
     this.declaringType = null;
@@ -74,6 +86,38 @@ public class JavaType extends JavaElementWithQualifiedName implements CodeType {
     this.methods = new ArrayList<>();
     this.constructors = new ArrayList<>();
     this.nestedTypes = new ArrayList<>();
+  }
+
+  @Override
+  public JavaPackage getParentPackage() {
+
+    return this.file.getParentPackage();
+  }
+
+  @Override
+  public void setParentPackage(CodePackage parentPackage) {
+
+    this.file.setParentPackage(parentPackage);
+  }
+
+  @Override
+  public String getSimpleName() {
+
+    if (this.simpleName == null) {
+      return this.file.getSimpleName();
+    }
+    return this.simpleName;
+  }
+
+  @Override
+  public void setSimpleName(String simpleName) {
+
+    if (this.simpleName == null) {
+      this.file.setSimpleName(simpleName);
+    } else {
+      verifyMutalbe();
+      this.simpleName = simpleName;
+    }
   }
 
   @Override
@@ -100,7 +144,7 @@ public class JavaType extends JavaElementWithQualifiedName implements CodeType {
   }
 
   @Override
-  public CodeFile getFile() {
+  public JavaFile getFile() {
 
     return this.file;
   }
@@ -194,7 +238,7 @@ public class JavaType extends JavaElementWithQualifiedName implements CodeType {
   }
 
   @Override
-  public CodeType getDeclaringType() {
+  public JavaType getDeclaringType() {
 
     return this.declaringType;
   }
@@ -207,7 +251,7 @@ public class JavaType extends JavaElementWithQualifiedName implements CodeType {
       this.declaringType.getNestedTypes().remove(this);
     }
     declaringType.getNestedTypes().add(this);
-    this.declaringType = declaringType;
+    this.declaringType = (JavaType) declaringType;
   }
 
   @Override
@@ -295,13 +339,14 @@ public class JavaType extends JavaElementWithQualifiedName implements CodeType {
     doWriteConstructors(sink, defaultIndent, currentIndent);
     doWriteMethods(sink, defaultIndent, currentIndent);
     doWriteNestedTypes(sink, defaultIndent, currentIndent);
+    sink.append("}");
+    writeNewline(sink);
   }
 
   private void doWriteDeclaration(Appendable sink, String currentIndent) throws IOException {
 
     sink.append(currentIndent);
     sink.append(this.modifiers.toString());
-    sink.append(' ');
     sink.append(getJavaCategory());
     sink.append(' ');
     writeReference(sink, true);

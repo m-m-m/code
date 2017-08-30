@@ -3,7 +3,7 @@
 package net.sf.mmm.code.base.doc;
 
 /**
- * A link of a {@link CodeDocImpl doc} tag.
+ * A link of a {@link AbstractCodeDoc doc} tag.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0

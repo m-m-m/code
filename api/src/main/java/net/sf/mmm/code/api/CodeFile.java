@@ -43,4 +43,9 @@ public abstract interface CodeFile extends CodeItemWithQualifiedName {
    */
   List<CodeImport> getImports();
 
+  /**
+   * @return the {@link CodeContext} owning this file. Never {@code null}.
+   */
+  CodeContext getContext();
+
 }

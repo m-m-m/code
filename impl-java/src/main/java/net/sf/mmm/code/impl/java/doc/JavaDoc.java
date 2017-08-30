@@ -1,26 +1,23 @@
 /* Copyright (c) The m-m-m Team, Licensed under the Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0 */
-package net.sf.mmm.code.impl.java;
+package net.sf.mmm.code.impl.java.doc;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import com.thoughtworks.qdox.model.JavaClass;
-import com.thoughtworks.qdox.model.JavaSource;
-
-import net.sf.mmm.code.base.doc.CodeDocContext;
-import net.sf.mmm.code.base.doc.CodeDocDescriptor;
+import net.sf.mmm.code.base.doc.AbstractCodeDoc;
+import net.sf.mmm.code.impl.java.JavaContext;
+import net.sf.mmm.code.impl.java.JavaElement;
 
 /**
- * Implementation of {@link CodeDocContext} for Java.
+ * Implementation of {@link net.sf.mmm.code.api.doc.CodeDoc} for Java.
  *
- * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
+ * @author hohwille
  * @since 1.0.0
  */
-public class JavaDocContext extends CodeDocContext {
+public class JavaDoc extends AbstractCodeDoc<JavaContext> {
 
   private static final Pattern PATTERN_JAVADOC_TAG = Pattern.compile("\\{@([a-zA-Z]+) ([^}]*)\\}");
 
@@ -39,24 +36,16 @@ public class JavaDocContext extends CodeDocContext {
       "TypeNotPresentException", "UnknownError", "UnsatisfiedLinkError", "UnsupportedClassVersionError", "UnsupportedOperationException", "VerifyError",
       "VirtualMachineError", "Void"));
 
-  private final JavaClass javaClass;
+  private static final Set<String> JAVA_PRIMITIVE_TYPES = new HashSet<>(Arrays.asList("void", "boolean", "int", "long", "char", "float", "double"));
 
   /**
    * The constructor.
    *
-   * @param docDescriptors the {@link List} of {@link CodeDocDescriptor}s.
-   * @param javaClass the source {@link JavaClass}.
+   * @param element the owning {@link #getElement() element}.
    */
-  public JavaDocContext(List<CodeDocDescriptor> docDescriptors, JavaClass javaClass) {
+  public JavaDoc(JavaElement element) {
 
-    super('.', docDescriptors);
-    this.javaClass = javaClass;
-  }
-
-  @Override
-  protected String getSimpleName() {
-
-    return this.javaClass.getSimpleName();
+    super(element.getContext(), element);
   }
 
   @Override
@@ -66,28 +55,15 @@ public class JavaDocContext extends CodeDocContext {
   }
 
   @Override
-  protected String qualify(String simpleName) {
+  protected String qualifyStandardType(String simpleName) {
 
-    if (getSimpleName().equals(simpleName)) {
-      return this.javaClass.getFullyQualifiedName();
-    }
-    JavaSource source = this.javaClass.getSource();
-    for (String qualifiedName : source.getImports()) {
-      if (qualifiedName.endsWith(simpleName)) {
-        char separator = qualifiedName.charAt(qualifiedName.length() - simpleName.length() - 1);
-        if (separator == '.') {
-          return qualifiedName;
-        }
-      }
-    }
-    String packageName = source.getPackageName();
-    if (packageName.isEmpty()) {
-      return simpleName;
-    }
     if (JAVA_LANG_TYPES.contains(simpleName)) {
+      return "java.lang." + simpleName;
+    }
+    if (JAVA_PRIMITIVE_TYPES.contains(simpleName)) {
       return simpleName;
     }
-    return packageName + '.' + simpleName;
+    return null;
   }
 
 }

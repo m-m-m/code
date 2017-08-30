@@ -19,10 +19,12 @@ public abstract class JavaItemWithComment extends JavaItem implements CodeItemWi
 
   /**
    * The constructor.
+   * 
+   * @param context the {@link #getContext() context}.
    */
-  public JavaItemWithComment() {
+  public JavaItemWithComment(JavaContext context) {
 
-    super();
+    super(context);
   }
 
   @Override

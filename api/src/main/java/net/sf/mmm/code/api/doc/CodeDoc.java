@@ -7,6 +7,7 @@ import java.util.List;
 import net.sf.mmm.code.api.CodeItem;
 
 /**
+ * {@link CodeItem} representing API documentation (e.g. JavaDoc or JSDoc).
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0

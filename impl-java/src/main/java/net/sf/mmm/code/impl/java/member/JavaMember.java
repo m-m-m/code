@@ -16,18 +16,21 @@ import net.sf.mmm.code.impl.java.JavaType;
  */
 public abstract class JavaMember extends JavaElementWithModifiers implements CodeMember {
 
-  private String name;
+  private final JavaType declaringType;
 
-  private JavaType declaringType;
+  private String name;
 
   /**
    * The constructor.
    *
+   * @param declaringType the {@link #getDeclaringType()}.
    * @param modifiers the {@link #getModifiers() modifiers}.
    */
-  public JavaMember(CodeModifiers modifiers) {
+  public JavaMember(JavaType declaringType, CodeModifiers modifiers) {
 
-    super(modifiers);
+    super(declaringType.getContext(), modifiers);
+    this.declaringType = declaringType;
+    this.name = "undefined";
   }
 
   /**
