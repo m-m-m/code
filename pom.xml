@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>net.sf.m-m-m</groupId>
+    <artifactId>mmm</artifactId>
+    <version>2.0.2</version>
+    <relativePath>../parent/pom.xml</relativePath>
+  </parent>
+  <groupId>net.sf.m-m-m</groupId>
+  <artifactId>mmm-code-parent</artifactId>
+  <version>dev-SNAPSHOT</version><!-- never released -->
+  <packaging>pom</packaging>
+  <name>${project.artifactId}</name>
+  <description>Library to parse, analyze, transform and generate code with reflective support for both byte-code and source-code.</description>
+
+  <modules>
+    <module>bom</module>
+    <module>modules</module>
+  </modules>
+
+  <properties>
+    <!-- Internal project versions -->
+    <net.sf.mmm.util.version>7.4.0</net.sf.mmm.util.version>
+    <net.sf.mmm.code.version>1.0.0-SNAPSHOT</net.sf.mmm.code.version>
+    <java.version>1.8</java.version>
+  </properties>
+
+  <issueManagement>
+    <system>GitHub</system>
+    <url>http://github.com/m-m-m/code/issues</url>
+  </issueManagement>
+  <scm>
+    <connection>scm:git:git@github.com:m-m-m/code.git</connection>
+    <developerConnection>scm:git:git@github.com:m-m-m/code.git</developerConnection>
+    <url>https://github.com/m-m-m/code/tree/master</url>
+    <tag/>
+  </scm>
+</project>

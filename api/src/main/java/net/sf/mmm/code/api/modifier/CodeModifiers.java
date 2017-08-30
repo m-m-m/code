@@ -1,0 +1,232 @@
+/* Copyright (c) The m-m-m Team, Licensed under the Apache License, Version 2.0
+ * http://www.apache.org/licenses/LICENSE-2.0 */
+package net.sf.mmm.code.api.modifier;
+
+import java.beans.Visibility;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
+import net.sf.mmm.code.api.member.CodeMethod;
+
+/**
+ * Represents the visibility of a {@link CodeMethod}.
+ *
+ * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
+ * @since 1.0.0
+ */
+public class CodeModifiers {
+
+  /** The {@link #getModifiers() modifier} {@value}. */
+  public static final String KEY_STATIC = "static";
+
+  /** The {@link #getModifiers() modifier} {@value}. */
+  public static final String KEY_FINAL = "final";
+
+  /** The {@link #getModifiers() modifier} {@value}. */
+  public static final String KEY_ABSTRACT = "abstract";
+
+  /** The {@link #getModifiers() modifier} {@value}. */
+  public static final String KEY_VOLATILE = "volatile";
+
+  /** The {@link #getModifiers() modifier} {@value}. */
+  public static final String KEY_TRANSIENT = "transient";
+
+  /** The {@link #getModifiers() modifier} {@value}. */
+  public static final String KEY_NATIVE = "native";
+
+  /** The {@link #getModifiers() modifier} {@value}. */
+  public static final String KEY_SYNCHRONIZED = "synchronized";
+
+  /** {@link CodeModifiers} for {@code public}. */
+  public static final CodeModifiers MODIFIERS_PUBLIC = new CodeModifiers(CodeVisibility.PUBLIC);
+
+  /** {@link CodeModifiers} for {@code public static}. */
+  public static final CodeModifiers MODIFIERS_PUBLIC_STATIC = new CodeModifiers(CodeVisibility.PUBLIC, KEY_STATIC);
+
+  /** {@link CodeModifiers} for {@code public static final}. */
+  public static final CodeModifiers MODIFIERS_PUBLIC_STATIC_FINAL = new CodeModifiers(CodeVisibility.PUBLIC, KEY_STATIC, KEY_FINAL);
+
+  /** {@link CodeModifiers} for {@code public final}. */
+  public static final CodeModifiers MODIFIERS_PUBLIC_FINAL = new CodeModifiers(CodeVisibility.PUBLIC, KEY_FINAL);
+
+  /** {@link CodeModifiers} for {@code private}. */
+  public static final CodeModifiers MODIFIERS_PRIVATE = new CodeModifiers(CodeVisibility.PRIVATE);
+
+  /** {@link CodeModifiers} for {@code private static}. */
+  public static final CodeModifiers MODIFIERS_PRIVATE_STATIC = new CodeModifiers(CodeVisibility.PRIVATE, KEY_STATIC);
+
+  /** {@link CodeModifiers} for {@code private static final}. */
+  public static final CodeModifiers MODIFIERS_PRIVATE_STATIC_FINAL = new CodeModifiers(CodeVisibility.PRIVATE, KEY_STATIC, KEY_FINAL);
+
+  /** {@link CodeModifiers} for {@code private final}. */
+  public static final CodeModifiers MODIFIERS_PRIVATE_FINAL = new CodeModifiers(CodeVisibility.PRIVATE, KEY_FINAL);
+
+  /** {@link CodeModifiers} for {@code protected}. */
+  public static final CodeModifiers MODIFIERS_PROTECTED = new CodeModifiers(CodeVisibility.PROTECTED);
+
+  /** {@link CodeModifiers} for {@code protected static}. */
+  public static final CodeModifiers MODIFIERS_PROTECTED_STATIC = new CodeModifiers(CodeVisibility.PROTECTED, KEY_STATIC);
+
+  /** {@link CodeModifiers} for {@code protected static final}. */
+  public static final CodeModifiers MODIFIERS_PROTECTED_STATIC_FINAL = new CodeModifiers(CodeVisibility.PROTECTED, KEY_STATIC, KEY_FINAL);
+
+  /** {@link CodeModifiers} for {@code protected final}. */
+  public static final CodeModifiers MODIFIERS_PROTECTED_FINAL = new CodeModifiers(CodeVisibility.PROTECTED, KEY_FINAL);
+
+  private final CodeVisibility visibility;
+
+  private final Set<String> modifiers;
+
+  /**
+   * The constructor.
+   *
+   * @param visibility the {@link Visibility}.
+   * @param modifiers the additional modifiers.
+   */
+  public CodeModifiers(CodeVisibility visibility, String... modifiers) {
+
+    super();
+    this.visibility = visibility;
+    Set<String> set = new HashSet<>(modifiers.length + 1);
+    if (!CodeVisibility.DEFAULT.equals(visibility)) {
+      set.add(this.visibility.toString());
+    }
+    for (String modifier : modifiers) {
+      set.add(modifier);
+    }
+    this.modifiers = Collections.unmodifiableSet(set);
+  }
+
+  /**
+   * @return the {@link CodeVisibility}.
+   */
+  public CodeVisibility getVisibility() {
+
+    return this.visibility;
+  }
+
+  /**
+   * @return the {@link Set} with all modifiers including the visiblity.
+   */
+  public Set<String> getModifiers() {
+
+    return this.modifiers;
+  }
+
+  /**
+   * @return {@code true} if abstract.
+   */
+  public boolean isAbstract() {
+
+    return this.modifiers.contains(KEY_ABSTRACT);
+  }
+
+  /**
+   * @return {@code true} if static.
+   */
+  public boolean isStatic() {
+
+    return this.modifiers.contains(KEY_STATIC);
+  }
+
+  /**
+   * @return {@code true} if final.
+   */
+  public boolean isFinal() {
+
+    return this.modifiers.contains(KEY_FINAL);
+  }
+
+  @Override
+  public int hashCode() {
+
+    return Objects.hashCode(this.modifiers);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+
+    if (this == obj) {
+      return true;
+    }
+    if ((obj == null) || (getClass() != obj.getClass())) {
+      return false;
+    }
+    CodeModifiers other = (CodeModifiers) obj;
+    if (!Objects.equals(this.modifiers, other.modifiers)) {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public String toString() {
+
+    StringBuilder buffer = new StringBuilder(32);
+    String visibilityString = this.visibility.toString();
+    if (!visibilityString.isEmpty()) {
+      appendModifier(buffer, visibilityString);
+    }
+    if (isAbstract()) {
+      appendModifier(buffer, KEY_ABSTRACT);
+    }
+    if (isStatic()) {
+      appendModifier(buffer, KEY_STATIC);
+    }
+    if (isFinal()) {
+      appendModifier(buffer, KEY_FINAL);
+    }
+    for (String modifier : this.modifiers) {
+      if (!modifier.equals(visibilityString) && !KEY_ABSTRACT.equals(modifier) && !KEY_STATIC.equals(modifier) && !KEY_FINAL.equals(modifier)) {
+        appendModifier(buffer, modifier);
+      }
+    }
+    return buffer.toString();
+  }
+
+  private static void appendModifier(StringBuilder buffer, String modifier) {
+
+    buffer.append(modifier);
+    buffer.append(' ');
+  }
+
+  /**
+   * @param javaModifiers the Java {@link Modifier} mask.
+   * @return the given {@link Modifier} mask as {@link CodeModifiers}.
+   */
+  public static CodeModifiers of(int javaModifiers) {
+
+    List<String> modifiers = new ArrayList<>();
+    if (Modifier.isAbstract(javaModifiers)) {
+      modifiers.add(KEY_ABSTRACT);
+    }
+    if (Modifier.isStatic(javaModifiers)) {
+      modifiers.add(KEY_STATIC);
+    }
+    if (Modifier.isFinal(javaModifiers)) {
+      modifiers.add(KEY_FINAL);
+    }
+    if (Modifier.isNative(javaModifiers)) {
+      modifiers.add(KEY_NATIVE);
+    }
+    if (Modifier.isSynchronized(javaModifiers)) {
+      modifiers.add(KEY_SYNCHRONIZED);
+    }
+    if (Modifier.isTransient(javaModifiers)) {
+      modifiers.add(KEY_TRANSIENT);
+    }
+    if (Modifier.isVolatile(javaModifiers)) {
+      modifiers.add(KEY_VOLATILE);
+    }
+    if (Modifier.isStrict(javaModifiers)) {
+      modifiers.add("strictfp");
+    }
+    String[] modifierArray = modifiers.toArray(new String[modifiers.size()]);
+    return new CodeModifiers(CodeVisibility.of(javaModifiers), modifierArray);
+  }
+}

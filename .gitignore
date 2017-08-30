@@ -1,0 +1,10 @@
+.*
+*.bak
+*.log
+*.diff
+*.patch
+*.iml
+target
+eclipse-target
+gwt-unitCache
+war

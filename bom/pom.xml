@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>net.sf.m-m-m</groupId>
+    <artifactId>mmm-code-parent</artifactId>
+    <version>dev-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  <artifactId>mmm-code-bom</artifactId>
+  <version>${net.sf.mmm.code.version}</version>
+  <packaging>pom</packaging>
+  <name>${project.artifactId}</name>
+  <description>Bill of materials (BOM) for mmm-code.</description>
+
+  <properties>
+    <mmm.flatten.mode>bom</mmm.flatten.mode>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- BOM of mmm-util -->
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>mmm-util-bom</artifactId>
+        <version>${net.sf.mmm.util.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>com.thoughtworks.qdox</groupId>
+        <artifactId>qdox</artifactId>
+        <version>2.0-M7</version>
+      </dependency>
+
+      <!-- Internal dependencies -->
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>mmm-code-api</artifactId>
+        <version>${net.sf.mmm.code.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>mmm-code-base</artifactId>
+        <version>${net.sf.mmm.code.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>mmm-code-impl-java</artifactId>
+        <version>${net.sf.mmm.code.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+</project>
