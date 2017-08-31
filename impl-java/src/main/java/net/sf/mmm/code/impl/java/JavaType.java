@@ -77,9 +77,9 @@ public class JavaType extends JavaElement implements CodeType {
 
     super(file.getContext());
     this.file = file;
+    this.simpleName = simpleName;
     this.modifiers = CodeModifiers.MODIFIERS_PUBLIC;
     this.category = CodeTypeCategory.CLASS;
-    this.declaringType = null;
     this.superTypes = new ArrayList<>();
     this.typeParameters = new ArrayList<>();
     this.fields = new ArrayList<>();
@@ -153,6 +153,13 @@ public class JavaType extends JavaElement implements CodeType {
   public CodeTypeCategory getCategory() {
 
     return this.category;
+  }
+
+  @Override
+  public void setCategory(CodeTypeCategory category) {
+
+    verifyMutalbe();
+    this.category = category;
   }
 
   @Override
@@ -250,7 +257,9 @@ public class JavaType extends JavaElement implements CodeType {
     if (this.declaringType != null) {
       this.declaringType.getNestedTypes().remove(this);
     }
-    declaringType.getNestedTypes().add(this);
+    if (!declaringType.isImmutable()) {
+      declaringType.getNestedTypes().add(this);
+    }
     this.declaringType = (JavaType) declaringType;
   }
 
@@ -339,6 +348,7 @@ public class JavaType extends JavaElement implements CodeType {
     doWriteConstructors(sink, defaultIndent, currentIndent);
     doWriteMethods(sink, defaultIndent, currentIndent);
     doWriteNestedTypes(sink, defaultIndent, currentIndent);
+    sink.append(currentIndent);
     sink.append("}");
     writeNewline(sink);
   }
@@ -404,8 +414,11 @@ public class JavaType extends JavaElement implements CodeType {
 
   private void doWriteNestedTypes(Appendable sink, String defaultIndent, String currentIndent) {
 
-    // TODO Auto-generated method stub
-
+    String childIndent = currentIndent + defaultIndent;
+    for (CodeType child : this.nestedTypes) {
+      writeNewline(sink);
+      child.write(sink, defaultIndent, childIndent);
+    }
   }
 
   @Override

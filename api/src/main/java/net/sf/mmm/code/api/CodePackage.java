@@ -22,4 +22,11 @@ public interface CodePackage extends CodeElementWithQualifiedName {
     return null;
   }
 
+  /**
+   * @return {@code true} if this a regular package that requires an {@link CodeFile#getImports() import},
+   *         {@code false} otherwise (in case of a standard package that is always visible such as
+   *         "{{@code java.lang}" for Java).
+   */
+  boolean isRequireImport();
+
 }

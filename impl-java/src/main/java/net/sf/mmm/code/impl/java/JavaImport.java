@@ -5,6 +5,7 @@ package net.sf.mmm.code.impl.java;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import net.sf.mmm.code.api.imports.CodeImport;
 import net.sf.mmm.code.api.imports.CodeImportItem;
@@ -15,7 +16,7 @@ import net.sf.mmm.code.api.imports.CodeImportItem;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaImport extends JavaItem implements CodeImport {
+public class JavaImport extends JavaItem implements CodeImport, Comparable<JavaImport> {
 
   private final String source;
 
@@ -33,6 +34,47 @@ public class JavaImport extends JavaItem implements CodeImport {
     super(context);
     this.source = source;
     this.staticFlag = staticFlag;
+  }
+
+  @Override
+  public int hashCode() {
+
+    return Objects.hash(this.source, this.staticFlag ? Integer.valueOf(1) : Integer.valueOf(0));
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+
+    if (this == obj) {
+      return true;
+    }
+    if (!super.equals(obj)) {
+      return false;
+    }
+    JavaImport other = (JavaImport) obj;
+    if (!Objects.equals(this.source, other.source)) {
+      return false;
+    }
+    if (this.staticFlag != other.staticFlag) {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public int compareTo(JavaImport other) {
+
+    if (other == null) {
+      return -1;
+    }
+    if (this.staticFlag != other.staticFlag) {
+      if (this.staticFlag) {
+        return -1;
+      } else {
+        return 1;
+      }
+    }
+    return this.source.compareTo(other.source);
   }
 
   @Override

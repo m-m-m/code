@@ -5,6 +5,7 @@ package net.sf.mmm.code.api;
 import java.util.List;
 import java.util.Objects;
 
+import net.sf.mmm.code.api.imports.CodeImport;
 import net.sf.mmm.util.exception.api.ObjectNotFoundException;
 
 /**
@@ -228,5 +229,11 @@ public interface CodeContext {
       return this.parent;
     }
   }
+
+  /**
+   * @param type the {@link CodeType} to {@link CodeFile#getImports() import}.
+   * @return a new canonical {@link CodeImport} for the given {@link CodeType}.
+   */
+  CodeImport createImport(CodeType type);
 
 }

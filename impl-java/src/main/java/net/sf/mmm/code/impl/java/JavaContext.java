@@ -59,11 +59,9 @@ public class JavaContext extends AbstractCodeContext<JavaType, JavaPackage> {
   @Override
   public JavaType createType(CodeType declaringType, String simpleName) {
 
-    JavaType type = createType(declaringType.getParentPackage(), simpleName);
+    JavaType declaring = (JavaType) declaringType;
+    JavaType type = new JavaType(declaring.getFile(), simpleName);
     type.setDeclaringType(declaringType);
-    if (!declaringType.isImmutable()) {
-      declaringType.getNestedTypes().add(type);
-    }
     return type;
   }
 
@@ -80,6 +78,12 @@ public class JavaContext extends AbstractCodeContext<JavaType, JavaPackage> {
     JavaPackage parent = (JavaPackage) parentPackage;
     JavaPackage pkg = new JavaPackage(parent, simpleName);
     return pkg;
+  }
+
+  @Override
+  public JavaImport createImport(CodeType type) {
+
+    return new JavaImport(this, type.getQualifiedName(), false);
   }
 
 }

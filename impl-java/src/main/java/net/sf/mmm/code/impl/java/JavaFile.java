@@ -5,6 +5,7 @@ package net.sf.mmm.code.impl.java;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 
 import net.sf.mmm.code.api.CodeFile;
 import net.sf.mmm.code.api.CodeItem;
@@ -19,6 +20,8 @@ import net.sf.mmm.code.api.statement.CodeComment;
  * @since 1.0.0
  */
 public class JavaFile extends JavaItemWithQualifiedName implements CodeFile {
+
+  private static final String DUMMY_PACKAGE_PREFIX = ".";
 
   private List<CodeType> types;
 
@@ -73,8 +76,22 @@ public class JavaFile extends JavaItemWithQualifiedName implements CodeFile {
       this.header.write(sink, defaultIndent, currentIndent);
     }
     getParentPackage().doWrite(sink, defaultIndent, currentIndent);
-    for (CodeImport imp : this.imports) {
-      // TODO allow grouping of imports?
+    writeNewline(sink);
+    TreeSet<CodeImport> sortedImportSet = new TreeSet<>(this.imports);
+    String currentSegmentPrefix = DUMMY_PACKAGE_PREFIX;
+    for (CodeImport imp : sortedImportSet) {
+      String source = imp.getSource();
+      if (!source.startsWith(currentSegmentPrefix)) {
+        if (!DUMMY_PACKAGE_PREFIX.equals(currentSegmentPrefix)) {
+          writeNewline(sink);
+        }
+        int firstDot = source.indexOf('.');
+        if (firstDot > 0) {
+          currentSegmentPrefix = source.substring(0, firstDot + 1);
+        } else {
+          currentSegmentPrefix = DUMMY_PACKAGE_PREFIX + DUMMY_PACKAGE_PREFIX;
+        }
+      }
       imp.write(sink, defaultIndent, currentIndent);
     }
     if (this.imports.size() > 0) {

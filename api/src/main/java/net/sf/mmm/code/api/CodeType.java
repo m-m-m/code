@@ -32,6 +32,12 @@ public interface CodeType extends CodeElementWithQualifiedName, CodeElementWithM
   CodeTypeCategory getCategory();
 
   /**
+   * @param category the {@link #getCategory() category}.
+   * @throws ReadOnlyException if {@link #isImmutable() immutable}.
+   */
+  void setCategory(CodeTypeCategory category);
+
+  /**
    * @return the {@link List} of {@link CodeGenericType}s inherited by this type. This model does not
    *         distinguish {@code extends} vs. {@code inherits} and potentially allows multi-inheritance of
    *         classes for languages other than Java.

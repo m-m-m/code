@@ -109,7 +109,7 @@ public abstract class AbstractCodeItem<C extends AbstractCodeContext<?, ?>> impl
    */
   protected void verifyMutalbe() {
 
-    if (!this.immutable) {
+    if (this.immutable) {
       throw new ReadOnlyException(getClass().getSimpleName());
     }
   }
@@ -145,7 +145,13 @@ public abstract class AbstractCodeItem<C extends AbstractCodeContext<?, ?>> impl
   protected final void writeNewline(Appendable sink) {
 
     try {
-      sink.append(this.context.getNewline());
+      CharSequence newline;
+      if (this.context == null) {
+        newline = "\n";
+      } else {
+        newline = this.context.getNewline();
+      }
+      sink.append(newline);
     } catch (IOException e) {
       throw new RuntimeIoException(e, IoMode.WRITE);
     }

@@ -33,4 +33,21 @@ public abstract class JavaItem extends AbstractCodeItem<JavaContext> {
     super(template);
   }
 
+  @Override
+  public boolean equals(Object obj) {
+
+    // has to be overridden by every sub-class
+    if ((obj == null) || (obj.getClass() != getClass())) {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+
+    // has to be overridden by every sub-class
+    return 1;
+  }
+
 }

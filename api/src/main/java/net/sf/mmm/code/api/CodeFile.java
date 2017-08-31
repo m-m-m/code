@@ -44,6 +44,31 @@ public abstract interface CodeFile extends CodeItemWithQualifiedName {
   List<CodeImport> getImports();
 
   /**
+   * @param type the {@link CodeType} to import.
+   */
+  default void addImport(CodeType type) {
+
+    CodePackage pkg = type.getParentPackage();
+    if (!pkg.isRequireImport()) {
+      return;
+    }
+    // this is specific for Java, e.g. for TypeScript you need to override.
+    CodePackage myPkg = getParentPackage();
+    if ((pkg == myPkg) || pkg.getQualifiedName().equals(myPkg.getQualifiedName())) {
+      return;
+    }
+    String name = type.getQualifiedName();
+    List<CodeImport> imports = getImports();
+    for (CodeImport imp : imports) {
+      if (!imp.isStatic() && imp.getSource().equals(name)) {
+        return;
+      }
+    }
+    CodeImport imp = getContext().createImport(type);
+    imports.add(imp);
+  }
+
+  /**
    * @return the {@link CodeContext} owning this file. Never {@code null}.
    */
   CodeContext getContext();

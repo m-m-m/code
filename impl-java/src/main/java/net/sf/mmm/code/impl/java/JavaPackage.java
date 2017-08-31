@@ -62,6 +62,12 @@ public class JavaPackage extends JavaElementWithQualifiedName implements CodePac
     super(template);
   }
 
+  @Override
+  public boolean isRequireImport() {
+
+    return !isDefault() && !isJavaLang();
+  }
+
   /**
    * @return {@code true} if this is the default package, {@code false} otherwise.
    */
