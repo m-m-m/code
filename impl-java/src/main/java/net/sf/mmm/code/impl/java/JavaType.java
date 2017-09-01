@@ -198,6 +198,24 @@ public class JavaType extends JavaElement implements CodeType {
   }
 
   @Override
+  public CodeField getField(String name) {
+
+    for (CodeField field : this.fields) {
+      if (field.getName().equals(name)) {
+        return field;
+      }
+    }
+    for (CodeGenericType superType : this.superTypes) {
+      CodeType rawType = superType.getRawType();
+      CodeField superField = rawType.getField(name);
+      if (superField != null) {
+        return superField;
+      }
+    }
+    return null;
+  }
+
+  @Override
   public List<CodeField> getFields() {
 
     return this.fields;

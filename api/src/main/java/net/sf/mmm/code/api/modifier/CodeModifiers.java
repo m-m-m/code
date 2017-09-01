@@ -90,16 +90,44 @@ public class CodeModifiers {
    */
   public CodeModifiers(CodeVisibility visibility, String... modifiers) {
 
+    this(visibility, createModifiers(visibility, modifiers));
+  }
+
+  /**
+   * The constructor.
+   *
+   * @param visibility the {@link Visibility}.
+   * @param modifiers the {@link #getModifiers() modifiers}.
+   */
+  private CodeModifiers(CodeVisibility visibility, Set<String> modifiers) {
+
     super();
     this.visibility = visibility;
+    this.modifiers = Collections.unmodifiableSet(modifiers);
+  }
+
+  private static Set<String> createModifiers(CodeVisibility visibility, String... modifiers) {
+
     Set<String> set = new HashSet<>(modifiers.length + 1);
     if (!CodeVisibility.DEFAULT.equals(visibility)) {
-      set.add(this.visibility.toString());
+      set.add(visibility.toString());
     }
     for (String modifier : modifiers) {
+      verifyModifier(modifier);
       set.add(modifier);
     }
-    this.modifiers = Collections.unmodifiableSet(set);
+    return set;
+  }
+
+  private static void verifyModifier(String modifier) {
+
+    Objects.requireNonNull(modifier, "modifier");
+    if (modifier.isEmpty()) {
+      throw new IllegalArgumentException(modifier);
+    }
+    if (CodeVisibility.of(modifier) != null) {
+      throw new IllegalArgumentException(modifier);
+    }
   }
 
   /**
@@ -116,6 +144,57 @@ public class CodeModifiers {
   public Set<String> getModifiers() {
 
     return this.modifiers;
+  }
+
+  /**
+   * @param modifier the {@link #getModifiers() modifier} to add.
+   * @return this {@link CodeModifiers} if the given {@code modifier} is already {@link #getModifiers()
+   *         contained} or a new instance of {@link CodeModifiers} with the given modifier.
+   */
+  public CodeModifiers addModifier(String modifier) {
+
+    verifyModifier(modifier);
+    if (this.modifiers.contains(modifier)) {
+      return this;
+    }
+    Set<String> newModifiers = new HashSet<>(this.modifiers);
+    newModifiers.add(modifier);
+    return new CodeModifiers(this.visibility, newModifiers);
+  }
+
+  /**
+   * @param modifier the {@link #getModifiers() modifier} to remove.
+   * @return this {@link CodeModifiers} if the given {@code modifier} is not {@link #getModifiers() contained}
+   *         or a new instance of {@link CodeModifiers} without the given modifier.
+   */
+  public CodeModifiers removeModifier(String modifier) {
+
+    verifyModifier(modifier);
+    if (!this.modifiers.contains(modifier)) {
+      return this;
+    }
+    Set<String> newModifiers = new HashSet<>(this.modifiers);
+    newModifiers.remove(modifier);
+    return new CodeModifiers(this.visibility, newModifiers);
+  }
+
+  /**
+   * @param newVisibility the new {@link #getVisibility() visibility}
+   * @return this {@link CodeModifiers} if it already {@link #getVisibility() has} the given
+   *         {@link CodeVisibility} or a new instance of {@link CodeModifiers} with the given
+   *         {@link CodeVisibility}.
+   */
+  public CodeModifiers changeVisibility(CodeVisibility newVisibility) {
+
+    if (this.visibility.equals(newVisibility)) {
+      return this;
+    }
+    Set<String> newModifiers = new HashSet<>(this.modifiers);
+    newModifiers.remove(this.visibility.toString());
+    if (!CodeVisibility.DEFAULT.equals(newVisibility)) {
+      newModifiers.add(newVisibility.toString());
+    }
+    return new CodeModifiers(newVisibility, newModifiers);
   }
 
   /**

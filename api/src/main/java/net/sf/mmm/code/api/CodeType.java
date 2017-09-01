@@ -52,6 +52,13 @@ public interface CodeType extends CodeElementWithQualifiedName, CodeElementWithM
   List<CodeGenericType> getTypeParameters();
 
   /**
+   * @param name the {@link CodeField#getName() name} of the requested {@link CodeField}.
+   * @return the requested {@link CodeField} (may be inherited from super-types) or {@code null} if no such
+   *         field exists.
+   */
+  CodeField getField(String name);
+
+  /**
    * @return the {@link List} of {@link CodeField}s declared by this type. May be {@link List#isEmpty() empty}
    *         but is never {@code null}.
    */

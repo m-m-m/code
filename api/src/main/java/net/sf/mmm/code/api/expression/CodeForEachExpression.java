@@ -5,7 +5,7 @@ package net.sf.mmm.code.api.expression;
 /**
  * {@link CodeForExpression} for a {@code foreach} loop.
  *
- * @author hohwille
+ * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
 public abstract interface CodeForEachExpression extends CodeForExpression {

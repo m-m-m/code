@@ -14,19 +14,31 @@ import net.sf.mmm.code.api.CodeItem;
  */
 public interface CodeDoc extends CodeItem {
 
-  /** {@link CodeDocFormat#replaceDocTag(String, String, String) Doc tag} for a link. */
+  /** {@link CodeDocFormat#replaceDocTag(String, java.util.function.Supplier, String) Doc tag} for a link. */
   String TAG_LINK = "link";
 
-  /** {@link CodeDocFormat#replaceDocTag(String, String, String) Doc tag} for a plain link. */
+  /**
+   * {@link CodeDocFormat#replaceDocTag(String, java.util.function.Supplier, String) Doc tag} for a plain
+   * link.
+   */
   String TAG_LINKPLAIN = "linkplain";
 
-  /** {@link CodeDocFormat#replaceDocTag(String, String, String) Doc tag} for a code format. */
+  /**
+   * {@link CodeDocFormat#replaceDocTag(String, java.util.function.Supplier, String) Doc tag} for a code
+   * format.
+   */
   String TAG_CODE = "code";
 
-  /** {@link CodeDocFormat#replaceDocTag(String, String, String) Doc tag} for an un-escaped literal. */
+  /**
+   * {@link CodeDocFormat#replaceDocTag(String, java.util.function.Supplier, String) Doc tag} for an
+   * un-escaped literal.
+   */
   String TAG_LITERAL = "literal";
 
-  /** {@link CodeDocFormat#replaceDocTag(String, String, String) Doc tag} for a value reference. */
+  /**
+   * {@link CodeDocFormat#replaceDocTag(String, java.util.function.Supplier, String) Doc tag} for a value
+   * reference.
+   */
   String TAG_VALUE = "value";
 
   /**
@@ -35,7 +47,7 @@ public interface CodeDoc extends CodeItem {
    *         {@link String#isEmpty() empty} {@link String} if not available and therefore never
    *         <code>null</code>.
    */
-  String get(CodeDocFormat format);
+  String getFormatted(CodeDocFormat format);
 
   /**
    * @return the {@link List} with the raw lines of documentation without leading format prefix ("/**", "*",

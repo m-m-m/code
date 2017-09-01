@@ -7,7 +7,7 @@ import net.sf.mmm.code.api.statement.CodeAtomicStatement;
 /**
  * {@link CodeForExpression} for a regular {@code for} loop.
  *
- * @author hohwille
+ * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
 public abstract interface CodeForLoopExpression extends CodeForExpression {

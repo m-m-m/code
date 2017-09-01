@@ -163,6 +163,54 @@ public interface CodeContext {
   }
 
   /**
+   * @param simpleName the {@link CodeType#getSimpleName() simple name} of the {@link CodeType} to resolve.
+   * @param owningType the owning {@link CodeType} where the {@code simpleName} origins from used as context
+   *        for resolution.
+   * @param omitStandardPackages {@code true} to omit standard package(s) (for
+   *        {@link #getQualifiedNameForStandardType(String, boolean) standard types}), {@code false} otherwise
+   *        (to enforce {@link CodeType#getQualifiedName() qualified name} also for standard types).
+   * @return the resolved {@link CodeType#getQualifiedName() qualified name} corresponding to the given
+   *         {@code simpleName}.
+   */
+  default String getQualifiedName(String simpleName, CodeType owningType, boolean omitStandardPackages) {
+
+    if (owningType.getSimpleName().equals(simpleName)) {
+      return owningType.getQualifiedName();
+    }
+    List<CodeImport> imports = owningType.getFile().getImports();
+    char separator = getPackageSeparator();
+    String suffix = separator + simpleName;
+    for (CodeImport imp : imports) {
+      if (!imp.isStatic()) {
+        String source = imp.getSource();
+        if (source.endsWith(suffix)) {
+          return source;
+        }
+      }
+    }
+    String qname = getQualifiedNameForStandardType(simpleName, omitStandardPackages);
+    if (qname != null) {
+      return qname;
+    }
+    String pkgName = owningType.getParentPackage().getQualifiedName();
+    if (pkgName.isEmpty()) {
+      return simpleName;
+    }
+    return pkgName + suffix;
+
+  }
+
+  /**
+   * @param simpleName the {@link CodeType#getSimpleName() simple name} of the {@link CodeType}.
+   * @param omitStandardPackages {@code true} to omit standard package(s) (for
+   *        {@link #getQualifiedNameForStandardType(String, boolean) standard types}), {@code false} otherwise
+   *        (to enforce {@link CodeType#getQualifiedName() qualified name} also for standard types).
+   * @return the corresponding {@link CodeType#getQualifiedName() qualified name} or {@code null} if no
+   *         standard type (import is required).
+   */
+  public String getQualifiedNameForStandardType(String simpleName, boolean omitStandardPackages);
+
+  /**
    * Represents a parsed {@link CodeItemWithQualifiedName#getQualifiedName() qualified name}.
    *
    * @see CodeContext#getQualifiedName(String)

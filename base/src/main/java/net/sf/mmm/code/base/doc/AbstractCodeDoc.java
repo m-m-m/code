@@ -6,18 +6,30 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.CodeElement;
 import net.sf.mmm.code.api.CodeType;
 import net.sf.mmm.code.api.doc.CodeDoc;
 import net.sf.mmm.code.api.doc.CodeDocDescriptor;
 import net.sf.mmm.code.api.doc.CodeDocFormat;
-import net.sf.mmm.code.api.imports.CodeImport;
+import net.sf.mmm.code.api.doc.CodeDocLink;
+import net.sf.mmm.code.api.doc.CodeDocMethodLink;
+import net.sf.mmm.code.api.doc.Tag;
+import net.sf.mmm.code.api.doc.XmlTag;
+import net.sf.mmm.code.api.expression.CodeExpression;
+import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.base.AbstractCodeContext;
-import net.sf.mmm.code.base.AbstractCodeItem;
+import net.sf.mmm.code.base.BasicCodeItem;
 
 /**
  * Abstract base implementation of {@link CodeDoc}.
@@ -26,7 +38,14 @@ import net.sf.mmm.code.base.AbstractCodeItem;
  * @param <C> type of {@link #getContext()}.
  * @since 1.0.0
  */
-public abstract class AbstractCodeDoc<C extends AbstractCodeContext<?, ?>> extends AbstractCodeItem<C> implements CodeDoc {
+public abstract class AbstractCodeDoc<C extends AbstractCodeContext<?, ?>> extends BasicCodeItem<C> implements CodeDoc {
+
+  private static final Logger LOG = LoggerFactory.getLogger(AbstractCodeDoc.class);
+
+  private static final Pattern PATTERN_XML_TAG = Pattern.compile("<[/]?([a-zA-Z_][a-zA-Z0-9:._-]*)([/]?|\\s([^>]*)*)>");
+
+  private static final Set<String> HTML_SELF_CLOSING_TAGS = new HashSet<>(
+      Arrays.asList("area", "base", "br", "col", "command", "embed", "hr", "img", "input", "keygen", "link", "meta", "param", "source", "track", "wbr"));
 
   private final CodeElement element;
 
@@ -66,7 +85,7 @@ public abstract class AbstractCodeDoc<C extends AbstractCodeContext<?, ?>> exten
   }
 
   @Override
-  public String get(CodeDocFormat format) {
+  public String getFormatted(CodeDocFormat format) {
 
     StringBuilder buffer = new StringBuilder();
     for (String line : this.lines) {
@@ -77,7 +96,7 @@ public abstract class AbstractCodeDoc<C extends AbstractCodeContext<?, ?>> exten
     if (CodeDocFormat.RAW.equals(format) || (format == null)) {
       return raw;
     } else {
-      String comment = raw.replace("\n", " ").replace("\r", "");
+      String comment = raw;
       comment = replaceDocTags(format, comment);
       comment = replaceXmlTags(format, comment);
       return comment;
@@ -94,9 +113,74 @@ public abstract class AbstractCodeDoc<C extends AbstractCodeContext<?, ?>> exten
     if (!format.isReplaceXmlTags()) {
       return comment;
     }
-    // format.replaceXmlTag(tag)
-    // TODO Auto-generated method stub
-    return comment;
+    Matcher matcher = PATTERN_XML_TAG.matcher(comment);
+    StringBuffer buffer = new StringBuffer();
+    Tag tag = null;
+    while (matcher.find()) {
+      String markup = matcher.group(0);
+      String tagName = matcher.group(1);
+      String attributes = "";
+      if (matcher.groupCount() >= 3) {
+        attributes = matcher.group(3);
+      }
+      Tag newTag = createTag(tag, markup, tagName, attributes);
+      String replacement = format.replaceXmlTag(newTag);
+      if (newTag.isOpening()) {
+        if (!newTag.isClosing()) {
+          tag = newTag;
+        }
+      } else if (newTag.isClosing()) {
+        if (tag != null) {
+          if (!tag.getName().equals(newTag.getName())) {
+            boolean warn = true;
+            if (HTML_SELF_CLOSING_TAGS.contains(tag.getName())) {
+              Tag parent = tag.getParent();
+              if (parent != null) {
+                tag = parent;
+                if (tag.getName().equals(newTag.getName())) {
+                  warn = false;
+                }
+              }
+            }
+            if (warn) {
+              LOG.warn("Malformed HTML at {}: closing tag {} does not match opening tag {}.", getElement(), newTag.getName(), tag.getName());
+            }
+          }
+          tag = tag.getParent();
+        }
+      }
+      matcher.appendReplacement(buffer, replacement);
+    }
+    matcher.appendTail(buffer);
+    return buffer.toString();
+  }
+
+  /**
+   * @param tag
+   * @param markup
+   * @param tagName
+   * @param attributes
+   * @return
+   */
+  private Tag createTag(Tag tag, String markup, String tagName, String attributes) {
+
+    String name = tagName.toLowerCase();
+    boolean opening;
+    boolean closing;
+    if (markup.startsWith("</")) {
+      opening = false;
+      closing = true;
+      if ((attributes != null) && !attributes.isEmpty()) {
+        LOG.warn("Illegal markup (closing tag should not have attributes): {}", markup);
+      }
+    } else if (markup.endsWith("/>")) {
+      opening = true;
+      closing = true;
+    } else {
+      opening = true;
+      closing = false;
+    }
+    return new XmlTag(name, opening, closing, attributes, tag);
   }
 
   private String replaceDocTags(CodeDocFormat format, String comment) {
@@ -106,91 +190,172 @@ public abstract class AbstractCodeDoc<C extends AbstractCodeContext<?, ?>> exten
     while (matcher.find()) {
       String tag = matcher.group(1);
       String text = matcher.group(2);
-      String parameter = "";
+      Supplier<CodeDocLink> link = null;
       if (CodeDoc.TAG_LINK.equals(tag) || CodeDoc.TAG_LINKPLAIN.equals(tag)) {
-        CodeDocLink link = parseLink(text);
-        String url = resolveLink(link);
-        parameter = url;
-        text = link.getText();
+        link = () -> resolveLink(text);
       } else if (CodeDoc.TAG_VALUE.equals(tag)) {
-        text = "" + resolveValue(text);
+        link = () -> resolveLink(text);
       }
-      String replacement = format.replaceDocTag(tag, parameter, text);
+      String replacement = format.replaceDocTag(tag, link, text);
       matcher.appendReplacement(buffer, replacement);
     }
     matcher.appendTail(buffer);
     return buffer.toString();
   }
 
-  /**
-   * The {@value CodeDoc#TAG_CODE} is cool.
-   *
-   * @param text the referenced value. May be empty to reference the value of the current constant field.
-   * @return the resolved value.
-   */
-  protected Object resolveValue(String text) {
+  private CodeDocLink resolveLink(String text) {
 
-    return null;
+    CodeType owningType = getOwningType(this.element);
+    return new CodeDocLinkImpl(text, getContext().getPackageSeparator(), owningType.getQualifiedName(), this::resolveLinkUrl, this::resolveLinkValue);
   }
 
   /**
-   * @param link the {@link CodeDocLink} to resolve.
-   * @return the {@link CodeDocLink} resolved as URL.
+   * @param link the {@link CodeDocLinkImpl} to resolve as value (e.g. to resolve "&#64;{value Foo#BAR}" or
+   *        "&#64;{value}").
+   * @return the resolved value.
    */
-  protected String resolveLink(CodeDocLink link) {
+  protected Object resolveLinkValue(CodeDocLink link) {
 
-    String qualifiedName = link.getQualifiedName();
+    C context = getContext();
+    String qualifiedName = resolveLinkQualifiedName(link);
+    String anchor = link.getAnchor();
+    CodeField linkedField;
+    if (qualifiedName.isEmpty() && (anchor == null)) {
+      if (this.element instanceof CodeField) {
+        linkedField = (CodeField) this.element;
+      } else {
+        linkedField = null;
+      }
+    } else {
+      CodeType linkedType = context.getType(qualifiedName);
+      if (linkedType == null) {
+        LOG.warn("Failed to resolve type {}.", qualifiedName);
+        return null;
+      }
+      if (anchor == null) {
+        linkedField = null;
+      } else {
+        CodeDocMethodLink methodLink = link.getMethodLink();
+        if (methodLink == null) {
+          linkedField = linkedType.getField(anchor);
+        } else {
+          linkedField = null;
+        }
+      }
+    }
+    if ((linkedField == null) || !linkedField.getModifiers().isStatic()) {
+      LOG.warn("Can only resolve value in constant fields: {}", link);
+      return null;
+    } else {
+      CodeExpression initializer = linkedField.getInitializer();
+      if (initializer != null) {
+        return initializer.evaluate(getOwningType(this.element));
+      }
+      return null;
+    }
+  }
+
+  /**
+   * @param link the {@link CodeDocLinkImpl} to resolve.
+   * @return the {@link CodeDocLinkImpl} resolved as URL.
+   */
+  protected String resolveLinkUrl(CodeDocLink link) {
+
+    String qualifiedName = resolveLinkQualifiedName(link);
     AbstractCodeContext<?, ?> context = getContext();
     char packageSeparator = context.getPackageSeparator();
     for (CodeDocDescriptor descriptor : context.getDocDescriptors()) {
       if (qualifiedName.startsWith(descriptor.getPackagePrefix() + packageSeparator)) {
-        return resolveLink(descriptor.getUrl(), link, true);
+        return resolveLinkUrl(descriptor.getUrl(), link, true);
       }
     }
     return resolveLinkRelative(link);
   }
 
   /**
+   * @param link the {@link CodeDocLinkImpl} to resolve.
+   * @return the {@link CodeDocLinkImpl#getQualifiedName() qualified name} of the {@link CodeDocLinkImpl}. In
+   *         case it is {@code null} the resolved qualified name from the
+   *         {@link CodeDocLinkImpl#getSimpleName() simple name}.
+   */
+  protected String resolveLinkQualifiedName(CodeDocLink link) {
+
+    String qualifiedName = link.getQualifiedName();
+    if (qualifiedName == null) {
+      if (link.getSimpleName().isEmpty()) {
+        return "";
+      }
+      CodeType owningType = getOwningType(this.element);
+      qualifiedName = getContext().getQualifiedName(link.getSimpleName(), owningType, false);
+    }
+    return qualifiedName;
+  }
+
+  /**
    * @param url the base URL or relative path.
-   * @param link the {@link CodeDocLink}.
-   * @param absolute - {@code true} if the {@link CodeDocLink#getQualifiedName() qualified name} should be
+   * @param link the {@link CodeDocLinkImpl}.
+   * @param absolute - {@code true} if the {@link CodeDocLinkImpl#getQualifiedName() qualified name} should be
    *        appended as path to the URL, {@code false} otherwise.
    * @return the resolved URL.
    */
-  protected String resolveLink(String url, CodeDocLink link, boolean absolute) {
+  protected String resolveLinkUrl(String url, CodeDocLink link, boolean absolute) {
 
     StringBuilder buffer = new StringBuilder(url);
+    C context = getContext();
+    char separator = context.getPackageSeparator();
     if (absolute) {
       if (!url.endsWith("/")) {
         buffer.append('/');
       }
       String path = link.getQualifiedName();
-      char separator = getContext().getPackageSeparator();
       if (separator != '/') {
         path = path.replace(separator, '/');
       }
       buffer.append(path);
-      buffer.append(".html");
     }
+    buffer.append(".html");
     String anchor = link.getAnchor();
     if (anchor != null) {
       buffer.append('#');
-      buffer.append(anchor);
+      CodeDocMethodLink methodLink = link.getMethodLink();
+      if (methodLink == null) {
+        buffer.append(anchor);
+      } else {
+        buffer.append(methodLink.getName());
+        buffer.append('-');
+        List<String> parameters = methodLink.getParameters();
+        if (parameters.isEmpty()) {
+          buffer.append('-');
+        } else {
+          CodeType owningType = getOwningType(this.element);
+          for (String arg : parameters) {
+            if (arg.indexOf(separator) < 0) {
+              arg = context.getQualifiedName(arg, owningType, false);
+            }
+            buffer.append(arg);
+            buffer.append('-');
+          }
+        }
+      }
     }
     return buffer.toString();
   }
 
   /**
-   * @param link the {@link CodeDocLink} to resolve.
+   * @param link the {@link CodeDocLinkImpl} to resolve.
    * @return the path relative to this context.
    */
   protected String resolveLinkRelative(CodeDocLink link) {
 
     CodeType owningType = getOwningType(this.element);
-    Path qualifiedSource = createPath(owningType.getQualifiedName());
-    Path qualifiedTarget = createPath(link.getQualifiedName());
+    Path qualifiedSource = createPath(owningType.getParentPackage().getQualifiedName());
+    Path qualifiedTarget = createPath(resolveLinkQualifiedName(link));
     Path relativePath = qualifiedSource.relativize(qualifiedTarget);
-    return relativePath.toString();
+    String path = relativePath.toString().replace('\\', '/');
+    if (!path.startsWith(".")) {
+      path = "./" + path;
+    }
+    return resolveLinkUrl(path, link, false);
   }
 
   /**
@@ -209,98 +374,6 @@ public abstract class AbstractCodeDoc<C extends AbstractCodeContext<?, ?>> exten
     String[] segments = qualifiedName.split(separatorString);
     return Paths.get(".", segments);
   }
-
-  /**
-   * @param value the raw text of the link tag containing the link followed by the optional title text.
-   * @return the parsed {@link CodeDocLink}.
-   */
-  protected CodeDocLink parseLink(String value) {
-
-    int spaceIndex = value.indexOf(' ');
-    String link;
-    String text = null;
-    if (spaceIndex > 0) {
-      link = value.substring(0, spaceIndex);
-      text = value.substring(spaceIndex + 1);
-    } else {
-      link = value;
-    }
-    int hashIndex = link.indexOf('#');
-    String type = null;
-    String anchor;
-    if (hashIndex >= 0) {
-      anchor = link.substring(hashIndex + 1);
-      if (hashIndex > 0) {
-        type = link.substring(0, hashIndex);
-      }
-    } else {
-      anchor = null;
-      type = link;
-    }
-    String simpleName;
-    String qualifiedName;
-    if (type == null) {
-      CodeType owningType = getOwningType(this.element);
-      simpleName = owningType.getSimpleName();
-      qualifiedName = owningType.getQualifiedName();
-    } else {
-      char separator = getContext().getPackageSeparator();
-      int separatorIndex = type.lastIndexOf(separator);
-      if (separatorIndex > 0) {
-        simpleName = type.substring(separatorIndex + 1);
-        qualifiedName = type;
-      } else {
-        simpleName = type;
-        qualifiedName = qualify(type);
-      }
-    }
-    if (text == null) {
-      text = simpleName;
-      if (anchor != null) {
-        text = text + '.' + anchor;
-      }
-    }
-    return new CodeDocLink(simpleName, qualifiedName, anchor, text);
-  }
-
-  /**
-   * @param simpleName the simple name to qualify.
-   * @return the qualified name.
-   */
-  protected String qualify(String simpleName) {
-
-    CodeType owningType = getOwningType(this.element);
-    if (owningType.getSimpleName().equals(simpleName)) {
-      return owningType.getQualifiedName();
-    }
-    List<CodeImport> imports = owningType.getFile().getImports();
-    char separator = getContext().getPackageSeparator();
-    String suffix = separator + simpleName;
-    for (CodeImport imp : imports) {
-      if (!imp.isStatic()) {
-        String source = imp.getSource();
-        if (source.endsWith(suffix)) {
-          return source;
-        }
-      }
-    }
-    String qname = qualifyStandardType(simpleName);
-    if (qname != null) {
-      return qname;
-    }
-    String pkgName = owningType.getParentPackage().getQualifiedName();
-    if (pkgName.isEmpty()) {
-      return simpleName;
-    }
-    return pkgName + separator + simpleName;
-  }
-
-  /**
-   * @param simpleName the {@link CodeType#getSimpleName() simple name} of the {@link CodeType}.
-   * @return the corresponding {@link CodeType#getQualifiedName() qualified name} or {@code null} if no
-   *         standard type (import is required).
-   */
-  protected abstract String qualifyStandardType(String simpleName);
 
   @Override
   protected void doWrite(Appendable sink, String defaultIndent, String currentIndent) throws IOException {

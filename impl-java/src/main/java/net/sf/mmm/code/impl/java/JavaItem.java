@@ -3,7 +3,7 @@
 package net.sf.mmm.code.impl.java;
 
 import net.sf.mmm.code.api.CodeItem;
-import net.sf.mmm.code.base.AbstractCodeItem;
+import net.sf.mmm.code.base.BasicCodeItem;
 
 /**
  * Implementation of {@link CodeItem} for Java reflection.
@@ -11,7 +11,7 @@ import net.sf.mmm.code.base.AbstractCodeItem;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class JavaItem extends AbstractCodeItem<JavaContext> {
+public abstract class JavaItem extends BasicCodeItem<JavaContext> {
 
   /**
    * The constructor.

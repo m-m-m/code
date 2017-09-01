@@ -5,7 +5,7 @@ package net.sf.mmm.code.api.doc;
 import java.util.Map;
 
 /**
- * TODO: this class ...
+ * A {@link Tag} of HTML or XML.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
@@ -16,6 +16,16 @@ public interface Tag {
    * @return the name of this tag ("a", "img", "code", etc.)
    */
   String getName();
+
+  /**
+   * @param tagName the {@link #getName() tag name} to check for.
+   * @return {@code true} if the given {@code tagName} is {@link String#equalsIgnoreCase(String) equal
+   *         ignoring case} to the {@link #getName() name} of this {@link Tag}.
+   */
+  default boolean hasNameIgnoreCase(String tagName) {
+
+    return tagName.equalsIgnoreCase(getName());
+  }
 
   /**
    * @return {@code true} if this is an opening tag (e.g. "{@literal <img ...>}" or "{@literal <img .../>}"),

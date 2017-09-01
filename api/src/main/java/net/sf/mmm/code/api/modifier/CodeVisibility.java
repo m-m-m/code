@@ -3,9 +3,12 @@
 package net.sf.mmm.code.api.modifier;
 
 import java.lang.reflect.Modifier;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import net.sf.mmm.code.api.member.CodeMethod;
+import net.sf.mmm.util.exception.api.DuplicateObjectException;
 
 /**
  * Represents the visibility of a {@link CodeMethod}.
@@ -14,6 +17,8 @@ import net.sf.mmm.code.api.member.CodeMethod;
  * @since 1.0.0
  */
 public class CodeVisibility {
+
+  private static final Map<String, CodeVisibility> VISIBILITY_MAP = new HashMap<>();
 
   /** {@link CodeVisibility} for public access. */
   public static final CodeVisibility PUBLIC = new CodeVisibility("public");
@@ -39,6 +44,10 @@ public class CodeVisibility {
     super();
     assert (value != null);
     this.value = value;
+    if (VISIBILITY_MAP.containsKey(value)) {
+      throw new DuplicateObjectException(this, value, VISIBILITY_MAP.get(value));
+    }
+    VISIBILITY_MAP.put(value, this);
   }
 
   @Override
@@ -91,6 +100,15 @@ public class CodeVisibility {
     } else {
       return DEFAULT;
     }
+  }
+
+  /**
+   * @param visiblity the {@link #toString() string representation} of the potential {@link CodeVisibility}
+   * @return the according {@link CodeVisibility} or {@code null} if not known.
+   */
+  public static CodeVisibility of(String visiblity) {
+
+    return VISIBILITY_MAP.get(visiblity);
   }
 
 }
