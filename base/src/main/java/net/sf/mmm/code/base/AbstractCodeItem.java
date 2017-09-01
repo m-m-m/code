@@ -18,6 +18,12 @@ import net.sf.mmm.util.io.api.RuntimeIoException;
  */
 public abstract class AbstractCodeItem implements CodeItem {
 
+  private static final String SPACES_MAX = "          ";
+
+  private static final int SPACES_MAX_LENGTH = SPACES_MAX.length();
+
+  private static final String[] SPACES = new String[] { "", " ", "  ", "   ", "    ", "     ", "      ", "       ", "        ", "         ", SPACES_MAX };
+
   /**
    * The constructor.
    */
@@ -71,6 +77,27 @@ public abstract class AbstractCodeItem implements CodeItem {
     } else {
       return element.getDeclaringType();
     }
+  }
+
+  /**
+   * @param length the number of spaces requested.
+   * @return a {@link String} of the given {@link String#length() length} only containing whitespaces.
+   */
+  protected static String getSpaces(int length) {
+
+    if (length < SPACES.length) {
+      return SPACES[length];
+    }
+    StringBuilder buffer = new StringBuilder(length);
+    int len = length;
+    while (len > SPACES_MAX_LENGTH) {
+      buffer.append(SPACES_MAX);
+      len = len - SPACES_MAX_LENGTH;
+    }
+    if (len > 0) {
+      buffer.append(SPACES[len]);
+    }
+    return buffer.toString();
   }
 
 }

@@ -19,6 +19,10 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.CodeElement;
 import net.sf.mmm.code.api.CodeType;
+import net.sf.mmm.code.api.arg.CodeException;
+import net.sf.mmm.code.api.arg.CodeOperationArg;
+import net.sf.mmm.code.api.arg.CodeParameter;
+import net.sf.mmm.code.api.arg.CodeReturn;
 import net.sf.mmm.code.api.doc.CodeDoc;
 import net.sf.mmm.code.api.doc.CodeDocDescriptor;
 import net.sf.mmm.code.api.doc.CodeDocFormat;
@@ -28,6 +32,8 @@ import net.sf.mmm.code.api.doc.Tag;
 import net.sf.mmm.code.api.doc.XmlTag;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.member.CodeField;
+import net.sf.mmm.code.api.member.CodeMethod;
+import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.base.AbstractCodeContext;
 import net.sf.mmm.code.base.BasicCodeItem;
 
@@ -379,25 +385,61 @@ public abstract class AbstractCodeDoc<C extends AbstractCodeContext<?, ?>> exten
   protected void doWrite(Appendable sink, String defaultIndent, String currentIndent) throws IOException {
 
     int size = this.lines.size();
-    if (size == 0) {
+    CodeOperation operation = null;
+    if (this.element instanceof CodeOperation) {
+      operation = (CodeOperation) this.element;
+    }
+    if ((size == 0) && (operation == null)) {
       return;
     }
     sink.append(currentIndent);
     sink.append("/**");
-    if (size == 1) {
+    if ((size == 1) && (operation == null)) {
       sink.append(' ');
       sink.append(this.lines.get(0).trim());
     } else {
       writeNewline(sink);
       for (String line : this.lines) {
-        sink.append(currentIndent);
-        sink.append(" * ");
-        sink.append(line.trim());
-        writeNewline(sink);
+        doWriteLine(sink, currentIndent, "", line);
       }
       sink.append(currentIndent);
+      if (operation != null) {
+        for (CodeParameter arg : operation.getParameters()) {
+          String tag = "@param " + arg.getName();
+          doWriteArg(sink, currentIndent, arg, tag, "       ");
+        }
+        for (CodeException ex : operation.getExceptions()) {
+          String tag = "@throws " + ex.getType().getRawType().getSimpleName();
+          doWriteArg(sink, currentIndent, ex, tag, "        ");
+        }
+        if (operation instanceof CodeMethod) {
+          CodeReturn result = ((CodeMethod) operation).getReturns();
+          if (!result.getType().getRawType().isVoid()) {
+            String tag = "@return ";
+            doWriteArg(sink, currentIndent, result, tag, "        ");
+          }
+        }
+      }
     }
     sink.append(" */");
+    writeNewline(sink);
+  }
+
+  private void doWriteArg(Appendable sink, String currentIndent, CodeOperationArg arg, String tag, String spaces) throws IOException {
+
+    String prefix = tag;
+    for (String line : arg.getDoc().getLines()) {
+      doWriteLine(sink, currentIndent, prefix, line);
+      prefix = spaces;
+    }
+  }
+
+  private void doWriteLine(Appendable sink, String currentIndent, String tag, String line) throws IOException {
+
+    sink.append(currentIndent);
+    sink.append(" * ");
+    sink.append(tag);
+    sink.append(line.trim());
     writeNewline(sink);
   }
 

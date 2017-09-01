@@ -97,6 +97,21 @@ public abstract class JavaElement extends JavaItem implements CodeElement {
   @Override
   protected void doWrite(Appendable sink, String defaultIndent, String currentIndent) throws IOException {
 
+    doWriteComment(sink, defaultIndent, currentIndent);
+    doWriteDoc(sink, defaultIndent, currentIndent);
+    doWriteAnnotations(sink, defaultIndent, currentIndent);
+  }
+
+  /**
+   * Writes the {@link #getComment() comment}.
+   *
+   * @param sink the {@link Appendable}.
+   * @param defaultIndent the default indent.
+   * @param currentIndent the current indent.
+   * @throws IOException if thrown by {@link Appendable}.
+   */
+  protected void doWriteComment(Appendable sink, String defaultIndent, String currentIndent) throws IOException {
+
     if (this.comment != null) {
       if (isCommentForceInline()) {
         List<String> lines = this.comment.getComments();
@@ -114,9 +129,31 @@ public abstract class JavaElement extends JavaItem implements CodeElement {
         this.comment.write(sink, defaultIndent, currentIndent);
       }
     }
+  }
+
+  /**
+   * Writes the {@link #getDoc() JavaDoc}.
+   *
+   * @param sink the {@link Appendable}.
+   * @param defaultIndent the default indent.
+   * @param currentIndent the current indent.
+   */
+  protected void doWriteDoc(Appendable sink, String defaultIndent, String currentIndent) {
+
     if (this.doc != null) {
       this.doc.write(sink, defaultIndent, currentIndent);
     }
+  }
+
+  /**
+   * Writes the {@link #getAnnotations() annotations}.
+   *
+   * @param sink the {@link Appendable}.
+   * @param defaultIndent the default indent.
+   * @param currentIndent the current indent.
+   */
+  protected void doWriteAnnotations(Appendable sink, String defaultIndent, String currentIndent) {
+
     for (CodeAnnotation annotation : this.annotations) {
       annotation.write(sink, defaultIndent, currentIndent);
     }

@@ -7,6 +7,7 @@ import java.util.List;
 import net.sf.mmm.code.api.CodeGenericType;
 import net.sf.mmm.code.api.CodeType;
 import net.sf.mmm.code.api.arg.CodeReturn;
+import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
  * Represents a {@link java.lang.reflect.Method} of a {@link CodeType}.
@@ -22,7 +23,13 @@ public interface CodeMethod extends CodeOperation {
    *         {@code null}.
    * @see Class#getTypeParameters()
    */
-  List<CodeGenericType> getTypeParameters();
+  List<? extends CodeGenericType> getTypeParameters();
+
+  /**
+   * @param typeParameter the {@link CodeGenericType} to add as type parameter.
+   * @throws ReadOnlyException if {@link #isImmutable() immutable}.
+   */
+  void addTypeParameter(CodeGenericType typeParameter);
 
   /**
    * @return the {@link CodeReturn} with the information about the returned result of this method. Will never
@@ -30,5 +37,11 @@ public interface CodeMethod extends CodeOperation {
    *         single {@link CodeReturn} will be returned that reflects a tuple of the actual returned types.
    */
   CodeReturn getReturns();
+
+  /**
+   * @param returns the new {@link #getReturns() returns}.
+   * @throws ReadOnlyException if {@link #isImmutable() immutable}.
+   */
+  void setReturns(CodeReturn returns);
 
 }

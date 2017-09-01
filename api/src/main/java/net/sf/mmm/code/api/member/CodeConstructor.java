@@ -3,6 +3,7 @@
 package net.sf.mmm.code.api.member;
 
 import net.sf.mmm.code.api.CodeType;
+import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
  * Represents a {@link java.lang.reflect.Constructor} of a {@link CodeType}.
@@ -11,5 +12,17 @@ import net.sf.mmm.code.api.CodeType;
  * @since 1.0.0
  */
 public interface CodeConstructor extends CodeOperation {
+
+  /**
+   * @deprecated the {@link #getName() name} of a {@link CodeConstructor} has to be equal to the
+   *             {@link CodeType#getSimpleName() simple name} of its {@link #getDeclaringType() declaring
+   *             type}.
+   */
+  @Deprecated
+  @Override
+  default void setName(String name) {
+
+    throw new ReadOnlyException(getClass().getSimpleName(), "name");
+  }
 
 }

@@ -65,7 +65,7 @@ public abstract class BasicCodeItem<C extends AbstractCodeContext<?, ?>> extends
   /**
    * Makes this item {@link #isImmutable() immutable}.
    */
-  public final void setImmutable() {
+  public void setImmutable() {
 
     if (this.immutable) {
       return;
@@ -97,6 +97,16 @@ public abstract class BasicCodeItem<C extends AbstractCodeContext<?, ?>> extends
       element.setImmutable();
     }
     return Collections.unmodifiableList(new ArrayList<>(list));
+  }
+
+  /**
+   * @param <T> the type of the {@link List} elements.
+   * @param list the {@link List} to copy.
+   * @return an mutable copy of the {@link List}.
+   */
+  protected <T extends CodeItem> List<T> copy(List<T> list) {
+
+    return new ArrayList<>(list);
   }
 
   /**

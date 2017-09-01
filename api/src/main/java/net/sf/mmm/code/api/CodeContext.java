@@ -110,6 +110,9 @@ public interface CodeContext {
     QualifiedName parent = qualifiedName.getParent();
     if (parent == null) {
       parentPackage = getRootPackage();
+      if (qualifiedName.getSimpleName().isEmpty()) {
+        return parentPackage;
+      }
     } else {
       parentPackage = getPackage(parent);
     }

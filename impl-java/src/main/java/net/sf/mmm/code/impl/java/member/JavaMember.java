@@ -2,7 +2,6 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.impl.java.member;
 
-import net.sf.mmm.code.api.CodeType;
 import net.sf.mmm.code.api.member.CodeMember;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.impl.java.JavaElementWithModifiers;
@@ -59,7 +58,7 @@ public abstract class JavaMember extends JavaElementWithModifiers implements Cod
   }
 
   @Override
-  public CodeType getDeclaringType() {
+  public JavaType getDeclaringType() {
 
     return this.declaringType;
   }

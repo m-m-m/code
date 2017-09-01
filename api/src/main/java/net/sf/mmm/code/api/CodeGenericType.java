@@ -32,7 +32,7 @@ public abstract interface CodeGenericType extends CodeItem {
    * @see Class#getTypeParameters()
    * @see java.lang.reflect.ParameterizedType
    */
-  List<CodeGenericType> getTypeParameters();
+  List<? extends CodeGenericType> getTypeParameters();
 
   /**
    * @return {@code true} if the usage of this type in its place is {@link CodeType#getQualifiedName() fully

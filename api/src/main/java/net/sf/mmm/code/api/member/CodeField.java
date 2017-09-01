@@ -10,7 +10,7 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * {@link CodeProperty} for a field of a {@link CodeType}.
  *
  * @see java.lang.reflect.Field
- * @see CodeType#getFields(CodeMemberSelector)
+ * @see CodeType#getFields()
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0

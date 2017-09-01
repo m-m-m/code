@@ -13,6 +13,7 @@ import net.sf.mmm.code.api.member.CodeProperty;
 import net.sf.mmm.code.api.member.CodePropertySelector;
 import net.sf.mmm.code.api.modifier.CodeElementWithModifiers;
 import net.sf.mmm.code.api.statement.CodeStaticBlock;
+import net.sf.mmm.util.exception.api.DuplicateObjectException;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
@@ -21,7 +22,7 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeType extends CodeElementWithQualifiedName, CodeElementWithModifiers, CodeGenericType {
+public interface CodeType extends CodeGenericType, CodeElementWithQualifiedName, CodeElementWithModifiers {
 
   /**
    * @return the {@link CodeFile} {@link CodeFile#getTypes() containing} this type.
@@ -42,14 +43,14 @@ public interface CodeType extends CodeElementWithQualifiedName, CodeElementWithM
    *         distinguish {@code extends} vs. {@code inherits} and potentially allows multi-inheritance of
    *         classes for languages other than Java.
    */
-  List<CodeGenericType> getSuperTypes();
+  List<? extends CodeGenericType> getSuperTypes();
 
   /**
    * @return the {@link List} of {@link CodeGenericType generic type} {@link #getTypeVariable() variables}
    *         declared by this type. May be {@link List#isEmpty() empty} but is never {@code null}.
    * @see Class#getTypeParameters()
    */
-  List<CodeGenericType> getTypeParameters();
+  List<? extends CodeGenericType> getTypeParameters();
 
   /**
    * @param name the {@link CodeField#getName() name} of the requested {@link CodeField}.
@@ -61,34 +62,67 @@ public interface CodeType extends CodeElementWithQualifiedName, CodeElementWithM
   /**
    * @return the {@link List} of {@link CodeField}s declared by this type. May be {@link List#isEmpty() empty}
    *         but is never {@code null}.
+   * @see #getFields()
    */
-  List<CodeField> getFields();
+  List<? extends CodeField> getDeclaredFields();
 
   /**
-   * @param selector the {@link CodeMemberSelector}.
-   * @return the {@link List} of {@link CodeField}s of this type matching the given {@link CodeMemberSelector
-   *         selector}. May be {@link List#isEmpty() empty} but is never {@code null}.
+   * @return the {@link Iterable} of all code {@link CodeField}s. These are the {@link #getDeclaredFields()
+   *         declared fields} together with all {@link CodeField}s from {@link #getSuperTypes() super types}.
+   *         Is never {@code null}.
+   * @see #getDeclaredFields()
+   * @see #getField(String)
    */
-  List<CodeField> getFields(CodeMemberSelector selector);
+  Iterable<? extends CodeField> getFields();
+
+  /**
+   * @param name the {@link CodeField#getName() field name}.
+   * @param type the {@link CodeField#getType() field type}.
+   * @return the new {@link CodeField} that has been added to this type.
+   * @throws ReadOnlyException if {@link #isImmutable() immutable}.
+   * @throws DuplicateObjectException if a {@link CodeField} with the same {@link CodeField#getName() field
+   *         name} is already {@link #getDeclaredFields() declared} by this type.
+   */
+  CodeField createField(String name, CodeGenericType type);
 
   /**
    * @return the {@link List} of {@link CodeMethod}s declared by this type. May be {@link List#isEmpty()
    *         empty} but is never {@code null}.
+   * @see #getMethods()
    */
-  List<CodeMethod> getMethods();
+  List<? extends CodeMethod> getDeclaredMethods();
 
   /**
-   * @param selector the {@link CodeMemberSelector}.
-   * @return the {@link List} of {@link CodeMethod}s of this type matching the given {@link CodeMemberSelector
-   *         selector}. May be {@link List#isEmpty() empty} but is never {@code null}.
+   * @return the {@link Iterable} of all code {@link CodeMethod}s. These are the {@link #getDeclaredMethods()
+   *         declared methods} together with all {@link CodeMethod}s from {@link #getSuperTypes() super
+   *         types}. Is never {@code null}.
+   * @see #getDeclaredMethods()
    */
-  List<CodeMethod> getMethods(CodeMemberSelector selector);
+  Iterable<? extends CodeMethod> getMethods();
+
+  /**
+   * @param name the {@link CodeMethod#getName() method name}.
+   * @param returnType the {@link CodeMethod#getReturns() return} type.
+   * @return the new {@link CodeMethod} that has been added to this type. It will not have any
+   *         {@link CodeMethod#getParameters() parameters} or {@link CodeMethod#getExceptions() exceptions}.
+   *         Simply add those afterwards as needed.
+   * @throws ReadOnlyException if {@link #isImmutable() immutable}.
+   */
+  CodeMethod createMethod(String name, CodeGenericType returnType);
 
   /**
    * @return the {@link List} of {@link CodeConstructor}s of this type. May be {@link List#isEmpty() empty}
    *         but is never {@code null}.
    */
-  List<CodeConstructor> getConstructors();
+  List<? extends CodeConstructor> getConstructors();
+
+  /**
+   * @return the new {@link CodeConstructor} that has been added to this type. It will not have any
+   *         {@link CodeMethod#getParameters() parameters} or {@link CodeMethod#getExceptions() exceptions}.
+   *         Simply add those afterwards as needed.
+   * @throws ReadOnlyException if {@link #isImmutable() immutable}.
+   */
+  CodeConstructor createConstructor();
 
   /**
    * This method can be expensive so avoid subsequent calls if possible.

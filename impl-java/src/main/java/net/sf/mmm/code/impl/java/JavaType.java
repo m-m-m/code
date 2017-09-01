@@ -5,6 +5,7 @@ package net.sf.mmm.code.impl.java;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -16,22 +17,26 @@ import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.CodeType;
 import net.sf.mmm.code.api.CodeTypeCategory;
 import net.sf.mmm.code.api.CodeTypeVariable;
-import net.sf.mmm.code.api.member.CodeConstructor;
 import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.member.CodeMemberSelector;
-import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.member.CodeProperty;
 import net.sf.mmm.code.api.member.CodePropertySelector;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.api.statement.CodeStaticBlock;
+import net.sf.mmm.code.impl.java.arg.JavaReturn;
+import net.sf.mmm.code.impl.java.member.JavaConstructor;
+import net.sf.mmm.code.impl.java.member.JavaField;
+import net.sf.mmm.code.impl.java.member.JavaMethod;
+import net.sf.mmm.util.collection.base.AbstractIterator;
+import net.sf.mmm.util.exception.api.DuplicateObjectException;
 
 /**
- * Implementation of {@link CodePackage} for Java.
+ * Implementation of {@link CodeType} for Java.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaType extends JavaElement implements CodeType {
+public class JavaType extends JavaGenericType implements CodeType {
 
   private final JavaFile file;
 
@@ -43,19 +48,23 @@ public class JavaType extends JavaElement implements CodeType {
 
   private JavaType declaringType;
 
-  private List<CodeGenericType> superTypes;
+  private List<JavaGenericType> superTypes;
 
-  private List<CodeGenericType> typeParameters;
+  private List<JavaGenericType> typeParameters;
 
-  private List<CodeField> fields;
+  private List<JavaField> fields;
 
-  private List<CodeMethod> methods;
+  private Map<String, JavaField> fieldMap;
 
-  private List<CodeConstructor> constructors;
+  private List<JavaMethod> methods;
+
+  private List<JavaConstructor> constructors;
 
   private List<CodeType> nestedTypes;
 
   private CodeStaticBlock initializer;
+
+  private Runnable lazyInit;
 
   /**
    * The constructor.
@@ -83,9 +92,62 @@ public class JavaType extends JavaElement implements CodeType {
     this.superTypes = new ArrayList<>();
     this.typeParameters = new ArrayList<>();
     this.fields = new ArrayList<>();
+    this.fieldMap = new HashMap<>();
     this.methods = new ArrayList<>();
     this.constructors = new ArrayList<>();
     this.nestedTypes = new ArrayList<>();
+  }
+
+  /**
+   * The copy-constructor.
+   *
+   * @param template the {@link JavaType} to copy.
+   */
+  public JavaType(JavaType template) {
+
+    super(template);
+    template.lazyInit();
+    this.category = template.category;
+    this.constructors = copy(template.constructors);
+    this.declaringType = template.declaringType;
+    this.fields = copy(template.fields);
+    this.fieldMap = new HashMap<>(this.fields.size());
+    for (JavaField field : this.fields) {
+      this.fieldMap.put(field.getName(), field);
+    }
+    this.file = template.file;
+    this.initializer = template.initializer; // TODO copy
+    this.methods = copy(template.methods);
+    this.modifiers = template.modifiers;
+    this.nestedTypes = copy(template.nestedTypes);
+    this.simpleName = template.simpleName;
+    this.superTypes = new ArrayList<>(template.superTypes);
+    this.typeParameters = copy(template.typeParameters);
+  }
+
+  /**
+   * Runs a potential lazy initializer.
+   */
+  private void lazyInit() {
+
+    if (this.lazyInit != null) {
+      this.lazyInit.run();
+      this.lazyInit = null;
+    }
+  }
+
+  @Override
+  public void setImmutable() {
+
+    lazyInit();
+    super.setImmutable();
+  }
+
+  @Override
+  protected void verifyMutalbe() {
+
+    lazyInit();
+    super.verifyMutalbe();
   }
 
   @Override
@@ -140,6 +202,7 @@ public class JavaType extends JavaElement implements CodeType {
     if (equals(type)) {
       return true;
     }
+    // TODO implement this properly (tricky one)
     return false;
   }
 
@@ -163,8 +226,9 @@ public class JavaType extends JavaElement implements CodeType {
   }
 
   @Override
-  public List<CodeGenericType> getSuperTypes() {
+  public List<? extends JavaGenericType> getSuperTypes() {
 
+    lazyInit();
     return this.superTypes;
   }
 
@@ -172,9 +236,9 @@ public class JavaType extends JavaElement implements CodeType {
    * @return the (first) {@link #isClass() class} of the {@link #getSuperTypes() super types} or {@code null}
    *         if none exists.
    */
-  public CodeGenericType getSuperClass() {
+  public JavaGenericType getSuperClass() {
 
-    for (CodeGenericType type : this.superTypes) {
+    for (JavaGenericType type : getSuperTypes()) {
       if (type.getRawType().isClass()) {
         return type;
       }
@@ -186,73 +250,109 @@ public class JavaType extends JavaElement implements CodeType {
    * @return the {@link List} of {@link #isInterface() interfaces} of the {@link #getSuperTypes() super
    *         types}. May be {@link List#isEmpty() empty} but is never {@code null}.
    */
-  public List<CodeGenericType> getSuperInterfaces() {
+  public List<? extends JavaGenericType> getSuperInterfaces() {
 
-    return this.superTypes.stream().filter(x -> x.getRawType().isInterface()).collect(Collectors.toList());
+    return getSuperTypes().stream().filter(x -> x.getRawType().isInterface()).collect(Collectors.toList());
   }
 
   @Override
-  public List<CodeGenericType> getTypeParameters() {
+  public List<? extends JavaGenericType> getTypeParameters() {
 
+    lazyInit();
     return this.typeParameters;
   }
 
   @Override
-  public CodeField getField(String name) {
+  public JavaField getField(String name) {
 
-    for (CodeField field : this.fields) {
-      if (field.getName().equals(name)) {
-        return field;
-      }
+    lazyInit();
+    JavaField field = this.fieldMap.get(name);
+    if (field != null) {
+      return field;
     }
-    for (CodeGenericType superType : this.superTypes) {
-      CodeType rawType = superType.getRawType();
-      CodeField superField = rawType.getField(name);
-      if (superField != null) {
-        return superField;
+    JavaGenericType superClass = getSuperClass();
+    if (superClass != null) {
+      JavaType rawType = superClass.getRawType();
+      field = rawType.getField(name);
+      if (field != null) {
+        return field;
       }
     }
     return null;
   }
 
   @Override
-  public List<CodeField> getFields() {
+  public List<? extends JavaField> getDeclaredFields() {
 
+    lazyInit();
     return this.fields;
   }
 
   @Override
-  public List<CodeField> getFields(CodeMemberSelector selector) {
+  public Iterable<? extends JavaField> getFields() {
 
-    // TODO Auto-generated method stub
-    return null;
+    return () -> new FieldIterator(this);
   }
 
   @Override
-  public List<CodeMethod> getMethods() {
+  public CodeField createField(String name, CodeGenericType type) {
+
+    verifyMutalbe();
+    if (this.fieldMap.containsKey(name)) {
+      throw new DuplicateObjectException(getSimpleName() + ".fields", name);
+    }
+    JavaField field = new JavaField(this);
+    field.setName(name);
+    field.setType(type);
+    this.fields.add(field);
+    this.fieldMap.put(name, field);
+    return field;
+  }
+
+  @Override
+  public List<? extends JavaMethod> getDeclaredMethods() {
 
     return this.methods;
   }
 
   @Override
-  public List<CodeMethod> getMethods(CodeMemberSelector selector) {
+  public Iterable<? extends JavaMethod> getMethods() {
 
-    // TODO Auto-generated method stub
+    return () -> new MethodIterator(this);
+  }
+
+  @Override
+  public JavaMethod createMethod(String name, CodeGenericType returnType) {
+
+    JavaMethod method = new JavaMethod(this);
+    method.setName(name);
+    JavaReturn returns = new JavaReturn(method);
+    returns.setType(returnType);
+    method.setReturns(returns);
     return null;
   }
 
   @Override
-  public List<CodeConstructor> getConstructors() {
+  public List<? extends JavaConstructor> getConstructors() {
 
     return this.constructors;
+  }
+
+  @Override
+  public JavaConstructor createConstructor() {
+
+    verifyMutalbe();
+    JavaConstructor constructor = new JavaConstructor(this);
+    this.constructors.add(constructor);
+    return constructor;
   }
 
   @Override
   public Map<String, CodeProperty> getProperties(CodeMemberSelector memberSelector, CodePropertySelector propertySelector) {
 
     if (CodePropertySelector.FIELDS.equals(propertySelector)) {
-      List<CodeField> selectedFields = getFields(memberSelector);
-      Map<String, CodeProperty> map = new HashMap<>(selectedFields.size());
+      Iterable<? extends JavaField> selectedFields = getFields();
+      Map<String, CodeProperty> map = new HashMap<>();
       for (CodeField field : selectedFields) {
         map.put(field.getName(), field);
       }
@@ -358,6 +458,12 @@ public class JavaType extends JavaElement implements CodeType {
   }
 
   @Override
+  public JavaType getRawType() {
+
+    return this;
+  }
+
+  @Override
   protected void doWrite(Appendable sink, String defaultIndent, String currentIndent) throws IOException {
 
     super.doWrite(sink, defaultIndent, currentIndent);
@@ -418,7 +524,7 @@ public class JavaType extends JavaElement implements CodeType {
 
   private void doWriteConstructors(Appendable sink, String defaultIndent, String currentIndent) throws IOException {
 
-    for (CodeConstructor constructor : this.constructors) {
+    for (JavaConstructor constructor : this.constructors) {
       constructor.write(sink, defaultIndent, currentIndent);
       writeNewline(sink);
     }
@@ -426,8 +532,10 @@ public class JavaType extends JavaElement implements CodeType {
 
   private void doWriteMethods(Appendable sink, String defaultIndent, String currentIndent) {
 
-    // TODO Auto-generated method stub
-
+    for (JavaMethod method : this.methods) {
+      method.write(sink, defaultIndent, currentIndent);
+      writeNewline(sink);
+    }
   }
 
   private void doWriteNestedTypes(Appendable sink, String defaultIndent, String currentIndent) {
@@ -450,7 +558,7 @@ public class JavaType extends JavaElement implements CodeType {
       } else {
         sink.append(rawType.getSimpleName());
       }
-      List<CodeGenericType> parameters = getTypeParameters();
+      List<? extends JavaGenericType> parameters = getTypeParameters();
       if (!parameters.isEmpty()) {
         String separator = "<";
         for (CodeGenericType variable : parameters) {
@@ -471,6 +579,72 @@ public class JavaType extends JavaElement implements CodeType {
       } else {
         sink.append(typeVariable.getName());
       }
+    }
+  }
+
+  private static class FieldIterator extends AbstractIterator<JavaField> {
+
+    private JavaType type;
+
+    private Iterator<JavaField> currentIterator;
+
+    private FieldIterator(JavaType type) {
+
+      super();
+      this.type = type;
+      this.currentIterator = type.fields.iterator();
+      findFirst();
+    }
+
+    @Override
+    protected JavaField findNext() {
+
+      if (this.currentIterator == null) {
+        return null;
+      }
+      if (this.currentIterator.hasNext()) {
+        return this.currentIterator.next();
+      }
+      JavaGenericType superClass = this.type.getSuperClass();
+      if (superClass == null) {
+        return null;
+      }
+      this.type = superClass.getRawType();
+      this.currentIterator = this.type.fields.iterator();
+      return findNext();
+    }
+  }
+
+  private static class MethodIterator extends AbstractIterator<JavaMethod> {
+
+    private JavaType type;
+
+    private Iterator<JavaMethod> currentIterator;
+
+    private MethodIterator(JavaType type) {
+
+      super();
+      this.type = type;
+      this.currentIterator = type.methods.iterator();
+      findFirst();
+    }
+
+    @Override
+    protected JavaMethod findNext() {
+
+      if (this.currentIterator == null) {
+        return null;
+      }
+      if (this.currentIterator.hasNext()) {
+        return this.currentIterator.next();
+      }
+      JavaGenericType superClass = this.type.getSuperClass();
+      if (superClass == null) {
+        return null;
+      }
+      this.type = superClass.getRawType();
+      this.currentIterator = this.type.methods.iterator();
+      return findNext();
     }
   }
 

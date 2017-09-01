@@ -4,15 +4,21 @@ package net.sf.mmm.code.api.arg;
 
 import net.sf.mmm.code.api.CodeElement;
 import net.sf.mmm.code.api.CodeItemWithType;
+import net.sf.mmm.code.api.member.CodeMember;
 import net.sf.mmm.code.api.member.CodeOperation;
 
 /**
- * A {@link CodeItemWithType} representing a argument of a {@link CodeOperation} such as {@link CodeParameter},
- * {@link CodeException} or {@link CodeReturn}.
+ * A {@link CodeItemWithType} representing a argument of a {@link CodeOperation} such as
+ * {@link CodeParameter}, {@link CodeException} or {@link CodeReturn}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
 public abstract interface CodeOperationArg extends CodeElement, CodeItemWithType {
+
+  /**
+   * @return the {@link CodeMember} declaring this operation argument.
+   */
+  CodeMember getDeclaringMember();
 
 }
