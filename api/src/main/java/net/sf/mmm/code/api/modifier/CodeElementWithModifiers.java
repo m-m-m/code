@@ -2,7 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.modifier;
 
-import net.sf.mmm.code.api.CodeElement;
+import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**

@@ -2,11 +2,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.member;
 
-import java.util.List;
-
-import net.sf.mmm.code.api.CodeGenericType;
-import net.sf.mmm.code.api.CodeType;
 import net.sf.mmm.code.api.arg.CodeReturn;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
@@ -16,20 +13,6 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @since 1.0.0
  */
 public interface CodeMethod extends CodeOperation {
-
-  /**
-   * @return the {@link List} of {@link CodeGenericType generic type} {@link CodeGenericType#getTypeVariable()
-   *         variables} declared by this method. May be {@link List#isEmpty() empty} but is never
-   *         {@code null}.
-   * @see Class#getTypeParameters()
-   */
-  List<? extends CodeGenericType> getTypeParameters();
-
-  /**
-   * @param typeParameter the {@link CodeGenericType} to add as type parameter.
-   * @throws ReadOnlyException if {@link #isImmutable() immutable}.
-   */
-  void addTypeParameter(CodeGenericType typeParameter);
 
   /**
    * @return the {@link CodeReturn} with the information about the returned result of this method. Will never

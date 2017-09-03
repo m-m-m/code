@@ -7,10 +7,10 @@ import java.io.IOException;
 import net.sf.mmm.code.api.CodeGenericType;
 import net.sf.mmm.code.api.arg.CodeOperationArg;
 import net.sf.mmm.code.api.member.CodeMember;
-import net.sf.mmm.code.impl.java.JavaElement;
-import net.sf.mmm.code.impl.java.JavaGenericType;
-import net.sf.mmm.code.impl.java.JavaType;
+import net.sf.mmm.code.impl.java.element.JavaElement;
 import net.sf.mmm.code.impl.java.member.JavaMember;
+import net.sf.mmm.code.impl.java.type.JavaGenericType;
+import net.sf.mmm.code.impl.java.type.JavaType;
 
 /**
  * Implementation of {@link CodeOperationArg} for Java.

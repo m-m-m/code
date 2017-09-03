@@ -2,7 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.imports;
 
-import net.sf.mmm.code.api.CodeItem;
+import net.sf.mmm.code.api.item.CodeItem;
 
 /**
  * An item of a {@link CodeImport} as used in type-scrypt (ES6).

@@ -1,11 +1,12 @@
 /* Copyright (c) The m-m-m Team, Licensed under the Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0 */
-package net.sf.mmm.code.impl.java;
+package net.sf.mmm.code.impl.java.item;
 
 import java.io.IOException;
 
-import net.sf.mmm.code.api.CodeItemWithComment;
+import net.sf.mmm.code.api.item.CodeItemWithComment;
 import net.sf.mmm.code.api.statement.CodeComment;
+import net.sf.mmm.code.impl.java.JavaContext;
 
 /**
  * Implementation of {@link CodeItemWithComment} for Java reflection.
@@ -19,7 +20,7 @@ public abstract class JavaItemWithComment extends JavaItem implements CodeItemWi
 
   /**
    * The constructor.
-   * 
+   *
    * @param context the {@link #getContext() context}.
    */
   public JavaItemWithComment(JavaContext context) {

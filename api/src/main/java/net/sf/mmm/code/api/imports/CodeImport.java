@@ -4,7 +4,7 @@ package net.sf.mmm.code.api.imports;
 
 import java.util.List;
 
-import net.sf.mmm.code.api.CodeItem;
+import net.sf.mmm.code.api.item.CodeItem;
 
 /**
  * {@link CodeItem} representing an import. An import is always {@link #isImmutable() immutable}. To modify it

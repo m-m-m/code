@@ -2,7 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.expression;
 
-import net.sf.mmm.code.api.CodeItem;
+import net.sf.mmm.code.api.item.CodeItem;
 
 /**
  * {@link CodeItem} for the {@link net.sf.mmm.code.api.statement.CodeForBlock#getExpression() expression} in a

@@ -2,8 +2,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.arg;
 
-import net.sf.mmm.code.api.CodeElement;
-import net.sf.mmm.code.api.CodeItemWithType;
+import net.sf.mmm.code.api.element.CodeElement;
+import net.sf.mmm.code.api.item.CodeItemWithType;
 import net.sf.mmm.code.api.member.CodeMember;
 import net.sf.mmm.code.api.member.CodeOperation;
 

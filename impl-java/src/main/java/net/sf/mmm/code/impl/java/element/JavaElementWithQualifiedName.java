@@ -1,9 +1,11 @@
 /* Copyright (c) The m-m-m Team, Licensed under the Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0 */
-package net.sf.mmm.code.impl.java;
+package net.sf.mmm.code.impl.java.element;
 
-import net.sf.mmm.code.api.CodeElementWithQualifiedName;
 import net.sf.mmm.code.api.CodePackage;
+import net.sf.mmm.code.api.element.CodeElementWithQualifiedName;
+import net.sf.mmm.code.impl.java.JavaContext;
+import net.sf.mmm.code.impl.java.JavaPackage;
 
 /**
  * Implementation of {@link CodeElementWithQualifiedName} for Java.
@@ -16,6 +18,8 @@ public abstract class JavaElementWithQualifiedName extends JavaElement implement
   private String simpleName;
 
   private JavaPackage parentPackage;
+
+  private Runnable lazyInit;
 
   /**
    * The constructor.
@@ -39,8 +43,42 @@ public abstract class JavaElementWithQualifiedName extends JavaElement implement
   public JavaElementWithQualifiedName(JavaElementWithQualifiedName template) {
 
     super(template);
+    template.lazyInit();
     this.simpleName = template.simpleName;
     this.parentPackage = template.parentPackage;
+  }
+
+  /**
+   * @param lazyInit the lazy initializer. Should only be set once directly after construction.
+   */
+  void setLazyInit(Runnable lazyInit) {
+
+    this.lazyInit = lazyInit;
+  }
+
+  /**
+   * Runs a potential lazy initializer.
+   */
+  protected void lazyInit() {
+
+    if (this.lazyInit != null) {
+      this.lazyInit.run();
+      this.lazyInit = null;
+    }
+  }
+
+  @Override
+  public void setImmutable() {
+
+    lazyInit();
+    super.setImmutable();
+  }
+
+  @Override
+  protected void verifyMutalbe() {
+
+    lazyInit();
+    super.verifyMutalbe();
   }
 
   @Override

@@ -7,8 +7,8 @@ import java.util.List;
 
 import net.sf.mmm.code.api.CodeContext;
 import net.sf.mmm.code.api.CodePackage;
-import net.sf.mmm.code.api.CodeType;
 import net.sf.mmm.code.api.doc.CodeDocDescriptor;
+import net.sf.mmm.code.api.type.CodeType;
 
 /**
  * Base implementation of {@link CodeContext}.
@@ -21,6 +21,10 @@ import net.sf.mmm.code.api.doc.CodeDocDescriptor;
 public abstract class AbstractCodeContext<T extends CodeType, P extends CodePackage> implements CodeContext {
 
   private P rootPackage;
+
+  private T rootType;
+
+  private T voidType;
 
   private final List<CodeDocDescriptor> docDescriptors;
 
@@ -68,6 +72,44 @@ public abstract class AbstractCodeContext<T extends CodeType, P extends CodePack
       this.rootPackage = rootPackage;
     }
     if (this.rootPackage != rootPackage) {
+      throw new IllegalStateException("Already initialized");
+    }
+  }
+
+  @Override
+  public T getRootType() {
+
+    return this.rootType;
+  }
+
+  /**
+   * @param rootType the new {@link #getRootType() root type}.
+   */
+  public void setRootType(T rootType) {
+
+    if (this.rootType == null) {
+      this.rootType = rootType;
+    }
+    if (this.rootType != rootType) {
+      throw new IllegalStateException("Already initialized");
+    }
+  }
+
+  @Override
+  public T getVoidType() {
+
+    return this.voidType;
+  }
+
+  /**
+   * @param voidType the new {@link #getVoidType() void type}.
+   */
+  public void setVoidType(T voidType) {
+
+    if (this.voidType == null) {
+      this.voidType = voidType;
+    }
+    if (this.voidType != voidType) {
       throw new IllegalStateException("Already initialized");
     }
   }

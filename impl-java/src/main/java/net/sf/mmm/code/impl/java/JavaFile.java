@@ -8,10 +8,11 @@ import java.util.List;
 import java.util.TreeSet;
 
 import net.sf.mmm.code.api.CodeFile;
-import net.sf.mmm.code.api.CodeItem;
-import net.sf.mmm.code.api.CodeType;
 import net.sf.mmm.code.api.imports.CodeImport;
+import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.statement.CodeComment;
+import net.sf.mmm.code.api.type.CodeType;
+import net.sf.mmm.code.impl.java.item.JavaItemWithQualifiedName;
 
 /**
  * Implementation of {@link CodeItem} for Java reflection.

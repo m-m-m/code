@@ -7,6 +7,7 @@ import java.util.List;
 import net.sf.mmm.code.api.arg.CodeException;
 import net.sf.mmm.code.api.arg.CodeParameter;
 import net.sf.mmm.code.api.statement.CodeBody;
+import net.sf.mmm.code.api.type.CodeTypeVariables;
 
 /**
  * Abstract interface for an invokable operation such as a {@link CodeMethod} or {@link CodeConstructor}.
@@ -33,5 +34,10 @@ public abstract interface CodeOperation extends CodeMember {
    *         {@link net.sf.mmm.code.api.modifier.CodeModifiers#KEY_ABSTRACT abstract} {@link CodeMethod}).
    */
   CodeBody getBody();
+
+  /**
+   * @return the {@link CodeTypeVariables} containing the {@link net.sf.mmm.code.api.type.CodeTypeVariable}s.
+   */
+  CodeTypeVariables getTypeVariables();
 
 }

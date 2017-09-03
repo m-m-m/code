@@ -3,7 +3,7 @@
 package net.sf.mmm.code.impl.java.member;
 
 import net.sf.mmm.code.api.member.CodeConstructor;
-import net.sf.mmm.code.impl.java.JavaType;
+import net.sf.mmm.code.impl.java.type.JavaType;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**

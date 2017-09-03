@@ -2,7 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.statement;
 
-import net.sf.mmm.code.api.CodeItem;
+import net.sf.mmm.code.api.item.CodeItem;
 
 /**
  * {@link CodeItem} with a statement or a complete {@link CodeBlock block} of statements. A

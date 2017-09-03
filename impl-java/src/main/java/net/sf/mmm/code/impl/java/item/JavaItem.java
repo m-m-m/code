@@ -1,9 +1,10 @@
 /* Copyright (c) The m-m-m Team, Licensed under the Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0 */
-package net.sf.mmm.code.impl.java;
+package net.sf.mmm.code.impl.java.item;
 
-import net.sf.mmm.code.api.CodeItem;
+import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.base.BasicCodeItem;
+import net.sf.mmm.code.impl.java.JavaContext;
 
 /**
  * Implementation of {@link CodeItem} for Java reflection.

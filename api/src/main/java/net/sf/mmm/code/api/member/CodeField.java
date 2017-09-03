@@ -2,8 +2,9 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.member;
 
-import net.sf.mmm.code.api.CodeType;
 import net.sf.mmm.code.api.expression.CodeExpression;
+import net.sf.mmm.code.api.item.CodeItemWithType;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
@@ -15,10 +16,7 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract interface CodeField extends CodeProperty {
-
-  @Override
-  CodeField inherit(CodeType declaring);
+public abstract interface CodeField extends CodeMember, CodeItemWithType {
 
   /**
    * @return the {@link CodeExpression} assigned to this field on initialization or {@code null} for none.

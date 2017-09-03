@@ -2,7 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.expression;
 
-import net.sf.mmm.code.api.CodeType;
+import net.sf.mmm.code.api.type.CodeType;
 
 /**
  * {@link CodeExpression} for a literal value.

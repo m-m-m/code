@@ -8,11 +8,12 @@ import java.util.List;
 import java.util.Set;
 
 import net.sf.mmm.code.api.CodePackage;
-import net.sf.mmm.code.api.CodeType;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.AbstractCodeContext;
+import net.sf.mmm.code.impl.java.type.JavaType;
 
 /**
- * TODO: this class ...
+ * Implementation of {@link net.sf.mmm.code.api.CodeContext} for Java.
  *
  * @author hohwille
  * @since 1.0.0
@@ -42,7 +43,8 @@ public class JavaContext extends AbstractCodeContext<JavaType, JavaPackage> {
   public JavaContext() {
 
     super();
-    setRootPackage(new JavaPackage(this));
+    JavaPackage rootPackage = new JavaPackage(this);
+    setRootPackage(rootPackage);
   }
 
   @Override

@@ -4,11 +4,11 @@ package net.sf.mmm.code.impl.java.member;
 
 import net.sf.mmm.code.api.member.CodeMember;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
-import net.sf.mmm.code.impl.java.JavaElementWithModifiers;
-import net.sf.mmm.code.impl.java.JavaType;
+import net.sf.mmm.code.impl.java.element.JavaElementWithModifiers;
+import net.sf.mmm.code.impl.java.type.JavaType;
 
 /**
- * Implementation of {@link CodeMember}.
+ * Implementation of {@link CodeMember} for Java.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0

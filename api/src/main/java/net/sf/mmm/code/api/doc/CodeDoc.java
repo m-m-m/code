@@ -4,7 +4,7 @@ package net.sf.mmm.code.api.doc;
 
 import java.util.List;
 
-import net.sf.mmm.code.api.CodeItem;
+import net.sf.mmm.code.api.item.CodeItem;
 
 /**
  * {@link CodeItem} representing API documentation (e.g. JavaDoc or JSDoc).

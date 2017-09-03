@@ -1,15 +1,17 @@
 /* Copyright (c) The m-m-m Team, Licensed under the Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0 */
-package net.sf.mmm.code.impl.java;
+package net.sf.mmm.code.impl.java.element;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import net.sf.mmm.code.api.CodeAnnotation;
-import net.sf.mmm.code.api.CodeElement;
+import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.statement.CodeComment;
+import net.sf.mmm.code.impl.java.JavaContext;
 import net.sf.mmm.code.impl.java.doc.JavaDoc;
+import net.sf.mmm.code.impl.java.item.JavaItem;
 
 /**
  * Implementation of {@link CodeElement} for Java.

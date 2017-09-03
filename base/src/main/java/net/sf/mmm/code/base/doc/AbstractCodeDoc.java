@@ -17,8 +17,6 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sf.mmm.code.api.CodeElement;
-import net.sf.mmm.code.api.CodeType;
 import net.sf.mmm.code.api.arg.CodeException;
 import net.sf.mmm.code.api.arg.CodeOperationArg;
 import net.sf.mmm.code.api.arg.CodeParameter;
@@ -30,10 +28,12 @@ import net.sf.mmm.code.api.doc.CodeDocLink;
 import net.sf.mmm.code.api.doc.CodeDocMethodLink;
 import net.sf.mmm.code.api.doc.Tag;
 import net.sf.mmm.code.api.doc.XmlTag;
+import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.member.CodeOperation;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.AbstractCodeContext;
 import net.sf.mmm.code.base.BasicCodeItem;
 
@@ -243,7 +243,7 @@ public abstract class AbstractCodeDoc<C extends AbstractCodeContext<?, ?>> exten
       } else {
         CodeDocMethodLink methodLink = link.getMethodLink();
         if (methodLink == null) {
-          linkedField = linkedType.getField(anchor);
+          linkedField = linkedType.getFields().get(anchor);
         } else {
           linkedField = null;
         }
@@ -409,12 +409,12 @@ public abstract class AbstractCodeDoc<C extends AbstractCodeContext<?, ?>> exten
           doWriteArg(sink, currentIndent, arg, tag, "       ");
         }
         for (CodeException ex : operation.getExceptions()) {
-          String tag = "@throws " + ex.getType().getRawType().getSimpleName();
+          String tag = "@throws " + ex.getType().asType().getSimpleName();
           doWriteArg(sink, currentIndent, ex, tag, "        ");
         }
         if (operation instanceof CodeMethod) {
           CodeReturn result = ((CodeMethod) operation).getReturns();
-          if (!result.getType().getRawType().isVoid()) {
+          if (!result.getType().asType().isVoid()) {
             String tag = "@return ";
             doWriteArg(sink, currentIndent, result, tag, "        ");
           }

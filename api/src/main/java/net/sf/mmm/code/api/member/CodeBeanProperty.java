@@ -11,11 +11,11 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.CodeAnnotation;
 import net.sf.mmm.code.api.CodeGenericType;
-import net.sf.mmm.code.api.CodeType;
 import net.sf.mmm.code.api.arg.CodeParameter;
 import net.sf.mmm.code.api.doc.CodeDoc;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.api.statement.CodeComment;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
@@ -276,7 +276,7 @@ public class CodeBeanProperty implements CodeProperty {
     String name = null;
     if (size == 0) { // getter?
       type = method.getReturns().getType();
-      if (type.getRawType().isVoid()) {
+      if (type.asType().isVoid()) {
         return null;
       }
       name = getPropertyName(method, true);

@@ -4,9 +4,12 @@ package net.sf.mmm.code.base;
 
 import java.io.IOException;
 
-import net.sf.mmm.code.api.CodeElement;
-import net.sf.mmm.code.api.CodeItem;
-import net.sf.mmm.code.api.CodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.sf.mmm.code.api.element.CodeElement;
+import net.sf.mmm.code.api.item.CodeItem;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.util.io.api.IoMode;
 import net.sf.mmm.util.io.api.RuntimeIoException;
 
@@ -17,6 +20,8 @@ import net.sf.mmm.util.io.api.RuntimeIoException;
  * @since 1.0.0
  */
 public abstract class AbstractCodeItem implements CodeItem {
+
+  private static final Logger LOG = LoggerFactory.getLogger(AbstractCodeItem.class);
 
   private static final String SPACES_MAX = "          ";
 
@@ -62,6 +67,7 @@ public abstract class AbstractCodeItem implements CodeItem {
       doWrite(buffer, DEFAULT_INDENT, "");
       return buffer.toString();
     } catch (Exception e) {
+      LOG.debug("{}.toString() failed!", getClass().getSimpleName(), e);
       return "<failed: " + e + ">";
     }
   }

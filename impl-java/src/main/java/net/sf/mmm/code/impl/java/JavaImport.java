@@ -9,6 +9,7 @@ import java.util.Objects;
 
 import net.sf.mmm.code.api.imports.CodeImport;
 import net.sf.mmm.code.api.imports.CodeImportItem;
+import net.sf.mmm.code.impl.java.item.JavaItem;
 
 /**
  * Implementation of {@link CodeImport}.

@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import net.sf.mmm.code.api.doc.CodeDocFormat;
 import net.sf.mmm.code.impl.java.doc.JavaDoc;
+import net.sf.mmm.code.impl.java.type.JavaType;
 
 /**
  * Test of {@link JavaDoc}.

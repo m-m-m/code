@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 import net.sf.mmm.code.base.doc.AbstractCodeDoc;
 import net.sf.mmm.code.impl.java.JavaContext;
-import net.sf.mmm.code.impl.java.JavaElement;
+import net.sf.mmm.code.impl.java.element.JavaElement;
 
 /**
  * Implementation of {@link net.sf.mmm.code.api.doc.CodeDoc} for Java.

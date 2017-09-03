@@ -7,7 +7,7 @@ import java.io.IOException;
 import net.sf.mmm.code.api.CodeGenericType;
 import net.sf.mmm.code.api.member.CodeProperty;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
-import net.sf.mmm.code.impl.java.JavaType;
+import net.sf.mmm.code.impl.java.type.JavaType;
 
 /**
  * Implementation of {@link CodeProperty} for Java.
@@ -69,10 +69,6 @@ public abstract class JavaProperty extends JavaMember implements CodeProperty {
   @Override
   protected void doWrite(Appendable sink, String defaultIndent, String currentIndent) throws IOException {
 
-    super.doWrite(sink, defaultIndent, currentIndent);
-    this.type.writeReference(sink, false);
-    sink.append(' ');
-    sink.append(getName());
   }
 
 }

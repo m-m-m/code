@@ -3,11 +3,15 @@
 package net.sf.mmm.code.impl.java;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.CodePackage;
+import net.sf.mmm.code.impl.java.element.JavaElementWithQualifiedName;
+import net.sf.mmm.code.impl.java.type.JavaType;
 
 /**
  * Implementation of {@link CodePackage} for Java.
@@ -31,6 +35,10 @@ public class JavaPackage extends JavaElementWithQualifiedName implements CodePac
 
   private static final Logger LOG = LoggerFactory.getLogger(JavaPackage.class);
 
+  private List<JavaPackage> childPackages;
+
+  private List<JavaType> childTypes;
+
   /**
    * The constructor for a {@link JavaContext#getRootPackage() root-package}.
    *
@@ -39,6 +47,8 @@ public class JavaPackage extends JavaElementWithQualifiedName implements CodePac
   public JavaPackage(JavaContext context) {
 
     super(context, null, "");
+    this.childTypes = new ArrayList<>();
+    this.childPackages = new ArrayList<>();
   }
 
   /**
@@ -60,6 +70,8 @@ public class JavaPackage extends JavaElementWithQualifiedName implements CodePac
   public JavaPackage(JavaPackage template) {
 
     super(template);
+    this.childPackages = copy(template.childPackages);
+    this.childTypes = copy(template.childTypes);
   }
 
   @Override

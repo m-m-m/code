@@ -21,7 +21,7 @@ public interface CodeDocMethodLink {
 
   /**
    * @return the {@link net.sf.mmm.code.api.member.CodeMethod#getParameters() parameter}
-   *         {@link net.sf.mmm.code.api.CodeType type} names.
+   *         {@link net.sf.mmm.code.api.type.CodeType type} names.
    */
   List<String> getParameters();
 

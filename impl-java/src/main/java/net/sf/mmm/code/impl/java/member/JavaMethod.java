@@ -2,14 +2,9 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.impl.java.member;
 
-import java.io.IOException;
-import java.util.List;
-
-import net.sf.mmm.code.api.CodeGenericType;
 import net.sf.mmm.code.api.arg.CodeReturn;
 import net.sf.mmm.code.api.member.CodeMethod;
-import net.sf.mmm.code.impl.java.JavaGenericType;
-import net.sf.mmm.code.impl.java.JavaType;
+import net.sf.mmm.code.impl.java.type.JavaType;
 
 /**
  * Implementation of {@link CodeMethod} for Java.
@@ -18,8 +13,6 @@ import net.sf.mmm.code.impl.java.JavaType;
  * @since 1.0.0
  */
 public class JavaMethod extends JavaOperation implements CodeMethod {
-
-  private List<JavaGenericType> typeParameters;
 
   private CodeReturn returns;
 
@@ -44,19 +37,6 @@ public class JavaMethod extends JavaOperation implements CodeMethod {
   }
 
   @Override
-  public List<? extends JavaGenericType> getTypeParameters() {
-
-    return this.typeParameters;
-  }
-
-  @Override
-  public void addTypeParameter(CodeGenericType typeParameter) {
-
-    verifyMutalbe();
-    this.typeParameters.add((JavaGenericType) typeParameter);
-  }
-
-  @Override
   public CodeReturn getReturns() {
 
     return this.returns;
@@ -67,21 +47,6 @@ public class JavaMethod extends JavaOperation implements CodeMethod {
 
     verifyMutalbe();
     this.returns = returns;
-  }
-
-  @Override
-  protected void doWriteSignature(Appendable sink) throws IOException {
-
-    String separator = "<";
-    for (JavaGenericType typeParam : this.typeParameters) {
-      sink.append(separator);
-      typeParam.writeReference(sink, true);
-      separator = ", ";
-    }
-    if (separator.length() != 1) {
-      sink.append("> ");
-    }
-    super.doWriteSignature(sink);
   }
 
 }

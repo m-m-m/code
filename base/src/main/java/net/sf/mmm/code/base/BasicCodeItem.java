@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import net.sf.mmm.code.api.CodeItem;
+import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 import net.sf.mmm.util.io.api.IoMode;
 import net.sf.mmm.util.io.api.RuntimeIoException;
@@ -107,6 +107,11 @@ public abstract class BasicCodeItem<C extends AbstractCodeContext<?, ?>> extends
   protected <T extends CodeItem> List<T> copy(List<T> list) {
 
     return new ArrayList<>(list);
+  }
+
+  protected <T extends CodeItem> T copy(T item) {
+
+    return null;
   }
 
   /**

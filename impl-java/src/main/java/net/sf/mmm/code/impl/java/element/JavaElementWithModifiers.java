@@ -1,12 +1,13 @@
 /* Copyright (c) The m-m-m Team, Licensed under the Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0 */
-package net.sf.mmm.code.impl.java;
+package net.sf.mmm.code.impl.java.element;
 
 import java.io.IOException;
 import java.util.Objects;
 
 import net.sf.mmm.code.api.modifier.CodeElementWithModifiers;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
+import net.sf.mmm.code.impl.java.JavaContext;
 
 /**
  * Implementation of {@link CodeElementWithModifiers} for Java.

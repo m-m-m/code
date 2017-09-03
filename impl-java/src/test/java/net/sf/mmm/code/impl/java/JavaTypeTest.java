@@ -5,9 +5,10 @@ package net.sf.mmm.code.impl.java;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
-import net.sf.mmm.code.api.CodeType;
-import net.sf.mmm.code.api.CodeTypeCategory;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
+import net.sf.mmm.code.api.type.CodeType;
+import net.sf.mmm.code.api.type.CodeTypeCategory;
+import net.sf.mmm.code.impl.java.type.JavaType;
 
 /**
  * Test of {@link JavaType}.
@@ -39,9 +40,9 @@ public class JavaTypeTest extends Assertions {
     assertThat(type.getDoc()).isNotNull();
     assertThat(type.getDoc().isEmpty()).isTrue();
     assertThat(type.getAnnotations()).isEmpty();
-    assertThat(type.getFields()).isEmpty();
-    assertThat(type.getMethods()).isEmpty();
-    assertThat(type.getConstructors()).isEmpty();
+    assertThat(type.getFields().getDeclared()).isEmpty();
+    assertThat(type.getMethods().getDeclared()).isEmpty();
+    assertThat(type.getConstructors().getDeclared()).isEmpty();
     assertThat(type.getFile().toString()).isEqualTo("package mydomain;\n" + //
         "\n" + //
         "public class MyClass {\n" + //

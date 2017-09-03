@@ -11,7 +11,8 @@ import net.sf.mmm.code.api.arg.CodeParameter;
 import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.api.statement.CodeBody;
-import net.sf.mmm.code.impl.java.JavaType;
+import net.sf.mmm.code.impl.java.type.JavaType;
+import net.sf.mmm.code.impl.java.type.JavaTypeVariables;
 
 /**
  * Implementation of {@link CodeOperation} for Java.
@@ -21,11 +22,13 @@ import net.sf.mmm.code.impl.java.JavaType;
  */
 public abstract class JavaOperation extends JavaMember implements CodeOperation {
 
-  private CodeBody body;
+  private JavaTypeVariables typeVariables;
 
   private List<CodeParameter> parameters;
 
   private List<CodeException> exceptions;
+
+  private CodeBody body;
 
   /**
    * The constructor.
@@ -35,6 +38,7 @@ public abstract class JavaOperation extends JavaMember implements CodeOperation 
   public JavaOperation(JavaType declaringType) {
 
     super(declaringType, CodeModifiers.MODIFIERS_PUBLIC);
+    this.typeVariables = new JavaTypeVariables(this);
     this.parameters = new ArrayList<>();
     this.exceptions = new ArrayList<>();
   }
@@ -49,6 +53,12 @@ public abstract class JavaOperation extends JavaMember implements CodeOperation 
     super(template);
     this.parameters = copy(template.parameters);
     this.exceptions = copy(template.exceptions);
+  }
+
+  @Override
+  public JavaTypeVariables getTypeVariables() {
+
+    return this.typeVariables;
   }
 
   @Override
@@ -73,6 +83,16 @@ public abstract class JavaOperation extends JavaMember implements CodeOperation 
   protected void doWrite(Appendable sink, String defaultIndent, String currentIndent) throws IOException {
 
     super.doWrite(sink, defaultIndent, currentIndent);
+    this.typeVariables.write(sink, "", "");
+    // String separator = "<";
+    // for (JavaGenericType typeParam : this.typeParameters) {
+    // sink.append(separator);
+    // typeParam.writeReference(sink, true);
+    // separator = ", ";
+    // }
+    // if (separator.length() != 1) {
+    // sink.append("> ");
+    // }
     doWriteSignature(sink);
     if (this.body == null) {
       sink.append(';');
@@ -89,7 +109,7 @@ public abstract class JavaOperation extends JavaMember implements CodeOperation 
   /**
    * Writes the operation signature with {@link #getName() name}, {@link #getParameters() args} and
    * {@link #getExceptions() exceptions}.
-   * 
+   *
    * @param sink the {@link Appendable}.
    * @throws IOException if thrown by {@link Appendable}.
    */

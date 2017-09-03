@@ -5,11 +5,11 @@ package net.sf.mmm.code.impl.java.member;
 import java.io.IOException;
 
 import net.sf.mmm.code.api.CodeGenericType;
-import net.sf.mmm.code.api.CodeType;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
-import net.sf.mmm.code.impl.java.JavaType;
+import net.sf.mmm.code.impl.java.type.JavaType;
+import net.sf.mmm.util.exception.api.DuplicateObjectException;
 
 /**
  * Implementation of {@link CodeField} for Java.
@@ -17,7 +17,9 @@ import net.sf.mmm.code.impl.java.JavaType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaField extends JavaProperty implements CodeField {
+public class JavaField extends JavaMember implements CodeField {
+
+  private CodeGenericType type;
 
   private CodeExpression initializer;
 
@@ -29,6 +31,7 @@ public class JavaField extends JavaProperty implements CodeField {
   public JavaField(JavaType declaringType) {
 
     super(declaringType, CodeModifiers.MODIFIERS_PRIVATE);
+    this.type = getContext().getRootType();
   }
 
   /**
@@ -39,7 +42,21 @@ public class JavaField extends JavaProperty implements CodeField {
   public JavaField(JavaField template) {
 
     super(template);
+    this.type = template.type;
     this.initializer = template.initializer;
+  }
+
+  @Override
+  public CodeGenericType getType() {
+
+    return this.type;
+  }
+
+  @Override
+  public void setType(CodeGenericType type) {
+
+    verifyMutalbe();
+    this.type = type;
   }
 
   @Override
@@ -56,22 +73,26 @@ public class JavaField extends JavaProperty implements CodeField {
   }
 
   @Override
-  public JavaField inherit(CodeType declaring) {
+  public void setName(String name) {
 
-    CodeGenericType currentType = getType();
-    CodeGenericType newType = currentType.resolve(declaring);
-    if (newType == currentType) {
-      return this;
+    JavaType declaringType = getDeclaringType();
+    JavaFields fields = declaringType.getFields();
+    JavaField duplicate = fields.getDeclared(name);
+    if (duplicate != null) {
+      throw new DuplicateObjectException(declaringType.getSimpleName() + ".fields", name);
     }
-    JavaField inherited = new JavaField(this);
-    inherited.setType(newType);
-    return inherited;
+    String oldName = getName();
+    super.setName(name);
+    fields.rename(this, oldName);
   }
 
   @Override
   protected void doWrite(Appendable sink, String defaultIndent, String currentIndent) throws IOException {
 
     super.doWrite(sink, defaultIndent, currentIndent);
+    this.type.writeReference(sink, false);
+    sink.append(' ');
+    sink.append(getName());
     if (this.initializer != null) {
       sink.append(" = ");
       this.initializer.write(sink, "", "");

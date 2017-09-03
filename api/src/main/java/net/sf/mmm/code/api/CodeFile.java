@@ -5,6 +5,8 @@ package net.sf.mmm.code.api;
 import java.util.List;
 
 import net.sf.mmm.code.api.imports.CodeImport;
+import net.sf.mmm.code.api.item.CodeItemWithQualifiedName;
+import net.sf.mmm.code.api.type.CodeType;
 
 /**
  * Abstract top-level interface for any item of code as defined by this API. It reflects code structure.

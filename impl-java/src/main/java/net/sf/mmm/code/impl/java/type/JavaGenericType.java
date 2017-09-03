@@ -1,8 +1,13 @@
 /* Copyright (c) The m-m-m Team, Licensed under the Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0 */
-package net.sf.mmm.code.impl.java;
+package net.sf.mmm.code.impl.java.type;
+
+import java.io.IOException;
 
 import net.sf.mmm.code.api.CodeGenericType;
+import net.sf.mmm.code.impl.java.JavaContext;
+import net.sf.mmm.code.impl.java.element.JavaElement;
+import net.sf.mmm.code.impl.java.element.JavaElementWithQualifiedName;
 
 /**
  * Implementation of {@link CodeGenericType} for Java.
@@ -10,7 +15,7 @@ import net.sf.mmm.code.api.CodeGenericType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class JavaGenericType extends JavaElement implements CodeGenericType {
+public abstract class JavaGenericType extends JavaElementWithQualifiedName implements CodeGenericType {
 
   /**
    * The constructor.
@@ -19,7 +24,7 @@ public abstract class JavaGenericType extends JavaElement implements CodeGeneric
    */
   public JavaGenericType(JavaContext context) {
 
-    super(context);
+    super(context, null, null);
   }
 
   /**
@@ -40,6 +45,20 @@ public abstract class JavaGenericType extends JavaElement implements CodeGeneric
   }
 
   @Override
-  public abstract JavaType getRawType();
+  public abstract JavaType asType();
+
+  @Override
+  public abstract JavaTypeVariable asTypeVariable();
+
+  @Override
+  public void writeReference(Appendable sink, boolean declaration) throws IOException {
+
+    if (isQualified()) {
+      sink.append(getQualifiedName());
+    } else {
+      sink.append(getSimpleName());
+    }
+    getTypeVariables().write(sink, "", "");
+  }
 
 }

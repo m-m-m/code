@@ -4,6 +4,8 @@ package net.sf.mmm.code.api;
 
 import java.util.Map;
 
+import net.sf.mmm.code.api.item.CodeItemWithType;
+
 /**
  * {@link CodeItemWithType} that represents an {@link java.lang.annotation.Annotation} instance.
  *

@@ -3,13 +3,13 @@
 package net.sf.mmm.code.api.member;
 
 import net.sf.mmm.code.api.CodeGenericType;
-import net.sf.mmm.code.api.CodeItemWithType;
-import net.sf.mmm.code.api.CodeType;
+import net.sf.mmm.code.api.item.CodeItemWithType;
+import net.sf.mmm.code.api.type.CodeType;
 
 /**
  * Abstract interface for a field of a {@link CodeType}.
  *
- * @see CodeType#getFields(CodeMemberSelector)
+ * @see CodeType#getProperties()
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0

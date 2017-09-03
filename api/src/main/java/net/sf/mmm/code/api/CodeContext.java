@@ -5,7 +5,10 @@ package net.sf.mmm.code.api;
 import java.util.List;
 import java.util.Objects;
 
+import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.imports.CodeImport;
+import net.sf.mmm.code.api.item.CodeItemWithQualifiedName;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.util.exception.api.ObjectNotFoundException;
 
 /**
@@ -89,6 +92,17 @@ public interface CodeContext {
    * @return the root {@link CodePackage}.
    */
   CodePackage getRootPackage();
+
+  /**
+   * @return the root type (for Java it represents {@link Object} for TypeScript {@code any}).
+   */
+  CodeType getRootType();
+
+  /**
+   * @return the {@link CodeType#isVoid() void} {@link CodeType} for a default
+   *         {@link net.sf.mmm.code.api.arg.CodeReturn return}.
+   */
+  CodeType getVoidType();
 
   /**
    * @param qualifiedName the {@link CodePackage#getQualifiedName() qualified name} of the requested

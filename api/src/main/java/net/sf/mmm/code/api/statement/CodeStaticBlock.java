@@ -3,8 +3,8 @@
 package net.sf.mmm.code.api.statement;
 
 /**
- * {@link CodeBlock} for the {@link net.sf.mmm.code.api.CodeType#getStaticInitializer() static initializer} of
- * a {@link net.sf.mmm.code.api.CodeType}.
+ * {@link CodeBlock} for the {@link net.sf.mmm.code.api.type.CodeType#getStaticInitializer() static initializer} of
+ * a {@link net.sf.mmm.code.api.type.CodeType}.
  *
  * @author hohwille
  * @since 1.0.0

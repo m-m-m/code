@@ -2,9 +2,9 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.expression;
 
-import net.sf.mmm.code.api.CodeItem;
-import net.sf.mmm.code.api.CodeType;
+import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.statement.CodeStatement;
+import net.sf.mmm.code.api.type.CodeType;
 
 /**
  * {@link CodeItem} for an expression. An expression is a sub-item of a {@link CodeStatement} that is
