@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.CodePackage;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.impl.java.element.JavaElementWithQualifiedName;
 import net.sf.mmm.code.impl.java.type.JavaType;
 
@@ -35,9 +36,11 @@ public class JavaPackage extends JavaElementWithQualifiedName implements CodePac
 
   private static final Logger LOG = LoggerFactory.getLogger(JavaPackage.class);
 
-  private List<JavaPackage> childPackages;
+  private final List<JavaPackage> childPackages;
 
-  private List<JavaType> childTypes;
+  private final List<JavaFile> childFiles;
+
+  private JavaPackage superPackage;
 
   /**
    * The constructor for a {@link JavaContext#getRootPackage() root-package}.
@@ -47,7 +50,7 @@ public class JavaPackage extends JavaElementWithQualifiedName implements CodePac
   public JavaPackage(JavaContext context) {
 
     super(context, null, "");
-    this.childTypes = new ArrayList<>();
+    this.childFiles = new ArrayList<>();
     this.childPackages = new ArrayList<>();
   }
 
@@ -60,6 +63,11 @@ public class JavaPackage extends JavaElementWithQualifiedName implements CodePac
   public JavaPackage(JavaPackage parentPackage, String simpleName) {
 
     super(parentPackage.getContext(), parentPackage, simpleName);
+    if (!parentPackage.isImmutable()) {
+      parentPackage.childPackages.add(this);
+    }
+    this.childFiles = new ArrayList<>();
+    this.childPackages = new ArrayList<>();
   }
 
   /**
@@ -69,9 +77,56 @@ public class JavaPackage extends JavaElementWithQualifiedName implements CodePac
    */
   public JavaPackage(JavaPackage template) {
 
-    super(template);
-    this.childPackages = copy(template.childPackages);
-    this.childTypes = copy(template.childTypes);
+    this(template, template.getParentPackage());
+  }
+
+  /**
+   * The copy-constructor.
+   *
+   * @param template the {@link JavaPackage} to copy.
+   * @param parentPackage the {@link #getParentPackage() parent package}.
+   */
+  public JavaPackage(JavaPackage template, JavaPackage parentPackage) {
+
+    super(template, parentPackage);
+    this.superPackage = template;
+    this.childPackages = new ArrayList<>();
+    this.childFiles = new ArrayList<>();
+  }
+
+  /**
+   * @deprecated a {@link CodePackage} contains {@link CodeType}s and not vice versa. Therefore this method
+   *             will always return {@code null} here.
+   */
+  @Deprecated
+  @Override
+  public JavaType getDeclaringType() {
+
+    return null;
+  }
+
+  /**
+   * @return the super package that was {@link #copy(CodePackage) copied} or {@code null} if not copied.
+   */
+  JavaPackage getSuperPackage() {
+
+    return this.superPackage;
+  }
+
+  /**
+   * @return the {@link List} of {@link JavaFile}s directly contained in this package.
+   */
+  List<JavaFile> getChildFiles() {
+
+    return this.childFiles;
+  }
+
+  /**
+   * @return the {@link List} of {@link JavaPackage}s directly contained in this package.
+   */
+  List<JavaPackage> getChildPackages() {
+
+    return this.childPackages;
   }
 
   @Override
@@ -130,11 +185,37 @@ public class JavaPackage extends JavaElementWithQualifiedName implements CodePac
     if (isDefault()) {
       return;
     }
-    sink.append(currentIndent);
+    if (currentIndent != null) {
+      sink.append(currentIndent);
+    }
     sink.append("package ");
     sink.append(getQualifiedName());
     sink.append(';');
     writeNewline(sink);
+  }
+
+  @Override
+  public JavaPackage copy(CodePackage newParentPackage) {
+
+    return new JavaPackage(this, (JavaPackage) newParentPackage);
+  }
+
+  /**
+   * @param simpleName the {@link CodeType#getSimpleName() simple name} of the requested {@link CodeType}.
+   * @return the requested {@link CodeType} or {@code null} if not found.
+   */
+  public JavaType getType(String simpleName) {
+
+    for (JavaFile file : this.childFiles) {
+      JavaType type = file.getType(simpleName);
+      if (type != null) {
+        return type;
+      }
+    }
+    if (this.superPackage != null) {
+      return this.superPackage.getType(simpleName);
+    }
+    return null;
   }
 
 }

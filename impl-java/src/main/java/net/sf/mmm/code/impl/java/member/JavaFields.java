@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import net.sf.mmm.code.api.CodeGenericType;
 import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.member.CodeFields;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.impl.java.type.JavaGenericType;
 import net.sf.mmm.code.impl.java.type.JavaType;
 import net.sf.mmm.util.collection.base.AbstractIterator;
@@ -47,27 +47,30 @@ public class JavaFields extends JavaMembers<CodeField> implements CodeFields {
    * The copy-constructor.
    *
    * @param template the {@link JavaFields} to copy.
+   * @param declaringType the {@link #getDeclaringType()}.
    */
-  public JavaFields(JavaFields template) {
+  public JavaFields(JavaFields template, JavaType declaringType) {
 
-    super(template);
+    super(template, declaringType);
+    this.fields = doCopy(template.fields, declaringType);
+    this.fieldMap = new HashMap<>(this.fields.size());
+    for (JavaField field : this.fields) {
+      this.fieldMap.put(field.getName(), field);
+    }
+  }
+
+  @Override
+  protected void doSetImmutable() {
+
+    super.doSetImmutable();
+    this.fields = makeImmutable(this.fields);
+    this.fieldMap = Collections.unmodifiableMap(this.fieldMap);
   }
 
   @Override
   public List<? extends JavaField> getDeclared() {
 
     return this.fields;
-  }
-
-  @Override
-  public Iterable<? extends JavaField> getInherited() {
-
-    JavaGenericType superClass = getDeclaringType().getSuperTypes().getSuperClass();
-    if (superClass == null) {
-      return Collections.emptyList();
-    } else {
-      return superClass.asType().getFields().getAll();
-    }
   }
 
   @Override
@@ -101,7 +104,7 @@ public class JavaFields extends JavaMembers<CodeField> implements CodeFields {
   }
 
   @Override
-  public JavaField add(String name, CodeGenericType type) {
+  public JavaField add(String name) {
 
     verifyMutalbe();
     if (this.fieldMap.containsKey(name)) {
@@ -109,7 +112,6 @@ public class JavaFields extends JavaMembers<CodeField> implements CodeFields {
     }
     JavaField field = new JavaField(getDeclaringType());
     field.setName(name);
-    field.setType(type);
     this.fields.add(field);
     this.fieldMap.put(name, field);
     return field;
@@ -142,6 +144,12 @@ public class JavaFields extends JavaMembers<CodeField> implements CodeFields {
         field.write(sink, defaultIndent, currentIndent);
       }
     }
+  }
+
+  @Override
+  public JavaFields copy(CodeType newDeclaringType) {
+
+    return new JavaFields(this, (JavaType) newDeclaringType);
   }
 
   private static class FieldIterator extends AbstractIterator<JavaField> {

@@ -6,6 +6,7 @@ import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.item.CodeItemContainer;
 import net.sf.mmm.code.api.item.CodeItemWithComment;
 import net.sf.mmm.code.impl.java.JavaContext;
+import net.sf.mmm.code.impl.java.type.JavaType;
 
 /**
  * Implementation of {@link CodeItemWithComment} for Java reflection.
@@ -16,14 +17,28 @@ import net.sf.mmm.code.impl.java.JavaContext;
  */
 public abstract class JavaItemContainer<I extends CodeItem> extends JavaItem implements CodeItemContainer<I> {
 
+  private final JavaType declaringType;
+
   /**
    * The constructor.
    *
    * @param context the {@link #getContext() context}.
    */
-  public JavaItemContainer(JavaContext context) {
+  protected JavaItemContainer(JavaContext context) {
 
     super(context);
+    this.declaringType = null;
+  }
+
+  /**
+   * The constructor.
+   *
+   * @param declaringType the {@link #getDeclaringType() declaring type}.
+   */
+  public JavaItemContainer(JavaType declaringType) {
+
+    super(declaringType.getContext());
+    this.declaringType = declaringType;
   }
 
   /**
@@ -33,7 +48,24 @@ public abstract class JavaItemContainer<I extends CodeItem> extends JavaItem imp
    */
   public JavaItemContainer(JavaItemContainer<I> template) {
 
-    super(template);
+    this(template, template.declaringType);
   }
 
+  /**
+   * The copy-constructor.
+   *
+   * @param template the {@link JavaItemContainer} to copy.
+   * @param declaringType the {@link #getDeclaringType() declaring type}.
+   */
+  public JavaItemContainer(JavaItemContainer<I> template, JavaType declaringType) {
+
+    super(template);
+    this.declaringType = declaringType;
+  }
+
+  @Override
+  public JavaType getDeclaringType() {
+
+    return this.declaringType;
+  }
 }

@@ -16,38 +16,87 @@ import net.sf.mmm.util.exception.api.DuplicateObjectException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class CodeVisibility {
+public class CodeVisibility implements Comparable<CodeVisibility> {
 
   private static final Map<String, CodeVisibility> VISIBILITY_MAP = new HashMap<>();
 
   /** {@link CodeVisibility} for public access. */
-  public static final CodeVisibility PUBLIC = new CodeVisibility("public");
+  public static final CodeVisibility PUBLIC = new CodeVisibility("public", 0);
 
   /** {@link CodeVisibility} for private access. */
-  public static final CodeVisibility PRIVATE = new CodeVisibility("private");
+  public static final CodeVisibility PRIVATE = new CodeVisibility("private", 100);
 
   /** {@link CodeVisibility} for protected access. */
-  public static final CodeVisibility PROTECTED = new CodeVisibility("protected");
+  public static final CodeVisibility PROTECTED = new CodeVisibility("protected", 10);
 
   /** {@link CodeVisibility} for default access (no/empty modifier). */
-  public static final CodeVisibility DEFAULT = new CodeVisibility("");
+  public static final CodeVisibility DEFAULT = new CodeVisibility("", 20);
 
   private final String value;
+
+  private final int order;
 
   /**
    * The constructor. Only use to declare new constants.
    *
    * @param value the visibility as {@link String}.
+   * @param order the {@link #getOrder() order}.
    */
-  public CodeVisibility(String value) {
+  public CodeVisibility(String value, int order) {
 
     super();
     assert (value != null);
     this.value = value;
+    this.order = order;
     if (VISIBILITY_MAP.containsKey(value)) {
       throw new DuplicateObjectException(this, value, VISIBILITY_MAP.get(value));
     }
     VISIBILITY_MAP.put(value, this);
+  }
+
+  /**
+   * @return the order
+   */
+  public int getOrder() {
+
+    return this.order;
+  }
+
+  /**
+   * @param visibility the {@link CodeVisibility} to compare to.
+   * @return {@code true} if this {@link CodeVisibility} is stronger or {@link #equals(Object) equal} to the
+   *         given {@code visibility}, {@code false} otherwise. E.g. {@value #PRIVATE} is stronger than
+   *         {@value #PUBLIC}.
+   */
+  public boolean isStrongerOrEqualTo(CodeVisibility visibility) {
+
+    if (visibility == null) {
+      return false;
+    }
+    return this.order >= visibility.order;
+  }
+
+  /**
+   * @param visibility the {@link CodeVisibility} to compare to.
+   * @return {@code true} if this {@link CodeVisibility} is weaker or {@link #equals(Object) equal} to the
+   *         given {@code visibility}, {@code false} otherwise. E.g. {@value #PUBLIC} is weaker than
+   *         {@value #PRIVATE}.
+   */
+  public boolean isWeakerOrEqualTo(CodeVisibility visibility) {
+
+    if (visibility == null) {
+      return false;
+    }
+    return this.order <= visibility.order;
+  }
+
+  @Override
+  public int compareTo(CodeVisibility visibility) {
+
+    if (visibility == null) {
+      return -1;
+    }
+    return this.order - visibility.order;
   }
 
   @Override
@@ -66,9 +115,6 @@ public class CodeVisibility {
     return true;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public int hashCode() {
 

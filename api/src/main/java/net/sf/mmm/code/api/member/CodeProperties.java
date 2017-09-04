@@ -2,6 +2,10 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.member;
 
+import net.sf.mmm.code.api.item.CodeItemContainerWithInheritanceAndName;
+import net.sf.mmm.code.api.type.CodeType;
+import net.sf.mmm.util.exception.api.ReadOnlyException;
+
 /**
  * {@link CodeMembers} as a container for the {@link CodeProperty}s. <br>
  * <b>Attention:</b><br>
@@ -11,13 +15,19 @@ package net.sf.mmm.code.api.member;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeProperties extends CodeMembers<CodeProperty> {
+public interface CodeProperties extends CodeMembers<CodeProperty>, CodeItemContainerWithInheritanceAndName<CodeProperty> {
 
   /**
-   * @param name the {@link CodeField#getName() name} of the requested {@link CodeField}.
-   * @return the requested {@link CodeField} (may be inherited from super-types) or {@code null} if no such
-   *         field exists.
+   * @deprecated instances of {@link CodeProperty} are dynamically created on the fly.
    */
-  CodeProperty getProperty(String name);
+  @Deprecated
+  @Override
+  default CodeProperty add(String name) {
+
+    throw new ReadOnlyException(getDeclaringType().getSimpleName(), "properties");
+  }
+
+  @Override
+  CodeProperties copy(CodeType newDeclaringType);
 
 }

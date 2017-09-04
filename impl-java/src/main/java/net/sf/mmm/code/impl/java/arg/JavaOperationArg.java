@@ -4,9 +4,9 @@ package net.sf.mmm.code.impl.java.arg;
 
 import java.io.IOException;
 
-import net.sf.mmm.code.api.CodeGenericType;
 import net.sf.mmm.code.api.arg.CodeOperationArg;
 import net.sf.mmm.code.api.member.CodeMember;
+import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.impl.java.element.JavaElement;
 import net.sf.mmm.code.impl.java.member.JavaMember;
 import net.sf.mmm.code.impl.java.type.JavaGenericType;
@@ -18,7 +18,7 @@ import net.sf.mmm.code.impl.java.type.JavaType;
  * @author hohwille
  * @since 1.0.0
  */
-public class JavaOperationArg extends JavaElement implements CodeOperationArg {
+public abstract class JavaOperationArg extends JavaElement implements CodeOperationArg {
 
   private final JavaMember declaringMember;
 
@@ -39,11 +39,13 @@ public class JavaOperationArg extends JavaElement implements CodeOperationArg {
    * The copy-constructor.
    *
    * @param template the {@link JavaOperationArg} to copy.
+   * @param declaringMember the {@link #getDeclaringMember() declaring member}.
    */
-  public JavaOperationArg(JavaOperationArg template) {
+  public JavaOperationArg(JavaOperationArg template, JavaMember declaringMember) {
 
     super(template);
-    this.declaringMember = template.declaringMember;
+    this.declaringMember = declaringMember;
+    this.type = template.type;
   }
 
   @Override

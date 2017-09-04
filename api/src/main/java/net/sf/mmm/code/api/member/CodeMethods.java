@@ -15,8 +15,8 @@ public interface CodeMethods extends CodeOperations<CodeMethod> {
 
   /**
    * @param name the {@link CodeOperation#getName() name} of the requested {@link CodeOperation}.
-   * @param parameterTypes the {@link net.sf.mmm.code.api.CodeGenericType#asType() raw} {@link CodeType}s
-   *        of the {@link CodeOperation#getParameters() parameters}.
+   * @param parameterTypes the {@link net.sf.mmm.code.api.type.CodeGenericType#asType() raw} {@link CodeType}s of
+   *        the {@link CodeOperation#getParameters() parameters}.
    * @return the requested {@link CodeOperation} or {@code null} if not found.
    */
   CodeMethod get(String name, CodeType... parameterTypes);
@@ -30,4 +30,8 @@ public interface CodeMethods extends CodeOperations<CodeMethod> {
    * @throws ReadOnlyException if {@link #isImmutable() immutable}.
    */
   CodeMethod add(String name);
+
+  @Override
+  CodeMethods copy(CodeType newDeclaringType);
+
 }

@@ -27,4 +27,7 @@ public interface CodeMethod extends CodeOperation {
    */
   void setReturns(CodeReturn returns);
 
+  @Override
+  CodeMethod copy(CodeType newDeclaringType);
+
 }

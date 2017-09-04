@@ -29,4 +29,7 @@ public abstract interface CodeField extends CodeMember, CodeItemWithType {
    */
   void setInitializer(CodeExpression initializer);
 
+  @Override
+  CodeField copy(CodeType newDeclaringType);
+
 }

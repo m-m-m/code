@@ -24,7 +24,7 @@ public abstract interface CodeExpression extends CodeItem {
   @Override
   default void setImmutable() {
 
-    throw new IllegalStateException();
+    throw new IllegalStateException("Expression (" + getClass().getSimpleName() + ") is always immutable!");
   }
 
   /**

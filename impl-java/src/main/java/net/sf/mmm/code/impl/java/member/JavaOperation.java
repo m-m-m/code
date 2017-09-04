@@ -11,6 +11,8 @@ import net.sf.mmm.code.api.arg.CodeParameter;
 import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.api.statement.CodeBody;
+import net.sf.mmm.code.impl.java.arg.JavaException;
+import net.sf.mmm.code.impl.java.arg.JavaParameter;
 import net.sf.mmm.code.impl.java.type.JavaType;
 import net.sf.mmm.code.impl.java.type.JavaTypeVariables;
 
@@ -22,11 +24,11 @@ import net.sf.mmm.code.impl.java.type.JavaTypeVariables;
  */
 public abstract class JavaOperation extends JavaMember implements CodeOperation {
 
-  private JavaTypeVariables typeVariables;
+  private final JavaTypeVariables typeVariables;
 
-  private List<CodeParameter> parameters;
+  private List<JavaParameter> parameters;
 
-  private List<CodeException> exceptions;
+  private List<JavaException> exceptions;
 
   private CodeBody body;
 
@@ -47,12 +49,23 @@ public abstract class JavaOperation extends JavaMember implements CodeOperation 
    * The copy-constructor.
    *
    * @param template the {@link JavaOperation} to copy.
+   * @param declaringType the {@link #getDeclaringType()}.
    */
-  public JavaOperation(JavaOperation template) {
+  public JavaOperation(JavaOperation template, JavaType declaringType) {
 
-    super(template);
-    this.parameters = copy(template.parameters);
-    this.exceptions = copy(template.exceptions);
+    super(template, declaringType);
+    this.typeVariables = template.typeVariables.copy(getDeclaringType());
+    this.parameters = doCopy(template.parameters, this);
+    this.exceptions = doCopy(template.exceptions, this);
+  }
+
+  @Override
+  protected void doSetImmutable() {
+
+    super.doSetImmutable();
+    this.typeVariables.setImmutable();
+    this.parameters = makeImmutable(this.parameters);
+    this.exceptions = makeImmutable(this.exceptions);
   }
 
   @Override
@@ -80,19 +93,17 @@ public abstract class JavaOperation extends JavaMember implements CodeOperation 
   }
 
   @Override
+  public void setBody(CodeBody body) {
+
+    verifyMutalbe();
+    this.body = body;
+  }
+
+  @Override
   protected void doWrite(Appendable sink, String defaultIndent, String currentIndent) throws IOException {
 
     super.doWrite(sink, defaultIndent, currentIndent);
     this.typeVariables.write(sink, "", "");
-    // String separator = "<";
-    // for (JavaGenericType typeParam : this.typeParameters) {
-    // sink.append(separator);
-    // typeParam.writeReference(sink, true);
-    // separator = ", ";
-    // }
-    // if (separator.length() != 1) {
-    // sink.append("> ");
-    // }
     doWriteSignature(sink);
     if (this.body == null) {
       sink.append(';');

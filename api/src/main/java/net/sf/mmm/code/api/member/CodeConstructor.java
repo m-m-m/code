@@ -25,4 +25,7 @@ public interface CodeConstructor extends CodeOperation {
     throw new ReadOnlyException(getClass().getSimpleName(), "name");
   }
 
+  @Override
+  CodeConstructor copy(CodeType newDeclaringType);
+
 }

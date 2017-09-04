@@ -4,10 +4,11 @@ package net.sf.mmm.code.impl.java.member;
 
 import java.io.IOException;
 
-import net.sf.mmm.code.api.CodeGenericType;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
+import net.sf.mmm.code.api.type.CodeGenericType;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.impl.java.type.JavaType;
 import net.sf.mmm.util.exception.api.DuplicateObjectException;
 
@@ -38,10 +39,11 @@ public class JavaField extends JavaMember implements CodeField {
    * The copy-constructor.
    *
    * @param template the {@link JavaField} to copy.
+   * @param declaringType the {@link #getDeclaringType()}.
    */
-  public JavaField(JavaField template) {
+  public JavaField(JavaField template, JavaType declaringType) {
 
-    super(template);
+    super(template, declaringType);
     this.type = template.type;
     this.initializer = template.initializer;
   }
@@ -83,7 +85,11 @@ public class JavaField extends JavaMember implements CodeField {
     }
     String oldName = getName();
     super.setName(name);
+    if (oldName.equals(name)) {
+      return;
+    }
     fields.rename(this, oldName);
+    declaringType.getProperties().rename(this, oldName);
   }
 
   @Override
@@ -99,6 +105,12 @@ public class JavaField extends JavaMember implements CodeField {
     }
     sink.append(';');
     writeNewline(sink);
+  }
+
+  @Override
+  public JavaField copy(CodeType newDeclaringType) {
+
+    return new JavaField(this, (JavaType) newDeclaringType);
   }
 
 }

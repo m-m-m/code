@@ -64,12 +64,20 @@ public abstract class AbstractCodeItem implements CodeItem {
 
     try {
       StringBuilder buffer = new StringBuilder();
-      doWrite(buffer, DEFAULT_INDENT, "");
+      doWrite(buffer, null, null);
       return buffer.toString();
     } catch (Exception e) {
       LOG.debug("{}.toString() failed!", getClass().getSimpleName(), e);
       return "<failed: " + e + ">";
     }
+  }
+
+  @Override
+  public String getSourceCode() {
+
+    StringBuilder buffer = new StringBuilder();
+    write(buffer);
+    return buffer.toString();
   }
 
   /**

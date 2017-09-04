@@ -3,9 +3,11 @@
 package net.sf.mmm.code.api.arg;
 
 import net.sf.mmm.code.api.element.CodeElement;
+import net.sf.mmm.code.api.item.CodeItemWithDeclaringMember;
 import net.sf.mmm.code.api.item.CodeItemWithType;
 import net.sf.mmm.code.api.member.CodeMember;
 import net.sf.mmm.code.api.member.CodeOperation;
+import net.sf.mmm.code.api.type.CodeType;
 
 /**
  * A {@link CodeItemWithType} representing a argument of a {@link CodeOperation} such as
@@ -14,11 +16,23 @@ import net.sf.mmm.code.api.member.CodeOperation;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract interface CodeOperationArg extends CodeElement, CodeItemWithType {
+public abstract interface CodeOperationArg extends CodeElement, CodeItemWithType, CodeItemWithDeclaringMember {
 
   /**
-   * @return the {@link CodeMember} declaring this operation argument.
+   * @deprecated use {@link #copy(CodeMember)} instead.
    */
-  CodeMember getDeclaringMember();
+  @Deprecated
+  @Override
+  default CodeOperationArg copy(CodeType newDeclaringType) {
+
+    return copy(getDeclaringMember());
+  }
+
+  /**
+   * @param newDeclaringMember the new {@link #getDeclaringMember() declaring member}.
+   * @return a new {@link #isImmutable() mutable} copy.
+   */
+  @Override
+  CodeOperationArg copy(CodeMember newDeclaringMember);
 
 }

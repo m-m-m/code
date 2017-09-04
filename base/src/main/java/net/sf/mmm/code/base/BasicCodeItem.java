@@ -7,7 +7,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.item.CodeItem;
+import net.sf.mmm.code.api.item.CodeItemWithDeclaringElement;
+import net.sf.mmm.code.api.item.CodeItemWithDeclaringMember;
+import net.sf.mmm.code.api.item.CodeItemWithDeclaringOperation;
+import net.sf.mmm.code.api.item.CodeItemWithDeclaringType;
+import net.sf.mmm.code.api.member.CodeMember;
+import net.sf.mmm.code.api.member.CodeOperation;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 import net.sf.mmm.util.io.api.IoMode;
 import net.sf.mmm.util.io.api.RuntimeIoException;
@@ -65,6 +73,7 @@ public abstract class BasicCodeItem<C extends AbstractCodeContext<?, ?>> extends
   /**
    * Makes this item {@link #isImmutable() immutable}.
    */
+  @Override
   public void setImmutable() {
 
     if (this.immutable) {
@@ -104,14 +113,76 @@ public abstract class BasicCodeItem<C extends AbstractCodeContext<?, ?>> extends
    * @param list the {@link List} to copy.
    * @return an mutable copy of the {@link List}.
    */
-  protected <T extends CodeItem> List<T> copy(List<T> list) {
+  protected <T extends CodeItem> List<T> doCopy(List<T> list) {
 
     return new ArrayList<>(list);
   }
 
-  protected <T extends CodeItem> T copy(T item) {
+  /**
+   * @param <T> the type of the {@link List} elements.
+   * @param list the {@link List} to copy.
+   * @param newDeclaringType the new {@link CodeItemWithDeclaringType#getDeclaringType() declaring type}.
+   * @return an mutable deep-copy of the {@link List}.
+   */
+  @SuppressWarnings("unchecked")
+  protected <T extends CodeItemWithDeclaringType> List<T> doCopy(List<T> list, CodeType newDeclaringType) {
 
-    return null;
+    List<T> copy = new ArrayList<>(list.size());
+    for (T item : list) {
+      copy.add((T) item.copy(newDeclaringType));
+    }
+    return copy;
+  }
+
+  /**
+   * @param <T> the type of the {@link List} elements.
+   * @param list the {@link List} to copy.
+   * @param newDeclaringOperation the new {@link CodeItemWithDeclaringOperation#getDeclaringOperation()
+   *        declaring operation}.
+   * @return an mutable deep-copy of the {@link List}.
+   */
+  @SuppressWarnings("unchecked")
+  protected <T extends CodeItemWithDeclaringOperation> List<T> doCopy(List<T> list, CodeOperation newDeclaringOperation) {
+
+    List<T> copy = new ArrayList<>(list.size());
+    for (T item : list) {
+      copy.add((T) item.copy(newDeclaringOperation));
+    }
+    return copy;
+  }
+
+  /**
+   * @param <T> the type of the {@link List} elements.
+   * @param list the {@link List} to copy.
+   * @param newDeclaringMember the new {@link CodeItemWithDeclaringMember#getDeclaringMember() declaring
+   *        member}.
+   * @return an mutable deep-copy of the {@link List}.
+   */
+  @SuppressWarnings("unchecked")
+  protected <T extends CodeItemWithDeclaringMember> List<T> doCopy(List<T> list, CodeMember newDeclaringMember) {
+
+    List<T> copy = new ArrayList<>(list.size());
+    for (T item : list) {
+      copy.add((T) item.copy(newDeclaringMember));
+    }
+    return copy;
+  }
+
+  /**
+   * @param <T> the type of the {@link List} elements.
+   * @param list the {@link List} to copy.
+   * @param newDeclaringElement the new {@link CodeItemWithDeclaringElement#getDeclaringElement() declaring
+   *        element}.
+   * @return an mutable deep-copy of the {@link List}.
+   */
+  @SuppressWarnings("unchecked")
+  protected <T extends CodeItemWithDeclaringElement> List<T> doCopy(List<T> list, CodeElement newDeclaringElement) {
+
+    List<T> copy = new ArrayList<>(list.size());
+    for (T item : list) {
+      copy.add((T) item.copy(newDeclaringElement));
+    }
+    return copy;
   }
 
   /**

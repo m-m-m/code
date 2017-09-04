@@ -3,6 +3,7 @@
 package net.sf.mmm.code.impl.java.arg;
 
 import net.sf.mmm.code.api.arg.CodeParameter;
+import net.sf.mmm.code.api.member.CodeMember;
 import net.sf.mmm.code.impl.java.member.JavaMember;
 
 /**
@@ -30,10 +31,11 @@ public class JavaParameter extends JavaOperationArg implements CodeParameter {
    * The copy-constructor.
    *
    * @param template the {@link JavaParameter} to copy.
+   * @param declaringMember the {@link #getDeclaringMember() declaring member}.
    */
-  public JavaParameter(JavaParameter template) {
+  public JavaParameter(JavaParameter template, JavaMember declaringMember) {
 
-    super(template);
+    super(template, declaringMember);
     this.name = template.name;
   }
 
@@ -48,6 +50,12 @@ public class JavaParameter extends JavaOperationArg implements CodeParameter {
 
     verifyMutalbe();
     this.name = name;
+  }
+
+  @Override
+  public JavaParameter copy(CodeMember newDeclaringMember) {
+
+    return new JavaParameter(this, (JavaMember) newDeclaringMember);
   }
 
 }

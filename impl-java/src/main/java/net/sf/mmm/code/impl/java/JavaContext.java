@@ -11,6 +11,7 @@ import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.AbstractCodeContext;
 import net.sf.mmm.code.impl.java.type.JavaType;
+import net.sf.mmm.code.impl.java.type.JavaTypeVariables;
 
 /**
  * Implementation of {@link net.sf.mmm.code.api.CodeContext} for Java.
@@ -37,6 +38,8 @@ public class JavaContext extends AbstractCodeContext<JavaType, JavaPackage> {
       "TypeNotPresentException", "UnknownError", "UnsatisfiedLinkError", "UnsupportedClassVersionError", "UnsupportedOperationException", "VerifyError",
       "VirtualMachineError", "Void"));
 
+  private final JavaTypeVariables emptyTypeVariables;
+
   /**
    * The constructor.
    */
@@ -45,13 +48,14 @@ public class JavaContext extends AbstractCodeContext<JavaType, JavaPackage> {
     super();
     JavaPackage rootPackage = new JavaPackage(this);
     setRootPackage(rootPackage);
+    this.emptyTypeVariables = new JavaTypeVariables(this);
   }
 
   @Override
   public JavaType getType(CodePackage parentPackage, String simpleName) {
 
-    // TODO Auto-generated method stub
-    return null;
+    JavaPackage pkg = (JavaPackage) parentPackage;
+    return pkg.getType(simpleName);
   }
 
   @Override
@@ -76,15 +80,6 @@ public class JavaContext extends AbstractCodeContext<JavaType, JavaPackage> {
 
     // TODO Auto-generated method stub
     return null;
-  }
-
-  @Override
-  public JavaType createType(CodeType declaringType, String simpleName) {
-
-    JavaType declaring = (JavaType) declaringType;
-    JavaType type = new JavaType(declaring.getFile(), simpleName);
-    type.setDeclaringType(declaringType);
-    return type;
   }
 
   @Override
@@ -124,4 +119,25 @@ public class JavaContext extends AbstractCodeContext<JavaType, JavaPackage> {
     return null;
   }
 
+  /**
+   * @return an instance of {@link JavaTypeVariables} that is always empty and
+   *         {@link JavaTypeVariables#isImmutable() immutable}.
+   */
+  public JavaTypeVariables getEmptyTypeVariables() {
+
+    return this.emptyTypeVariables;
+  }
+
+  /**
+   * @param javaType the {@link JavaType} that might be {@link JavaType#isPrimitive() primitive}.
+   * @return the corresponding {@link JavaType#getNonPrimitiveType() non-primitive type}.
+   */
+  public JavaType getNonPrimitiveType(JavaType javaType) {
+
+    if (!javaType.isPrimitive()) {
+      return javaType;
+    }
+    // TODO Auto-generated method stub
+    return null;
+  }
 }

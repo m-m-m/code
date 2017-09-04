@@ -4,6 +4,7 @@ package net.sf.mmm.code.impl.java.member;
 
 import net.sf.mmm.code.api.arg.CodeReturn;
 import net.sf.mmm.code.api.member.CodeMethod;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.impl.java.type.JavaType;
 
 /**
@@ -30,10 +31,18 @@ public class JavaMethod extends JavaOperation implements CodeMethod {
    * The copy-constructor.
    *
    * @param template the {@link JavaMethod} to copy.
+   * @param declaringType the {@link #getDeclaringType()}.
    */
-  public JavaMethod(JavaMethod template) {
+  public JavaMethod(JavaMethod template, JavaType declaringType) {
 
-    super(template);
+    super(template, declaringType);
+  }
+
+  @Override
+  protected void doSetImmutable() {
+
+    super.doSetImmutable();
+    this.returns.setImmutable();
   }
 
   @Override
@@ -47,6 +56,23 @@ public class JavaMethod extends JavaOperation implements CodeMethod {
 
     verifyMutalbe();
     this.returns = returns;
+  }
+
+  @Override
+  public void setName(String name) {
+
+    String oldName = getName();
+    super.setName(name);
+    if (oldName.equals(name)) {
+      return;
+    }
+    getDeclaringType().getProperties().rename(this, oldName);
+  }
+
+  @Override
+  public JavaMethod copy(CodeType newDeclaringType) {
+
+    return new JavaMethod(this, (JavaType) newDeclaringType);
   }
 
 }

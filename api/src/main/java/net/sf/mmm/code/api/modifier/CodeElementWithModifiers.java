@@ -3,6 +3,7 @@
 package net.sf.mmm.code.api.modifier;
 
 import net.sf.mmm.code.api.element.CodeElement;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
@@ -23,5 +24,8 @@ public abstract interface CodeElementWithModifiers extends CodeElement {
    * @throws ReadOnlyException if {@link #isImmutable() immutable}.
    */
   void setModifiers(CodeModifiers modifiers);
+
+  @Override
+  CodeElementWithModifiers copy(CodeType newDeclaringType);
 
 }

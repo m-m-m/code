@@ -3,6 +3,7 @@
 package net.sf.mmm.code.impl.java.arg;
 
 import net.sf.mmm.code.api.arg.CodeException;
+import net.sf.mmm.code.api.member.CodeMember;
 import net.sf.mmm.code.impl.java.member.JavaMember;
 
 /**
@@ -27,10 +28,17 @@ public class JavaException extends JavaOperationArg implements CodeException {
    * The copy-constructor.
    *
    * @param template the {@link JavaException} to copy.
+   * @param declaringMember the {@link #getDeclaringMember() declaring member}.
    */
-  public JavaException(JavaException template) {
+  public JavaException(JavaException template, JavaMember declaringMember) {
 
-    super(template);
+    super(template, declaringMember);
+  }
+
+  @Override
+  public JavaException copy(CodeMember newDeclaringMember) {
+
+    return new JavaException(this, (JavaMember) newDeclaringMember);
   }
 
 }

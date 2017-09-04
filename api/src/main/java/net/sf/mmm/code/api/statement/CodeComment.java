@@ -5,7 +5,7 @@ package net.sf.mmm.code.api.statement;
 import java.util.List;
 
 /**
- * TODO: this class ...
+ * {@link CodeStatement} for a comment.
  *
  * @author hohwille
  * @since 1.0.0

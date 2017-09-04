@@ -7,7 +7,9 @@ import java.util.List;
 import net.sf.mmm.code.api.arg.CodeException;
 import net.sf.mmm.code.api.arg.CodeParameter;
 import net.sf.mmm.code.api.statement.CodeBody;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.api.type.CodeTypeVariables;
+import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
  * Abstract interface for an invokable operation such as a {@link CodeMethod} or {@link CodeConstructor}.
@@ -36,8 +38,17 @@ public abstract interface CodeOperation extends CodeMember {
   CodeBody getBody();
 
   /**
+   * @param body the new {@link #getBody() body}.
+   * @throws ReadOnlyException if {@link #isImmutable() immutable}.
+   */
+  void setBody(CodeBody body);
+
+  /**
    * @return the {@link CodeTypeVariables} containing the {@link net.sf.mmm.code.api.type.CodeTypeVariable}s.
    */
   CodeTypeVariables getTypeVariables();
+
+  @Override
+  CodeOperation copy(CodeType newDeclaringType);
 
 }

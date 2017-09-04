@@ -28,6 +28,17 @@ public abstract class JavaItemWithComment extends JavaItem implements CodeItemWi
     super(context);
   }
 
+  /**
+   * The copy-constructor.
+   *
+   * @param template the {@link JavaItemWithComment} to copy.
+   */
+  public JavaItemWithComment(JavaItemWithComment template) {
+
+    super(template);
+    this.comment = template.comment; // TODO copy?
+  }
+
   @Override
   public CodeComment getComment() {
 

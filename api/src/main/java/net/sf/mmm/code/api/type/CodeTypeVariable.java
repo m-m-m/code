@@ -2,23 +2,23 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.type;
 
-import net.sf.mmm.code.api.CodeGenericType;
 import net.sf.mmm.code.api.element.CodeElementWithName;
+import net.sf.mmm.code.api.item.CodeItemWithDeclaringOperation;
 import net.sf.mmm.code.api.member.CodeOperation;
 
 /**
- * Abstract top-level interface for any item of code as defined by this API. It reflects code structure.
+ * {@link CodeGenericType} representing a type variable. It is a variable as a placeholder for a
+ * {@link CodeGenericType generic} {@link CodeType type}.
+ *
+ * @see java.lang.reflect.TypeVariable
+ * @see CodeType#getTypeVariables()
+ * @see CodeGenericType#asTypeVariable()
+ * @see CodeTypeVariables
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract interface CodeTypeVariable extends CodeGenericType, CodeElementWithName {
-
-  /**
-   * @return the {@link CodeOperation} declaring this type variable or {@code null} if
-   *         {@link #getDeclaringType() declared by a type}.
-   */
-  CodeOperation getDeclaringOperation();
+public abstract interface CodeTypeVariable extends CodeGenericType, CodeElementWithName, CodeItemWithDeclaringOperation {
 
   /**
    * @return {@code true} if this type variable extends a given type (e.g. "{@code T extends String}"),
@@ -51,4 +51,11 @@ public abstract interface CodeTypeVariable extends CodeGenericType, CodeElementW
   @Deprecated
   @Override
   CodeTypeVariables getTypeVariables();
+
+  @Override
+  CodeTypeVariable copy(CodeType newDeclaringType);
+
+  @Override
+  CodeTypeVariable copy(CodeOperation newDeclaringOperation);
+
 }

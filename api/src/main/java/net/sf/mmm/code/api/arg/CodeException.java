@@ -2,6 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.arg;
 
+import net.sf.mmm.code.api.member.CodeMember;
 import net.sf.mmm.code.api.member.CodeOperation;
 
 /**
@@ -14,5 +15,8 @@ import net.sf.mmm.code.api.member.CodeOperation;
  * @since 1.0.0
  */
 public interface CodeException extends CodeOperationArg {
+
+  @Override
+  CodeException copy(CodeMember newDeclaringMemeber);
 
 }

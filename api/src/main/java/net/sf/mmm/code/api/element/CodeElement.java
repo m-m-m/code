@@ -2,13 +2,12 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.element;
 
-import java.util.List;
-
-import net.sf.mmm.code.api.CodeAnnotation;
+import net.sf.mmm.code.api.annotation.CodeAnnotations;
 import net.sf.mmm.code.api.doc.CodeDoc;
 import net.sf.mmm.code.api.item.CodeItemWithComment;
 import net.sf.mmm.code.api.item.CodeItemWithDeclaringType;
 import net.sf.mmm.code.api.item.CodeItemWithType;
+import net.sf.mmm.code.api.type.CodeType;
 
 /**
  * {@link CodeItemWithType} that might be {@link #getAnnotations() annotated} or {@link #getDoc() documented}.
@@ -25,8 +24,12 @@ public abstract interface CodeElement extends CodeItemWithComment, CodeItemWithD
   CodeDoc getDoc();
 
   /**
-   * @return a {@link List} with the {@link CodeAnnotation}s of this element.
+   * @return the {@link CodeAnnotations} with the {@link net.sf.mmm.code.api.annotation.CodeAnnotation}s of
+   *         this element.
    */
-  List<CodeAnnotation> getAnnotations();
+  CodeAnnotations getAnnotations();
+
+  @Override
+  CodeElement copy(CodeType newDeclaringType);
 
 }

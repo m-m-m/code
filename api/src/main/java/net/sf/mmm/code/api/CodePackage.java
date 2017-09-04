@@ -33,4 +33,21 @@ public interface CodePackage extends CodeElementWithQualifiedName {
    */
   boolean isRequireImport();
 
+  /**
+   * @deprecated use {@link #copy(CodePackage)}
+   */
+  @Deprecated
+  @Override
+  default CodePackage copy(CodeType newDeclaringType) {
+
+    return copy(getParentPackage());
+  }
+
+  /**
+   * @param newParentPackage the new {@link #getParentPackage() parent package}.
+   * @return a new {@link #isImmutable() mutable} copy.
+   * @see #copy(CodeType)
+   */
+  CodePackage copy(CodePackage newParentPackage);
+
 }

@@ -2,6 +2,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.element;
 
+import net.sf.mmm.code.api.item.CodeItemWithName;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
@@ -10,17 +12,15 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract interface CodeElementWithName extends CodeElement {
-
-  /**
-   * @return the name of this element.
-   */
-  String getName();
+public abstract interface CodeElementWithName extends CodeElement, CodeItemWithName {
 
   /**
    * @param name the new {@link #getName() name}.
    * @throws ReadOnlyException if {@link #isImmutable() immutable}.
    */
   void setName(String name);
+
+  @Override
+  CodeElementWithName copy(CodeType newDeclaringType);
 
 }

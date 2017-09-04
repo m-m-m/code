@@ -32,10 +32,11 @@ public abstract class JavaMembers<M extends CodeMember> extends JavaItemContaine
    * The copy-constructor.
    *
    * @param template the {@link JavaMembers} to copy.
+   * @param declaringType the {@link #getDeclaringType()}.
    */
-  public JavaMembers(JavaMembers<M> template) {
+  public JavaMembers(JavaMembers<M> template, JavaType declaringType) {
 
-    super(template);
+    super(template, declaringType);
   }
 
   @Override

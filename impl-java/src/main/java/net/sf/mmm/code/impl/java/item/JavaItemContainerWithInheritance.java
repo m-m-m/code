@@ -5,6 +5,7 @@ package net.sf.mmm.code.impl.java.item;
 import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.item.CodeItemContainerWithInheritance;
 import net.sf.mmm.code.api.item.CodeItemWithComment;
+import net.sf.mmm.code.impl.java.JavaContext;
 import net.sf.mmm.code.impl.java.type.JavaType;
 
 /**
@@ -14,8 +15,17 @@ import net.sf.mmm.code.impl.java.type.JavaType;
  * @param <I> the type of the contained {@link JavaItem}s.
  * @since 1.0.0
  */
-public abstract class JavaItemContainerWithInheritance<I extends CodeItem> extends JavaItemContainerWithDeclaringType<I>
-    implements CodeItemContainerWithInheritance<I> {
+public abstract class JavaItemContainerWithInheritance<I extends CodeItem> extends JavaItemContainer<I> implements CodeItemContainerWithInheritance<I> {
+
+  /**
+   * The constructor.
+   *
+   * @param context the {@link #getContext() context}.
+   */
+  protected JavaItemContainerWithInheritance(JavaContext context) {
+
+    super(context);
+  }
 
   /**
    * The constructor.
@@ -31,10 +41,11 @@ public abstract class JavaItemContainerWithInheritance<I extends CodeItem> exten
    * The copy-constructor.
    *
    * @param template the {@link JavaItemContainerWithInheritance} to copy.
+   * @param declaringType the {@link #getDeclaringType() declaring type}.
    */
-  public JavaItemContainerWithInheritance(JavaItemContainerWithInheritance<I> template) {
+  public JavaItemContainerWithInheritance(JavaItemContainerWithInheritance<I> template, JavaType declaringType) {
 
-    super(template);
+    super(template, declaringType);
   }
 
 }

@@ -1,15 +1,11 @@
 /* Copyright (c) The m-m-m Team, Licensed under the Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0 */
-package net.sf.mmm.code.api;
+package net.sf.mmm.code.api.type;
 
 import java.io.IOException;
 
-import net.sf.mmm.code.api.element.CodeElementWithQualifiedName;
+import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.item.CodeItem;
-import net.sf.mmm.code.api.type.CodeType;
-import net.sf.mmm.code.api.type.CodeTypeCategory;
-import net.sf.mmm.code.api.type.CodeTypeVariable;
-import net.sf.mmm.code.api.type.CodeTypeVariables;
 
 /**
  * {@link CodeItem} that represents a (potentially generic) type (similar to {@link java.lang.reflect.Type}).
@@ -17,7 +13,7 @@ import net.sf.mmm.code.api.type.CodeTypeVariables;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract interface CodeGenericType extends CodeElementWithQualifiedName {
+public abstract interface CodeGenericType extends CodeElement {
 
   /**
    * @return the raw {@link CodeType}. In case of an {@link #isArray() array} the
@@ -79,18 +75,6 @@ public abstract interface CodeGenericType extends CodeElementWithQualifiedName {
     return asType().getCategory();
   }
 
-  @Override
-  default String getSimpleName() {
-
-    return asType().getSimpleName();
-  }
-
-  @Override
-  default CodePackage getParentPackage() {
-
-    return asType().getParentPackage();
-  }
-
   /**
    * @return {@code true} if this type represents an {@link CodeTypeCategory#INTERFACE interface}.
    */
@@ -136,5 +120,8 @@ public abstract interface CodeGenericType extends CodeElementWithQualifiedName {
    * @throws IOException if thrown by {@link Appendable}.
    */
   void writeReference(Appendable sink, boolean declaration) throws IOException;
+
+  @Override
+  CodeGenericType copy(CodeType newDeclaringType);
 
 }

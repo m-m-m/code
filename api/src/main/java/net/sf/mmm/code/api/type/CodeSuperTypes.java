@@ -5,7 +5,6 @@ package net.sf.mmm.code.api.type;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import net.sf.mmm.code.api.CodeGenericType;
 import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.item.CodeItemContainerWithInheritance;
 
@@ -20,18 +19,12 @@ import net.sf.mmm.code.api.item.CodeItemContainerWithInheritance;
 public abstract interface CodeSuperTypes extends CodeItemContainerWithInheritance<CodeGenericType> {
 
   /**
-   * @return the {@link List} of {@link CodeGenericType generic type}.
-   * @see Class#getTypeParameters()
-   */
-  List<? extends CodeGenericType> getAll();
-
-  /**
    * @return the (first) {@link CodeGenericType#isClass() class} of the {@link CodeType#getSuperTypes() super
    *         types} or {@code null} if none exists.
    */
   default CodeGenericType getSuperClass() {
 
-    for (CodeGenericType type : getAll()) {
+    for (CodeGenericType type : getDeclared()) {
       if (type.isClass()) {
         return type;
       }
@@ -45,12 +38,15 @@ public abstract interface CodeSuperTypes extends CodeItemContainerWithInheritanc
    */
   default List<? extends CodeGenericType> getSuperInterfaces() {
 
-    return getAll().stream().filter(x -> x.isInterface()).collect(Collectors.toList());
+    return getDeclared().stream().filter(x -> x.isInterface()).collect(Collectors.toList());
   }
 
   /**
    * @param superType the {@link CodeGenericType} to add.
    */
   void add(CodeGenericType superType);
+
+  @Override
+  CodeSuperTypes copy(CodeType newDeclaringType);
 
 }

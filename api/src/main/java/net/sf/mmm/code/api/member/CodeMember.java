@@ -15,4 +15,7 @@ import net.sf.mmm.code.api.type.CodeType;
  */
 public abstract interface CodeMember extends CodeElementWithModifiers, CodeElementWithName {
 
+  @Override
+  CodeMember copy(CodeType newDeclaringType);
+
 }

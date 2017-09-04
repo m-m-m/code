@@ -82,13 +82,6 @@ public interface CodeContext {
   CodeType createType(CodePackage parentPackage, String simpleName);
 
   /**
-   * @param declaringType the {@link CodeType#getDeclaringType() declaring type}.
-   * @param simpleName the {@link CodeType#getSimpleName() simple name} of the new {@link CodeType}.
-   * @return a new {@link CodeType#isNested() nested} {@link CodeType}.
-   */
-  CodeType createType(CodeType declaringType, String simpleName);
-
-  /**
    * @return the root {@link CodePackage}.
    */
   CodePackage getRootPackage();
@@ -194,7 +187,7 @@ public interface CodeContext {
     if (owningType.getSimpleName().equals(simpleName)) {
       return owningType.getQualifiedName();
     }
-    List<CodeImport> imports = owningType.getFile().getImports();
+    List<? extends CodeImport> imports = owningType.getFile().getImports();
     char separator = getPackageSeparator();
     String suffix = separator + simpleName;
     for (CodeImport imp : imports) {

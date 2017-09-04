@@ -31,6 +31,31 @@ public abstract class JavaItemWithQualifiedName extends JavaItemWithComment impl
     this.simpleName = simpleName;
   }
 
+  /**
+   * The copy-constructor.
+   *
+   * @param template the {@link JavaItemWithQualifiedName} to copy.
+   */
+  public JavaItemWithQualifiedName(JavaItemWithQualifiedName template) {
+
+    super(template);
+    this.parentPackage = template.parentPackage;
+    this.simpleName = template.simpleName;
+  }
+
+  /**
+   * The copy-constructor.
+   *
+   * @param template the {@link JavaItemWithQualifiedName} to copy.
+   * @param parentPackage the {@link #getParentPackage() parent package}.
+   */
+  public JavaItemWithQualifiedName(JavaItemWithQualifiedName template, JavaPackage parentPackage) {
+
+    super(template);
+    this.parentPackage = parentPackage;
+    this.simpleName = template.simpleName;
+  }
+
   @Override
   public String getSimpleName() {
 

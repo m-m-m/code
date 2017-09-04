@@ -3,7 +3,6 @@
 package net.sf.mmm.code.impl.java.member;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import net.sf.mmm.code.api.member.CodeConstructor;
@@ -37,22 +36,24 @@ public class JavaConstructors extends JavaMembers<CodeConstructor> implements Co
    * The copy-constructor.
    *
    * @param template the {@link JavaConstructors} to copy.
+   * @param declaringType the {@link #getDeclaringType()}.
    */
-  public JavaConstructors(JavaConstructors template) {
+  public JavaConstructors(JavaConstructors template, JavaType declaringType) {
 
-    super(template);
+    super(template, declaringType);
+  }
+
+  @Override
+  protected void doSetImmutable() {
+
+    super.doSetImmutable();
+    this.constructors = makeImmutable(this.constructors);
   }
 
   @Override
   public List<? extends JavaConstructor> getDeclared() {
 
     return this.constructors;
-  }
-
-  @Override
-  public Iterable<? extends JavaConstructor> getInherited() {
-
-    return Collections.emptyList();
   }
 
   @Override
@@ -73,9 +74,16 @@ public class JavaConstructors extends JavaMembers<CodeConstructor> implements Co
   @Override
   public JavaConstructor add() {
 
+    verifyMutalbe();
     JavaConstructor constructor = new JavaConstructor(getDeclaringType());
     this.constructors.add(constructor);
     return constructor;
+  }
+
+  @Override
+  public JavaConstructors copy(CodeType newDeclaringType) {
+
+    return new JavaConstructors(this, (JavaType) newDeclaringType);
   }
 
 }

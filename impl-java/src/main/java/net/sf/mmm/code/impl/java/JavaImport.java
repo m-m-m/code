@@ -85,6 +85,12 @@ public class JavaImport extends JavaItem implements CodeImport, Comparable<JavaI
   }
 
   @Override
+  public void setImmutable() {
+
+    CodeImport.super.setImmutable();
+  }
+
+  @Override
   public String getSource() {
 
     return this.source;

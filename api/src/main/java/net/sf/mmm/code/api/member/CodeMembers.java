@@ -4,6 +4,7 @@ package net.sf.mmm.code.api.member;
 
 import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.item.CodeItemContainerWithInheritance;
+import net.sf.mmm.code.api.type.CodeType;
 
 /**
  * {@link CodeItem} that groups all {@link CodeMember}s of a type.
@@ -13,5 +14,8 @@ import net.sf.mmm.code.api.item.CodeItemContainerWithInheritance;
  * @since 1.0.0
  */
 public abstract interface CodeMembers<M extends CodeMember> extends CodeItemContainerWithInheritance<M> {
+
+  @Override
+  CodeMembers<M> copy(CodeType newDeclaringType);
 
 }

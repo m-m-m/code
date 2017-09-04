@@ -49,6 +49,20 @@ public abstract class JavaElementWithQualifiedName extends JavaElement implement
   }
 
   /**
+   * The copy-constructor.
+   *
+   * @param template the {@link JavaElementWithQualifiedName} to copy.
+   * @param parentPackage the {@link #getParentPackage() parent package}.
+   */
+  public JavaElementWithQualifiedName(JavaElementWithQualifiedName template, JavaPackage parentPackage) {
+
+    super(template);
+    template.lazyInit();
+    this.simpleName = template.simpleName;
+    this.parentPackage = parentPackage;
+  }
+
+  /**
    * @param lazyInit the lazy initializer. Should only be set once directly after construction.
    */
   void setLazyInit(Runnable lazyInit) {
@@ -84,7 +98,6 @@ public abstract class JavaElementWithQualifiedName extends JavaElement implement
   @Override
   public JavaContext getContext() {
 
-    // TODO Auto-generated method stub
     return super.getContext();
   }
 

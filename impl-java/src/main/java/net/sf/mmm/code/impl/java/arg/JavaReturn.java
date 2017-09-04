@@ -3,6 +3,7 @@
 package net.sf.mmm.code.impl.java.arg;
 
 import net.sf.mmm.code.api.arg.CodeReturn;
+import net.sf.mmm.code.api.member.CodeMember;
 import net.sf.mmm.code.impl.java.member.JavaMember;
 
 /**
@@ -27,10 +28,17 @@ public class JavaReturn extends JavaOperationArg implements CodeReturn {
    * The copy-constructor.
    *
    * @param template the {@link JavaReturn} to copy.
+   * @param declaringMember the {@link #getDeclaringMember() declaring member}.
    */
-  public JavaReturn(JavaReturn template) {
+  public JavaReturn(JavaReturn template, JavaMember declaringMember) {
 
-    super(template);
+    super(template, declaringMember);
+  }
+
+  @Override
+  public JavaReturn copy(CodeMember newDeclaringMember) {
+
+    return new JavaReturn(this, (JavaMember) newDeclaringMember);
   }
 
 }

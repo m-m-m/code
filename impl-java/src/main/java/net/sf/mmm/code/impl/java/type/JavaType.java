@@ -3,15 +3,12 @@
 package net.sf.mmm.code.impl.java.type;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
-import net.sf.mmm.code.api.CodeGenericType;
 import net.sf.mmm.code.api.CodePackage;
-import net.sf.mmm.code.api.member.CodeProperties;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.api.statement.CodeStaticBlock;
+import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.api.type.CodeTypeCategory;
 import net.sf.mmm.code.api.type.CodeTypeVariables;
@@ -32,29 +29,31 @@ public class JavaType extends JavaGenericType implements CodeType {
 
   private final JavaFile file;
 
+  private final JavaType declaringType;
+
+  private final JavaSuperTypes superTypes;
+
+  private final JavaTypeVariables typeVariables;
+
+  private final JavaFields fields;
+
+  private final JavaMethods methods;
+
+  private final JavaConstructors constructors;
+
+  private final JavaProperties properties;
+
+  private final JavaNestedTypes nestedTypes;
+
   private String simpleName;
 
   private CodeModifiers modifiers;
 
   private CodeTypeCategory category;
 
-  private JavaType declaringType;
-
-  private JavaSuperTypes superTypes;
-
-  private JavaTypeVariables typeVariables;
-
-  private JavaFields fields;
-
-  private JavaMethods methods;
-
-  private JavaConstructors constructors;
-
-  private JavaProperties properties;
-
-  private List<CodeType> nestedTypes;
-
   private CodeStaticBlock initializer;
+
+  private Runnable lazyInit;
 
   /**
    * The constructor.
@@ -74,39 +73,110 @@ public class JavaType extends JavaGenericType implements CodeType {
    */
   public JavaType(JavaFile file, String simpleName) {
 
+    this(file, simpleName, null);
+  }
+
+  /**
+   * The constructor for a nested type.
+   *
+   * @param file the {@link #getFile() file}.
+   * @param simpleName the {@link #getSimpleName() simple name}.
+   * @param declaringType the {@link #getDeclaringType() declaringType}.
+   */
+  public JavaType(JavaFile file, String simpleName, JavaType declaringType) {
+
     super(file.getContext());
     this.file = file;
+    this.declaringType = declaringType;
     this.simpleName = simpleName;
     this.modifiers = CodeModifiers.MODIFIERS_PUBLIC;
     this.category = CodeTypeCategory.CLASS;
     this.superTypes = new JavaSuperTypes(this);
+    this.nestedTypes = new JavaNestedTypes(this);
     this.typeVariables = new JavaTypeVariables(this);
     this.fields = new JavaFields(this);
     this.methods = new JavaMethods(this);
     this.constructors = new JavaConstructors(this);
-    this.nestedTypes = new ArrayList<>();
+    this.properties = new JavaProperties(this);
   }
 
   /**
    * The copy-constructor.
    *
    * @param template the {@link JavaType} to copy.
+   * @param file the {@link #getFile() file}.
+   * @param declaringType the {@link #getDeclaringType() declaringType}.
    */
-  public JavaType(JavaType template) {
+  public JavaType(JavaType template, JavaFile file, JavaType declaringType) {
 
     super(template);
-    this.category = template.category;
-    this.constructors = copy(template.constructors);
-    this.declaringType = template.declaringType;
-    this.fields = copy(template.fields);
-    this.file = template.file;
-    this.initializer = copy(template.initializer);
-    this.methods = copy(template.methods);
-    this.modifiers = template.modifiers;
-    this.nestedTypes = copy(template.nestedTypes);
+    if (file == null) {
+      this.file = template.file;
+    } else {
+      this.file = file;
+    }
+    if (declaringType == null) {
+      this.declaringType = template.declaringType;
+    } else {
+      this.declaringType = declaringType;
+    }
     this.simpleName = template.simpleName;
-    this.superTypes = copy(template.superTypes);
-    this.typeVariables = copy(template.typeVariables);
+    this.category = template.category;
+    this.initializer = template.initializer;
+    this.modifiers = template.modifiers;
+    this.nestedTypes = template.nestedTypes.copy(this);
+    this.superTypes = template.superTypes.copy(this);
+    this.typeVariables = template.typeVariables.copy(this);
+    this.constructors = template.constructors.copy(this);
+    this.fields = template.fields.copy(this);
+    this.methods = template.methods.copy(this);
+    this.properties = template.properties.copy(this);
+  }
+
+  @Override
+  protected void doSetImmutable() {
+
+    super.doSetImmutable();
+    this.constructors.setImmutable();
+    this.fields.setImmutable();
+    this.methods.setImmutable();
+    this.nestedTypes.setImmutable();
+    this.properties.setImmutable();
+    this.superTypes.setImmutable();
+    this.typeVariables.setImmutable();
+  }
+
+  /**
+   * @param lazyInit the lazy initializer. Should only be set once directly after construction.
+   */
+  void setLazyInit(Runnable lazyInit) {
+
+    this.lazyInit = lazyInit;
+  }
+
+  /**
+   * Runs a potential lazy initializer.
+   */
+  protected void lazyInit() {
+
+    if (this.lazyInit != null) {
+      this.lazyInit.run();
+      this.lazyInit = null;
+    }
+  }
+
+  @Override
+  public void setImmutable() {
+
+    lazyInit();
+    super.setImmutable();
+  }
+
+  @Override
+  protected void verifyMutalbe() {
+
+    lazyInit();
+    super.verifyMutalbe();
   }
 
   @Override
@@ -213,7 +283,7 @@ public class JavaType extends JavaGenericType implements CodeType {
   }
 
   @Override
-  public CodeProperties getProperties() {
+  public JavaProperties getProperties() {
 
     lazyInit();
     return this.properties;
@@ -226,29 +296,21 @@ public class JavaType extends JavaGenericType implements CodeType {
   }
 
   @Override
-  public void setDeclaringType(CodeType declaringType) {
-
-    verifyMutalbe();
-    if (this.declaringType != null) {
-      this.declaringType.getNestedTypes().remove(this);
-    }
-    if (!declaringType.isImmutable()) {
-      declaringType.getNestedTypes().add(this);
-    }
-    this.declaringType = (JavaType) declaringType;
-  }
-
-  @Override
-  public List<CodeType> getNestedTypes() {
+  public JavaNestedTypes getNestedTypes() {
 
     return this.nestedTypes;
   }
 
   @Override
-  public CodeType getNonPrimitiveType() {
+  public JavaType resolve(CodeGenericType context) {
 
-    // TODO Auto-generated method stub
-    return null;
+    return this;
+  }
+
+  @Override
+  public JavaType getNonPrimitiveType() {
+
+    return getContext().getNonPrimitiveType(this);
   }
 
   @Override
@@ -335,6 +397,10 @@ public class JavaType extends JavaGenericType implements CodeType {
   @Override
   protected void doWrite(Appendable sink, String defaultIndent, String currentIndent) throws IOException {
 
+    if (currentIndent == null) {
+      writeReference(sink, true);
+      return;
+    }
     super.doWrite(sink, defaultIndent, currentIndent);
     doWriteDeclaration(sink, currentIndent);
     sink.append(" {");
@@ -343,7 +409,7 @@ public class JavaType extends JavaGenericType implements CodeType {
     this.fields.write(sink, defaultIndent, bodyIndent);
     this.constructors.write(sink, defaultIndent, bodyIndent);
     this.methods.write(sink, defaultIndent, bodyIndent);
-    doWriteNestedTypes(sink, defaultIndent, currentIndent);
+    this.nestedTypes.write(sink, defaultIndent, currentIndent);
     sink.append(currentIndent);
     sink.append("}");
     writeNewline(sink);
@@ -356,16 +422,26 @@ public class JavaType extends JavaGenericType implements CodeType {
     sink.append(getJavaCategory());
     sink.append(' ');
     writeReference(sink, true);
-    getSuperTypes().write(sink, "", "");
+    getSuperTypes().write(sink, null, null);
   }
 
-  private void doWriteNestedTypes(Appendable sink, String defaultIndent, String currentIndent) {
+  @Override
+  public void writeReference(Appendable sink, boolean declaration) throws IOException {
 
-    String childIndent = currentIndent + defaultIndent;
-    for (CodeType child : this.nestedTypes) {
-      writeNewline(sink);
-      child.write(sink, defaultIndent, childIndent);
+    if (isQualified()) {
+      sink.append(getQualifiedName());
+    } else {
+      sink.append(getSimpleName());
     }
+    if (declaration) {
+      getTypeVariables().write(sink, null, null);
+    }
+  }
+
+  @Override
+  public JavaType copy(CodeType newDeclaringType) {
+
+    return new JavaType(this, null, (JavaType) newDeclaringType);
   }
 
 }

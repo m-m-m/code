@@ -2,6 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.arg;
 
+import net.sf.mmm.code.api.member.CodeMember;
 import net.sf.mmm.code.api.member.CodeMethod;
 
 /**
@@ -13,5 +14,8 @@ import net.sf.mmm.code.api.member.CodeMethod;
  * @since 1.0.0
  */
 public interface CodeReturn extends CodeOperationArg {
+
+  @Override
+  CodeReturn copy(CodeMember newDeclaringMemeber);
 
 }

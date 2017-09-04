@@ -33,4 +33,16 @@ public interface CodeImport extends CodeItem {
    */
   List<CodeImportItem> getItems();
 
+  @Override
+  default boolean isImmutable() {
+
+    return true;
+  }
+
+  @Override
+  default void setImmutable() {
+
+    throw new IllegalStateException("Import (" + getClass().getSimpleName() + ") is always immutable!");
+  }
+
 }

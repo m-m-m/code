@@ -2,7 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.item;
 
-import net.sf.mmm.code.api.CodeGenericType;
+import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**

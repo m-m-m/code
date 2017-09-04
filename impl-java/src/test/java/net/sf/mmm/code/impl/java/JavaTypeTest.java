@@ -2,11 +2,12 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.impl.java;
 
+import java.util.List;
+
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import net.sf.mmm.code.api.modifier.CodeModifiers;
-import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.api.type.CodeTypeCategory;
 import net.sf.mmm.code.impl.java.type.JavaType;
 
@@ -39,11 +40,12 @@ public class JavaTypeTest extends Assertions {
     assertThat(type.getModifiers()).isEqualTo(CodeModifiers.MODIFIERS_PUBLIC);
     assertThat(type.getDoc()).isNotNull();
     assertThat(type.getDoc().isEmpty()).isTrue();
-    assertThat(type.getAnnotations()).isEmpty();
+    assertThat(type.getAnnotations().getDeclared()).isEmpty();
     assertThat(type.getFields().getDeclared()).isEmpty();
     assertThat(type.getMethods().getDeclared()).isEmpty();
     assertThat(type.getConstructors().getDeclared()).isEmpty();
-    assertThat(type.getFile().toString()).isEqualTo("package mydomain;\n" + //
+    assertThat(type.getFile().toString()).isEqualTo("MyClass");
+    assertThat(type.getFile().getSourceCode()).isEqualTo("package mydomain;\n" + //
         "\n" + //
         "public class MyClass {\n" + //
         "}\n");
@@ -53,6 +55,7 @@ public class JavaTypeTest extends Assertions {
    * Test of {@link JavaType} with {@link JavaType#getNestedTypes() nested types} of all
    * {@link JavaType#getCategory() categories}.
    */
+  @SuppressWarnings("unchecked")
   @Test
   public void testNestedTypesWithDoc() {
 
@@ -70,14 +73,14 @@ public class JavaTypeTest extends Assertions {
 
     // when
     JavaType classTop = context.createType(pkg, simpleNameTop);
-    JavaType classStaticNested1 = context.createType(classTop, simpleNameNested1);
+    JavaType classStaticNested1 = classTop.getNestedTypes().add(simpleNameNested1);
     classStaticNested1.setModifiers(CodeModifiers.MODIFIERS_PUBLIC_STATIC);
-    JavaType interfacetypeNested2 = context.createType(classTop, simpleNameNested2);
+    JavaType interfacetypeNested2 = classTop.getNestedTypes().add(simpleNameNested2);
     interfacetypeNested2.setCategory(CodeTypeCategory.INTERFACE);
-    JavaType classNested21 = context.createType(interfacetypeNested2, simpleNameNested21);
-    JavaType annotationNested211 = context.createType(classNested21, simpleNameNested211);
+    JavaType classNested21 = interfacetypeNested2.getNestedTypes().add(simpleNameNested21);
+    JavaType annotationNested211 = classNested21.getNestedTypes().add(simpleNameNested211);
     annotationNested211.setCategory(CodeTypeCategory.ANNOTATION);
-    JavaType enumNested212 = context.createType(classNested21, simpleNameNested212);
+    JavaType enumNested212 = classNested21.getNestedTypes().add(simpleNameNested212);
     enumNested212.setCategory(CodeTypeCategory.ENUMERAION);
     addDummyDoc(classTop);
 
@@ -88,10 +91,11 @@ public class JavaTypeTest extends Assertions {
     assertThat(classNested21.getSimpleName()).isEqualTo(simpleNameNested21);
     assertThat(annotationNested211.getSimpleName()).isEqualTo(simpleNameNested211);
     assertThat(enumNested212.getSimpleName()).isEqualTo(simpleNameNested212);
-    assertThat(classTop.getNestedTypes()).containsExactly(classStaticNested1, interfacetypeNested2);
-    assertThat(interfacetypeNested2.getNestedTypes()).containsExactly(classNested21);
-    assertThat(classNested21.getNestedTypes()).containsExactly(annotationNested211, enumNested212);
-    assertThat(classTop.getFile().toString()).isEqualTo("package mydomain;\n" + //
+    assertThat((List<JavaType>) classTop.getNestedTypes().getDeclared()).containsExactly(classStaticNested1, interfacetypeNested2);
+    assertThat((List<JavaType>) interfacetypeNested2.getNestedTypes().getDeclared()).containsExactly(classNested21);
+    assertThat((List<JavaType>) classNested21.getNestedTypes().getDeclared()).containsExactly(annotationNested211, enumNested212);
+    assertThat(classTop.getFile().toString()).isEqualTo("ClassToplevel");
+    assertThat(classTop.getFile().getSourceCode()).isEqualTo("package mydomain;\n" + //
         "\n" + //
         "/** Doc for {@link ClassToplevel}. */\n" + //
         "public class ClassToplevel {\n" + //
@@ -118,10 +122,10 @@ public class JavaTypeTest extends Assertions {
         "}\n");
   }
 
-  private void addDummyDoc(CodeType type) {
+  private void addDummyDoc(JavaType type) {
 
     type.getDoc().getLines().add("Doc for {@link " + type.getSimpleName() + "}.");
-    for (CodeType child : type.getNestedTypes()) {
+    for (JavaType child : type.getNestedTypes().getDeclared()) {
       addDummyDoc(child);
     }
   }

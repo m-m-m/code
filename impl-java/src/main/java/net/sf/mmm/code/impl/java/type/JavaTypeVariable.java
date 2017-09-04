@@ -4,8 +4,9 @@ package net.sf.mmm.code.impl.java.type;
 
 import java.io.IOException;
 
-import net.sf.mmm.code.api.CodeGenericType;
 import net.sf.mmm.code.api.member.CodeOperation;
+import net.sf.mmm.code.api.type.CodeGenericType;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.api.type.CodeTypeVariable;
 import net.sf.mmm.code.api.type.CodeTypeVariables;
 import net.sf.mmm.code.impl.java.member.JavaOperation;
@@ -18,9 +19,9 @@ import net.sf.mmm.code.impl.java.member.JavaOperation;
  */
 public class JavaTypeVariable extends JavaGenericType implements CodeTypeVariable {
 
-  private JavaType declaringType;
+  private final JavaType declaringType;
 
-  private JavaOperation declaringOperation;
+  private final JavaOperation declaringOperation;
 
   private JavaType type;
 
@@ -48,7 +49,7 @@ public class JavaTypeVariable extends JavaGenericType implements CodeTypeVariabl
 
     super(declaringOperation.getContext());
     this.declaringOperation = declaringOperation;
-    this.declaringType = this.declaringType.getDeclaringType();
+    this.declaringType = declaringOperation.getDeclaringType();
     this.type = getContext().getRootType();
   }
 
@@ -56,12 +57,27 @@ public class JavaTypeVariable extends JavaGenericType implements CodeTypeVariabl
    * The copy-constructor.
    *
    * @param template the {@link JavaTypeVariable} to copy.
+   * @param declaringType the {@link #getDeclaringType() declaring type}.
    */
-  public JavaTypeVariable(JavaTypeVariable template) {
+  public JavaTypeVariable(JavaTypeVariable template, JavaType declaringType) {
 
     super(template);
     this.declaringType = template.declaringType;
     this.declaringOperation = template.declaringOperation;
+    this.type = template.type;
+  }
+
+  /**
+   * The copy-constructor.
+   *
+   * @param template the {@link JavaTypeVariable} to copy.
+   * @param declaringOperation the {@link #getDeclaringOperation() declaring operation}.
+   */
+  public JavaTypeVariable(JavaTypeVariable template, JavaOperation declaringOperation) {
+
+    super(template);
+    this.declaringOperation = declaringOperation;
+    this.declaringType = declaringOperation.getDeclaringType();
     this.type = template.type;
   }
 
@@ -85,17 +101,24 @@ public class JavaTypeVariable extends JavaGenericType implements CodeTypeVariabl
   }
 
   @Override
-  public CodeGenericType resolve(CodeGenericType context) {
+  public JavaGenericType resolve(CodeGenericType context) {
 
     // TODO Auto-generated method stub
-    return null;
+    return this;
   }
 
   @Override
   public void writeReference(Appendable sink, boolean declaration) throws IOException {
 
-    // TODO Auto-generated method stub
-
+    sink.append(this.name);
+    if (declaration) {
+      if (isSuper()) {
+        sink.append(" super ");
+      } else {
+        sink.append(" extends ");
+      }
+      this.type.writeReference(sink, false);
+    }
   }
 
   @Override
@@ -149,11 +172,27 @@ public class JavaTypeVariable extends JavaGenericType implements CodeTypeVariabl
     return this.type;
   }
 
+  /**
+   * @deprecated a {@link CodeTypeVariable} can not have {@link CodeTypeVariables}. The result will always be
+   *             empty and {@link #isImmutable() immutable}.
+   */
   @Override
-  public CodeTypeVariables getTypeVariables() {
+  @Deprecated
+  public JavaTypeVariables getTypeVariables() {
 
-    // TODO Auto-generated method stub
-    return null;
+    return getContext().getEmptyTypeVariables();
+  }
+
+  @Override
+  public JavaTypeVariable copy(CodeOperation newDeclaringOperation) {
+
+    return new JavaTypeVariable(this, (JavaOperation) newDeclaringOperation);
+  }
+
+  @Override
+  public JavaTypeVariable copy(CodeType newDeclaringType) {
+
+    return new JavaTypeVariable(this, (JavaType) newDeclaringType);
   }
 
 }

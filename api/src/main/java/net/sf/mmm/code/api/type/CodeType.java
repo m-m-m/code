@@ -5,8 +5,8 @@ package net.sf.mmm.code.api.type;
 import java.util.List;
 
 import net.sf.mmm.code.api.CodeFile;
-import net.sf.mmm.code.api.CodeGenericType;
 import net.sf.mmm.code.api.element.CodeElement;
+import net.sf.mmm.code.api.element.CodeElementWithQualifiedName;
 import net.sf.mmm.code.api.member.CodeConstructors;
 import net.sf.mmm.code.api.member.CodeFields;
 import net.sf.mmm.code.api.member.CodeMethods;
@@ -22,7 +22,7 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeType extends CodeGenericType, CodeElementWithModifiers {
+public interface CodeType extends CodeGenericType, CodeElementWithModifiers, CodeElementWithQualifiedName {
 
   /**
    * @return the {@link CodeFile} {@link CodeFile#getTypes() containing} this type.
@@ -48,6 +48,7 @@ public interface CodeType extends CodeGenericType, CodeElementWithModifiers {
   /**
    * @return the {@link CodeTypeVariables} containing {@link net.sf.mmm.code.api.type.CodeTypeVariable}s.
    */
+  @Override
   CodeTypeVariables getTypeVariables();
 
   /**
@@ -75,13 +76,8 @@ public interface CodeType extends CodeGenericType, CodeElementWithModifiers {
    * @return the {@link CodeType} containing this {@link CodeType} or {@code null} if not a {@link #isNested()
    *         nested type}.
    */
+  @Override
   CodeType getDeclaringType();
-
-  /**
-   * @param declaringType the new {@link #getDeclaringType() declaring type}.
-   * @throws ReadOnlyException if {@link #isImmutable() immutable}.
-   */
-  void setDeclaringType(CodeType declaringType);
 
   /**
    * @return {@code true} if this a nested type (sometimes called "inner class"), {@code false} otherwise
@@ -94,12 +90,10 @@ public interface CodeType extends CodeGenericType, CodeElementWithModifiers {
   }
 
   /**
-   * @return the {@link List} of the {@link #isNested() nested} {@link CodeType}s. May be
-   *         {@link List#isEmpty() empty} but is never {@code null}. This {@link List} is always
-   *         {@link java.util.Collections#unmodifiableCollection(java.util.Collection) unmodifiable}. Create a
-   *         new nested type to add it here.
+   * @return the {@link CodeNestedTypes} containing the {@link #isNested() nested} {@link CodeType}s. May be
+   *         {@link List#isEmpty() empty} but is never {@code null}.
    */
-  List<CodeType> getNestedTypes();
+  CodeNestedTypes getNestedTypes();
 
   /**
    * @return the static initializer block or {@code null} for none.
@@ -162,5 +156,8 @@ public interface CodeType extends CodeGenericType, CodeElementWithModifiers {
 
     return this;
   }
+
+  @Override
+  CodeType copy(CodeType newDeclaringType);
 
 }

@@ -2,12 +2,9 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.impl.java.type;
 
-import java.io.IOException;
-
-import net.sf.mmm.code.api.CodeGenericType;
+import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.impl.java.JavaContext;
 import net.sf.mmm.code.impl.java.element.JavaElement;
-import net.sf.mmm.code.impl.java.element.JavaElementWithQualifiedName;
 
 /**
  * Implementation of {@link CodeGenericType} for Java.
@@ -15,7 +12,7 @@ import net.sf.mmm.code.impl.java.element.JavaElementWithQualifiedName;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class JavaGenericType extends JavaElementWithQualifiedName implements CodeGenericType {
+public abstract class JavaGenericType extends JavaElement implements CodeGenericType {
 
   /**
    * The constructor.
@@ -24,7 +21,7 @@ public abstract class JavaGenericType extends JavaElementWithQualifiedName imple
    */
   public JavaGenericType(JavaContext context) {
 
-    super(context, null, null);
+    super(context);
   }
 
   /**
@@ -51,14 +48,6 @@ public abstract class JavaGenericType extends JavaElementWithQualifiedName imple
   public abstract JavaTypeVariable asTypeVariable();
 
   @Override
-  public void writeReference(Appendable sink, boolean declaration) throws IOException {
-
-    if (isQualified()) {
-      sink.append(getQualifiedName());
-    } else {
-      sink.append(getSimpleName());
-    }
-    getTypeVariables().write(sink, "", "");
-  }
+  public abstract JavaGenericType resolve(CodeGenericType context);
 
 }

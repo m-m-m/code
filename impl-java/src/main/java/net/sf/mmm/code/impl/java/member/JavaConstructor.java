@@ -3,6 +3,7 @@
 package net.sf.mmm.code.impl.java.member;
 
 import net.sf.mmm.code.api.member.CodeConstructor;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.impl.java.type.JavaType;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
@@ -28,10 +29,11 @@ public class JavaConstructor extends JavaOperation implements CodeConstructor {
    * The copy-constructor.
    *
    * @param template the {@link JavaConstructor} to copy.
+   * @param declaringType the {@link #getDeclaringType()}.
    */
-  public JavaConstructor(JavaConstructor template) {
+  public JavaConstructor(JavaConstructor template, JavaType declaringType) {
 
-    super(template);
+    super(template, declaringType);
   }
 
   @Override
@@ -44,6 +46,12 @@ public class JavaConstructor extends JavaOperation implements CodeConstructor {
   public void setName(String name) {
 
     throw new ReadOnlyException(getClass().getSimpleName(), "name");
+  }
+
+  @Override
+  public JavaConstructor copy(CodeType newDeclaringType) {
+
+    return new JavaConstructor(this, (JavaType) newDeclaringType);
   }
 
 }

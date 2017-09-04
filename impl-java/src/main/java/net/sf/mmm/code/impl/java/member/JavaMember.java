@@ -36,12 +36,17 @@ public abstract class JavaMember extends JavaElementWithModifiers implements Cod
    * The copy-constructor.
    *
    * @param template the {@link JavaMember} to copy.
+   * @param declaringType the {@link #getDeclaringType()}.
    */
-  public JavaMember(JavaMember template) {
+  public JavaMember(JavaMember template, JavaType declaringType) {
 
     super(template);
     this.name = template.name;
-    this.declaringType = template.declaringType;
+    if (declaringType == null) {
+      this.declaringType = template.declaringType;
+    } else {
+      this.declaringType = declaringType;
+    }
   }
 
   @Override

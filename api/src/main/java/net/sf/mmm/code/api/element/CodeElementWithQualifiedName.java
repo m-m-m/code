@@ -4,6 +4,7 @@ package net.sf.mmm.code.api.element;
 
 import net.sf.mmm.code.api.item.CodeItemWithQualifiedName;
 import net.sf.mmm.code.api.modifier.CodeElementWithModifiers;
+import net.sf.mmm.code.api.type.CodeType;
 
 /**
  * Combines {@link CodeElementWithModifiers} and {@link CodeItemWithQualifiedName}.
@@ -12,5 +13,8 @@ import net.sf.mmm.code.api.modifier.CodeElementWithModifiers;
  * @since 1.0.0
  */
 public abstract interface CodeElementWithQualifiedName extends CodeElement, CodeItemWithQualifiedName {
+
+  @Override
+  CodeElementWithQualifiedName copy(CodeType newDeclaringType);
 
 }

@@ -37,10 +37,18 @@ public class JavaMethods extends JavaMembers<CodeMethod> implements CodeMethods 
    * The copy-constructor.
    *
    * @param template the {@link JavaMethods} to copy.
+   * @param declaringType the {@link #getDeclaringType()}.
    */
-  public JavaMethods(JavaMethods template) {
+  public JavaMethods(JavaMethods template, JavaType declaringType) {
 
-    super(template);
+    super(template, declaringType);
+  }
+
+  @Override
+  protected void doSetImmutable() {
+
+    super.doSetImmutable();
+    this.methods = makeImmutable(this.methods);
   }
 
   @Override
@@ -50,20 +58,20 @@ public class JavaMethods extends JavaMembers<CodeMethod> implements CodeMethods 
   }
 
   @Override
-  public Iterable<? extends JavaMethod> getInherited() {
-
-    JavaGenericType superClass = getDeclaringType().getSuperTypes().getSuperClass();
-    if (superClass != null) {
-
-    }
-    return null;
-  }
-
-  @Override
   public Iterable<? extends JavaMethod> getAll() {
 
-    // TODO Auto-generated method stub
-    return null;
+    List<JavaMethod> list = new ArrayList<>(this.methods);
+    collectMethods(list);
+    return list;
+  }
+
+  private void collectMethods(List<JavaMethod> list) {
+
+    for (JavaGenericType superType : getDeclaringType().getSuperTypes().getDeclared()) {
+      JavaMethods javaMethods = superType.asType().getMethods();
+      list.addAll(javaMethods.methods);
+      javaMethods.collectMethods(list);
+    }
   }
 
   @Override
@@ -88,6 +96,12 @@ public class JavaMethods extends JavaMembers<CodeMethod> implements CodeMethods 
     method.setReturns(returns);
     this.methods.add(method);
     return method;
+  }
+
+  @Override
+  public JavaMethods copy(CodeType newDeclaringType) {
+
+    return new JavaMethods(this, (JavaType) newDeclaringType);
   }
 
 }

@@ -24,18 +24,8 @@ public interface CodeConstructors extends CodeOperations<CodeConstructor> {
   }
 
   /**
-   * @deprecated constructors can not be inherited. Use {@link #getDeclared()} instead.
-   */
-  @Deprecated
-  @Override
-  default Iterable<? extends CodeConstructor> getInherited() {
-
-    return getDeclared();
-  }
-
-  /**
    * @param name the {@link CodeOperation#getName() name} of the requested {@link CodeOperation}.
-   * @param parameterTypes the {@link net.sf.mmm.code.api.CodeGenericType#asType() raw} {@link CodeType}s
+   * @param parameterTypes the {@link net.sf.mmm.code.api.type.CodeGenericType#asType() raw} {@link CodeType}s
    *        of the {@link CodeOperation#getParameters() parameters}.
    * @return the requested {@link CodeOperation} or {@code null} if not found.
    */
@@ -49,4 +39,8 @@ public interface CodeConstructors extends CodeOperations<CodeConstructor> {
    * @throws ReadOnlyException if {@link #isImmutable() immutable}.
    */
   CodeConstructor add();
+
+  @Override
+  CodeConstructors copy(CodeType newDeclaringType);
+
 }

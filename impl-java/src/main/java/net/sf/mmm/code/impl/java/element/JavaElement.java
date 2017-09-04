@@ -3,15 +3,15 @@
 package net.sf.mmm.code.impl.java.element;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
-import net.sf.mmm.code.api.CodeAnnotation;
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.statement.CodeComment;
 import net.sf.mmm.code.impl.java.JavaContext;
+import net.sf.mmm.code.impl.java.annotation.JavaAnnotations;
 import net.sf.mmm.code.impl.java.doc.JavaDoc;
 import net.sf.mmm.code.impl.java.item.JavaItem;
+import net.sf.mmm.code.impl.java.type.JavaType;
 
 /**
  * Implementation of {@link CodeElement} for Java.
@@ -21,9 +21,9 @@ import net.sf.mmm.code.impl.java.item.JavaItem;
  */
 public abstract class JavaElement extends JavaItem implements CodeElement {
 
-  private List<CodeAnnotation> annotations;
+  private final JavaAnnotations annotations;
 
-  private JavaDoc doc;
+  private final JavaDoc doc;
 
   private CodeComment comment;
 
@@ -35,7 +35,8 @@ public abstract class JavaElement extends JavaItem implements CodeElement {
   public JavaElement(JavaContext context) {
 
     super(context);
-    this.annotations = new ArrayList<>();
+    this.doc = new JavaDoc(this);
+    this.annotations = new JavaAnnotations(this);
   }
 
   /**
@@ -48,20 +49,17 @@ public abstract class JavaElement extends JavaItem implements CodeElement {
     super(template);
     this.doc = template.doc;
     this.comment = template.comment;
-    this.annotations = template.annotations;
+    this.annotations = template.annotations.copy(this);
   }
 
   @Override
   public JavaDoc getDoc() {
 
-    if (this.doc == null) {
-      this.doc = new JavaDoc(this);
-    }
     return this.doc;
   }
 
   @Override
-  public List<CodeAnnotation> getAnnotations() {
+  public JavaAnnotations getAnnotations() {
 
     return this.annotations;
   }
@@ -83,9 +81,12 @@ public abstract class JavaElement extends JavaItem implements CodeElement {
   protected void doSetImmutable() {
 
     super.doSetImmutable();
-    this.annotations = makeImmutable(this.annotations);
-    getDoc().setImmutable();
+    this.annotations.setImmutable();
+    this.doc.setImmutable();
   }
+
+  @Override
+  public abstract JavaType getDeclaringType();
 
   /**
    * @return {@code true} if this element only allows inline {@link #getComment() comments} (without
@@ -142,7 +143,7 @@ public abstract class JavaElement extends JavaItem implements CodeElement {
    */
   protected void doWriteDoc(Appendable sink, String defaultIndent, String currentIndent) {
 
-    if (this.doc != null) {
+    if ((this.doc != null) && !isCommentForceInline()) {
       this.doc.write(sink, defaultIndent, currentIndent);
     }
   }
@@ -156,8 +157,12 @@ public abstract class JavaElement extends JavaItem implements CodeElement {
    */
   protected void doWriteAnnotations(Appendable sink, String defaultIndent, String currentIndent) {
 
-    for (CodeAnnotation annotation : this.annotations) {
-      annotation.write(sink, defaultIndent, currentIndent);
+    if (this.annotations != null) {
+      if (isCommentForceInline()) {
+        this.annotations.write(sink, null, null);
+      } else {
+        this.annotations.write(sink, defaultIndent, currentIndent);
+      }
     }
   }
 

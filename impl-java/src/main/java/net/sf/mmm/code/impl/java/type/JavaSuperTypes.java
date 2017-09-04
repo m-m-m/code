@@ -4,14 +4,19 @@ package net.sf.mmm.code.impl.java.type;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import net.sf.mmm.code.api.CodeGenericType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeSuperTypes;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.impl.java.item.JavaItemContainerWithInheritance;
-import net.sf.mmm.util.collection.base.AbstractIterator;
 
 /**
  * Implementation of {@link CodeSuperTypes} for Java.
@@ -20,6 +25,8 @@ import net.sf.mmm.util.collection.base.AbstractIterator;
  * @since 1.0.0
  */
 public class JavaSuperTypes extends JavaItemContainerWithInheritance<CodeGenericType> implements CodeSuperTypes {
+
+  private static final Logger LOG = LoggerFactory.getLogger(JavaSuperTypes.class);
 
   private List<JavaGenericType> superTypes;
 
@@ -38,24 +45,18 @@ public class JavaSuperTypes extends JavaItemContainerWithInheritance<CodeGeneric
    * The copy-constructor.
    *
    * @param template the {@link JavaSuperTypes} to copy.
+   * @param declaringType the {@link #getDeclaringType() declaring type}.
    */
-  public JavaSuperTypes(JavaSuperTypes template) {
+  public JavaSuperTypes(JavaSuperTypes template, JavaType declaringType) {
 
-    super(template);
+    super(template, declaringType);
   }
 
   @Override
-  public List<? extends JavaGenericType> getAll() {
+  protected void doSetImmutable() {
 
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public void add(CodeGenericType superType) {
-
-    verifyMutalbe();
-    this.superTypes.add((JavaGenericType) superType);
+    super.doSetImmutable();
+    this.superTypes = Collections.unmodifiableList(this.superTypes);
   }
 
   @Override
@@ -65,10 +66,26 @@ public class JavaSuperTypes extends JavaItemContainerWithInheritance<CodeGeneric
   }
 
   @Override
-  public Iterable<? extends JavaGenericType> getInherited() {
+  public Iterable<? extends JavaGenericType> getAll() {
 
-    // TODO Auto-generated method stub
-    return null;
+    Set<JavaGenericType> set = new HashSet<>();
+    collectSuperTypes(set);
+    return set;
+  }
+
+  private void collectSuperTypes(Set<JavaGenericType> set) {
+
+    set.addAll(this.superTypes);
+    for (JavaGenericType superType : this.superTypes) {
+      superType.asType().getSuperTypes().collectSuperTypes(set);
+    }
+  }
+
+  @Override
+  public void add(CodeGenericType superType) {
+
+    verifyMutalbe();
+    this.superTypes.add((JavaGenericType) superType);
   }
 
   @Override
@@ -96,7 +113,6 @@ public class JavaSuperTypes extends JavaItemContainerWithInheritance<CodeGeneric
   @Override
   protected void doWrite(Appendable sink, String defaultIndent, String currentIndent) throws IOException {
 
-    // TODO Auto-generated method stub
     String keywordInherit;
     JavaType declaringType = getDeclaringType();
     if (declaringType.isInterface()) {
@@ -104,8 +120,13 @@ public class JavaSuperTypes extends JavaItemContainerWithInheritance<CodeGeneric
     } else {
       CodeGenericType superClass = getSuperClass();
       if (superClass != null) {
-        sink.append(" extends ");
-        superClass.writeReference(sink, false);
+        if (declaringType.isClass()) {
+          sink.append(" extends ");
+          superClass.writeReference(sink, false);
+        } else {
+          LOG.warn("Illegal {} {}: can not have super-class {}.", declaringType.getCategory(), declaringType.getSimpleName(),
+              superClass.asType().getSimpleName());
+        }
       }
       keywordInherit = " implements ";
     }
@@ -118,43 +139,10 @@ public class JavaSuperTypes extends JavaItemContainerWithInheritance<CodeGeneric
     }
   }
 
-  private static class SuperTypeIterator extends AbstractIterator<JavaGenericType> {
+  @Override
+  public JavaSuperTypes copy(CodeType newDeclaringType) {
 
-    private Iterator<JavaGenericType> superTypeIterator;
-
-    private JavaType type;
-
-    private Iterator<JavaGenericType> currentIterator;
-
-    private SuperTypeIterator(JavaType type) {
-
-      super();
-      this.type = type;
-      this.superTypeIterator = type.getSuperTypes().superTypes.iterator();
-      this.currentIterator = type.getSuperTypes().superTypes.iterator();
-      findFirst();
-    }
-
-    @Override
-    protected JavaGenericType findNext() {
-
-      if (this.currentIterator == null) {
-        return null;
-      }
-      if (this.currentIterator.hasNext()) {
-        return this.currentIterator.next();
-      }
-      if (this.superTypeIterator.hasNext()) {
-
-      }
-      // JavaGenericType superTypes = this.type.getSuperTypes().superTypes;
-      // if (superClass == null) {
-      // return null;
-      // }
-      // this.type = superClass.asType();
-      // this.currentIterator = this.type.getFields().fields.iterator();
-      return findNext();
-    }
+    return new JavaSuperTypes(this, (JavaType) newDeclaringType);
   }
 
 }

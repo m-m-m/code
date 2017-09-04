@@ -5,6 +5,7 @@ package net.sf.mmm.code.api;
 import java.util.List;
 
 import net.sf.mmm.code.api.imports.CodeImport;
+import net.sf.mmm.code.api.item.CodeItemWithDeclaringType;
 import net.sf.mmm.code.api.item.CodeItemWithQualifiedName;
 import net.sf.mmm.code.api.type.CodeType;
 
@@ -26,7 +27,7 @@ public abstract interface CodeFile extends CodeItemWithQualifiedName {
    */
   default CodeType getType() {
 
-    List<CodeType> types = getTypes();
+    List<? extends CodeType> types = getTypes();
     if (types.isEmpty()) {
       return null;
     }
@@ -37,42 +38,29 @@ public abstract interface CodeFile extends CodeItemWithQualifiedName {
    * @return the {@link List} with all {@link CodeType#isNested() top-level} {@link CodeType}s contained in
    *         this file. For clean Java code this should be only one single type.
    */
-  List<CodeType> getTypes();
+  List<? extends CodeType> getTypes();
 
   /**
    * @return the {@link List} of {@link CodeImport}s. May be {@link List#isEmpty() empty} but is never
    *         {@code null}.
    */
-  List<CodeImport> getImports();
+  List<? extends CodeImport> getImports();
 
   /**
    * @param type the {@link CodeType} to import.
    */
-  default void addImport(CodeType type) {
-
-    CodePackage pkg = type.getParentPackage();
-    if (!pkg.isRequireImport()) {
-      return;
-    }
-    // this is specific for Java, e.g. for TypeScript you need to override.
-    CodePackage myPkg = getParentPackage();
-    if ((pkg == myPkg) || pkg.getQualifiedName().equals(myPkg.getQualifiedName())) {
-      return;
-    }
-    String name = type.getQualifiedName();
-    List<CodeImport> imports = getImports();
-    for (CodeImport imp : imports) {
-      if (!imp.isStatic() && imp.getSource().equals(name)) {
-        return;
-      }
-    }
-    CodeImport imp = getContext().createImport(type);
-    imports.add(imp);
-  }
+  void addImport(CodeType type);
 
   /**
    * @return the {@link CodeContext} owning this file. Never {@code null}.
    */
   CodeContext getContext();
+
+  /**
+   * @param newParentPackage the new {@link #getParentPackage() parent package}.
+   * @return a new {@link #isImmutable() mutable} copy.
+   * @see CodeItemWithDeclaringType#copy(CodeType)
+   */
+  CodeFile copy(CodePackage newParentPackage);
 
 }
