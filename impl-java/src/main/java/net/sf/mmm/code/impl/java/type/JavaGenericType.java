@@ -3,7 +3,6 @@
 package net.sf.mmm.code.impl.java.type;
 
 import net.sf.mmm.code.api.type.CodeGenericType;
-import net.sf.mmm.code.impl.java.JavaContext;
 import net.sf.mmm.code.impl.java.element.JavaElement;
 
 /**
@@ -16,18 +15,16 @@ public abstract class JavaGenericType extends JavaElement implements CodeGeneric
 
   /**
    * The constructor.
-   *
-   * @param context the {@link #getContext() context}.
    */
-  public JavaGenericType(JavaContext context) {
+  public JavaGenericType() {
 
-    super(context);
+    super();
   }
 
   /**
    * The copy-constructor.
    *
-   * @param template the {@link JavaElement} to copy.
+   * @param template the {@link JavaGenericType} to copy.
    */
   public JavaGenericType(JavaGenericType template) {
 
@@ -45,7 +42,40 @@ public abstract class JavaGenericType extends JavaElement implements CodeGeneric
   public abstract JavaType asType();
 
   @Override
-  public abstract JavaTypeVariable asTypeVariable();
+  public JavaTypeVariable asTypeVariable() {
+
+    return null;
+  }
+
+  @Override
+  public JavaComposedType asComposedType() {
+
+    return null;
+  }
+
+  @Override
+  public JavaTypeVariables getTypeVariables() {
+
+    return JavaTypeVariables.EMPTY;
+  }
+
+  @Override
+  public JavaGenericType getComponentType() {
+
+    return null;
+  }
+
+  @Override
+  public boolean isArray() {
+
+    return false;
+  }
+
+  @Override
+  public boolean isQualified() {
+
+    return false;
+  }
 
   @Override
   public abstract JavaGenericType resolve(CodeGenericType context);

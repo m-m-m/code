@@ -6,12 +6,18 @@ import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
- * Represents a {@link java.lang.reflect.Constructor} of a {@link CodeType}.
+ * {@link CodeOperation} representing a constructor of a {@link CodeType}.
  *
+ * @see CodeType#getConstructors()
+ * @see CodeConstructors#getAll()
+ * @see java.lang.reflect.Constructor
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
 public interface CodeConstructor extends CodeOperation {
+
+  @Override
+  CodeConstructors getParent();
 
   /**
    * @deprecated the {@link #getName() name} of a {@link CodeConstructor} has to be equal to the
@@ -26,6 +32,6 @@ public interface CodeConstructor extends CodeOperation {
   }
 
   @Override
-  CodeConstructor copy(CodeType newDeclaringType);
+  CodeConstructor copy();
 
 }

@@ -2,9 +2,10 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.impl.java.element;
 
+import java.util.Objects;
+
 import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.element.CodeElementWithQualifiedName;
-import net.sf.mmm.code.impl.java.JavaContext;
 import net.sf.mmm.code.impl.java.JavaPackage;
 
 /**
@@ -24,13 +25,12 @@ public abstract class JavaElementWithQualifiedName extends JavaElement implement
   /**
    * The constructor.
    *
-   * @param context the {@link #getContext() context}.
    * @param parentPackage the {@link #getParentPackage() parent package}.
    * @param simpleName the {@link #getSimpleName() simple name}.
    */
-  public JavaElementWithQualifiedName(JavaContext context, JavaPackage parentPackage, String simpleName) {
+  public JavaElementWithQualifiedName(JavaPackage parentPackage, String simpleName) {
 
-    super(context);
+    super();
     this.parentPackage = parentPackage;
     this.simpleName = simpleName;
   }
@@ -43,7 +43,6 @@ public abstract class JavaElementWithQualifiedName extends JavaElement implement
   public JavaElementWithQualifiedName(JavaElementWithQualifiedName template) {
 
     super(template);
-    template.lazyInit();
     this.simpleName = template.simpleName;
     this.parentPackage = template.parentPackage;
   }
@@ -96,12 +95,6 @@ public abstract class JavaElementWithQualifiedName extends JavaElement implement
   }
 
   @Override
-  public JavaContext getContext() {
-
-    return super.getContext();
-  }
-
-  @Override
   public String getSimpleName() {
 
     return this.simpleName;
@@ -124,6 +117,41 @@ public abstract class JavaElementWithQualifiedName extends JavaElement implement
   public void setParentPackage(CodePackage parentPackage) {
 
     verifyMutalbe();
-    this.parentPackage = (JavaPackage) parentPackage;
+    if (this.parentPackage == parentPackage) {
+      return;
+    }
+    doSetParentPackage((JavaPackage) parentPackage);
+  }
+
+  /**
+   * Internal variant of {@link #setParentPackage(CodePackage)}.
+   *
+   * @param parentPkg the new {@link #getParentPackage() parent package}.
+   */
+  protected void doSetParentPackage(JavaPackage parentPkg) {
+
+    this.parentPackage = parentPkg;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+
+    if (obj == this) {
+      return true;
+    }
+    if (!super.equals(obj)) {
+      return false;
+    }
+    JavaElementWithQualifiedName other = (JavaElementWithQualifiedName) obj;
+    if (!Objects.equals(getQualifiedName(), other.getQualifiedName())) {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+
+    return Objects.hashCode(getQualifiedName());
   }
 }

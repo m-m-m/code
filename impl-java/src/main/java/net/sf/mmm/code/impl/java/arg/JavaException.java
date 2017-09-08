@@ -3,8 +3,8 @@
 package net.sf.mmm.code.impl.java.arg;
 
 import net.sf.mmm.code.api.arg.CodeException;
-import net.sf.mmm.code.api.member.CodeMember;
-import net.sf.mmm.code.impl.java.member.JavaMember;
+import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
+import net.sf.mmm.code.impl.java.type.JavaType;
 
 /**
  * Implementation of {@link CodeException} for Java.
@@ -12,33 +12,55 @@ import net.sf.mmm.code.impl.java.member.JavaMember;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaException extends JavaOperationArg implements CodeException {
+public class JavaException extends JavaOperationArg implements CodeException, CodeNodeItemWithGenericParent<JavaExceptions, JavaException> {
+
+  private final JavaExceptions parent;
 
   /**
    * The constructor.
    *
-   * @param declaringMember the {@link #getDeclaringMember() declaring member}.
+   * @param parent the {@link #getParent() parent}.
    */
-  public JavaException(JavaMember declaringMember) {
+  public JavaException(JavaExceptions parent) {
 
-    super(declaringMember);
+    super();
+    this.parent = parent;
   }
 
   /**
    * The copy-constructor.
    *
    * @param template the {@link JavaException} to copy.
-   * @param declaringMember the {@link #getDeclaringMember() declaring member}.
+   * @param parent the {@link #getParent() parent}.
    */
-  public JavaException(JavaException template, JavaMember declaringMember) {
+  public JavaException(JavaException template, JavaExceptions parent) {
 
-    super(template, declaringMember);
+    super(template);
+    this.parent = parent;
   }
 
   @Override
-  public JavaException copy(CodeMember newDeclaringMember) {
+  public JavaExceptions getParent() {
 
-    return new JavaException(this, (JavaMember) newDeclaringMember);
+    return this.parent;
+  }
+
+  @Override
+  public JavaType getDeclaringType() {
+
+    return getParent().getDeclaringType();
+  }
+
+  @Override
+  public JavaException copy() {
+
+    return copy(this.parent);
+  }
+
+  @Override
+  public JavaException copy(JavaExceptions newParent) {
+
+    return new JavaException(this, newParent);
   }
 
 }

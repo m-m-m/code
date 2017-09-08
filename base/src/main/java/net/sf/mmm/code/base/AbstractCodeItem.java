@@ -38,10 +38,10 @@ public abstract class AbstractCodeItem implements CodeItem {
   }
 
   @Override
-  public void write(Appendable sink, String defaultIndent, String currentIndent) {
+  public void write(Appendable sink, String newline, String defaultIndent, String currentIndent) {
 
     try {
-      doWrite(sink, defaultIndent, currentIndent);
+      doWrite(sink, newline, defaultIndent, currentIndent);
     } catch (IOException e) {
       throw new RuntimeIoException(e, IoMode.WRITE);
     }
@@ -51,20 +51,21 @@ public abstract class AbstractCodeItem implements CodeItem {
    * @see #write(Appendable, String, String)
    * @param sink the {@link Appendable} where to {@link Appendable#append(CharSequence) append} the code from
    *        this {@link CodeItem}.
+   * @param newline the newline {@link String}.
    * @param defaultIndent the {@link String} used for indentation (e.g. a number of spaces to insert per
    *        indent level).
    * @param currentIndent the current indent (number of spaces). Initially the empty string ({@code ""}).
    *        Before a recursion the {@code indent} will be appended.
    * @throws IOException if thrown by {@link Appendable}.
    */
-  protected abstract void doWrite(Appendable sink, String defaultIndent, String currentIndent) throws IOException;
+  protected abstract void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException;
 
   @Override
   public String toString() {
 
     try {
       StringBuilder buffer = new StringBuilder();
-      doWrite(buffer, null, null);
+      doWrite(buffer, DEFAULT_NEWLINE, null, null);
       return buffer.toString();
     } catch (Exception e) {
       LOG.debug("{}.toString() failed!", getClass().getSimpleName(), e);

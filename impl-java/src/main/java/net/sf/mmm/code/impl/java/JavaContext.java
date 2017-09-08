@@ -2,16 +2,11 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.impl.java;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import net.sf.mmm.code.api.CodePackage;
-import net.sf.mmm.code.api.type.CodeType;
-import net.sf.mmm.code.base.AbstractCodeContext;
+import net.sf.mmm.code.api.CodeContext;
+import net.sf.mmm.code.impl.java.source.JavaSource;
 import net.sf.mmm.code.impl.java.type.JavaType;
-import net.sf.mmm.code.impl.java.type.JavaTypeVariables;
 
 /**
  * Implementation of {@link net.sf.mmm.code.api.CodeContext} for Java.
@@ -19,113 +14,92 @@ import net.sf.mmm.code.impl.java.type.JavaTypeVariables;
  * @author hohwille
  * @since 1.0.0
  */
-public class JavaContext extends AbstractCodeContext<JavaType, JavaPackage> {
+public abstract class JavaContext extends JavaProvider implements CodeContext {
 
-  private static final Set<String> JAVA_PRIMITIVE_TYPES = new HashSet<>(Arrays.asList("void", "boolean", "int", "long", "char", "float", "double"));
+  private final JavaLoader loader;
 
-  private static final Set<String> JAVA_LANG_TYPES = new HashSet<>(Arrays.asList("AbstractMethodError", "AbstractStringBuilder", "Appendable",
-      "ArithmeticException", "ArrayIndexOutOfBoundsException", "ArrayStoreException", "AssertionError", "AutoCloseable", "Boolean", "BootstrapMethodError",
-      "Byte", "Character", "CharSequence", "Class", "ClassCastException", "ClassCircularityError", "ClassFormatError", "ClassLoader", "ClassNotFoundException",
-      "ClassValue", "Cloneable", "CloneNotSupportedException", "Comparable", "Compiler", "Deprecated", "Double", "Enum", "EnumConstantNotPresentException",
-      "Error", "Exception", "ExceptionInInitializerError", "Float", "FunctionalInterface", "IllegalAccessError", "IllegalAccessException",
-      "IllegalArgumentException", "IllegalMonitorStateException", "IllegalStateException", "IllegalThreadStateException", "IncompatibleClassChangeError",
-      "IndexOutOfBoundsException", "InheritableThreadLocal", "InstantiationError", "InstantiationException", "Integer", "InternalError", "InterruptedException",
-      "Iterable", "LinkageError", "Long", "Math", "NegativeArraySizeException", "NoClassDefFoundError", "NoSuchFieldError", "NoSuchFieldException",
-      "NoSuchMethodError", "NoSuchMethodException", "NullPointerException", "Number", "NumberFormatException", "Object", "OutOfMemoryError", "Override",
-      "Package", "Process", "ProcessBuilder", "Readable", "ReflectiveOperationException", "Runnable", "Runtime", "RuntimeException", "RuntimePermission",
-      "SafeVarargs", "SecurityException", "SecurityManager", "Short", "StackOverflowError", "StackTraceElement", "StrictMath", "String", "StringBuffer",
-      "StringBuilder", "StringIndexOutOfBoundsException", "SuppressWarnings", "System", "Thread", "ThreadDeath", "ThreadGroup", "ThreadLocal", "Throwable",
-      "TypeNotPresentException", "UnknownError", "UnsatisfiedLinkError", "UnsupportedClassVersionError", "UnsupportedOperationException", "VerifyError",
-      "VirtualMachineError", "Void"));
+  private final JavaSource source;
 
-  private final JavaTypeVariables emptyTypeVariables;
+  private JavaPackage rootPackage;
+
+  private JavaType rootExceptionType;
 
   /**
    * The constructor.
    */
-  public JavaContext() {
+  public JavaContext(JavaLoader loader, JavaSource source) {
 
     super();
-    JavaPackage rootPackage = new JavaPackage(this);
-    setRootPackage(rootPackage);
-    this.emptyTypeVariables = new JavaTypeVariables(this);
+    this.loader = loader;
+    this.source = new JavaSource(this, System.getProperty("java.home"), null); // TODO
+    this.source.setContext(this);
+    JavaPackage superPackage = null; // TODO
+    this.rootPackage = new JavaPackage(this.source, superPackage, null);
   }
 
   @Override
-  public JavaType getType(CodePackage parentPackage, String simpleName) {
+  public abstract JavaContext getParent();
 
-    JavaPackage pkg = (JavaPackage) parentPackage;
-    return pkg.getType(simpleName);
+  @Override
+  public JavaContext getContext() {
+
+    return this;
   }
 
   @Override
-  public JavaType createType(CodePackage parentPackage, String simpleName) {
+  public JavaSource getSource() {
 
-    JavaPackage pkg = (JavaPackage) parentPackage;
-    JavaFile file = new JavaFile(pkg, simpleName);
-    JavaType type = new JavaType(file);
-    file.getTypes().add(type);
-    return type;
+    return this.source;
   }
 
   @Override
-  public List<JavaPackage> getChildPackages(CodePackage pkg) {
+  public JavaPackage getRootPackage() {
 
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public List<JavaType> getChildTypes(CodePackage pkg) {
-
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public JavaPackage getPackage(CodePackage parentPackage, String simpleName) {
-
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  @Override
-  public JavaPackage createPackage(CodePackage parentPackage, String simpleName) {
-
-    JavaPackage parent = (JavaPackage) parentPackage;
-    JavaPackage pkg = new JavaPackage(parent, simpleName);
-    return pkg;
-  }
-
-  @Override
-  public JavaImport createImport(CodeType type) {
-
-    return new JavaImport(this, type.getQualifiedName(), false);
-  }
-
-  @Override
-  public String getQualifiedNameForStandardType(String simpleName, boolean omitStandardPackages) {
-
-    if (JAVA_LANG_TYPES.contains(simpleName)) {
-      if (omitStandardPackages) {
-        return simpleName;
-      } else {
-        return "java.lang." + simpleName;
-      }
-    }
-    if (JAVA_PRIMITIVE_TYPES.contains(simpleName)) {
-      return simpleName;
-    }
-    return null;
+    return this.rootPackage;
   }
 
   /**
-   * @return an instance of {@link JavaTypeVariables} that is always empty and
-   *         {@link JavaTypeVariables#isImmutable() immutable}.
+   * @return the {@link JavaSource#getToplevelPackage() top-level package}.
    */
-  public JavaTypeVariables getEmptyTypeVariables() {
+  public JavaPackage getToplevelPackage() {
 
-    return this.emptyTypeVariables;
+    JavaPackage pkg = this.rootPackage;
+    boolean todo = true;
+    while (todo) {
+      todo = false;
+      List<JavaPathElement> children = pkg.getChildren().getList();
+      if (children.size() == 1) {
+        JavaPathElement child = children.get(0);
+        if (child.isFile()) {
+          pkg = (JavaPackage) child;
+          todo = true;
+        }
+      }
+    }
+    return pkg;
+  }
+
+  JavaLoader getLoader() {
+
+    return this.loader;
+  }
+
+  @Override
+  public JavaType getRootType() {
+
+    return getParent().getRootType();
+  }
+
+  @Override
+  public JavaType getVoidType() {
+
+    return getParent().getVoidType();
+  }
+
+  @Override
+  public JavaType getRootExceptionType() {
+
+    return getParent().getRootExceptionType();
   }
 
   /**
@@ -134,10 +108,7 @@ public class JavaContext extends AbstractCodeContext<JavaType, JavaPackage> {
    */
   public JavaType getNonPrimitiveType(JavaType javaType) {
 
-    if (!javaType.isPrimitive()) {
-      return javaType;
-    }
-    // TODO Auto-generated method stub
-    return null;
+    return getParent().getNonPrimitiveType(javaType);
   }
+
 }

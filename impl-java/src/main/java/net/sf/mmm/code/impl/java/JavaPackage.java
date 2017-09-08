@@ -3,15 +3,17 @@
 package net.sf.mmm.code.impl.java;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.CodePackage;
+import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeType;
-import net.sf.mmm.code.impl.java.element.JavaElementWithQualifiedName;
+import net.sf.mmm.code.impl.java.item.JavaReflectiveObject;
+import net.sf.mmm.code.impl.java.node.JavaContainer;
+import net.sf.mmm.code.impl.java.node.JavaNode;
+import net.sf.mmm.code.impl.java.source.JavaSource;
 import net.sf.mmm.code.impl.java.type.JavaType;
 
 /**
@@ -20,7 +22,8 @@ import net.sf.mmm.code.impl.java.type.JavaType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaPackage extends JavaElementWithQualifiedName implements CodePackage {
+public final class JavaPackage extends JavaPathElement
+    implements CodePackage, JavaContainer, CodeNodeItemWithGenericParent<JavaNode, JavaPackage>, JavaReflectiveObject<Package> {
 
   /** {@link #getSimpleName() Simple name} of the default (root) package. */
   public static final String NAME_DEFAULT = "";
@@ -36,22 +39,29 @@ public class JavaPackage extends JavaElementWithQualifiedName implements CodePac
 
   private static final Logger LOG = LoggerFactory.getLogger(JavaPackage.class);
 
-  private final List<JavaPackage> childPackages;
+  private final JavaSource source;
 
-  private final List<JavaFile> childFiles;
+  private final JavaPackage superLayerPackage;
 
-  private JavaPackage superPackage;
+  private final JavaPathElements children;
+
+  private final Package reflectiveObject;
 
   /**
    * The constructor for a {@link JavaContext#getRootPackage() root-package}.
    *
-   * @param context the {@link #getContext() context}.
+   * @param superPackage the super package to inherit from.
+   * @param source the {@link #getSource() source}.
+   * @param reflectiveObject the {@link #getReflectiveObject() reflective object}.
    */
-  public JavaPackage(JavaContext context) {
+  JavaPackage(JavaSource source, JavaPackage superPackage, Package reflectiveObject) {
 
-    super(context, null, "");
-    this.childFiles = new ArrayList<>();
-    this.childPackages = new ArrayList<>();
+    super(null, "");
+    this.source = source;
+    this.superLayerPackage = superPackage;
+    this.children = new JavaPathElements(this);
+    this.reflectiveObject = reflectiveObject;
+    setImmutable();
   }
 
   /**
@@ -59,25 +69,15 @@ public class JavaPackage extends JavaElementWithQualifiedName implements CodePac
    *
    * @param parentPackage the {@link #getParentPackage() parent package}.
    * @param simpleName the {@link #getSimpleName() simple name}.
+   * @param reflectiveObject the {@link #getReflectiveObject() reflective object}.
    */
-  public JavaPackage(JavaPackage parentPackage, String simpleName) {
+  public JavaPackage(JavaPackage parentPackage, String simpleName, Package reflectiveObject) {
 
-    super(parentPackage.getContext(), parentPackage, simpleName);
-    if (!parentPackage.isImmutable()) {
-      parentPackage.childPackages.add(this);
-    }
-    this.childFiles = new ArrayList<>();
-    this.childPackages = new ArrayList<>();
-  }
-
-  /**
-   * The copy-constructor.
-   *
-   * @param template the {@link JavaPackage} to copy.
-   */
-  public JavaPackage(JavaPackage template) {
-
-    this(template, template.getParentPackage());
+    super(parentPackage, simpleName);
+    this.source = parentPackage.getSource();
+    this.superLayerPackage = null;
+    this.children = new JavaPathElements(this);
+    this.reflectiveObject = reflectiveObject;
   }
 
   /**
@@ -89,56 +89,112 @@ public class JavaPackage extends JavaElementWithQualifiedName implements CodePac
   public JavaPackage(JavaPackage template, JavaPackage parentPackage) {
 
     super(template, parentPackage);
-    this.superPackage = template;
-    this.childPackages = new ArrayList<>();
-    this.childFiles = new ArrayList<>();
+    this.superLayerPackage = template;
+    this.source = parentPackage.source;
+    this.reflectiveObject = template.reflectiveObject;
+    this.children = new JavaPathElements(this);
   }
 
   /**
-   * @deprecated a {@link CodePackage} contains {@link CodeType}s and not vice versa. Therefore this method
-   *             will always return {@code null} here.
+   * The copy-constructor.
+   *
+   * @param template the {@link JavaPackage} to copy.
+   * @param source the {@link #getSource() source}.
    */
-  @Deprecated
+  public JavaPackage(JavaPackage template, JavaSource source) {
+
+    super(template, parentCopy(template, source));
+    this.superLayerPackage = template;
+    this.source = source;
+    this.reflectiveObject = template.reflectiveObject;
+    this.children = new JavaPathElements(this);
+  }
+
+  private static JavaPackage parentCopy(JavaPackage template, JavaSource source) {
+
+    if (template.isRoot()) {
+      return null;
+    }
+    return new JavaPackage(template.getParentPackage(), source);
+  }
+
   @Override
-  public JavaType getDeclaringType() {
+  public JavaPackage getSuperLayerPackage() {
 
-    return null;
+    return this.superLayerPackage;
   }
 
-  /**
-   * @return the super package that was {@link #copy(CodePackage) copied} or {@code null} if not copied.
-   */
-  JavaPackage getSuperPackage() {
+  @Override
+  public String getSimpleName() {
 
-    return this.superPackage;
+    String simpleName = super.getSimpleName();
+    if ((simpleName == null) && (this.superLayerPackage != null)) {
+      simpleName = this.superLayerPackage.getSimpleName();
+    }
+    return simpleName;
   }
 
-  /**
-   * @return the {@link List} of {@link JavaFile}s directly contained in this package.
-   */
-  List<JavaFile> getChildFiles() {
+  @Override
+  public JavaPackage getParentPackage() {
 
-    return this.childFiles;
+    JavaPackage parentPackage = super.getParentPackage();
+    if ((parentPackage == null) && (this.superLayerPackage != null)) {
+      return this.superLayerPackage.getParentPackage();
+    }
+    return parentPackage;
   }
 
-  /**
-   * @return the {@link List} of {@link JavaPackage}s directly contained in this package.
-   */
-  List<JavaPackage> getChildPackages() {
+  @Override
+  public JavaContainer getParent() {
 
-    return this.childPackages;
+    JavaPackage parent = getParentPackage();
+    if (parent != null) {
+      return parent;
+    }
+    return this.source;
+  }
+
+  @Override
+  public Package getReflectiveObject() {
+
+    return this.reflectiveObject;
+  }
+
+  @Override
+  public JavaContext getContext() {
+
+    return this.source.getContext();
+  }
+
+  @Override
+  public JavaSource getSource() {
+
+    return this.source;
+  }
+
+  @Override
+  public boolean isFile() {
+
+    return false;
+  }
+
+  @Override
+  public JavaPathElements getChildren() {
+
+    return this.children;
   }
 
   @Override
   public boolean isRequireImport() {
 
-    return !isDefault() && !isJavaLang();
+    return !isRoot() && !isJavaLang();
   }
 
   /**
    * @return {@code true} if this is the default package, {@code false} otherwise.
    */
-  public boolean isDefault() {
+  @Override
+  public boolean isRoot() {
 
     if (getParentPackage() == null) {
       String name = getSimpleName();
@@ -157,7 +213,7 @@ public class JavaPackage extends JavaElementWithQualifiedName implements CodePac
 
     if (NAME_JAVA.equals(getSimpleName())) {
       JavaPackage parent = getParentPackage();
-      if ((parent != null) && (parent.isDefault())) {
+      if ((parent != null) && (parent.isRoot())) {
         return true;
       }
     }
@@ -179,43 +235,49 @@ public class JavaPackage extends JavaElementWithQualifiedName implements CodePac
     return false;
   }
 
+  /**
+   * @deprecated a {@link CodePackage} contains {@link CodeType}s and not vice versa. Therefore this method
+   *             will always return {@code null} here.
+   */
+  @Deprecated
   @Override
-  protected void doWrite(Appendable sink, String defaultIndent, String currentIndent) throws IOException {
+  public JavaType getDeclaringType() {
 
-    if (isDefault()) {
+    return null;
+  }
+
+  @Override
+  public JavaPackage copy() {
+
+    return copy(getParent());
+  }
+
+  @Override
+  public JavaPackage copy(JavaNode newParent) {
+
+    if (newParent instanceof JavaPackage) {
+      return new JavaPackage(this, (JavaPackage) newParent);
+    } else if (newParent instanceof JavaSource) {
+      return new JavaPackage(this, (JavaSource) newParent);
+    } else {
+      throw new IllegalArgumentException("" + newParent);
+    }
+  }
+
+  @Override
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
+
+    if (isRoot()) {
       return;
     }
+    super.doWrite(sink, newline, defaultIndent, currentIndent);
     if (currentIndent != null) {
       sink.append(currentIndent);
     }
     sink.append("package ");
     sink.append(getQualifiedName());
     sink.append(';');
-    writeNewline(sink);
-  }
-
-  @Override
-  public JavaPackage copy(CodePackage newParentPackage) {
-
-    return new JavaPackage(this, (JavaPackage) newParentPackage);
-  }
-
-  /**
-   * @param simpleName the {@link CodeType#getSimpleName() simple name} of the requested {@link CodeType}.
-   * @return the requested {@link CodeType} or {@code null} if not found.
-   */
-  public JavaType getType(String simpleName) {
-
-    for (JavaFile file : this.childFiles) {
-      JavaType type = file.getType(simpleName);
-      if (type != null) {
-        return type;
-      }
-    }
-    if (this.superPackage != null) {
-      return this.superPackage.getType(simpleName);
-    }
-    return null;
+    sink.append(newline);
   }
 
 }

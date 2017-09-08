@@ -4,7 +4,9 @@ package net.sf.mmm.code.api.doc;
 
 import java.util.List;
 
+import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.item.CodeItem;
+import net.sf.mmm.code.api.node.CodeNodeItem;
 
 /**
  * {@link CodeItem} representing API documentation (e.g. JavaDoc or JSDoc).
@@ -12,7 +14,7 @@ import net.sf.mmm.code.api.item.CodeItem;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeDoc extends CodeItem {
+public interface CodeDoc extends CodeNodeItem {
 
   /** {@link CodeDocFormat#replaceDocTag(String, java.util.function.Supplier, String) Doc tag} for a link. */
   String TAG_LINK = "link";
@@ -41,13 +43,28 @@ public interface CodeDoc extends CodeItem {
    */
   String TAG_VALUE = "value";
 
+  @Override
+  CodeElement getParent();
+
   /**
    * @param format the requested {@link CodeDocFormat}.
    * @return this documentation as {@link String} in the given {@link CodeDocFormat}. Will be the
    *         {@link String#isEmpty() empty} {@link String} if not available and therefore never
    *         <code>null</code>.
    */
-  String getFormatted(CodeDocFormat format);
+  default String getFormatted(CodeDocFormat format) {
+
+    return getFormatted(format, DEFAULT_NEWLINE);
+  }
+
+  /**
+   * @param format the requested {@link CodeDocFormat}.
+   * @param newline the newline {@link String}.
+   * @return this documentation as {@link String} in the given {@link CodeDocFormat}. Will be the
+   *         {@link String#isEmpty() empty} {@link String} if not available and therefore never
+   *         <code>null</code>.
+   */
+  String getFormatted(CodeDocFormat format, String newline);
 
   /**
    * @return the {@link List} with the raw lines of documentation without leading format prefix ("/**", "*",

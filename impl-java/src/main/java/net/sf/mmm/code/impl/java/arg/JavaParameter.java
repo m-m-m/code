@@ -3,8 +3,8 @@
 package net.sf.mmm.code.impl.java.arg;
 
 import net.sf.mmm.code.api.arg.CodeParameter;
-import net.sf.mmm.code.api.member.CodeMember;
-import net.sf.mmm.code.impl.java.member.JavaMember;
+import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
+import net.sf.mmm.code.impl.java.type.JavaType;
 
 /**
  * Implementation of {@link CodeParameter} for Java.
@@ -12,31 +12,48 @@ import net.sf.mmm.code.impl.java.member.JavaMember;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaParameter extends JavaOperationArg implements CodeParameter {
+public class JavaParameter extends JavaOperationArg implements CodeParameter, CodeNodeItemWithGenericParent<JavaParameters, JavaParameter> {
+
+  private final JavaParameters parent;
 
   private String name;
 
   /**
    * The constructor.
    *
-   * @param declaringMember the {@link #getDeclaringMember() declaring member}.
+   * @param parent the {@link #getParent() parent}.
+   * @param name the {@link #getName() name}.
    */
-  public JavaParameter(JavaMember declaringMember) {
+  public JavaParameter(JavaParameters parent, String name) {
 
-    super(declaringMember);
-    this.name = "arg";
+    super();
+    this.parent = parent;
+    this.name = name;
   }
 
   /**
    * The copy-constructor.
    *
    * @param template the {@link JavaParameter} to copy.
-   * @param declaringMember the {@link #getDeclaringMember() declaring member}.
+   * @param parent the {@link #getParent() parent}.
    */
-  public JavaParameter(JavaParameter template, JavaMember declaringMember) {
+  public JavaParameter(JavaParameter template, JavaParameters parent) {
 
-    super(template, declaringMember);
+    super(template);
+    this.parent = parent;
     this.name = template.name;
+  }
+
+  @Override
+  public JavaParameters getParent() {
+
+    return this.parent;
+  }
+
+  @Override
+  public JavaType getDeclaringType() {
+
+    return getParent().getDeclaringType();
   }
 
   @Override
@@ -53,9 +70,15 @@ public class JavaParameter extends JavaOperationArg implements CodeParameter {
   }
 
   @Override
-  public JavaParameter copy(CodeMember newDeclaringMember) {
+  public JavaParameter copy() {
 
-    return new JavaParameter(this, (JavaMember) newDeclaringMember);
+    return copy(this.parent);
+  }
+
+  @Override
+  public JavaParameter copy(JavaParameters newParent) {
+
+    return new JavaParameter(this, newParent);
   }
 
 }

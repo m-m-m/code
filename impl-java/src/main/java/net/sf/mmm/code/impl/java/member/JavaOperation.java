@@ -3,17 +3,13 @@
 package net.sf.mmm.code.impl.java.member;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-import net.sf.mmm.code.api.arg.CodeException;
-import net.sf.mmm.code.api.arg.CodeParameter;
 import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.api.statement.CodeBody;
-import net.sf.mmm.code.impl.java.arg.JavaException;
-import net.sf.mmm.code.impl.java.arg.JavaParameter;
-import net.sf.mmm.code.impl.java.type.JavaType;
+import net.sf.mmm.code.impl.java.arg.JavaExceptions;
+import net.sf.mmm.code.impl.java.arg.JavaParameters;
+import net.sf.mmm.code.impl.java.element.JavaElementWithTypeVariables;
 import net.sf.mmm.code.impl.java.type.JavaTypeVariables;
 
 /**
@@ -22,50 +18,52 @@ import net.sf.mmm.code.impl.java.type.JavaTypeVariables;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class JavaOperation extends JavaMember implements CodeOperation {
+public abstract class JavaOperation extends JavaMember implements CodeOperation, JavaElementWithTypeVariables {
 
   private final JavaTypeVariables typeVariables;
 
-  private List<JavaParameter> parameters;
+  private JavaParameters parameters;
 
-  private List<JavaException> exceptions;
+  private JavaExceptions exceptions;
 
   private CodeBody body;
 
   /**
    * The constructor.
    *
-   * @param declaringType the {@link #getDeclaringType()}.
+   * @param name the {@link #getName() name}.
    */
-  public JavaOperation(JavaType declaringType) {
+  public JavaOperation(String name) {
 
-    super(declaringType, CodeModifiers.MODIFIERS_PUBLIC);
+    super(CodeModifiers.MODIFIERS_PUBLIC, name);
     this.typeVariables = new JavaTypeVariables(this);
-    this.parameters = new ArrayList<>();
-    this.exceptions = new ArrayList<>();
+    this.parameters = new JavaParameters(this);
+    this.exceptions = new JavaExceptions(this);
   }
 
   /**
    * The copy-constructor.
    *
    * @param template the {@link JavaOperation} to copy.
-   * @param declaringType the {@link #getDeclaringType()}.
    */
-  public JavaOperation(JavaOperation template, JavaType declaringType) {
+  public JavaOperation(JavaOperation template) {
 
-    super(template, declaringType);
+    super(template);
     this.typeVariables = template.typeVariables.copy(getDeclaringType());
-    this.parameters = doCopy(template.parameters, this);
-    this.exceptions = doCopy(template.exceptions, this);
+    this.parameters = template.parameters.copy(this);
+    this.exceptions = template.exceptions.copy(this);
   }
+
+  @Override
+  public abstract JavaOperations<?, ?> getParent();
 
   @Override
   protected void doSetImmutable() {
 
     super.doSetImmutable();
     this.typeVariables.setImmutable();
-    this.parameters = makeImmutable(this.parameters);
-    this.exceptions = makeImmutable(this.exceptions);
+    this.parameters.setImmutable();
+    this.exceptions.setImmutable();
   }
 
   @Override
@@ -75,13 +73,13 @@ public abstract class JavaOperation extends JavaMember implements CodeOperation 
   }
 
   @Override
-  public List<? extends CodeParameter> getParameters() {
+  public JavaParameters getParameters() {
 
     return this.parameters;
   }
 
   @Override
-  public List<? extends CodeException> getExceptions() {
+  public JavaExceptions getExceptions() {
 
     return this.exceptions;
   }
@@ -100,20 +98,20 @@ public abstract class JavaOperation extends JavaMember implements CodeOperation 
   }
 
   @Override
-  protected void doWrite(Appendable sink, String defaultIndent, String currentIndent) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
 
-    super.doWrite(sink, defaultIndent, currentIndent);
-    this.typeVariables.write(sink, "", "");
-    doWriteSignature(sink);
+    super.doWrite(sink, newline, defaultIndent, currentIndent);
+    this.typeVariables.write(sink, newline, null, null);
+    doWriteSignature(sink, newline);
     if (this.body == null) {
       sink.append(';');
     } else {
       sink.append(" {");
-      writeNewline(sink);
+      sink.append(newline);
       this.body.write(sink, defaultIndent, currentIndent + defaultIndent);
       sink.append(currentIndent);
       sink.append("}");
-      writeNewline(sink);
+      sink.append(newline);
     }
   }
 
@@ -122,24 +120,16 @@ public abstract class JavaOperation extends JavaMember implements CodeOperation 
    * {@link #getExceptions() exceptions}.
    *
    * @param sink the {@link Appendable}.
+   * @param newline the newline {@link String}.
    * @throws IOException if thrown by {@link Appendable}.
    */
-  protected void doWriteSignature(Appendable sink) throws IOException {
+  protected void doWriteSignature(Appendable sink, String newline) throws IOException {
 
     sink.append(getName());
-    String separator = "(";
-    for (CodeParameter arg : this.parameters) {
-      sink.append(separator);
-      arg.write(sink);
-      separator = ", ";
-    }
+    sink.append('(');
+    this.parameters.write(sink, newline, null, null);
     sink.append(')');
-    separator = " throws ";
-    for (CodeException ex : this.exceptions) {
-      sink.append(separator);
-      ex.write(sink);
-      separator = ", ";
-    }
+    this.exceptions.write(sink, newline, null, null);
   }
 
 }

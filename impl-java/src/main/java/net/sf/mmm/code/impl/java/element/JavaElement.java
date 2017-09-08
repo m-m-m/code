@@ -6,11 +6,12 @@ import java.io.IOException;
 import java.util.List;
 
 import net.sf.mmm.code.api.element.CodeElement;
+import net.sf.mmm.code.api.node.CodeNodeItemContainer;
 import net.sf.mmm.code.api.statement.CodeComment;
-import net.sf.mmm.code.impl.java.JavaContext;
 import net.sf.mmm.code.impl.java.annotation.JavaAnnotations;
 import net.sf.mmm.code.impl.java.doc.JavaDoc;
-import net.sf.mmm.code.impl.java.item.JavaItem;
+import net.sf.mmm.code.impl.java.node.JavaNode;
+import net.sf.mmm.code.impl.java.node.JavaNodeItem;
 import net.sf.mmm.code.impl.java.type.JavaType;
 
 /**
@@ -19,7 +20,7 @@ import net.sf.mmm.code.impl.java.type.JavaType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class JavaElement extends JavaItem implements CodeElement {
+public abstract class JavaElement extends JavaNodeItem implements CodeElement {
 
   private final JavaAnnotations annotations;
 
@@ -29,12 +30,10 @@ public abstract class JavaElement extends JavaItem implements CodeElement {
 
   /**
    * The constructor.
-   *
-   * @param context the {@link #getContext() context}.
    */
-  public JavaElement(JavaContext context) {
+  public JavaElement() {
 
-    super(context);
+    super();
     this.doc = new JavaDoc(this);
     this.annotations = new JavaAnnotations(this);
   }
@@ -47,9 +46,22 @@ public abstract class JavaElement extends JavaItem implements CodeElement {
   public JavaElement(JavaElement template) {
 
     super(template);
-    this.doc = template.doc;
-    this.comment = template.comment;
-    this.annotations = template.annotations.copy(this);
+    this.doc = template.getDoc().copy();
+    this.comment = template.getComment();
+    this.annotations = template.getAnnotations().copy(this);
+  }
+
+  @SuppressWarnings({ "rawtypes", "unchecked" })
+  @Override
+  public void removeFromParent() {
+
+    verifyMutalbe();
+    JavaNode parent = getParent();
+    if (parent instanceof CodeNodeItemContainer) {
+      ((CodeNodeItemContainer) parent).remove(this);
+    } else {
+      throw new UnsupportedOperationException();
+    }
   }
 
   @Override
@@ -88,35 +100,30 @@ public abstract class JavaElement extends JavaItem implements CodeElement {
   @Override
   public abstract JavaType getDeclaringType();
 
-  /**
-   * @return {@code true} if this element only allows inline {@link #getComment() comments} (without
-   *         newlines), {@code false} otherwise.
-   */
-  protected boolean isCommentForceInline() {
-
-    return false;
-  }
-
   @Override
-  protected void doWrite(Appendable sink, String defaultIndent, String currentIndent) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
 
-    doWriteComment(sink, defaultIndent, currentIndent);
-    doWriteDoc(sink, defaultIndent, currentIndent);
-    doWriteAnnotations(sink, defaultIndent, currentIndent);
+    doWriteComment(sink, newline, defaultIndent, currentIndent);
+    doWriteDoc(sink, newline, defaultIndent, currentIndent);
+    doWriteAnnotations(sink, newline, defaultIndent, currentIndent);
   }
 
   /**
    * Writes the {@link #getComment() comment}.
    *
    * @param sink the {@link Appendable}.
+   * @param newline the newline {@link String}.
    * @param defaultIndent the default indent.
    * @param currentIndent the current indent.
    * @throws IOException if thrown by {@link Appendable}.
    */
-  protected void doWriteComment(Appendable sink, String defaultIndent, String currentIndent) throws IOException {
+  protected void doWriteComment(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
 
     if (this.comment != null) {
-      if (isCommentForceInline()) {
+      if (currentIndent == null) {
+        if (defaultIndent == null) {
+          return;
+        }
         List<String> lines = this.comment.getComments();
         if (!lines.isEmpty()) {
           String separator = "/* ";
@@ -129,7 +136,7 @@ public abstract class JavaElement extends JavaItem implements CodeElement {
           sink.append(" */");
         }
       } else {
-        this.comment.write(sink, defaultIndent, currentIndent);
+        this.comment.write(sink, newline, defaultIndent, currentIndent);
       }
     }
   }
@@ -138,13 +145,14 @@ public abstract class JavaElement extends JavaItem implements CodeElement {
    * Writes the {@link #getDoc() JavaDoc}.
    *
    * @param sink the {@link Appendable}.
+   * @param newline the newline {@link String}.
    * @param defaultIndent the default indent.
    * @param currentIndent the current indent.
    */
-  protected void doWriteDoc(Appendable sink, String defaultIndent, String currentIndent) {
+  protected void doWriteDoc(Appendable sink, String newline, String defaultIndent, String currentIndent) {
 
-    if ((this.doc != null) && !isCommentForceInline()) {
-      this.doc.write(sink, defaultIndent, currentIndent);
+    if ((this.doc != null) && (currentIndent != null)) {
+      this.doc.write(sink, newline, defaultIndent, currentIndent);
     }
   }
 
@@ -152,17 +160,14 @@ public abstract class JavaElement extends JavaItem implements CodeElement {
    * Writes the {@link #getAnnotations() annotations}.
    *
    * @param sink the {@link Appendable}.
+   * @param newline the newline {@link String}.
    * @param defaultIndent the default indent.
    * @param currentIndent the current indent.
    */
-  protected void doWriteAnnotations(Appendable sink, String defaultIndent, String currentIndent) {
+  protected void doWriteAnnotations(Appendable sink, String newline, String defaultIndent, String currentIndent) {
 
     if (this.annotations != null) {
-      if (isCommentForceInline()) {
-        this.annotations.write(sink, null, null);
-      } else {
-        this.annotations.write(sink, defaultIndent, currentIndent);
-      }
+      this.annotations.write(sink, newline, defaultIndent, currentIndent);
     }
   }
 

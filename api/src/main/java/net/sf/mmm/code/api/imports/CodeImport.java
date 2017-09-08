@@ -7,8 +7,7 @@ import java.util.List;
 import net.sf.mmm.code.api.item.CodeItem;
 
 /**
- * {@link CodeItem} representing an import. An import is always {@link #isImmutable() immutable}. To modify it
- * create a new one and replace it.
+ * {@link CodeItem} representing an import.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
@@ -16,33 +15,24 @@ import net.sf.mmm.code.api.item.CodeItem;
 public interface CodeImport extends CodeItem {
 
   /**
-   * @return the source that references where to import from. For Java typically the {@link Class#getName()
-   *         qualified name} of the according type. May also
+   * @return the reference pointing to the location where to import from. For Java typically the
+   *         {@link Class#getName() qualified name} of the according type. May also be a star import but these
+   *         are discouraged.
    */
-  String getSource();
+  String getReference();
 
   /**
    * @return {@code true} if this is a static import, {@code false} otherwise.
    */
   boolean isStatic();
 
+  // TODO shall be have this in the generic API? Or should it only be available in
+  // JavaScriptImport/TypeScriptImport?
   /**
-   * @return the {@link List} of {@link CodeImportItem items} to import from {@link #getSource() source}. Will
-   *         be {@link List#isEmpty() empty} for no item and therefore is never {@code null}. For Java this
-   *         will always be empty.
+   * @return the {@link List} of {@link CodeImportItem items} to import from the {@link #getReference()
+   *         reference}. Will be {@link List#isEmpty() empty} for no item and therefore is never {@code null}.
+   *         For Java this will always be empty.
    */
   List<CodeImportItem> getItems();
-
-  @Override
-  default boolean isImmutable() {
-
-    return true;
-  }
-
-  @Override
-  default void setImmutable() {
-
-    throw new IllegalStateException("Import (" + getClass().getSimpleName() + ") is always immutable!");
-  }
 
 }

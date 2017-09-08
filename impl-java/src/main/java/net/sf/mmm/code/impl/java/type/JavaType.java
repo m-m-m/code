@@ -7,13 +7,16 @@ import java.util.Objects;
 
 import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
+import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.statement.CodeStaticBlock;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.api.type.CodeTypeCategory;
-import net.sf.mmm.code.api.type.CodeTypeVariables;
 import net.sf.mmm.code.impl.java.JavaFile;
 import net.sf.mmm.code.impl.java.JavaPackage;
+import net.sf.mmm.code.impl.java.element.JavaElement;
+import net.sf.mmm.code.impl.java.element.JavaElementWithTypeVariables;
+import net.sf.mmm.code.impl.java.item.JavaReflectiveObject;
 import net.sf.mmm.code.impl.java.member.JavaConstructors;
 import net.sf.mmm.code.impl.java.member.JavaFields;
 import net.sf.mmm.code.impl.java.member.JavaMethods;
@@ -25,7 +28,8 @@ import net.sf.mmm.code.impl.java.member.JavaProperties;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaType extends JavaGenericType implements CodeType {
+public class JavaType extends JavaGenericType
+    implements CodeType, JavaElementWithTypeVariables, CodeNodeItemWithGenericParent<JavaElement, JavaType>, JavaReflectiveObject<Class<?>> {
 
   private final JavaFile file;
 
@@ -45,6 +49,8 @@ public class JavaType extends JavaGenericType implements CodeType {
 
   private final JavaNestedTypes nestedTypes;
 
+  private final Class<?> reflectiveObject;
+
   private String simpleName;
 
   private CodeModifiers modifiers;
@@ -62,18 +68,18 @@ public class JavaType extends JavaGenericType implements CodeType {
    */
   public JavaType(JavaFile file) {
 
-    this(file, null);
+    this(file, null, null, null);
   }
 
   /**
    * The constructor for a nested type.
    *
    * @param file the {@link #getFile() file}.
-   * @param simpleName the {@link #getSimpleName() simple name}.
+   * @param reflectiveObject the {@link #getReflectiveObject() reflective object}.
    */
-  public JavaType(JavaFile file, String simpleName) {
+  public JavaType(JavaFile file, Class<?> reflectiveObject) {
 
-    this(file, simpleName, null);
+    this(file, null, null, reflectiveObject);
   }
 
   /**
@@ -82,13 +88,15 @@ public class JavaType extends JavaGenericType implements CodeType {
    * @param file the {@link #getFile() file}.
    * @param simpleName the {@link #getSimpleName() simple name}.
    * @param declaringType the {@link #getDeclaringType() declaringType}.
+   * @param reflectiveObject the {@link #getReflectiveObject() reflective object}.
    */
-  public JavaType(JavaFile file, String simpleName, JavaType declaringType) {
+  public JavaType(JavaFile file, String simpleName, JavaType declaringType, Class<?> reflectiveObject) {
 
-    super(file.getContext());
+    super();
     this.file = file;
     this.declaringType = declaringType;
     this.simpleName = simpleName;
+    this.reflectiveObject = reflectiveObject;
     this.modifiers = CodeModifiers.MODIFIERS_PUBLIC;
     this.category = CodeTypeCategory.CLASS;
     this.superTypes = new JavaSuperTypes(this);
@@ -110,17 +118,10 @@ public class JavaType extends JavaGenericType implements CodeType {
   public JavaType(JavaType template, JavaFile file, JavaType declaringType) {
 
     super(template);
-    if (file == null) {
-      this.file = template.file;
-    } else {
-      this.file = file;
-    }
-    if (declaringType == null) {
-      this.declaringType = template.declaringType;
-    } else {
-      this.declaringType = declaringType;
-    }
+    this.file = file;
+    this.declaringType = declaringType;
     this.simpleName = template.simpleName;
+    this.reflectiveObject = null;
     this.category = template.category;
     this.initializer = template.initializer;
     this.modifiers = template.modifiers;
@@ -180,6 +181,15 @@ public class JavaType extends JavaGenericType implements CodeType {
   }
 
   @Override
+  public JavaElement getParent() {
+
+    if (this.declaringType != null) {
+      return this.declaringType;
+    }
+    return this.file;
+  }
+
+  @Override
   public JavaPackage getParentPackage() {
 
     return this.file.getParentPackage();
@@ -207,8 +217,17 @@ public class JavaType extends JavaGenericType implements CodeType {
       this.file.setSimpleName(simpleName);
     } else {
       verifyMutalbe();
+      if (this.declaringType != null) {
+        this.declaringType.getNestedTypes().rename(this, this.simpleName, simpleName, null);
+      }
       this.simpleName = simpleName;
     }
+  }
+
+  @Override
+  public Class<?> getReflectiveObject() {
+
+    return this.reflectiveObject;
   }
 
   @Override
@@ -302,6 +321,12 @@ public class JavaType extends JavaGenericType implements CodeType {
   }
 
   @Override
+  public JavaGenericType getComponentType() {
+
+    return null;
+  }
+
+  @Override
   public JavaType resolve(CodeGenericType context) {
 
     return this;
@@ -316,7 +341,7 @@ public class JavaType extends JavaGenericType implements CodeType {
   @Override
   public boolean isPrimitive() {
 
-    if (getParentPackage().isDefault()) {
+    if (getParentPackage().isRoot()) {
       String name = getSimpleName();
       if (!name.isEmpty()) {
         char firstChar = name.charAt(0);
@@ -326,6 +351,12 @@ public class JavaType extends JavaGenericType implements CodeType {
       }
     }
     return false;
+  }
+
+  @Override
+  public boolean isException() {
+
+    return getContext().getRootExceptionType().isAssignableFrom(this);
   }
 
   @Override
@@ -389,30 +420,50 @@ public class JavaType extends JavaGenericType implements CodeType {
   }
 
   @Override
-  public CodeTypeVariables getTypeVariables() {
+  public JavaTypeVariables getTypeVariables() {
 
     return this.typeVariables;
   }
 
   @Override
-  protected void doWrite(Appendable sink, String defaultIndent, String currentIndent) throws IOException {
+  public JavaType copy() {
+
+    return copy(getParent());
+  }
+
+  @Override
+  public JavaType copy(JavaElement newParent) {
+
+    if (newParent instanceof JavaFile) {
+      assert (this.declaringType == null);
+      return new JavaType(this, (JavaFile) newParent, null);
+    } else if (newParent instanceof JavaType) {
+      JavaType parentType = (JavaType) newParent;
+      return new JavaType(this, parentType.file, parentType);
+    } else {
+      throw new IllegalArgumentException("" + newParent);
+    }
+  }
+
+  @Override
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
 
     if (currentIndent == null) {
       writeReference(sink, true);
       return;
     }
-    super.doWrite(sink, defaultIndent, currentIndent);
+    super.doWrite(sink, newline, defaultIndent, currentIndent);
     doWriteDeclaration(sink, currentIndent);
     sink.append(" {");
-    writeNewline(sink);
+    sink.append(newline);
     String bodyIndent = currentIndent + defaultIndent;
-    this.fields.write(sink, defaultIndent, bodyIndent);
-    this.constructors.write(sink, defaultIndent, bodyIndent);
-    this.methods.write(sink, defaultIndent, bodyIndent);
-    this.nestedTypes.write(sink, defaultIndent, currentIndent);
+    this.fields.write(sink, newline, defaultIndent, bodyIndent);
+    this.constructors.write(sink, newline, defaultIndent, bodyIndent);
+    this.methods.write(sink, newline, defaultIndent, bodyIndent);
+    this.nestedTypes.write(sink, newline, defaultIndent, currentIndent);
     sink.append(currentIndent);
     sink.append("}");
-    writeNewline(sink);
+    sink.append(newline);
   }
 
   private void doWriteDeclaration(Appendable sink, String currentIndent) throws IOException {
@@ -434,14 +485,8 @@ public class JavaType extends JavaGenericType implements CodeType {
       sink.append(getSimpleName());
     }
     if (declaration) {
-      getTypeVariables().write(sink, null, null);
+      getTypeVariables().write(sink, DEFAULT_NEWLINE, null, null);
     }
-  }
-
-  @Override
-  public JavaType copy(CodeType newDeclaringType) {
-
-    return new JavaType(this, null, (JavaType) newDeclaringType);
   }
 
 }

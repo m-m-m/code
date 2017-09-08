@@ -16,8 +16,8 @@ public interface CodeImportItem extends CodeItem {
   String ITEM_ALL = "*";
 
   /**
-   * @return the item to import from the {@link CodeImport#getSource() source}. Either {@link #ITEM_ALL}, or a
-   *         simple type name.
+   * @return the item to import from the {@link CodeImport#getReference() reference}. Either
+   *         {@link #ITEM_ALL}, or a simple type name.
    */
   String getItem();
 

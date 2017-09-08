@@ -3,26 +3,61 @@
 package net.sf.mmm.code.api.annotation;
 
 import net.sf.mmm.code.api.element.CodeElement;
-import net.sf.mmm.code.api.item.CodeItemContainerWithInheritance;
-import net.sf.mmm.code.api.item.CodeItemWithDeclaringElement;
+import net.sf.mmm.code.api.node.CodeNodeItemContainerHierarchical;
 import net.sf.mmm.code.api.type.CodeType;
 
 /**
- * {@link CodeItemContainerWithInheritance} containing {@link CodeAnnotation}s.
+ * {@link CodeNodeItemContainerHierarchical} containing {@link CodeAnnotation}s.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeAnnotations extends CodeItemContainerWithInheritance<CodeAnnotation>, CodeItemWithDeclaringElement {
+public interface CodeAnnotations extends CodeNodeItemContainerHierarchical<CodeAnnotation> {
 
   @Override
-  CodeAnnotations copy(CodeType newDeclaringType);
+  CodeElement getParent();
 
   /**
-   * @param newDeclaringElement the new {@link #getDeclaringElement() declaring element}.
-   * @return the new {@link #isImmutable() mutable} copy.
+   * <b>Attention:</b><br>
+   * This method can be expensive as it has to traverse inherited elements. However, due to the usage of
+   * {@link Iterable} implementations can lazily traverse.
+   *
+   * @see net.sf.mmm.code.api.member.CodeMethod#getParentMethod()
    */
   @Override
-  CodeAnnotations copy(CodeElement newDeclaringElement);
+  Iterable<? extends CodeAnnotation> getAll();
+
+  /**
+   * @param type the {@link CodeAnnotation#getType() type} reflecting the {@link CodeType#isAnnotation()
+   *        annotation}.
+   * @return the new {@link CodeAnnotation} that has been added.
+   */
+  CodeAnnotation add(CodeType type);
+
+  /**
+   * @param type the {@link CodeAnnotation#getType() type} reflecting the {@link CodeType#isAnnotation()
+   *        annotation}.
+   * @return the {@link CodeAnnotation} from {@link #getDeclared()} {@link CodeAnnotation#getType() with} the
+   *         give {@link CodeType} or {@code null} if not found.
+   */
+  CodeAnnotation getDeclared(CodeType type);
+
+  /**
+   * @param type the {@link CodeAnnotation#getType() type} reflecting the {@link CodeType#isAnnotation()
+   *        annotation}.
+   * @return the {@link CodeAnnotation} from {@link #getDeclared()} {@link CodeAnnotation#getType() with} the
+   *         give {@link CodeType} or a new {@link #add(CodeType) added} one.
+   */
+  default CodeAnnotation getDeclaredOrAdd(CodeType type) {
+
+    CodeAnnotation annotation = getDeclared(type);
+    if (annotation == null) {
+      annotation = add(type);
+    }
+    return annotation;
+  }
+
+  @Override
+  CodeAnnotations copy();
 
 }

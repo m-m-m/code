@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 
 import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.member.CodeFields;
-import net.sf.mmm.code.api.type.CodeType;
+import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.impl.java.type.JavaGenericType;
 import net.sf.mmm.code.impl.java.type.JavaType;
 import net.sf.mmm.util.collection.base.AbstractIterator;
@@ -25,7 +25,7 @@ import net.sf.mmm.util.exception.api.DuplicateObjectException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaFields extends JavaMembers<CodeField> implements CodeFields {
+public class JavaFields extends JavaMembers<CodeField, JavaField> implements CodeFields, CodeNodeItemWithGenericParent<JavaType, JavaFields> {
 
   private List<JavaField> fields;
 
@@ -34,11 +34,11 @@ public class JavaFields extends JavaMembers<CodeField> implements CodeFields {
   /**
    * The constructor.
    *
-   * @param declaringType the {@link #getDeclaringType()}.
+   * @param parent the {@link #getParent() parent}.
    */
-  public JavaFields(JavaType declaringType) {
+  public JavaFields(JavaType parent) {
 
-    super(declaringType);
+    super(parent);
     this.fields = new ArrayList<>();
     this.fieldMap = new HashMap<>();
   }
@@ -47,12 +47,12 @@ public class JavaFields extends JavaMembers<CodeField> implements CodeFields {
    * The copy-constructor.
    *
    * @param template the {@link JavaFields} to copy.
-   * @param declaringType the {@link #getDeclaringType()}.
+   * @param parent the {@link #getParent() parent}.
    */
-  public JavaFields(JavaFields template, JavaType declaringType) {
+  public JavaFields(JavaFields template, JavaType parent) {
 
-    super(template, declaringType);
-    this.fields = doCopy(template.fields, declaringType);
+    super(template, parent);
+    this.fields = doCopy(template.fields, this);
     this.fieldMap = new HashMap<>(this.fields.size());
     for (JavaField field : this.fields) {
       this.fieldMap.put(field.getName(), field);
@@ -104,17 +104,29 @@ public class JavaFields extends JavaMembers<CodeField> implements CodeFields {
   }
 
   @Override
+  public JavaField getRequired(String name) {
+
+    return super.getRequired(name);
+  }
+
+  @Override
   public JavaField add(String name) {
 
     verifyMutalbe();
     if (this.fieldMap.containsKey(name)) {
       throw new DuplicateObjectException(getDeclaringType().getSimpleName() + ".fields", name);
     }
-    JavaField field = new JavaField(getDeclaringType());
-    field.setName(name);
+    JavaField field = new JavaField(this, name);
     this.fields.add(field);
     this.fieldMap.put(name, field);
     return field;
+  }
+
+  @Override
+  public boolean remove(CodeField item) {
+
+    this.fieldMap.remove(item.getName());
+    return this.fields.remove(item);
   }
 
   /**
@@ -130,26 +142,32 @@ public class JavaFields extends JavaMembers<CodeField> implements CodeFields {
   }
 
   @Override
-  protected void doWrite(Appendable sink, String defaultIndent, String currentIndent) throws IOException {
+  public JavaFields copy() {
 
-    doWriteFields(sink, defaultIndent, currentIndent, f -> f.getModifiers().isStatic());
-    doWriteFields(sink, defaultIndent, currentIndent, f -> !f.getModifiers().isStatic());
-  }
-
-  private void doWriteFields(Appendable sink, String defaultIndent, String currentIndent, Predicate<CodeField> filter) throws IOException {
-
-    for (CodeField field : this.fields) {
-      if (filter.test(field)) {
-        writeNewline(sink);
-        field.write(sink, defaultIndent, currentIndent);
-      }
-    }
+    return copy(getParent());
   }
 
   @Override
-  public JavaFields copy(CodeType newDeclaringType) {
+  public JavaFields copy(JavaType newParent) {
 
-    return new JavaFields(this, (JavaType) newDeclaringType);
+    return new JavaFields(this, newParent);
+  }
+
+  @Override
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
+
+    doWriteFields(sink, newline, defaultIndent, currentIndent, f -> f.getModifiers().isStatic());
+    doWriteFields(sink, newline, defaultIndent, currentIndent, f -> !f.getModifiers().isStatic());
+  }
+
+  private void doWriteFields(Appendable sink, String newline, String defaultIndent, String currentIndent, Predicate<CodeField> filter) throws IOException {
+
+    for (CodeField field : this.fields) {
+      if (filter.test(field)) {
+        sink.append(newline);
+        field.write(sink, defaultIndent, currentIndent);
+      }
+    }
   }
 
   private static class FieldIterator extends AbstractIterator<JavaField> {

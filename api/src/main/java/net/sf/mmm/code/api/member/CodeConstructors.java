@@ -2,6 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.member;
 
+import net.sf.mmm.code.api.node.CodeNodeItemContainerFlat;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
@@ -11,17 +12,7 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeConstructors extends CodeOperations<CodeConstructor> {
-
-  /**
-   * @deprecated constructors can not be inherited. Use {@link #getDeclared()} instead.
-   */
-  @Deprecated
-  @Override
-  default Iterable<? extends CodeConstructor> getAll() {
-
-    return getDeclared();
-  }
+public interface CodeConstructors extends CodeOperations<CodeConstructor>, CodeNodeItemContainerFlat<CodeConstructor> {
 
   /**
    * @param name the {@link CodeOperation#getName() name} of the requested {@link CodeOperation}.
@@ -32,15 +23,14 @@ public interface CodeConstructors extends CodeOperations<CodeConstructor> {
   CodeConstructor get(CodeType... parameterTypes);
 
   /**
-   * @return a new {@link CodeConstructor} that has been added to {@link #getDeclared()}. The
-   *         {@link CodeMethod#getReturns() return type} will be initialized as {@link void}. It will not have
-   *         any {@link CodeMethod#getParameters() parameters} or {@link CodeMethod#getExceptions()
-   *         exceptions}. Simply add those afterwards as needed.
+   * @return a new {@link CodeConstructor} that has been added to {@link #getAll()}. It will not have any
+   *         {@link CodeMethod#getParameters() parameters} or {@link CodeMethod#getExceptions() exceptions}.
+   *         Simply add those afterwards as needed.
    * @throws ReadOnlyException if {@link #isImmutable() immutable}.
    */
   CodeConstructor add();
 
   @Override
-  CodeConstructors copy(CodeType newDeclaringType);
+  CodeConstructors copy();
 
 }

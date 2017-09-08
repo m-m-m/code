@@ -5,8 +5,7 @@ package net.sf.mmm.code.api;
 import java.util.List;
 
 import net.sf.mmm.code.api.imports.CodeImport;
-import net.sf.mmm.code.api.item.CodeItemWithDeclaringType;
-import net.sf.mmm.code.api.item.CodeItemWithQualifiedName;
+import net.sf.mmm.code.api.imports.CodeImports;
 import net.sf.mmm.code.api.type.CodeType;
 
 /**
@@ -15,7 +14,10 @@ import net.sf.mmm.code.api.type.CodeType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract interface CodeFile extends CodeItemWithQualifiedName {
+public abstract interface CodeFile extends CodePathElement {
+
+  @Override
+  CodePackage getParent();
 
   /**
    * @return the file extension including the dot (e.g. ".java").
@@ -41,26 +43,9 @@ public abstract interface CodeFile extends CodeItemWithQualifiedName {
   List<? extends CodeType> getTypes();
 
   /**
-   * @return the {@link List} of {@link CodeImport}s. May be {@link List#isEmpty() empty} but is never
-   *         {@code null}.
+   * @return the {@link CodeImports} containing the {@link CodeImport}s. May be {@link List#isEmpty() empty}
+   *         but is never {@code null}.
    */
-  List<? extends CodeImport> getImports();
-
-  /**
-   * @param type the {@link CodeType} to import.
-   */
-  void addImport(CodeType type);
-
-  /**
-   * @return the {@link CodeContext} owning this file. Never {@code null}.
-   */
-  CodeContext getContext();
-
-  /**
-   * @param newParentPackage the new {@link #getParentPackage() parent package}.
-   * @return a new {@link #isImmutable() mutable} copy.
-   * @see CodeItemWithDeclaringType#copy(CodeType)
-   */
-  CodeFile copy(CodePackage newParentPackage);
+  CodeImports getImports();
 
 }

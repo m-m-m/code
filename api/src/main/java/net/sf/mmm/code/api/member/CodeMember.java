@@ -2,13 +2,12 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.member;
 
+import net.sf.mmm.code.api.element.CodeElementWithModifiers;
 import net.sf.mmm.code.api.element.CodeElementWithName;
-import net.sf.mmm.code.api.modifier.CodeElementWithModifiers;
-import net.sf.mmm.code.api.type.CodeType;
 
 /**
- * Abstract interface for a member of a {@link CodeType} that is either a {@link CodeOperation} or a
- * CodeField.
+ * {@link CodeElementWithModifiers} representing a member of a {@link net.sf.mmm.code.api.type.CodeType} that
+ * is either a {@link CodeOperation} or a {@link CodeField}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
@@ -16,6 +15,9 @@ import net.sf.mmm.code.api.type.CodeType;
 public abstract interface CodeMember extends CodeElementWithModifiers, CodeElementWithName {
 
   @Override
-  CodeMember copy(CodeType newDeclaringType);
+  CodeMembers<?> getParent();
+
+  @Override
+  CodeMember copy();
 
 }

@@ -3,20 +3,15 @@
 package net.sf.mmm.code.impl.java.type;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.function.Consumer;
 
-import net.sf.mmm.code.api.member.CodeOperation;
-import net.sf.mmm.code.api.type.CodeType;
+import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeTypeVariable;
 import net.sf.mmm.code.api.type.CodeTypeVariables;
-import net.sf.mmm.code.impl.java.JavaContext;
-import net.sf.mmm.code.impl.java.item.JavaItemContainerWithInheritance;
+import net.sf.mmm.code.impl.java.element.JavaElement;
 import net.sf.mmm.code.impl.java.member.JavaOperation;
-import net.sf.mmm.util.exception.api.DuplicateObjectException;
+import net.sf.mmm.code.impl.java.node.JavaNodeItemContainerFlatWithName;
 
 /**
  * Implementation of {@link CodeTypeVariables} for Java.
@@ -24,25 +19,24 @@ import net.sf.mmm.util.exception.api.DuplicateObjectException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaTypeVariables extends JavaItemContainerWithInheritance<CodeTypeVariable> implements CodeTypeVariables {
+public class JavaTypeVariables extends JavaNodeItemContainerFlatWithName<CodeTypeVariable, JavaTypeVariable>
+    implements CodeTypeVariables, CodeNodeItemWithGenericParent<JavaElement, JavaTypeVariables> {
+
+  /** The empty and {@link #isImmutable() immutable} instance of {@link JavaTypeVariables}. */
+  public static final JavaTypeVariables EMPTY = new JavaTypeVariables();
+
+  private final JavaType declaringType;
 
   private final JavaOperation declaringOperation;
 
-  private List<JavaTypeVariable> typeVariables;
-
-  private Map<String, JavaTypeVariable> typeVariableMap;
-
   /**
    * The constructor.
-   *
-   * @param context the {@link #getContext() context}.
    */
-  public JavaTypeVariables(JavaContext context) {
+  private JavaTypeVariables() {
 
-    super(context);
+    super();
+    this.declaringType = null;
     this.declaringOperation = null;
-    this.typeVariables = Collections.emptyList();
-    this.typeVariableMap = Collections.emptyMap();
     setImmutable();
   }
 
@@ -53,9 +47,8 @@ public class JavaTypeVariables extends JavaItemContainerWithInheritance<CodeType
    */
   public JavaTypeVariables(JavaType declaringType) {
 
-    super(declaringType);
-    this.typeVariables = new ArrayList<>();
-    this.typeVariableMap = new HashMap<>();
+    super();
+    this.declaringType = declaringType;
     this.declaringOperation = null;
   }
 
@@ -66,9 +59,8 @@ public class JavaTypeVariables extends JavaItemContainerWithInheritance<CodeType
    */
   public JavaTypeVariables(JavaOperation declaringOperation) {
 
-    super(declaringOperation.getDeclaringType());
-    this.typeVariables = new ArrayList<>();
-    this.typeVariableMap = new HashMap<>();
+    super();
+    this.declaringType = declaringOperation.getDeclaringType();
     this.declaringOperation = declaringOperation;
   }
 
@@ -80,12 +72,8 @@ public class JavaTypeVariables extends JavaItemContainerWithInheritance<CodeType
    */
   public JavaTypeVariables(JavaTypeVariables template, JavaType declaringType) {
 
-    super(template, declaringType);
-    this.typeVariables = doCopy(template.typeVariables, declaringType);
-    this.typeVariableMap = new HashMap<>(this.typeVariables.size());
-    for (JavaTypeVariable variable : this.typeVariables) {
-      this.typeVariableMap.put(variable.getName(), variable);
-    }
+    super(template);
+    this.declaringType = declaringType;
     this.declaringOperation = null;
   }
 
@@ -97,33 +85,24 @@ public class JavaTypeVariables extends JavaItemContainerWithInheritance<CodeType
    */
   public JavaTypeVariables(JavaTypeVariables template, JavaOperation declaringOperation) {
 
-    super(template, declaringOperation.getDeclaringType());
+    super(template);
+    this.declaringType = declaringOperation.getDeclaringType();
     this.declaringOperation = declaringOperation;
-    this.typeVariables = doCopy(template.typeVariables, declaringOperation);
-    this.typeVariableMap = new HashMap<>(this.typeVariables.size());
-    for (JavaTypeVariable variable : this.typeVariables) {
-      this.typeVariableMap.put(variable.getName(), variable);
+  }
+
+  @Override
+  public JavaElement getParent() {
+
+    if (this.declaringOperation != null) {
+      return this.declaringOperation;
     }
+    return this.declaringType;
   }
 
   @Override
-  protected void doSetImmutable() {
+  public JavaType getDeclaringType() {
 
-    super.doSetImmutable();
-    this.typeVariables = Collections.unmodifiableList(this.typeVariables);
-    this.typeVariableMap = Collections.unmodifiableMap(this.typeVariableMap);
-  }
-
-  @Override
-  public List<? extends JavaTypeVariable> getDeclared() {
-
-    return this.typeVariables;
-  }
-
-  @Override
-  public List<? extends JavaTypeVariable> getAll() {
-
-    return this.typeVariables;
+    return this.declaringType;
   }
 
   @Override
@@ -133,64 +112,64 @@ public class JavaTypeVariables extends JavaItemContainerWithInheritance<CodeType
   }
 
   @Override
-  public CodeTypeVariable getDeclared(String name) {
-
-    return this.typeVariableMap.get(name);
-  }
-
-  @Override
-  public CodeTypeVariable get(String name) {
-
-    return this.typeVariableMap.get(name);
-  }
-
-  @Override
   public JavaTypeVariable add(String name) {
 
-    verifyMutalbe();
-    if (this.typeVariableMap.containsKey(name)) {
-      throw new DuplicateObjectException(JavaTypeVariable.class, name);
-    }
-    JavaTypeVariable variable;
-    if (this.declaringOperation == null) {
-      variable = new JavaTypeVariable(getDeclaringType());
-    } else {
-      variable = new JavaTypeVariable(this.declaringOperation);
-    }
-    this.typeVariables.add(variable);
-    this.typeVariableMap.put(name, variable);
+    JavaTypeVariable variable = new JavaTypeVariable(this, name);
+    add(variable);
     return variable;
   }
 
+  JavaTypeVariables createChild() {
+
+    if (this.declaringOperation != null) {
+      return new JavaTypeVariables(this.declaringOperation);
+    } else {
+      return new JavaTypeVariables(this.declaringType);
+    }
+  }
+
   @Override
-  protected void doWrite(Appendable sink, String defaultIndent, String currentIndent) throws IOException {
+  protected void rename(JavaTypeVariable child, String oldName, String newName, Consumer<String> renamer) {
+
+    super.rename(child, oldName, newName, renamer);
+  }
+
+  @Override
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
 
     writeReference(sink, true);
   }
 
+  @Override
+  public JavaTypeVariables copy() {
+
+    return copy(getParent());
+  }
+
+  @Override
+  public JavaTypeVariables copy(JavaElement newParent) {
+
+    if (newParent instanceof JavaType) {
+      return new JavaTypeVariables(this, (JavaType) newParent);
+    } else if (newParent instanceof JavaOperation) {
+      return new JavaTypeVariables(this, (JavaOperation) newParent);
+    } else {
+      throw new IllegalArgumentException("" + newParent);
+    }
+  }
+
   void writeReference(Appendable sink, boolean declaration) throws IOException {
 
-    if (!this.typeVariables.isEmpty()) {
+    List<JavaTypeVariable> typeVariables = getList();
+    if (!typeVariables.isEmpty()) {
       String prefix = "<";
-      for (JavaTypeVariable variable : this.typeVariables) {
+      for (JavaTypeVariable variable : typeVariables) {
         sink.append(prefix);
         variable.write(sink, "", "");
         prefix = ", ";
       }
       sink.append('>');
     }
-  }
-
-  @Override
-  public JavaTypeVariables copy(CodeType newDeclaringType) {
-
-    return new JavaTypeVariables(this, (JavaType) newDeclaringType);
-  }
-
-  @Override
-  public CodeTypeVariables copy(CodeOperation newDeclaringOperation) {
-
-    return new JavaTypeVariables(this, (JavaOperation) newDeclaringOperation);
   }
 
 }

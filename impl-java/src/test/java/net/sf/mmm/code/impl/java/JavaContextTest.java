@@ -17,18 +17,20 @@ public class JavaContextTest extends Assertions {
   public void testBasics() {
 
     // given
-    JavaContext context = new JavaContext();
+    JavaContext context = new JavaRootContext();
 
     // then
-    assertThat(context.getNewline()).isEqualTo("\n");
     assertThat(context.getPackageSeparator()).isEqualTo('.');
-    assertThat(context.getDocDescriptors()).isEmpty();
     JavaPackage rootPackage = context.getRootPackage();
     assertThat(rootPackage).isNotNull();
     assertThat(rootPackage.getSimpleName()).isEmpty();
     assertThat(rootPackage.getQualifiedName()).isEmpty();
     assertThat(rootPackage.getParentPackage()).isNull();
     assertThat(context.getPackage("")).isSameAs(rootPackage);
+    assertThat(context.getQualifiedNameForStandardType("byte", true)).isEqualTo("byte");
+    assertThat(context.getQualifiedNameForStandardType("String", true)).isEqualTo("String");
+    assertThat(context.getQualifiedNameForStandardType("String", false)).isEqualTo("java.lang.String");
+    assertThat(context.getQualifiedNameForStandardType("UndefinedBanana", false)).isNull();
   }
 
 }

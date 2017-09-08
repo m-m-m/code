@@ -4,16 +4,14 @@ package net.sf.mmm.code.impl.java.type;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.function.Consumer;
 
+import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeNestedTypes;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.api.type.CodeTypeVariables;
-import net.sf.mmm.code.impl.java.item.JavaItemContainerWithInheritance;
-import net.sf.mmm.util.exception.api.DuplicateObjectException;
+import net.sf.mmm.code.impl.java.node.JavaNodeItemContainerHierarchicalWithName;
 
 /**
  * Implementation of {@link CodeTypeVariables} for Java.
@@ -21,67 +19,53 @@ import net.sf.mmm.util.exception.api.DuplicateObjectException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaNestedTypes extends JavaItemContainerWithInheritance<CodeType> implements CodeNestedTypes {
+public class JavaNestedTypes extends JavaNodeItemContainerHierarchicalWithName<CodeType, JavaType>
+    implements CodeNestedTypes, CodeNodeItemWithGenericParent<JavaType, JavaNestedTypes> {
 
-  private List<JavaType> nestedTypes;
-
-  private Map<String, JavaType> nestedTypeMap;
+  private final JavaType parent;
 
   /**
    * The constructor.
    *
-   * @param declaringType the {@link #getDeclaringType() declaring type}.
+   * @param parent the {@link #getParent() parent}.
    */
-  public JavaNestedTypes(JavaType declaringType) {
+  public JavaNestedTypes(JavaType parent) {
 
-    super(declaringType);
-    this.nestedTypes = new ArrayList<>();
-    this.nestedTypeMap = new HashMap<>();
+    super();
+    this.parent = parent;
   }
 
   /**
    * The copy-constructor.
    *
    * @param template the {@link JavaNestedTypes} to copy.
-   * @param declaringType the {@link #getDeclaringType() declaring type}.
+   * @param parent the {@link #getParent() parent}.
    */
-  public JavaNestedTypes(JavaNestedTypes template, JavaType declaringType) {
+  public JavaNestedTypes(JavaNestedTypes template, JavaType parent) {
 
-    super(template, declaringType);
-    this.nestedTypes = doCopy(template.nestedTypes, declaringType);
-    this.nestedTypeMap = new HashMap<>(this.nestedTypes.size());
-    for (JavaType nestedType : this.nestedTypes) {
-      this.nestedTypeMap.put(nestedType.getSimpleName(), nestedType);
-    }
+    super(template);
+    this.parent = parent;
   }
 
   @Override
-  protected void doSetImmutable() {
+  public JavaType getParent() {
 
-    super.doSetImmutable();
-    this.nestedTypes = Collections.unmodifiableList(this.nestedTypes);
-    this.nestedTypeMap = Collections.unmodifiableMap(this.nestedTypeMap);
+    return this.parent;
   }
 
   @Override
-  public List<? extends JavaType> getDeclared() {
+  public List<? extends JavaType> getAll() {
 
-    return this.nestedTypes;
-  }
-
-  @Override
-  public Iterable<? extends JavaType> getAll() {
-
-    List<JavaType> list = new ArrayList<>(this.nestedTypes);
+    List<JavaType> list = new ArrayList<>(getList());
     collectNestedTypes(list);
     return list;
   }
 
   private void collectNestedTypes(List<JavaType> list) {
 
-    for (JavaType nested : this.nestedTypes) {
+    for (JavaType nested : getDeclared()) {
       JavaNestedTypes nestedContainer = nested.getNestedTypes();
-      list.addAll(nestedContainer.nestedTypes);
+      list.addAll(nestedContainer.getDeclared());
       nestedContainer.collectNestedTypes(list);
     }
   }
@@ -89,11 +73,11 @@ public class JavaNestedTypes extends JavaItemContainerWithInheritance<CodeType> 
   @Override
   public JavaType get(String name) {
 
-    JavaType nestedType = this.nestedTypeMap.get(name);
+    JavaType nestedType = getDeclared(name);
     if (nestedType != null) {
       return nestedType;
     }
-    for (JavaType nested : this.nestedTypes) {
+    for (JavaType nested : getDeclared()) {
       nestedType = nested.getNestedTypes().get(name);
       if (nestedType != null) {
         return nestedType;
@@ -103,41 +87,55 @@ public class JavaNestedTypes extends JavaItemContainerWithInheritance<CodeType> 
   }
 
   @Override
-  public CodeType getDeclared(String name) {
+  public JavaType getDeclared(String name) {
 
-    return this.nestedTypeMap.get(name);
+    return getByName(name);
   }
 
   @Override
   public JavaType add(String name) {
 
-    verifyMutalbe();
-    if (this.nestedTypeMap.containsKey(name)) {
-      throw new DuplicateObjectException(JavaTypeVariable.class, name);
-    }
-    JavaType nestedType = new JavaType(getDeclaringType().getFile(), name, getDeclaringType());
-    this.nestedTypes.add(nestedType);
-    this.nestedTypeMap.put(name, nestedType);
+    JavaType nestedType = new JavaType(getDeclaringType().getFile(), name, getDeclaringType(), null);
+    add(nestedType);
     return nestedType;
   }
 
   @Override
-  protected void doWrite(Appendable sink, String defaultIndent, String currentIndent) throws IOException {
+  protected void add(JavaType item) {
 
-    if (this.nestedTypes.isEmpty()) {
-      return;
-    }
-    String childIndent = currentIndent + defaultIndent;
-    for (JavaType nestedType : this.nestedTypes) {
-      writeNewline(sink);
-      nestedType.write(sink, defaultIndent, childIndent);
-    }
+    super.add(item);
   }
 
   @Override
-  public JavaNestedTypes copy(CodeType newDeclaringType) {
+  protected void rename(JavaType child, String oldName, String newName, Consumer<String> renamer) {
 
-    return new JavaNestedTypes(this, (JavaType) newDeclaringType);
+    super.rename(child, oldName, newName, renamer);
+  }
+
+  @Override
+  public JavaNestedTypes copy() {
+
+    return copy(this.parent);
+  }
+
+  @Override
+  public JavaNestedTypes copy(JavaType newParent) {
+
+    return new JavaNestedTypes(this, newParent);
+  }
+
+  @Override
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
+
+    List<? extends JavaType> nestedTypes = getDeclared();
+    if (nestedTypes.isEmpty()) {
+      return;
+    }
+    String childIndent = currentIndent + defaultIndent;
+    for (JavaType nestedType : nestedTypes) {
+      sink.append(newline);
+      nestedType.write(sink, newline, defaultIndent, childIndent);
+    }
   }
 
 }

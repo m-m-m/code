@@ -3,7 +3,6 @@
 package net.sf.mmm.code.api.element;
 
 import net.sf.mmm.code.api.item.CodeItemWithName;
-import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
@@ -21,6 +20,6 @@ public abstract interface CodeElementWithName extends CodeElement, CodeItemWithN
   void setName(String name);
 
   @Override
-  CodeElementWithName copy(CodeType newDeclaringType);
+  CodeElementWithName copy();
 
 }

@@ -3,8 +3,6 @@
 package net.sf.mmm.code.impl.java.type;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -13,10 +11,10 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeSuperTypes;
-import net.sf.mmm.code.api.type.CodeType;
-import net.sf.mmm.code.impl.java.item.JavaItemContainerWithInheritance;
+import net.sf.mmm.code.impl.java.node.JavaNodeItemContainerHierarchical;
 
 /**
  * Implementation of {@link CodeSuperTypes} for Java.
@@ -24,45 +22,40 @@ import net.sf.mmm.code.impl.java.item.JavaItemContainerWithInheritance;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaSuperTypes extends JavaItemContainerWithInheritance<CodeGenericType> implements CodeSuperTypes {
+public class JavaSuperTypes extends JavaNodeItemContainerHierarchical<CodeGenericType, JavaGenericType>
+    implements CodeSuperTypes, CodeNodeItemWithGenericParent<JavaType, JavaSuperTypes> {
 
   private static final Logger LOG = LoggerFactory.getLogger(JavaSuperTypes.class);
 
-  private List<JavaGenericType> superTypes;
+  private final JavaType parent;
 
   /**
    * The constructor.
    *
-   * @param declaringType the {@link #getDeclaringType() declaring type}.
+   * @param parent the {@link #getParent() parent}.
    */
-  public JavaSuperTypes(JavaType declaringType) {
+  public JavaSuperTypes(JavaType parent) {
 
-    super(declaringType);
-    this.superTypes = new ArrayList<>();
+    super();
+    this.parent = parent;
   }
 
   /**
    * The copy-constructor.
    *
    * @param template the {@link JavaSuperTypes} to copy.
-   * @param declaringType the {@link #getDeclaringType() declaring type}.
+   * @param parent the {@link #getParent() parent}.
    */
-  public JavaSuperTypes(JavaSuperTypes template, JavaType declaringType) {
+  public JavaSuperTypes(JavaSuperTypes template, JavaType parent) {
 
-    super(template, declaringType);
+    super(template);
+    this.parent = parent;
   }
 
   @Override
-  protected void doSetImmutable() {
+  public JavaType getParent() {
 
-    super.doSetImmutable();
-    this.superTypes = Collections.unmodifiableList(this.superTypes);
-  }
-
-  @Override
-  public List<? extends JavaGenericType> getDeclared() {
-
-    return this.superTypes;
+    return this.parent;
   }
 
   @Override
@@ -73,33 +66,52 @@ public class JavaSuperTypes extends JavaItemContainerWithInheritance<CodeGeneric
     return set;
   }
 
-  private void collectSuperTypes(Set<JavaGenericType> set) {
+  @Override
+  public void add(JavaGenericType superType) {
 
-    set.addAll(this.superTypes);
-    for (JavaGenericType superType : this.superTypes) {
-      superType.asType().getSuperTypes().collectSuperTypes(set);
-    }
+    super.add(superType);
   }
 
   @Override
   public void add(CodeGenericType superType) {
 
-    verifyMutalbe();
-    this.superTypes.add((JavaGenericType) superType);
+    add((JavaGenericType) superType);
+  }
+
+  private void collectSuperTypes(Set<JavaGenericType> set) {
+
+    List<JavaGenericType> declared = getList();
+    set.addAll(declared);
+    for (JavaGenericType superType : declared) {
+      JavaSuperTypes superTypes = superType.asType().getSuperTypes();
+      superTypes.collectSuperTypes(set);
+    }
   }
 
   @Override
   public JavaGenericType getSuperClass() {
 
-    for (JavaGenericType type : getDeclared()) {
-      if (type.isClass()) {
-        return type;
-      }
+    JavaGenericType superClass = getSuperClassAsDeclared();
+    if (superClass != null) {
+      return superClass;
     }
     JavaType declaringType = getDeclaringType();
     JavaType rootType = getContext().getRootType();
     if (declaringType != rootType) {
       return rootType;
+    }
+    return null;
+  }
+
+  private JavaGenericType getSuperClassAsDeclared() {
+
+    if (this.parent.isInterface() || this.parent.isAnnotation()) {
+      return null;
+    }
+    for (JavaGenericType type : getDeclared()) {
+      if (type.isClass()) {
+        return type;
+      }
     }
     return null;
   }
@@ -111,14 +123,26 @@ public class JavaSuperTypes extends JavaItemContainerWithInheritance<CodeGeneric
   }
 
   @Override
-  protected void doWrite(Appendable sink, String defaultIndent, String currentIndent) throws IOException {
+  public JavaSuperTypes copy() {
+
+    return copy(this.parent);
+  }
+
+  @Override
+  public JavaSuperTypes copy(JavaType newParent) {
+
+    return new JavaSuperTypes(this, newParent);
+  }
+
+  @Override
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
 
     String keywordInherit;
     JavaType declaringType = getDeclaringType();
     if (declaringType.isInterface()) {
       keywordInherit = " extends ";
     } else {
-      CodeGenericType superClass = getSuperClass();
+      JavaGenericType superClass = getSuperClassAsDeclared();
       if (superClass != null) {
         if (declaringType.isClass()) {
           sink.append(" extends ");
@@ -131,18 +155,12 @@ public class JavaSuperTypes extends JavaItemContainerWithInheritance<CodeGeneric
       keywordInherit = " implements ";
     }
     String separator = keywordInherit;
-    for (CodeGenericType superType : this.superTypes) {
+    for (JavaGenericType superType : getDeclared()) {
       assert (superType.isInterface());
       sink.append(separator);
       superType.writeReference(sink, false);
       separator = ", ";
     }
-  }
-
-  @Override
-  public JavaSuperTypes copy(CodeType newDeclaringType) {
-
-    return new JavaSuperTypes(this, (JavaType) newDeclaringType);
   }
 
 }

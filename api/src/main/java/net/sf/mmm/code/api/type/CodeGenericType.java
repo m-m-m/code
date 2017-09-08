@@ -16,18 +16,35 @@ import net.sf.mmm.code.api.item.CodeItem;
 public abstract interface CodeGenericType extends CodeElement {
 
   /**
-   * @return the raw {@link CodeType}. In case of an {@link #isArray() array} the
-   *         {@link Class#getComponentType() component type}. Can not be changed as it is the type itself or
-   *         calculated from resolving the {@link #asTypeVariable() type variable}.
+   * @return the raw {@link CodeType}. Can not be changed as it is the type itself or calculated from
+   *         {@link #resolve(CodeGenericType) resolving}.
    */
   CodeType asType();
 
   /**
+   * @return the {@link CodeGenericType} of the contained elements (e.g. if case of an {@link #isArray()
+   *         array}) or {@code null} if no container type.
+   */
+  CodeGenericType getComponentType();
+
+  /**
    * @return the {@link CodeTypeVariable} if this type is a type variable (e.g. "{@code T extends String}") or
-   *         {@code null} for none.
+   *         {@code null} otherwise.
    * @see #getTypeVariables()
    */
-  CodeTypeVariable asTypeVariable();
+  default CodeTypeVariable asTypeVariable() {
+
+    return null;
+  }
+
+  /**
+   * @return the {@link CodeComposedType} if this type is composed (e.g. "{@code Comparable & Serializable}")
+   *         or {@code null} otherwise.
+   */
+  default CodeComposedType asComposedType() {
+
+    return null;
+  }
 
   /**
    * @return the {@link CodeTypeVariables} containing the {@link CodeTypeVariable}s.
@@ -43,7 +60,7 @@ public abstract interface CodeGenericType extends CodeElement {
   boolean isQualified();
 
   /**
-   * @return {@code true} if this represents an array of the {@link #asType()} and potential
+   * @return {@code true} if this represents an array of the {@link #getComponentType()} and potential
    *         {@link #asTypeVariable() type variable}.
    */
   boolean isArray();
@@ -64,7 +81,7 @@ public abstract interface CodeGenericType extends CodeElement {
   CodeGenericType resolve(CodeGenericType context);
 
   /**
-   * @return the {@link CodeTypeCategory} of this type.
+   * @return the {@link CodeTypeCategory} of this type. Will be {@code null} for {@link #isArray() array}.
    * @see #isClass()
    * @see #isInterface()
    * @see #isEnumeration()
@@ -122,6 +139,6 @@ public abstract interface CodeGenericType extends CodeElement {
   void writeReference(Appendable sink, boolean declaration) throws IOException;
 
   @Override
-  CodeGenericType copy(CodeType newDeclaringType);
+  CodeGenericType copy();
 
 }

@@ -5,31 +5,36 @@ package net.sf.mmm.code.api.member;
 import java.util.List;
 
 import net.sf.mmm.code.api.arg.CodeException;
+import net.sf.mmm.code.api.arg.CodeExceptions;
 import net.sf.mmm.code.api.arg.CodeParameter;
+import net.sf.mmm.code.api.arg.CodeParameters;
+import net.sf.mmm.code.api.element.CodeElementWithTypeVariables;
 import net.sf.mmm.code.api.statement.CodeBody;
-import net.sf.mmm.code.api.type.CodeType;
-import net.sf.mmm.code.api.type.CodeTypeVariables;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
- * Abstract interface for an invokable operation such as a {@link CodeMethod} or {@link CodeConstructor}.
+ * {@link CodeMember} representing an invokable operation such as a {@link CodeMethod} or
+ * {@link CodeConstructor}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract interface CodeOperation extends CodeMember {
+public abstract interface CodeOperation extends CodeMember, CodeElementWithTypeVariables {
+
+  @Override
+  CodeOperations<?> getParent();
 
   /**
-   * @return the {@link List} with the {@link CodeParameter}s of this method. May be {@link List#isEmpty()
-   *         empty} but never <code>null</code>.
+   * @return the {@link CodeParameters} containing the {@link CodeParameter}s of this operation. May be
+   *         {@link List#isEmpty() empty} but never <code>null</code>.
    */
-  List<? extends CodeParameter> getParameters();
+  CodeParameters getParameters();
 
   /**
-   * @return the {@link List} with the {@link CodeException}s of this method. May be {@link List#isEmpty()
-   *         empty} but never <code>null</code>.
+   * @return the {@link CodeExceptions} containing the {@link CodeException}s of this operation. May be
+   *         {@link List#isEmpty() empty} but never <code>null</code>.
    */
-  List<? extends CodeException> getExceptions();
+  CodeExceptions getExceptions();
 
   /**
    * @return the {@link CodeBody} of this method. Will be {@code null} if not present (in case of an
@@ -43,12 +48,7 @@ public abstract interface CodeOperation extends CodeMember {
    */
   void setBody(CodeBody body);
 
-  /**
-   * @return the {@link CodeTypeVariables} containing the {@link net.sf.mmm.code.api.type.CodeTypeVariable}s.
-   */
-  CodeTypeVariables getTypeVariables();
-
   @Override
-  CodeOperation copy(CodeType newDeclaringType);
+  CodeOperation copy();
 
 }

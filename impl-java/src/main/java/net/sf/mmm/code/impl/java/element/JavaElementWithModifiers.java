@@ -5,9 +5,8 @@ package net.sf.mmm.code.impl.java.element;
 import java.io.IOException;
 import java.util.Objects;
 
-import net.sf.mmm.code.api.modifier.CodeElementWithModifiers;
+import net.sf.mmm.code.api.element.CodeElementWithModifiers;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
-import net.sf.mmm.code.impl.java.JavaContext;
 
 /**
  * Implementation of {@link CodeElementWithModifiers} for Java.
@@ -22,12 +21,11 @@ public abstract class JavaElementWithModifiers extends JavaElement implements Co
   /**
    * The constructor.
    *
-   * @param context the {@link #getContext() context}.
    * @param modifiers the {@link #getModifiers() modifiers}.
    */
-  public JavaElementWithModifiers(JavaContext context, CodeModifiers modifiers) {
+  public JavaElementWithModifiers(CodeModifiers modifiers) {
 
-    super(context);
+    super();
     this.modifiers = modifiers;
   }
 
@@ -57,10 +55,19 @@ public abstract class JavaElementWithModifiers extends JavaElement implements Co
   }
 
   @Override
-  protected void doWrite(Appendable sink, String defaultIndent, String currentIndent) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
 
-    super.doWrite(sink, defaultIndent, currentIndent);
+    super.doWrite(sink, newline, defaultIndent, currentIndent);
     sink.append(currentIndent);
+    doWriteModifiers(sink);
+  }
+
+  /**
+   * @param sink the {@link Appendable}.
+   * @throws IOException if thrown by {@link Appendable}.
+   */
+  protected void doWriteModifiers(Appendable sink) throws IOException {
+
     sink.append(this.modifiers.toString());
   }
 

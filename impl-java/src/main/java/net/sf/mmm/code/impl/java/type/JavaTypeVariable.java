@@ -5,11 +5,10 @@ package net.sf.mmm.code.impl.java.type;
 import java.io.IOException;
 
 import net.sf.mmm.code.api.member.CodeOperation;
+import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeGenericType;
-import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.api.type.CodeTypeVariable;
 import net.sf.mmm.code.api.type.CodeTypeVariables;
-import net.sf.mmm.code.impl.java.member.JavaOperation;
 
 /**
  * Implementation of {@link CodeTypeVariable} for Java.
@@ -17,68 +16,46 @@ import net.sf.mmm.code.impl.java.member.JavaOperation;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaTypeVariable extends JavaGenericType implements CodeTypeVariable {
+public class JavaTypeVariable extends JavaGenericType implements CodeTypeVariable, CodeNodeItemWithGenericParent<JavaTypeVariables, JavaTypeVariable> {
 
-  private final JavaType declaringType;
+  private final JavaTypeVariables parent;
 
-  private final JavaOperation declaringOperation;
-
-  private JavaType type;
+  private JavaGenericType bound;
 
   private String name;
 
   /**
    * The constructor.
    *
-   * @param declaringType the {@link #getDeclaringType() declaring type}.
+   * @param parent the {@link #getParent() parent}.
+   * @param name the {@link #getName() name}.
    */
-  public JavaTypeVariable(JavaType declaringType) {
+  public JavaTypeVariable(JavaTypeVariables parent, String name) {
 
-    super(declaringType.getContext());
-    this.declaringOperation = null;
-    this.declaringType = declaringType;
-    this.type = getContext().getRootType();
-  }
-
-  /**
-   * The constructor.
-   *
-   * @param declaringOperation the {@link #getDeclaringOperation() declaring operation}.
-   */
-  public JavaTypeVariable(JavaOperation declaringOperation) {
-
-    super(declaringOperation.getContext());
-    this.declaringOperation = declaringOperation;
-    this.declaringType = declaringOperation.getDeclaringType();
-    this.type = getContext().getRootType();
+    super();
+    this.parent = parent;
+    this.name = name;
+    this.bound = getContext().getRootType();
   }
 
   /**
    * The copy-constructor.
    *
    * @param template the {@link JavaTypeVariable} to copy.
-   * @param declaringType the {@link #getDeclaringType() declaring type}.
+   * @param parent the {@link #getParent() parent}.
    */
-  public JavaTypeVariable(JavaTypeVariable template, JavaType declaringType) {
+  public JavaTypeVariable(JavaTypeVariable template, JavaTypeVariables parent) {
 
     super(template);
-    this.declaringType = template.declaringType;
-    this.declaringOperation = template.declaringOperation;
-    this.type = template.type;
+    this.parent = parent;
+    this.name = template.name;
+    this.bound = template.bound;
   }
 
-  /**
-   * The copy-constructor.
-   *
-   * @param template the {@link JavaTypeVariable} to copy.
-   * @param declaringOperation the {@link #getDeclaringOperation() declaring operation}.
-   */
-  public JavaTypeVariable(JavaTypeVariable template, JavaOperation declaringOperation) {
+  @Override
+  public JavaTypeVariables getParent() {
 
-    super(template);
-    this.declaringOperation = declaringOperation;
-    this.declaringType = declaringOperation.getDeclaringType();
-    this.type = template.type;
+    return this.parent;
   }
 
   @Override
@@ -88,23 +65,16 @@ public class JavaTypeVariable extends JavaGenericType implements CodeTypeVariabl
   }
 
   @Override
-  public boolean isQualified() {
-
-    return false;
-  }
-
-  @Override
-  public boolean isArray() {
-
-    // TODO Auto-generated method stub
-    return false;
-  }
-
-  @Override
   public JavaGenericType resolve(CodeGenericType context) {
 
     // TODO Auto-generated method stub
     return this;
+  }
+
+  @Override
+  public CodeGenericType getBound() {
+
+    return this.bound;
   }
 
   @Override
@@ -117,20 +87,8 @@ public class JavaTypeVariable extends JavaGenericType implements CodeTypeVariabl
       } else {
         sink.append(" extends ");
       }
-      this.type.writeReference(sink, false);
+      this.bound.writeReference(sink, false);
     }
-  }
-
-  @Override
-  public JavaType getDeclaringType() {
-
-    return this.declaringType;
-  }
-
-  @Override
-  public CodeOperation getDeclaringOperation() {
-
-    return this.declaringOperation;
   }
 
   @Override
@@ -143,7 +101,24 @@ public class JavaTypeVariable extends JavaGenericType implements CodeTypeVariabl
   public void setName(String name) {
 
     verifyMutalbe();
-    this.name = name;
+    this.parent.rename(this, this.name, name, this::doSetName);
+  }
+
+  private void doSetName(String newName) {
+
+    this.name = newName;
+  }
+
+  @Override
+  public JavaType getDeclaringType() {
+
+    return this.parent.getDeclaringType();
+  }
+
+  @Override
+  public CodeOperation getDeclaringOperation() {
+
+    return this.parent.getDeclaringOperation();
   }
 
   @Override
@@ -169,7 +144,7 @@ public class JavaTypeVariable extends JavaGenericType implements CodeTypeVariabl
   @Override
   public JavaType asType() {
 
-    return this.type;
+    return this.bound.asType();
   }
 
   /**
@@ -180,19 +155,19 @@ public class JavaTypeVariable extends JavaGenericType implements CodeTypeVariabl
   @Deprecated
   public JavaTypeVariables getTypeVariables() {
 
-    return getContext().getEmptyTypeVariables();
+    return JavaTypeVariables.EMPTY;
   }
 
   @Override
-  public JavaTypeVariable copy(CodeOperation newDeclaringOperation) {
+  public JavaTypeVariable copy() {
 
-    return new JavaTypeVariable(this, (JavaOperation) newDeclaringOperation);
+    return copy(this.parent);
   }
 
   @Override
-  public JavaTypeVariable copy(CodeType newDeclaringType) {
+  public JavaTypeVariable copy(JavaTypeVariables newParent) {
 
-    return new JavaTypeVariable(this, (JavaType) newDeclaringType);
+    return new JavaTypeVariable(this, newParent);
   }
 
 }

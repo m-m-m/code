@@ -2,6 +2,9 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.impl.java.member;
 
+import java.util.Objects;
+import java.util.function.Consumer;
+
 import net.sf.mmm.code.api.member.CodeMember;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.impl.java.element.JavaElementWithModifiers;
@@ -15,38 +18,29 @@ import net.sf.mmm.code.impl.java.type.JavaType;
  */
 public abstract class JavaMember extends JavaElementWithModifiers implements CodeMember {
 
-  private final JavaType declaringType;
-
   private String name;
 
   /**
    * The constructor.
    *
-   * @param declaringType the {@link #getDeclaringType()}.
    * @param modifiers the {@link #getModifiers() modifiers}.
+   * @param name the {@link #getName() name}.
    */
-  public JavaMember(JavaType declaringType, CodeModifiers modifiers) {
+  public JavaMember(CodeModifiers modifiers, String name) {
 
-    super(declaringType.getContext(), modifiers);
-    this.declaringType = declaringType;
-    this.name = "undefined";
+    super(modifiers);
+    this.name = name;
   }
 
   /**
    * The copy-constructor.
    *
    * @param template the {@link JavaMember} to copy.
-   * @param declaringType the {@link #getDeclaringType()}.
    */
-  public JavaMember(JavaMember template, JavaType declaringType) {
+  public JavaMember(JavaMember template) {
 
     super(template);
     this.name = template.name;
-    if (declaringType == null) {
-      this.declaringType = template.declaringType;
-    } else {
-      this.declaringType = declaringType;
-    }
   }
 
   @Override
@@ -55,17 +49,52 @@ public abstract class JavaMember extends JavaElementWithModifiers implements Cod
     return this.name;
   }
 
+  @SuppressWarnings({ "rawtypes", "unchecked" })
   @Override
   public void setName(String name) {
 
     verifyMutalbe();
-    this.name = name;
+    if (this.name.equals(name)) {
+      return;
+    }
+    Consumer<String> renamer = this::doSetName;
+    ((JavaMembers) getParent()).rename(this, this.name, name, renamer);
   }
+
+  private void doSetName(String newName) {
+
+    this.name = newName;
+  }
+
+  @Override
+  public abstract JavaMembers<?, ?> getParent();
 
   @Override
   public JavaType getDeclaringType() {
 
-    return this.declaringType;
+    return getParent().getParent();
+  }
+
+  @Override
+  public int hashCode() {
+
+    return Objects.hashCode(getName());
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+
+    if (this == obj) {
+      return true;
+    }
+    if (!super.equals(obj)) {
+      return false;
+    }
+    JavaMember other = (JavaMember) obj;
+    if (!Objects.equals(getName(), other.getName())) {
+      return false;
+    }
+    return true;
   }
 
 }

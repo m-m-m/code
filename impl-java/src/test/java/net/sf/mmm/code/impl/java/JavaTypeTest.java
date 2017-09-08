@@ -23,14 +23,14 @@ public class JavaTypeTest extends Assertions {
   public void testEmptyClass() {
 
     // given
-    JavaContext context = new JavaContext();
+    JavaContext context = new JavaRootContext();
     JavaPackage rootPackage = context.getRootPackage();
     String pkgName = "mydomain";
-    JavaPackage pkg = context.createPackage(rootPackage, pkgName);
+    JavaPackage pkg = rootPackage.getChildren().createPackage(pkgName);
     String simpleName = "MyClass";
 
     // when
-    JavaType type = context.createType(pkg, simpleName);
+    JavaType type = pkg.getChildren().createFile(simpleName).getType();
 
     // then
     assertThat(type.getSimpleName()).isEqualTo(simpleName);
@@ -43,7 +43,7 @@ public class JavaTypeTest extends Assertions {
     assertThat(type.getAnnotations().getDeclared()).isEmpty();
     assertThat(type.getFields().getDeclared()).isEmpty();
     assertThat(type.getMethods().getDeclared()).isEmpty();
-    assertThat(type.getConstructors().getDeclared()).isEmpty();
+    assertThat(type.getConstructors().getAll()).isEmpty();
     assertThat(type.getFile().toString()).isEqualTo("MyClass");
     assertThat(type.getFile().getSourceCode()).isEqualTo("package mydomain;\n" + //
         "\n" + //
@@ -60,10 +60,10 @@ public class JavaTypeTest extends Assertions {
   public void testNestedTypesWithDoc() {
 
     // given
-    JavaContext context = new JavaContext();
+    JavaContext context = new JavaRootContext();
     JavaPackage rootPackage = context.getRootPackage();
     String pkgName = "mydomain";
-    JavaPackage pkg = context.createPackage(rootPackage, pkgName);
+    JavaPackage pkg = rootPackage.getChildren().createPackage(pkgName);
     String simpleNameTop = "ClassToplevel";
     String simpleNameNested1 = "StaticClassNested1";
     String simpleNameNested2 = "InterfaceClassNested2";
@@ -72,7 +72,7 @@ public class JavaTypeTest extends Assertions {
     String simpleNameNested212 = "EnumNested2_1_2";
 
     // when
-    JavaType classTop = context.createType(pkg, simpleNameTop);
+    JavaType classTop = pkg.getChildren().createType(simpleNameTop);
     JavaType classStaticNested1 = classTop.getNestedTypes().add(simpleNameNested1);
     classStaticNested1.setModifiers(CodeModifiers.MODIFIERS_PUBLIC_STATIC);
     JavaType interfacetypeNested2 = classTop.getNestedTypes().add(simpleNameNested2);

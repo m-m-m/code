@@ -2,6 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.member;
 
+import net.sf.mmm.code.api.node.CodeNodeItemContainerHierarchical;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
@@ -11,15 +12,15 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeMethods extends CodeOperations<CodeMethod> {
+public interface CodeMethods extends CodeOperations<CodeMethod>, CodeNodeItemContainerHierarchical<CodeMethod> {
 
   /**
    * @param name the {@link CodeOperation#getName() name} of the requested {@link CodeOperation}.
-   * @param parameterTypes the {@link net.sf.mmm.code.api.type.CodeGenericType#asType() raw} {@link CodeType}s of
-   *        the {@link CodeOperation#getParameters() parameters}.
+   * @param parameterTypes the {@link net.sf.mmm.code.api.type.CodeGenericType#asType() raw} {@link CodeType}s
+   *        of the {@link CodeOperation#getParameters() parameters}.
    * @return the requested {@link CodeOperation} or {@code null} if not found.
    */
-  CodeMethod get(String name, CodeType... parameterTypes);
+  CodeMethod getDeclared(String name, CodeType... parameterTypes);
 
   /**
    * @param name the {@link CodeMethod#getName() method name}.
@@ -32,6 +33,6 @@ public interface CodeMethods extends CodeOperations<CodeMethod> {
   CodeMethod add(String name);
 
   @Override
-  CodeMethods copy(CodeType newDeclaringType);
+  CodeMethods copy();
 
 }

@@ -12,11 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.annotation.CodeAnnotation;
-import net.sf.mmm.code.api.element.CodeElement;
+import net.sf.mmm.code.api.expression.CodeExpression;
+import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeGenericType;
-import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.impl.java.element.JavaElement;
-import net.sf.mmm.code.impl.java.item.JavaItem;
+import net.sf.mmm.code.impl.java.node.JavaNodeItem;
 import net.sf.mmm.code.impl.java.type.JavaType;
 import net.sf.mmm.util.nls.api.NlsBundleOptions;
 
@@ -27,25 +27,25 @@ import net.sf.mmm.util.nls.api.NlsBundleOptions;
  * @since 1.0.0
  */
 @NlsBundleOptions(productive = true)
-public class JavaAnnotation extends JavaItem implements CodeAnnotation {
+public class JavaAnnotation extends JavaNodeItem implements CodeAnnotation, CodeNodeItemWithGenericParent<JavaAnnotations, JavaAnnotation> {
 
   private static final Logger LOG = LoggerFactory.getLogger(JavaAnnotation.class);
 
-  private final JavaElement declaringElement;
+  private JavaAnnotations parent;
 
   private JavaType type;
 
-  private Map<String, Object> parameters;
+  private Map<String, CodeExpression> parameters;
 
   /**
    * The constructor.
    *
-   * @param declaringElement the {@link #getDeclaringElement() declaring element}.
+   * @param parent the {@link #getParent() parent}.
    */
-  public JavaAnnotation(JavaElement declaringElement) {
+  public JavaAnnotation(JavaAnnotations parent) {
 
-    super(declaringElement.getContext());
-    this.declaringElement = declaringElement;
+    super();
+    this.parent = parent;
     this.parameters = new HashMap<>();
   }
 
@@ -53,16 +53,12 @@ public class JavaAnnotation extends JavaItem implements CodeAnnotation {
    * The copy-constructor.
    *
    * @param template the {@link JavaAnnotation} to copy.
-   * @param declaringElement the {@link #getDeclaringElement() declaring element}.
+   * @param parent the {@link #getParent() parent}.
    */
-  public JavaAnnotation(JavaAnnotation template, JavaElement declaringElement) {
+  public JavaAnnotation(JavaAnnotation template, JavaAnnotations parent) {
 
     super(template);
-    if (declaringElement == null) {
-      this.declaringElement = template.declaringElement;
-    } else {
-      this.declaringElement = declaringElement;
-    }
+    this.parent = parent;
     this.type = template.type;
     this.parameters = new HashMap<>(template.parameters);
   }
@@ -75,18 +71,21 @@ public class JavaAnnotation extends JavaItem implements CodeAnnotation {
   }
 
   @Override
+  public JavaAnnotations getParent() {
+
+    return this.parent;
+  }
+
+  @Override
   public JavaElement getDeclaringElement() {
 
-    return this.declaringElement;
+    return getParent().getParent();
   }
 
   @Override
   public JavaType getDeclaringType() {
 
-    if (this.declaringElement instanceof JavaType) {
-      return (JavaType) this.declaringElement;
-    }
-    return this.declaringElement.getDeclaringType();
+    return getParent().getDeclaringType();
   }
 
   @Override
@@ -106,13 +105,13 @@ public class JavaAnnotation extends JavaItem implements CodeAnnotation {
   }
 
   @Override
-  public Map<String, Object> getParameters() {
+  public Map<String, CodeExpression> getParameters() {
 
     return this.parameters;
   }
 
   @Override
-  protected void doWrite(Appendable sink, String defaultIndent, String currentIndent) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
 
     sink.append('@');
     if (this.type == null) {
@@ -123,7 +122,7 @@ public class JavaAnnotation extends JavaItem implements CodeAnnotation {
     }
     if (!this.parameters.isEmpty()) {
       String prefix = "(";
-      for (Entry<String, Object> entry : this.parameters.entrySet()) {
+      for (Entry<String, CodeExpression> entry : this.parameters.entrySet()) {
         sink.append(prefix);
         sink.append(entry.getKey());
         sink.append(" = ");
@@ -134,21 +133,21 @@ public class JavaAnnotation extends JavaItem implements CodeAnnotation {
     }
   }
 
-  private String formatValue(Object value) {
+  private String formatValue(CodeExpression value) {
 
     return value.toString();
   }
 
   @Override
-  public JavaAnnotation copy(CodeElement newDeclaringElement) {
+  public JavaAnnotation copy() {
 
-    return new JavaAnnotation(this, (JavaElement) newDeclaringElement);
+    return copy(this.parent);
   }
 
   @Override
-  public JavaAnnotation copy(CodeType newDeclaringType) {
+  public JavaAnnotation copy(JavaAnnotations newParent) {
 
-    return copy((CodeElement) newDeclaringType);
+    return new JavaAnnotation(this, newParent);
   }
 
 }

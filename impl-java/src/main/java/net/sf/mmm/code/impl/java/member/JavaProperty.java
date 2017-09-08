@@ -11,10 +11,10 @@ import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.member.CodeProperty;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.api.modifier.CodeVisibility;
+import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.impl.java.type.JavaGenericType;
-import net.sf.mmm.code.impl.java.type.JavaType;
 
 /**
  * Implementation of {@link CodeProperty} for Java.
@@ -22,9 +22,11 @@ import net.sf.mmm.code.impl.java.type.JavaType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaProperty extends JavaMember implements CodeProperty {
+public class JavaProperty extends JavaMember implements CodeProperty, CodeNodeItemWithGenericParent<JavaProperties, JavaProperty> {
 
   private static final Logger LOG = LoggerFactory.getLogger(JavaProperty.class);
+
+  private final JavaProperties parent;
 
   private JavaGenericType type;
 
@@ -37,23 +39,31 @@ public class JavaProperty extends JavaMember implements CodeProperty {
   /**
    * The constructor.
    *
-   * @param declaringType the {@link #getDeclaringType()}.
+   * @param parent the {@link #getParent() parent}.
+   * @param name the {@link #getName() name}.
    */
-  public JavaProperty(JavaType declaringType) {
+  public JavaProperty(JavaProperties parent, String name) {
 
-    super(declaringType, null);
+    super(null, name);
+    this.parent = parent;
   }
 
   /**
    * The copy-constructor.
    *
    * @param template the {@link JavaProperty} to copy.
-   * @param declaringType the {@link #getDeclaringType()}.
+   * @param parent the {@link #getParent() parent}.
    */
-  public JavaProperty(JavaProperty template, JavaType declaringType) {
+  public JavaProperty(JavaProperty template, JavaProperties parent) {
 
-    super(template, declaringType);
-    this.type = template.type;
+    super(template);
+    this.parent = parent;
+  }
+
+  @Override
+  public JavaProperties getParent() {
+
+    return this.parent;
   }
 
   @Override
@@ -138,7 +148,7 @@ public class JavaProperty extends JavaMember implements CodeProperty {
     if (resolvedType == this.type) {
       return this;
     }
-    JavaProperty copy = new JavaProperty(this, (JavaType) declaring);
+    JavaProperty copy = new JavaProperty(this, this.parent);
     copy.type = resolvedType;
     return copy;
   }
@@ -211,15 +221,21 @@ public class JavaProperty extends JavaMember implements CodeProperty {
   }
 
   @Override
-  protected void doWrite(Appendable sink, String defaultIndent, String currentIndent) throws IOException {
+  public JavaProperty copy() {
 
-    // properties are virtual and will never be written...
+    return copy(this.parent);
   }
 
   @Override
-  public JavaProperty copy(CodeType newDeclaringType) {
+  public JavaProperty copy(JavaProperties newParent) {
 
-    return new JavaProperty(this, (JavaType) newDeclaringType);
+    return new JavaProperty(this, newParent);
+  }
+
+  @Override
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
+
+    // properties are virtual and will never be written...
   }
 
   static String getPropertyName(CodeMethod method, boolean checkSignature) {
@@ -228,11 +244,11 @@ public class JavaProperty extends JavaMember implements CodeProperty {
     String propertyName = getPropertyName(methodName);
     if (checkSignature && (propertyName != null)) {
       if (methodName.startsWith("set")) {
-        if (method.getParameters().size() != 1) {
+        if (method.getParameters().getAll().size() != 1) {
           return null;
         }
       } else {
-        if (method.getParameters().size() != 0) {
+        if (method.getParameters().getAll().size() != 0) {
           return null;
         }
         if (method.getReturns().getType().asType().isVoid()) {

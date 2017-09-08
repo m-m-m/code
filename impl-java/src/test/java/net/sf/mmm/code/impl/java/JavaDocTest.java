@@ -21,17 +21,17 @@ public class JavaDocTest extends Assertions {
   public void testJavaDoc() {
 
     // given
-    JavaContext context = new JavaContext();
+    JavaContext context = new JavaRootContext();
     JavaPackage rootPackage = context.getRootPackage();
     String pkg1Name = "pkg1";
-    JavaPackage pkg1 = context.createPackage(rootPackage, pkg1Name);
+    JavaPackage pkg1 = rootPackage.getChildren().createPackage(pkg1Name);
     String pkg2Name = "pkg2";
-    JavaPackage pkg2 = context.createPackage(rootPackage, pkg2Name);
+    JavaPackage pkg2 = rootPackage.getChildren().createPackage(pkg2Name);
     String simpleName1 = "Foo";
-    JavaType class1 = context.createType(pkg1, simpleName1);
+    JavaType class1 = pkg1.getChildren().createType(simpleName1);
     String simpleName2 = "Bar";
-    JavaType class2 = context.createType(pkg2, simpleName2);
-    class1.getFile().addImport(class2);
+    JavaType class2 = pkg2.getChildren().createType(simpleName2);
+    class1.getFile().getImports().add(class2);
 
     // when
     JavaDoc doc = class1.getDoc();

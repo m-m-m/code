@@ -15,18 +15,6 @@ import net.sf.mmm.code.api.type.CodeType;
  */
 public abstract interface CodeExpression extends CodeItem {
 
-  @Override
-  default boolean isImmutable() {
-
-    return true;
-  }
-
-  @Override
-  default void setImmutable() {
-
-    throw new IllegalStateException("Expression (" + getClass().getSimpleName() + ") is always immutable!");
-  }
-
   /**
    * @param type the optional {@link CodeType} as context for evaluation. May be {@code null}.
    * @return the evaluated value. May be {@code null}. Will also be {@code null} if the expression can not be

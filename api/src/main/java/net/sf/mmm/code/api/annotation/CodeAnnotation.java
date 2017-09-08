@@ -5,32 +5,39 @@ package net.sf.mmm.code.api.annotation;
 import java.util.Map;
 
 import net.sf.mmm.code.api.element.CodeElement;
-import net.sf.mmm.code.api.item.CodeItemWithDeclaringElement;
-import net.sf.mmm.code.api.item.CodeItemWithType;
+import net.sf.mmm.code.api.expression.CodeExpression;
+import net.sf.mmm.code.api.node.CodeNodeItemWithDeclaringElement;
+import net.sf.mmm.code.api.node.CodeNodeItemWithType;
 import net.sf.mmm.code.api.type.CodeType;
 
 /**
- * {@link CodeItemWithType} that represents an {@link java.lang.annotation.Annotation} instance.
+ * {@link CodeNodeItemWithType} that represents an {@link java.lang.annotation.Annotation} instance.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeAnnotation extends CodeItemWithType, CodeItemWithDeclaringElement {
+public interface CodeAnnotation extends CodeNodeItemWithType, CodeNodeItemWithDeclaringElement {
+
+  @Override
+  CodeAnnotations getParent();
 
   /**
    * @return the {@link Map} with the parameters of this annotation. May be {@link Map#isEmpty() empty} but is
-   *         never <code>null</code>.
+   *         never <code>null</code>. The {@link CodeExpression}s are most likely a
+   *         {@link net.sf.mmm.code.api.expression.CodeLiteral}.
    */
-  Map<String, Object> getParameters();
+  Map<String, CodeExpression> getParameters();
 
   @Override
   CodeType getType();
 
-  /**
-   * @param newDeclaringElement the new {@link #getDeclaringElement() declaring element}.
-   * @return the new {@link #isImmutable() mutable} copy.
-   */
   @Override
-  CodeAnnotation copy(CodeElement newDeclaringElement);
+  CodeAnnotation copy();
+
+  @Override
+  default CodeElement getDeclaringElement() {
+
+    return getParent().getParent();
+  }
 
 }

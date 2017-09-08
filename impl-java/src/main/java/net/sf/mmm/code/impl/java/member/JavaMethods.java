@@ -7,6 +7,7 @@ import java.util.List;
 
 import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.member.CodeMethods;
+import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.impl.java.arg.JavaReturn;
 import net.sf.mmm.code.impl.java.type.JavaGenericType;
@@ -18,9 +19,7 @@ import net.sf.mmm.code.impl.java.type.JavaType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaMethods extends JavaMembers<CodeMethod> implements CodeMethods {
-
-  private List<JavaMethod> methods;
+public class JavaMethods extends JavaOperations<CodeMethod, JavaMethod> implements CodeMethods, CodeNodeItemWithGenericParent<JavaType, JavaMethods> {
 
   /**
    * The constructor.
@@ -30,7 +29,6 @@ public class JavaMethods extends JavaMembers<CodeMethod> implements CodeMethods 
   public JavaMethods(JavaType declaringType) {
 
     super(declaringType);
-    this.methods = new ArrayList<>();
   }
 
   /**
@@ -45,22 +43,15 @@ public class JavaMethods extends JavaMembers<CodeMethod> implements CodeMethods 
   }
 
   @Override
-  protected void doSetImmutable() {
-
-    super.doSetImmutable();
-    this.methods = makeImmutable(this.methods);
-  }
-
-  @Override
   public List<? extends JavaMethod> getDeclared() {
 
-    return this.methods;
+    return getList();
   }
 
   @Override
   public Iterable<? extends JavaMethod> getAll() {
 
-    List<JavaMethod> list = new ArrayList<>(this.methods);
+    List<JavaMethod> list = new ArrayList<>(getDeclared());
     collectMethods(list);
     return list;
   }
@@ -69,39 +60,66 @@ public class JavaMethods extends JavaMembers<CodeMethod> implements CodeMethods 
 
     for (JavaGenericType superType : getDeclaringType().getSuperTypes().getDeclared()) {
       JavaMethods javaMethods = superType.asType().getMethods();
-      list.addAll(javaMethods.methods);
+      list.addAll(javaMethods.getDeclared());
       javaMethods.collectMethods(list);
     }
   }
 
   @Override
-  public JavaMethod get(String name, CodeType... parameterTypes) {
+  public JavaMethod get(CodeMethod method) {
 
-    for (JavaMethod method : this.methods) {
-      if (method.getName().equals(name)) {
-
+    String name = method.getName();
+    for (JavaMethod myMethod : getDeclared()) {
+      if (myMethod.getName().equals(name)) {
+        if (myMethod.getParameters().isInvokable(method.getParameters())) {
+          return myMethod;
+        }
       }
     }
-    // TODO Auto-generated method stub
+    for (JavaGenericType superType : getDeclaringType().getSuperTypes().getDeclared()) {
+      JavaMethod myMethod = superType.asType().getMethods().get(method);
+      if (myMethod != null) {
+        return myMethod;
+      }
+    }
+    return null;
+  }
+
+  @Override
+  public JavaMethod getDeclared(String name, CodeType... parameterTypes) {
+
+    for (JavaMethod method : getDeclared()) {
+      if (method.getName().equals(name)) {
+        if (method.getParameters().isInvokable(parameterTypes)) {
+          return method;
+        }
+      }
+    }
     return null;
   }
 
   @Override
   public JavaMethod add(String name) {
 
-    JavaMethod method = new JavaMethod(getDeclaringType());
-    method.setName(name);
+    verifyMutalbe();
+    JavaMethod method = new JavaMethod(this, name);
     JavaReturn returns = new JavaReturn(method);
     returns.setType(getContext().getVoidType());
     method.setReturns(returns);
-    this.methods.add(method);
+    add(method);
     return method;
   }
 
   @Override
-  public JavaMethods copy(CodeType newDeclaringType) {
+  public JavaMethods copy() {
 
-    return new JavaMethods(this, (JavaType) newDeclaringType);
+    return copy(getParent());
+  }
+
+  @Override
+  public JavaMethods copy(JavaType newParent) {
+
+    return new JavaMethods(this, newParent);
   }
 
 }

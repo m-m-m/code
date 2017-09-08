@@ -2,8 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.member;
 
-import net.sf.mmm.code.api.item.CodeItemContainerWithInheritanceAndName;
-import net.sf.mmm.code.api.type.CodeType;
+import net.sf.mmm.code.api.node.CodeNodeItemContainerHierarchicalWithName;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
@@ -15,7 +14,7 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeProperties extends CodeMembers<CodeProperty>, CodeItemContainerWithInheritanceAndName<CodeProperty> {
+public interface CodeProperties extends CodeMembers<CodeProperty>, CodeNodeItemContainerHierarchicalWithName<CodeProperty> {
 
   /**
    * @deprecated instances of {@link CodeProperty} are dynamically created on the fly.
@@ -28,6 +27,6 @@ public interface CodeProperties extends CodeMembers<CodeProperty>, CodeItemConta
   }
 
   @Override
-  CodeProperties copy(CodeType newDeclaringType);
+  CodeProperties copy();
 
 }

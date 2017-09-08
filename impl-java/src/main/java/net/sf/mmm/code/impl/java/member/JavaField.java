@@ -3,14 +3,13 @@
 package net.sf.mmm.code.impl.java.member;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
+import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeGenericType;
-import net.sf.mmm.code.api.type.CodeType;
-import net.sf.mmm.code.impl.java.type.JavaType;
-import net.sf.mmm.util.exception.api.DuplicateObjectException;
 
 /**
  * Implementation of {@link CodeField} for Java.
@@ -18,7 +17,9 @@ import net.sf.mmm.util.exception.api.DuplicateObjectException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaField extends JavaMember implements CodeField {
+public class JavaField extends JavaMember implements CodeField, CodeNodeItemWithGenericParent<JavaFields, JavaField> {
+
+  private final JavaFields parent;
 
   private CodeGenericType type;
 
@@ -27,11 +28,13 @@ public class JavaField extends JavaMember implements CodeField {
   /**
    * The constructor.
    *
-   * @param declaringType the {@link #getDeclaringType()}.
+   * @param parent the {@link #getParent() parent}.
+   * @param name the {@link #getName() name}.
    */
-  public JavaField(JavaType declaringType) {
+  public JavaField(JavaFields parent, String name) {
 
-    super(declaringType, CodeModifiers.MODIFIERS_PRIVATE);
+    super(CodeModifiers.MODIFIERS_PRIVATE, name);
+    this.parent = parent;
     this.type = getContext().getRootType();
   }
 
@@ -39,13 +42,20 @@ public class JavaField extends JavaMember implements CodeField {
    * The copy-constructor.
    *
    * @param template the {@link JavaField} to copy.
-   * @param declaringType the {@link #getDeclaringType()}.
+   * @param parent the {@link #getParent() parent}.
    */
-  public JavaField(JavaField template, JavaType declaringType) {
+  public JavaField(JavaField template, JavaFields parent) {
 
-    super(template, declaringType);
+    super(template);
+    this.parent = parent;
     this.type = template.type;
     this.initializer = template.initializer;
+  }
+
+  @Override
+  public JavaFields getParent() {
+
+    return this.parent;
   }
 
   @Override
@@ -75,27 +85,28 @@ public class JavaField extends JavaMember implements CodeField {
   }
 
   @Override
-  public void setName(String name) {
+  public boolean equals(Object obj) {
 
-    JavaType declaringType = getDeclaringType();
-    JavaFields fields = declaringType.getFields();
-    JavaField duplicate = fields.getDeclared(name);
-    if (duplicate != null) {
-      throw new DuplicateObjectException(declaringType.getSimpleName() + ".fields", name);
+    if (this == obj) {
+      return true;
     }
-    String oldName = getName();
-    super.setName(name);
-    if (oldName.equals(name)) {
-      return;
+    if (!super.equals(obj)) {
+      return false;
     }
-    fields.rename(this, oldName);
-    declaringType.getProperties().rename(this, oldName);
+    JavaField other = (JavaField) obj;
+    if (!Objects.equals(this.type, other.type)) {
+      return false;
+    }
+    if (!Objects.equals(this.initializer, other.initializer)) {
+      return false;
+    }
+    return true;
   }
 
   @Override
-  protected void doWrite(Appendable sink, String defaultIndent, String currentIndent) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
 
-    super.doWrite(sink, defaultIndent, currentIndent);
+    super.doWrite(sink, newline, defaultIndent, currentIndent);
     this.type.writeReference(sink, false);
     sink.append(' ');
     sink.append(getName());
@@ -104,13 +115,19 @@ public class JavaField extends JavaMember implements CodeField {
       this.initializer.write(sink, "", "");
     }
     sink.append(';');
-    writeNewline(sink);
+    sink.append(newline);
   }
 
   @Override
-  public JavaField copy(CodeType newDeclaringType) {
+  public JavaField copy() {
 
-    return new JavaField(this, (JavaType) newDeclaringType);
+    return copy(this.parent);
+  }
+
+  @Override
+  public JavaField copy(JavaFields newParent) {
+
+    return new JavaField(this, newParent);
   }
 
 }

@@ -2,18 +2,15 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.impl.java.member;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import net.sf.mmm.code.api.member.CodeProperties;
 import net.sf.mmm.code.api.member.CodeProperty;
-import net.sf.mmm.code.api.type.CodeType;
+import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.impl.java.type.JavaGenericType;
 import net.sf.mmm.code.impl.java.type.JavaType;
-import net.sf.mmm.util.exception.api.DuplicateObjectException;
 
 /**
  * Implementation of {@link CodeProperties} for Java.
@@ -21,71 +18,58 @@ import net.sf.mmm.util.exception.api.DuplicateObjectException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaProperties extends JavaMembers<CodeProperty> implements CodeProperties {
-
-  private List<JavaProperty> properties;
-
-  private Map<String, JavaProperty> propertyMap;
+public class JavaProperties extends JavaMembers<CodeProperty, JavaProperty> implements CodeProperties, CodeNodeItemWithGenericParent<JavaType, JavaProperties> {
 
   /**
    * The constructor.
    *
-   * @param declaringType the {@link #getDeclaringType()}.
+   * @param parent the {@link #getParent() parent}.
    */
-  public JavaProperties(JavaType declaringType) {
+  public JavaProperties(JavaType parent) {
 
-    super(declaringType);
-    this.properties = new ArrayList<>();
-    this.propertyMap = new HashMap<>();
+    super(parent);
   }
 
   /**
    * The copy-constructor.
    *
    * @param template the {@link JavaProperties} to copy.
-   * @param declaringType the {@link #getDeclaringType()}.
+   * @param parent the {@link #getParent() parent}.
    */
-  public JavaProperties(JavaProperties template, JavaType declaringType) {
+  public JavaProperties(JavaProperties template, JavaType parent) {
 
-    super(template, declaringType);
-    this.properties = doCopy(template.properties, declaringType);
-  }
-
-  @Override
-  protected void doSetImmutable() {
-
-    super.doSetImmutable();
-    this.properties = makeImmutable(this.properties);
-    this.propertyMap = Collections.unmodifiableMap(this.propertyMap);
+    super(template, parent);
   }
 
   @Override
   public List<? extends JavaProperty> getDeclared() {
 
-    return this.properties;
+    return getList();
   }
 
   @Override
   public Iterable<? extends JavaProperty> getAll() {
 
-    List<JavaProperty> list = new ArrayList<>(this.properties);
-    collectProperties(list);
-    return list;
+    Map<String, JavaProperty> map = new HashMap<>(getMap());
+    collectProperties(map);
+    return map.values();
   }
 
-  private void collectProperties(List<JavaProperty> list) {
+  private void collectProperties(Map<String, JavaProperty> map) {
 
     for (JavaGenericType superType : getDeclaringType().getSuperTypes().getDeclared()) {
       JavaProperties javaProperties = superType.asType().getProperties();
-      list.addAll(javaProperties.properties);
-      javaProperties.collectProperties(list);
+      for (JavaProperty property : javaProperties.getDeclared()) {
+        map.putIfAbsent(property.getName(), property.inherit(getParent()));
+      }
+      javaProperties.collectProperties(map);
     }
   }
 
   @Override
   public JavaProperty get(String name) {
 
-    JavaProperty property = this.propertyMap.get(name);
+    JavaProperty property = getByName(name);
     if (property != null) {
       return property;
     }
@@ -93,68 +77,72 @@ public class JavaProperties extends JavaMembers<CodeProperty> implements CodePro
       JavaProperties javaProperties = superType.asType().getProperties();
       property = javaProperties.get(name);
       if (property != null) {
-        return property;
+        return property.inherit(getParent());
       }
     }
     return null;
   }
 
   @Override
-  public JavaProperty add(String name) {
+  public JavaProperty getRequired(String name) {
 
-    verifyMutalbe();
-    if (this.propertyMap.containsKey(name)) {
-      throw new DuplicateObjectException(getDeclaringType().getSimpleName() + ".properties", name);
-    }
-    JavaProperty property = new JavaProperty(getDeclaringType());
-    property.setName(name);
-    this.properties.add(property);
-    this.propertyMap.put(name, property);
-    return property;
-  }
-
-  /**
-   * @param name the {@link JavaProperty#getName() name} of the {@link JavaProperty} to remove.
-   * @return {@code true} if successfully removed, {@code false} otherwise.
-   */
-  boolean remove(String name) {
-
-    verifyMutalbe();
-    JavaProperty property = this.propertyMap.remove(name);
-    if (property != null) {
-      return this.properties.remove(property);
-    }
-    return false;
+    return super.getRequired(name);
   }
 
   @Override
-  public CodeProperty getDeclared(String name) {
+  public JavaProperty add(String name) {
 
-    return this.propertyMap.get(name);
+    verifyMutalbe();
+    JavaProperty property = new JavaProperty(this, name);
+    add(property);
+    return property;
   }
 
-  void rename(JavaField field, String oldName) {
+  @Override
+  public JavaProperty getDeclared(String name) {
 
-    JavaProperty property = this.propertyMap.get(oldName);
-    if ((property != null) && property.getField() == field) {
-      property.setField(null);
-      if (property.isEmpty()) {
-        remove(oldName);
-      }
-    }
-    String name = field.getName();
-    property = this.propertyMap.get(name);
+    return getByName(name);
+  }
+
+  @Override
+  public JavaProperty getDeclaredOrCreate(String name) {
+
+    JavaProperty property = getDeclared(name);
     if (property == null) {
       property = add(name);
     }
+    return property;
+  }
+
+  void renameMember(JavaMember member, String oldName, String newName) {
+
+    if (member instanceof JavaField) {
+      rename((JavaField) member, oldName, newName);
+    } else if (member instanceof JavaMethod) {
+      rename((JavaMethod) member, oldName, newName);
+    }
+  }
+
+  private void rename(JavaField field, String oldName, String newName) {
+
+    Map<String, JavaProperty> map = getMap();
+    JavaProperty property = map.get(oldName);
+    if ((property != null) && property.getField() == field) {
+      property.setField(null);
+      if (property.isEmpty()) {
+        remove(property);
+      }
+    }
+    property = getDeclaredOrCreate(newName);
     property.join(field);
   }
 
-  void rename(JavaMethod method, String oldName) {
+  private void rename(JavaMethod method, String oldName, String newName) {
 
+    Map<String, JavaProperty> map = getMap();
     String propertyName = JavaProperty.getPropertyName(oldName);
     if (propertyName != null) {
-      JavaProperty property = this.propertyMap.get(propertyName);
+      JavaProperty property = map.get(propertyName);
       if (property != null) {
         if (oldName.startsWith("set")) {
           if (property.getSetter() == method) {
@@ -166,24 +154,27 @@ public class JavaProperties extends JavaMembers<CodeProperty> implements CodePro
           }
         }
         if (property.isEmpty()) {
-          remove(propertyName);
+          remove(property);
         }
       }
     }
     propertyName = JavaProperty.getPropertyName(method, true);
     if (propertyName != null) {
-      JavaProperty property = this.propertyMap.get(propertyName);
-      if (property == null) {
-        property = add(propertyName);
-      }
+      JavaProperty property = getDeclaredOrCreate(propertyName);
       property.join(method);
     }
   }
 
   @Override
-  public JavaProperties copy(CodeType newDeclaringType) {
+  public JavaProperties copy() {
 
-    return new JavaProperties(this, (JavaType) newDeclaringType);
+    return copy(getParent());
+  }
+
+  @Override
+  public JavaProperties copy(JavaType newParent) {
+
+    return new JavaProperties(this, newParent);
   }
 
 }

@@ -3,20 +3,23 @@
 package net.sf.mmm.code.api.member;
 
 import net.sf.mmm.code.api.expression.CodeExpression;
-import net.sf.mmm.code.api.item.CodeItemWithType;
-import net.sf.mmm.code.api.type.CodeType;
+import net.sf.mmm.code.api.node.CodeNodeItemWithType;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
- * {@link CodeProperty} for a field of a {@link CodeType}.
+ * {@link CodeMember} for a field of a {@link net.sf.mmm.code.api.type.CodeType}.
  *
  * @see java.lang.reflect.Field
- * @see CodeType#getFields()
+ * @see net.sf.mmm.code.api.type.CodeType#getFields()
+ * @see CodeFields#getDeclared()
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract interface CodeField extends CodeMember, CodeItemWithType {
+public abstract interface CodeField extends CodeMember, CodeNodeItemWithType {
+
+  @Override
+  CodeFields getParent();
 
   /**
    * @return the {@link CodeExpression} assigned to this field on initialization or {@code null} for none.
@@ -30,6 +33,6 @@ public abstract interface CodeField extends CodeMember, CodeItemWithType {
   void setInitializer(CodeExpression initializer);
 
   @Override
-  CodeField copy(CodeType newDeclaringType);
+  CodeField copy();
 
 }

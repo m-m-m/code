@@ -3,7 +3,7 @@
 package net.sf.mmm.code.api.member;
 
 import net.sf.mmm.code.api.item.CodeItem;
-import net.sf.mmm.code.api.item.CodeItemContainerWithInheritance;
+import net.sf.mmm.code.api.node.CodeNodeItemContainer;
 import net.sf.mmm.code.api.type.CodeType;
 
 /**
@@ -13,9 +13,12 @@ import net.sf.mmm.code.api.type.CodeType;
  * @param <M> type of the contained {@link CodeMember}s.
  * @since 1.0.0
  */
-public abstract interface CodeMembers<M extends CodeMember> extends CodeItemContainerWithInheritance<M> {
+public abstract interface CodeMembers<M extends CodeMember> extends CodeNodeItemContainer<M> {
 
   @Override
-  CodeMembers<M> copy(CodeType newDeclaringType);
+  CodeType getParent();
+
+  @Override
+  CodeMembers<M> copy();
 
 }

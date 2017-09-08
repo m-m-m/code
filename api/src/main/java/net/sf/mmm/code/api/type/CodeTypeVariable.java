@@ -3,8 +3,7 @@
 package net.sf.mmm.code.api.type;
 
 import net.sf.mmm.code.api.element.CodeElementWithName;
-import net.sf.mmm.code.api.item.CodeItemWithDeclaringOperation;
-import net.sf.mmm.code.api.member.CodeOperation;
+import net.sf.mmm.code.api.node.CodeNodeItemWithDeclaringOperation;
 
 /**
  * {@link CodeGenericType} representing a type variable. It is a variable as a placeholder for a
@@ -18,7 +17,10 @@ import net.sf.mmm.code.api.member.CodeOperation;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract interface CodeTypeVariable extends CodeGenericType, CodeElementWithName, CodeItemWithDeclaringOperation {
+public abstract interface CodeTypeVariable extends CodeGenericType, CodeElementWithName, CodeNodeItemWithDeclaringOperation {
+
+  @Override
+  CodeTypeVariables getParent();
 
   /**
    * @return {@code true} if this type variable extends a given type (e.g. "{@code T extends String}"),
@@ -38,6 +40,12 @@ public abstract interface CodeTypeVariable extends CodeGenericType, CodeElementW
    */
   boolean isWildcard();
 
+  /**
+   * @return the {@link CodeGenericType} representing the {@link java.lang.reflect.TypeVariable#getBounds()
+   *         bound(s)} of this type variable.
+   */
+  CodeGenericType getBound();
+
   @Override
   default boolean isQualified() {
 
@@ -53,9 +61,6 @@ public abstract interface CodeTypeVariable extends CodeGenericType, CodeElementW
   CodeTypeVariables getTypeVariables();
 
   @Override
-  CodeTypeVariable copy(CodeType newDeclaringType);
-
-  @Override
-  CodeTypeVariable copy(CodeOperation newDeclaringOperation);
+  CodeTypeVariable copy();
 
 }

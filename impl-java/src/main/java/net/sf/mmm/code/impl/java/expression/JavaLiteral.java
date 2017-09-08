@@ -3,6 +3,14 @@
 package net.sf.mmm.code.impl.java.expression;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.expression.CodeLiteral;
 import net.sf.mmm.code.base.AbstractCodeItem;
@@ -15,6 +23,8 @@ import net.sf.mmm.code.base.AbstractCodeItem;
  * @since 1.0.0
  */
 public class JavaLiteral<T> extends AbstractCodeItem implements CodeLiteral {
+
+  private static final Logger LOG = LoggerFactory.getLogger(JavaLiteral.class);
 
   /** {@link JavaLiteral} for {@code null}. */
   @SuppressWarnings("rawtypes")
@@ -80,7 +90,7 @@ public class JavaLiteral<T> extends AbstractCodeItem implements CodeLiteral {
   }
 
   @Override
-  protected void doWrite(Appendable sink, String defaultIndent, String currentIndent) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
 
     sink.append(getLiteral());
   }
@@ -94,8 +104,12 @@ public class JavaLiteral<T> extends AbstractCodeItem implements CodeLiteral {
     if (value == null) {
       return NULL;
     }
-    String literal = '"' + value.replaceAll("\"", "\\\\\"") + '"';
-    return new JavaLiteral<>(literal, value);
+    return new JavaLiteral<>(createStringLiteral(value), value);
+  }
+
+  private static String createStringLiteral(String value) {
+
+    return '"' + value.replaceAll("\"", "\\\\\"") + '"';
   }
 
   /**
@@ -166,6 +180,48 @@ public class JavaLiteral<T> extends AbstractCodeItem implements CodeLiteral {
    * @param value the literal value.
    * @return the {@link CodeLiteral} for the given {@code value}.
    */
+  public static JavaLiteral<Short> of(short value) {
+
+    return new JavaLiteral<>(Short.toString(value), Short.valueOf(value));
+  }
+
+  /**
+   * @param value the literal value.
+   * @return the {@link CodeLiteral} for the given {@code value}.
+   */
+  public static JavaLiteral<Short> of(Short value) {
+
+    if (value == null) {
+      return NULL;
+    }
+    return new JavaLiteral<>("Short.valueOf(" + value + ")", value);
+  }
+
+  /**
+   * @param value the literal value.
+   * @return the {@link CodeLiteral} for the given {@code value}.
+   */
+  public static JavaLiteral<Byte> of(byte value) {
+
+    return new JavaLiteral<>(Byte.toString(value), Byte.valueOf(value));
+  }
+
+  /**
+   * @param value the literal value.
+   * @return the {@link CodeLiteral} for the given {@code value}.
+   */
+  public static JavaLiteral<Byte> of(Byte value) {
+
+    if (value == null) {
+      return NULL;
+    }
+    return new JavaLiteral<>("Byte.valueOf(" + value + ")", value);
+  }
+
+  /**
+   * @param value the literal value.
+   * @return the {@link CodeLiteral} for the given {@code value}.
+   */
   public static JavaLiteral<Character> of(char value) {
 
     String literal = toCharLiteral(value);
@@ -214,7 +270,31 @@ public class JavaLiteral<T> extends AbstractCodeItem implements CodeLiteral {
    */
   public static JavaLiteral<Double> of(Double value) {
 
+    if (value == null) {
+      return NULL;
+    }
     return new JavaLiteral<>("Double.valueOf(" + value + "d)", value);
+  }
+
+  /**
+   * @param value the literal value.
+   * @return the {@link CodeLiteral} for the given {@code value}.
+   */
+  public static JavaLiteral<Float> of(float value) {
+
+    return new JavaLiteral<>(Float.toString(value) + "f", Float.valueOf(value));
+  }
+
+  /**
+   * @param value the literal value.
+   * @return the {@link CodeLiteral} for the given {@code value}.
+   */
+  public static JavaLiteral<Float> of(Float value) {
+
+    if (value == null) {
+      return NULL;
+    }
+    return new JavaLiteral<>("Float.valueOf(" + value + "f)", value);
   }
 
   /**
@@ -233,6 +313,155 @@ public class JavaLiteral<T> extends AbstractCodeItem implements CodeLiteral {
   public static JavaLiteral<Long> of(Long value) {
 
     return new JavaLiteral<>("Long.valueOf(" + value + "l)", value);
+  }
+
+  /**
+   * @param value the literal value.
+   * @return the {@link CodeLiteral} for the given {@code value}.
+   */
+  public static JavaLiteral<BigDecimal> of(BigDecimal value) {
+
+    if (value == null) {
+      return NULL;
+    }
+    return new JavaLiteral<>("new BigDecimal(" + createStringLiteral(value.toString()) + ")", value);
+  }
+
+  /**
+   * @param value the literal value.
+   * @return the {@link CodeLiteral} for the given {@code value}.
+   */
+  public static JavaLiteral<BigInteger> of(BigInteger value) {
+
+    if (value == null) {
+      return NULL;
+    }
+    return new JavaLiteral<>("new BigInteger(" + createStringLiteral(value.toString()) + ")", value);
+  }
+
+  /**
+   * @param value the literal value.
+   * @return the {@link CodeLiteral} for the given {@code value}.
+   */
+  public static JavaLiteral<Instant> of(Instant value) {
+
+    if (value == null) {
+      return NULL;
+    }
+    return new JavaLiteral<>("Instant.ofEpochMilli(" + value.toEpochMilli() + "l)", value);
+  }
+
+  /**
+   * @param value the literal value.
+   * @return the {@link CodeLiteral} for the given {@code value}.
+   */
+  public static JavaLiteral<LocalDate> of(LocalDate value) {
+
+    if (value == null) {
+      return NULL;
+    }
+    return new JavaLiteral<>("LocalDate.of(" + value.getYear() + ", " + value.getMonthValue() + ", " + value.getDayOfMonth() + ")", value);
+  }
+
+  /**
+   * @param value the literal value.
+   * @return the {@link CodeLiteral} for the given {@code value}.
+   */
+  public static JavaLiteral<LocalDateTime> of(LocalDateTime value) {
+
+    if (value == null) {
+      return NULL;
+    }
+    return new JavaLiteral<>("LocalDateTime.of(" + value.getYear() + ", " + value.getMonthValue() + ", " + value.getDayOfMonth() + ", " + value.getHour() + ", "
+        + value.getMinute() + ", " + value.getSecond() + ", " + value.getNano() + ")", value);
+  }
+
+  /**
+   * @param <T> type of the given {@link Class}.
+   * @param value the literal value.
+   * @return the {@link CodeLiteral} for the given {@code value}.
+   */
+  public static <T> JavaLiteral<Class<T>> of(Class<T> value) {
+
+    if (value == null) {
+      return NULL;
+    }
+    return new JavaLiteral<>(value.getName() + ".class", value);
+  }
+
+  /**
+   * @param value the literal value.
+   * @param primitive - {@code true} if the given {@code value} should be interpreted as primitive value.
+   * @return the {@link CodeLiteral} for the given {@code value}. May be {@code null} if the type of the given
+   *         {@code value} is not supported.
+   */
+  public static JavaLiteral<?> of(Object value, boolean primitive) {
+
+    if (value == null) {
+      return NULL;
+    } else if (value instanceof Boolean) {
+      Boolean b = (Boolean) value;
+      if (primitive) {
+        return of(b.booleanValue());
+      } else {
+        return of(b);
+      }
+    } else if (value instanceof Integer) {
+      Integer i = (Integer) value;
+      if (primitive) {
+        return of(i.intValue());
+      } else {
+        return of(i);
+      }
+    } else if (value instanceof Long) {
+      Long l = (Long) value;
+      if (primitive) {
+        return of(l.longValue());
+      } else {
+        return of(l);
+      }
+    } else if (value instanceof Short) {
+      Short s = (Short) value;
+      if (primitive) {
+        return of(s.shortValue());
+      } else {
+        return of(s);
+      }
+    } else if (value instanceof Float) {
+      Float f = (Float) value;
+      if (primitive) {
+        return of(f.floatValue());
+      } else {
+        return of(f);
+      }
+    } else if (value instanceof Double) {
+      Double d = (Double) value;
+      if (primitive) {
+        return of(d.doubleValue());
+      } else {
+        return of(d);
+      }
+    } else if (value instanceof Character) {
+      Character c = (Character) value;
+      if (primitive) {
+        return of(c.charValue());
+      } else {
+        return of(c);
+      }
+    } else if (value instanceof String) {
+      return of((String) value);
+    } else if (value instanceof Class) {
+      return of((Class<?>) value);
+    } else if (value instanceof BigInteger) {
+      return of((BigInteger) value);
+    } else if (value instanceof BigDecimal) {
+      return of((BigDecimal) value);
+    } else if (value instanceof Instant) {
+      return of((Instant) value);
+    } else {
+      LOG.debug("Undefined value type for literal: {}", value);
+      return null;
+    }
   }
 
 }

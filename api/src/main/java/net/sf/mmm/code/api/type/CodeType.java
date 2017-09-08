@@ -6,13 +6,14 @@ import java.util.List;
 
 import net.sf.mmm.code.api.CodeFile;
 import net.sf.mmm.code.api.element.CodeElement;
+import net.sf.mmm.code.api.element.CodeElementWithModifiers;
 import net.sf.mmm.code.api.element.CodeElementWithQualifiedName;
+import net.sf.mmm.code.api.element.CodeElementWithTypeVariables;
 import net.sf.mmm.code.api.member.CodeConstructors;
 import net.sf.mmm.code.api.member.CodeFields;
 import net.sf.mmm.code.api.member.CodeMethods;
 import net.sf.mmm.code.api.member.CodeProperties;
 import net.sf.mmm.code.api.member.CodeProperty;
-import net.sf.mmm.code.api.modifier.CodeElementWithModifiers;
 import net.sf.mmm.code.api.statement.CodeStaticBlock;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
@@ -22,7 +23,14 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeType extends CodeGenericType, CodeElementWithModifiers, CodeElementWithQualifiedName {
+public interface CodeType extends CodeGenericType, CodeElementWithModifiers, CodeElementWithQualifiedName, CodeElementWithTypeVariables {
+
+  /**
+   * @return the parent element of this type. Will either be the {@link #getFile() file} or the
+   *         {@link #getDeclaringType() declaring type}.
+   */
+  @Override
+  CodeElement getParent();
 
   /**
    * @return the {@link CodeFile} {@link CodeFile#getTypes() containing} this type.
@@ -44,12 +52,6 @@ public interface CodeType extends CodeGenericType, CodeElementWithModifiers, Cod
    *         classes for languages other than Java.
    */
   CodeSuperTypes getSuperTypes();
-
-  /**
-   * @return the {@link CodeTypeVariables} containing {@link net.sf.mmm.code.api.type.CodeTypeVariable}s.
-   */
-  @Override
-  CodeTypeVariables getTypeVariables();
 
   /**
    * @return the {@link CodeFields} containing the actual {@link net.sf.mmm.code.api.member.CodeField}s.
@@ -127,6 +129,12 @@ public interface CodeType extends CodeGenericType, CodeElementWithModifiers, Cod
    */
   boolean isBoolean();
 
+  /**
+   * @return {@code true} if this type represents an exception (in Java any type assignable to
+   *         {@link Throwable}).
+   */
+  boolean isException();
+
   @Override
   default boolean isArray() {
 
@@ -158,6 +166,6 @@ public interface CodeType extends CodeGenericType, CodeElementWithModifiers, Cod
   }
 
   @Override
-  CodeType copy(CodeType newDeclaringType);
+  CodeType copy();
 
 }
