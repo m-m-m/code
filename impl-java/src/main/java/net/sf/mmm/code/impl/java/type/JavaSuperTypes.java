@@ -155,6 +155,8 @@ public class JavaSuperTypes extends JavaNodeItemContainerHierarchical<CodeGeneri
 
   private static class SuperTypeIterator extends AbstractIterator<JavaGenericType> {
 
+    private final InternalSuperTypeIterator root;
+
     private InternalSuperTypeIterator iterator;
 
     /**
@@ -165,21 +167,23 @@ public class JavaSuperTypes extends JavaNodeItemContainerHierarchical<CodeGeneri
     public SuperTypeIterator(JavaType type) {
 
       super();
-      this.iterator = new InternalSuperTypeIterator(type);
+      this.root = new InternalSuperTypeIterator(type);
+      this.iterator = this.root;
       findFirst();
     }
 
     @Override
     protected JavaGenericType findNext() {
 
-      JavaGenericType next = this.iterator.nextSuperType();
       if (this.iterator.hasNext()) {
         this.iterator = this.iterator.next();
-        if (next == null) {
-          return findNext();
-        }
+      } else {
+        return null;
       }
-      return next;
+      if (this.iterator == null) {
+        return null;
+      }
+      return this.iterator.getType();
     }
 
   }

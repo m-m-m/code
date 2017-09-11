@@ -188,23 +188,27 @@ public class JavaAnnotations extends JavaNodeItemContainerHierarchical<CodeAnnot
 
   private class TypeAnnotationIterator extends AnnotationIterator {
 
-    private InternalSuperTypeIterator superTypeIterator;
+    private InternalSuperTypeIterator iterator;
 
     private TypeAnnotationIterator(JavaType type) {
 
       super();
-      this.superTypeIterator = new InternalSuperTypeIterator(type);
+      this.iterator = new InternalSuperTypeIterator(type);
       findFirst();
     }
 
     @Override
     protected Iterator<JavaAnnotation> nextParent() {
 
-      if (this.superTypeIterator.hasNext()) {
-        this.superTypeIterator = this.superTypeIterator.next();
-        return this.superTypeIterator.nextSuperType().asType().getAnnotations().getList().iterator();
+      if (this.iterator.hasNext()) {
+        this.iterator = this.iterator.next();
+      } else {
+        return null;
       }
-      return null;
+      if (this.iterator == null) {
+        return null;
+      }
+      return this.iterator.getType().asType().getAnnotations().getList().iterator();
     }
   }
 
