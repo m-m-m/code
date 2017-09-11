@@ -2,6 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.impl.java;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
@@ -9,12 +10,18 @@ import org.junit.Test;
 
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.api.type.CodeTypeCategory;
+import net.sf.mmm.code.impl.java.type.JavaGenericType;
 import net.sf.mmm.code.impl.java.type.JavaType;
 
 /**
  * Test of {@link JavaType}.
  */
 public class JavaTypeTest extends Assertions {
+
+  protected JavaRootContext createContext() {
+
+    return new JavaRootContext();
+  }
 
   /**
    * Test of {@link JavaType} for empty class.
@@ -23,7 +30,7 @@ public class JavaTypeTest extends Assertions {
   public void testEmptyClass() {
 
     // given
-    JavaContext context = new JavaRootContext();
+    JavaContext context = createContext();
     JavaPackage rootPackage = context.getRootPackage();
     String pkgName = "mydomain";
     JavaPackage pkg = rootPackage.getChildren().createPackage(pkgName);
@@ -60,7 +67,7 @@ public class JavaTypeTest extends Assertions {
   public void testNestedTypesWithDoc() {
 
     // given
-    JavaContext context = new JavaRootContext();
+    JavaContext context = createContext();
     JavaPackage rootPackage = context.getRootPackage();
     String pkgName = "mydomain";
     JavaPackage pkg = rootPackage.getChildren().createPackage(pkgName);
@@ -128,6 +135,48 @@ public class JavaTypeTest extends Assertions {
     for (JavaType child : type.getNestedTypes().getDeclared()) {
       addDummyDoc(child);
     }
+  }
+
+  /**
+   * Test of {@link JavaType#getSuperTypes()}.
+   */
+  @Test
+  public void testSuperTypes() {
+
+    // given
+    JavaContext context = createContext();
+    JavaPackage rootPackage = context.getRootPackage();
+    String pkgName1 = "pkg1";
+    JavaPackage pkg1 = rootPackage.getChildren().createPackage(pkgName1);
+    String pkgName2 = "pkg2";
+    JavaPackage pkg2 = rootPackage.getChildren().createPackage(pkgName2);
+
+    // when
+    JavaType interface1Other = pkg1.getChildren().createType("Other");
+    JavaType interface2Bar = pkg1.getChildren().createType("Bar");
+    JavaType interface3Some = pkg2.getChildren().createType("Some");
+    JavaType interface4Foo = pkg2.getChildren().createType("Foo");
+    JavaType class1Other = pkg1.getChildren().createType("OtherClass");
+    JavaType class2Foo = pkg2.getChildren().createType("FooClass");
+    interface3Some.getSuperTypes().add(interface2Bar);
+    interface4Foo.getSuperTypes().add(interface3Some);
+    interface4Foo.getSuperTypes().add(interface1Other);
+    class1Other.getSuperTypes().add(interface1Other);
+    class1Other.getSuperTypes().add(interface2Bar);
+    class2Foo.getSuperTypes().add(class1Other);
+    class2Foo.getSuperTypes().add(interface4Foo);
+
+    // then
+    assertThat(getAllSuperTypesAsList(class2Foo)).containsExactly(class1Other, interface1Other, interface2Bar, interface4Foo, interface3Some);
+  }
+
+  private List<JavaGenericType> getAllSuperTypesAsList(JavaType class2Foo) {
+
+    List<JavaGenericType> superTypeList = new ArrayList<>();
+    for (JavaGenericType superType : class2Foo.getSuperTypes().getAll()) {
+      superTypeList.add(superType);
+    }
+    return superTypeList;
   }
 
 }

@@ -202,7 +202,7 @@ public class JavaAnnotations extends JavaNodeItemContainerHierarchical<CodeAnnot
 
       if (this.superTypeIterator.hasNext()) {
         this.superTypeIterator = this.superTypeIterator.next();
-        return this.superTypeIterator.getType().getAnnotations().getList().iterator();
+        return this.superTypeIterator.nextSuperType().asType().getAnnotations().getList().iterator();
       }
       return null;
     }

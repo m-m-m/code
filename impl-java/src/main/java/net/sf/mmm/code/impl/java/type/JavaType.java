@@ -59,8 +59,6 @@ public class JavaType extends JavaGenericType
 
   private CodeStaticBlock initializer;
 
-  private Runnable lazyInit;
-
   /**
    * The constructor.
    *
@@ -97,8 +95,6 @@ public class JavaType extends JavaGenericType
     this.declaringType = declaringType;
     this.simpleName = simpleName;
     this.reflectiveObject = reflectiveObject;
-    this.modifiers = CodeModifiers.MODIFIERS_PUBLIC;
-    this.category = CodeTypeCategory.CLASS;
     this.superTypes = new JavaSuperTypes(this);
     this.nestedTypes = new JavaNestedTypes(this);
     this.typeVariables = new JavaTypeVariables(this);
@@ -106,6 +102,14 @@ public class JavaType extends JavaGenericType
     this.methods = new JavaMethods(this);
     this.constructors = new JavaConstructors(this);
     this.properties = new JavaProperties(this);
+    if (this.reflectiveObject != null) {
+      int mods = this.reflectiveObject.getModifiers();
+      this.modifiers = CodeModifiers.of(mods);
+      this.category = getCategory(this.reflectiveObject);
+    } else {
+      this.modifiers = CodeModifiers.MODIFIERS_PUBLIC;
+      this.category = CodeTypeCategory.CLASS;
+    }
   }
 
   /**
@@ -147,37 +151,19 @@ public class JavaType extends JavaGenericType
     this.typeVariables.setImmutable();
   }
 
-  /**
-   * @param lazyInit the lazy initializer. Should only be set once directly after construction.
-   */
-  void setLazyInit(Runnable lazyInit) {
+  static CodeTypeCategory getCategory(Class<?> clazz) {
 
-    this.lazyInit = lazyInit;
-  }
-
-  /**
-   * Runs a potential lazy initializer.
-   */
-  protected void lazyInit() {
-
-    if (this.lazyInit != null) {
-      this.lazyInit.run();
-      this.lazyInit = null;
+    CodeTypeCategory category;
+    if (clazz.isInterface()) {
+      category = CodeTypeCategory.INTERFACE;
+    } else if (clazz.isEnum()) {
+      category = CodeTypeCategory.ENUMERAION;
+    } else if (clazz.isAnnotation()) {
+      category = CodeTypeCategory.ANNOTATION;
+    } else {
+      category = CodeTypeCategory.CLASS;
     }
-  }
-
-  @Override
-  public void setImmutable() {
-
-    lazyInit();
-    super.setImmutable();
-  }
-
-  @Override
-  protected void verifyMutalbe() {
-
-    lazyInit();
-    super.verifyMutalbe();
+    return category;
   }
 
   @Override
@@ -276,35 +262,31 @@ public class JavaType extends JavaGenericType
   @Override
   public JavaSuperTypes getSuperTypes() {
 
-    lazyInit();
     return this.superTypes;
   }
 
   @Override
   public JavaFields getFields() {
 
-    lazyInit();
     return this.fields;
   }
 
   @Override
   public JavaMethods getMethods() {
 
-    lazyInit();
     return this.methods;
   }
 
   @Override
   public JavaConstructors getConstructors() {
 
-    lazyInit();
     return this.constructors;
   }
 
   @Override
   public JavaProperties getProperties() {
 
-    lazyInit();
+    initialize();
     return this.properties;
   }
 
@@ -317,13 +299,8 @@ public class JavaType extends JavaGenericType
   @Override
   public JavaNestedTypes getNestedTypes() {
 
+    initialize();
     return this.nestedTypes;
-  }
-
-  @Override
-  public JavaGenericType getComponentType() {
-
-    return null;
   }
 
   @Override
@@ -487,6 +464,41 @@ public class JavaType extends JavaGenericType
     if (declaration) {
       getTypeVariables().write(sink, DEFAULT_NEWLINE, null, null);
     }
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+
+    if (obj == this) {
+      return true;
+    }
+    if (!super.equals(obj)) {
+      return false;
+    }
+    JavaType other = (JavaType) obj;
+    if (!Objects.equals(this.simpleName, other.simpleName)) {
+      return false;
+    }
+    if (!Objects.equals(this.category, other.category)) {
+      return false;
+    }
+    if (!Objects.equals(this.modifiers, other.modifiers)) {
+      return false;
+    }
+    if (!Objects.equals(this.file, other.file)) {
+      return false;
+    }
+    if (!Objects.equals(this.declaringType, other.declaringType)) {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+
+    // TODO Auto-generated method stub
+    return super.hashCode();
   }
 
 }

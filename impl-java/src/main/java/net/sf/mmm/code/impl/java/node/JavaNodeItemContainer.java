@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.item.CodeItemWithName;
 import net.sf.mmm.code.api.node.CodeNodeItemContainer;
@@ -29,6 +32,8 @@ import net.sf.mmm.util.exception.api.ObjectNotFoundException;
  * @since 1.0.0
  */
 public abstract class JavaNodeItemContainer<I extends CodeItem, J extends I> extends JavaNodeItem implements CodeNodeItemContainer<I> {
+
+  private static final Logger LOG = LoggerFactory.getLogger(JavaNodeItemContainer.class);
 
   private List<J> list;
 
@@ -160,13 +165,19 @@ public abstract class JavaNodeItemContainer<I extends CodeItem, J extends I> ext
    */
   protected void addInternal(J item) {
 
+    boolean duplicate;
     if (this.map != null) {
-      put(item);
+      duplicate = put(item);
+    } else {
+      duplicate = this.list.contains(item);
+    }
+    if (duplicate) {
+      LOG.debug("Omitting duplicate child item {} in {}.", item, getClass().getSimpleName());
     }
     this.list.add(item);
   }
 
-  private void put(J item) {
+  private boolean put(J item) {
 
     String key;
     if (item instanceof CodeNodeItemWithQualifiedName) {
@@ -174,10 +185,15 @@ public abstract class JavaNodeItemContainer<I extends CodeItem, J extends I> ext
     } else {
       key = ((CodeItemWithName) item).getName();
     }
-    if (this.map.containsKey(key)) {
+    Object duplicate = this.map.get(key);
+    if (duplicate != null) {
+      if (duplicate == item) {
+        return true;
+      }
       throw new DuplicateObjectException(item.getClass().getSimpleName(), key);
     }
     this.map.put(key, item);
+    return false;
   }
 
   @Override

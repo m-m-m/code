@@ -20,8 +20,6 @@ public abstract class JavaElementWithQualifiedName extends JavaElement implement
 
   private JavaPackage parentPackage;
 
-  private Runnable lazyInit;
-
   /**
    * The constructor.
    *
@@ -56,42 +54,8 @@ public abstract class JavaElementWithQualifiedName extends JavaElement implement
   public JavaElementWithQualifiedName(JavaElementWithQualifiedName template, JavaPackage parentPackage) {
 
     super(template);
-    template.lazyInit();
     this.simpleName = template.simpleName;
     this.parentPackage = parentPackage;
-  }
-
-  /**
-   * @param lazyInit the lazy initializer. Should only be set once directly after construction.
-   */
-  void setLazyInit(Runnable lazyInit) {
-
-    this.lazyInit = lazyInit;
-  }
-
-  /**
-   * Runs a potential lazy initializer.
-   */
-  protected void lazyInit() {
-
-    if (this.lazyInit != null) {
-      this.lazyInit.run();
-      this.lazyInit = null;
-    }
-  }
-
-  @Override
-  public void setImmutable() {
-
-    lazyInit();
-    super.setImmutable();
-  }
-
-  @Override
-  protected void verifyMutalbe() {
-
-    lazyInit();
-    super.verifyMutalbe();
   }
 
   @Override

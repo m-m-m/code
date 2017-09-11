@@ -3,9 +3,7 @@
 package net.sf.mmm.code.impl.java.type;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -15,6 +13,7 @@ import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeSuperTypes;
 import net.sf.mmm.code.impl.java.node.JavaNodeItemContainerHierarchical;
+import net.sf.mmm.util.collection.base.AbstractIterator;
 
 /**
  * Implementation of {@link CodeSuperTypes} for Java.
@@ -61,14 +60,15 @@ public class JavaSuperTypes extends JavaNodeItemContainerHierarchical<CodeGeneri
   @Override
   public Iterable<? extends JavaGenericType> getAll() {
 
-    Set<JavaGenericType> set = new HashSet<>();
-    collectSuperTypes(set);
-    return set;
+    return () -> new SuperTypeIterator(this.parent);
   }
 
   @Override
   public void add(JavaGenericType superType) {
 
+    if (superType.asType().equals(this.parent)) {
+      throw new IllegalStateException("Type " + this.parent.getQualifiedName() + " can not extend itself");
+    }
     super.add(superType);
   }
 
@@ -76,16 +76,6 @@ public class JavaSuperTypes extends JavaNodeItemContainerHierarchical<CodeGeneri
   public void add(CodeGenericType superType) {
 
     add((JavaGenericType) superType);
-  }
-
-  private void collectSuperTypes(Set<JavaGenericType> set) {
-
-    List<JavaGenericType> declared = getList();
-    set.addAll(declared);
-    for (JavaGenericType superType : declared) {
-      JavaSuperTypes superTypes = superType.asType().getSuperTypes();
-      superTypes.collectSuperTypes(set);
-    }
   }
 
   @Override
@@ -161,6 +151,37 @@ public class JavaSuperTypes extends JavaNodeItemContainerHierarchical<CodeGeneri
       superType.writeReference(sink, false);
       separator = ", ";
     }
+  }
+
+  private static class SuperTypeIterator extends AbstractIterator<JavaGenericType> {
+
+    private InternalSuperTypeIterator iterator;
+
+    /**
+     * The constructor.
+     *
+     * @param type the initial {@link JavaType}. All its transitive super-types will be iterated.
+     */
+    public SuperTypeIterator(JavaType type) {
+
+      super();
+      this.iterator = new InternalSuperTypeIterator(type);
+      findFirst();
+    }
+
+    @Override
+    protected JavaGenericType findNext() {
+
+      JavaGenericType next = this.iterator.nextSuperType();
+      if (this.iterator.hasNext()) {
+        this.iterator = this.iterator.next();
+        if (next == null) {
+          return findNext();
+        }
+      }
+      return next;
+    }
+
   }
 
 }
