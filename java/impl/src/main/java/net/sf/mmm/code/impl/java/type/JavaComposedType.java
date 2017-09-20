@@ -131,7 +131,7 @@ public class JavaComposedType extends JavaGenericType
   @Override
   protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
 
-    super.doWrite(sink, newline, null, null);
+    super.doWrite(sink, newline, null, "");
     writeReference(sink, true);
   }
 

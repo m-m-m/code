@@ -3,7 +3,7 @@
 package net.sf.mmm.code.api.member;
 
 import net.sf.mmm.code.api.node.CodeNodeItemContainerHierarchical;
-import net.sf.mmm.code.api.type.CodeType;
+import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
@@ -17,11 +17,11 @@ public interface CodeMethods<M extends CodeMethod> extends CodeOperations<M>, Co
 
   /**
    * @param name the {@link CodeOperation#getName() name} of the requested {@link CodeOperation}.
-   * @param parameterTypes the {@link net.sf.mmm.code.api.type.CodeGenericType#asType() raw} {@link CodeType}s
-   *        of the {@link CodeOperation#getParameters() parameters}.
+   * @param parameterTypes the {@link CodeGenericType}s of the {@link CodeOperation#getParameters()
+   *        parameters}.
    * @return the requested {@link CodeOperation} or {@code null} if not found.
    */
-  M getDeclared(String name, CodeType... parameterTypes);
+  M getDeclared(String name, CodeGenericType... parameterTypes);
 
   /**
    * @param name the {@link CodeMethod#getName() method name}.

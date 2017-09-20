@@ -35,6 +35,8 @@ public abstract class JavaNodeItemContainer<I extends JavaItem> extends JavaNode
 
   private List<I> list;
 
+  private List<I> mutableList;
+
   private final Map<String, I> map;
 
   /**
@@ -43,7 +45,8 @@ public abstract class JavaNodeItemContainer<I extends JavaItem> extends JavaNode
   protected JavaNodeItemContainer() {
 
     super();
-    this.list = new ArrayList<>();
+    this.mutableList = new ArrayList<>();
+    this.list = this.mutableList;
     if (isNamed()) {
       this.map = new HashMap<>();
     } else {
@@ -75,7 +78,7 @@ public abstract class JavaNodeItemContainer<I extends JavaItem> extends JavaNode
   protected void doSetImmutable() {
 
     super.doSetImmutable();
-    this.list = makeImmutable(this.list);
+    this.list = makeImmutable(this.mutableList);
   }
 
   /**
@@ -171,7 +174,7 @@ public abstract class JavaNodeItemContainer<I extends JavaItem> extends JavaNode
       duplicate = this.list.contains(item);
     }
     if (duplicate) {
-      LOG.debug("Omitting duplicate child item {} in {}.", item, getClass().getSimpleName());
+      LOG.debug("Omitting duplicate child item '{}' in {}.", item, getClass().getSimpleName());
     }
     this.list.add(item);
   }
@@ -228,18 +231,6 @@ public abstract class JavaNodeItemContainer<I extends JavaItem> extends JavaNode
   public JavaType getDeclaringType() {
 
     return getParent().getDeclaringType();
-  }
-
-  @Override
-  public final boolean equals(Object obj) {
-
-    return this == obj;
-  }
-
-  @Override
-  public final int hashCode() {
-
-    return System.identityHashCode(this);
   }
 
 }

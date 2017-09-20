@@ -8,7 +8,7 @@ import java.util.List;
 
 import net.sf.mmm.code.api.member.CodeMethods;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
-import net.sf.mmm.code.api.type.CodeType;
+import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.impl.java.arg.JavaReturn;
 import net.sf.mmm.code.impl.java.type.JavaGenericType;
 import net.sf.mmm.code.impl.java.type.JavaType;
@@ -58,6 +58,7 @@ public class JavaMethods extends JavaOperations<JavaMethod> implements CodeMetho
   @Override
   public List<? extends JavaMethod> getDeclared() {
 
+    initialize();
     return getList();
   }
 
@@ -99,7 +100,7 @@ public class JavaMethods extends JavaOperations<JavaMethod> implements CodeMetho
   }
 
   @Override
-  public JavaMethod getDeclared(String name, CodeType... parameterTypes) {
+  public JavaMethod getDeclared(String name, CodeGenericType... parameterTypes) {
 
     for (JavaMethod method : getDeclared()) {
       if (method.getName().equals(name)) {

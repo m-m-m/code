@@ -74,4 +74,10 @@ public final class CodeName {
     }
     return this.parent;
   }
+
+  @Override
+  public String toString() {
+
+    return this.fullName;
+  }
 }

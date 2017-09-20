@@ -85,7 +85,7 @@ public abstract class JavaTypePlaceholder extends JavaGenericType implements Cod
   protected abstract Type[] getReflectiveBounds();
 
   @Override
-  public CodeGenericType getBound() {
+  public JavaGenericType getBound() {
 
     if (this.bound == null) {
       JavaContext context = getContext();
@@ -133,7 +133,7 @@ public abstract class JavaTypePlaceholder extends JavaGenericType implements Cod
   @Override
   public JavaType asType() {
 
-    return this.bound.asType();
+    return getBound().asType();
   }
 
   /**

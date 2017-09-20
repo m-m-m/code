@@ -115,6 +115,8 @@ public abstract class JavaContext extends JavaProvider implements CodeContext, J
   @Override
   public JavaGenericType getType(Type type, JavaElementNode declaringElement) {
 
+    // TODO this is nuts. We need to reuse the package caching to retrieve existing objects instead of
+    // creating new ones...
     return declaringElement.getSource().getContext().getLoader().getType(type, declaringElement);
   }
 
@@ -138,6 +140,9 @@ public abstract class JavaContext extends JavaProvider implements CodeContext, J
 
   @Override
   public abstract JavaType getRootType();
+
+  @Override
+  public abstract JavaType getRootEnumerationType();
 
   @Override
   public abstract JavaType getVoidType();

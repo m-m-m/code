@@ -143,13 +143,13 @@ public class JavaType extends JavaGenericType
   protected void doSetImmutable() {
 
     super.doSetImmutable();
-    this.constructors.setImmutable();
-    this.fields.setImmutable();
-    this.methods.setImmutable();
-    this.nestedTypes.setImmutable();
-    this.properties.setImmutable();
-    this.superTypes.setImmutable();
-    this.typeVariables.setImmutable();
+    this.constructors.setImmutableIfNotSystemImmutable();;
+    this.fields.setImmutableIfNotSystemImmutable();
+    this.methods.setImmutableIfNotSystemImmutable();
+    this.nestedTypes.setImmutableIfNotSystemImmutable();
+    this.properties.setImmutableIfNotSystemImmutable();
+    this.superTypes.setImmutableIfNotSystemImmutable();
+    this.typeVariables.setImmutableIfNotSystemImmutable();
   }
 
   static CodeTypeCategory getCategory(Class<?> clazz) {
@@ -287,7 +287,6 @@ public class JavaType extends JavaGenericType
   @Override
   public JavaProperties getProperties() {
 
-    initialize();
     return this.properties;
   }
 
@@ -303,7 +302,6 @@ public class JavaType extends JavaGenericType
   @Override
   public JavaNestedTypes getNestedTypes() {
 
-    initialize();
     return this.nestedTypes;
   }
 
@@ -435,7 +433,7 @@ public class JavaType extends JavaGenericType
   @Override
   protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
 
-    if (currentIndent == null) {
+    if (defaultIndent == null) {
       writeReference(sink, true);
       return;
     }
@@ -472,43 +470,8 @@ public class JavaType extends JavaGenericType
       sink.append(getSimpleName());
     }
     if (declaration) {
-      getTypeParameters().write(sink, DEFAULT_NEWLINE, null, null);
+      getTypeParameters().write(sink, "", null, "");
     }
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-
-    if (obj == this) {
-      return true;
-    }
-    if (!super.equals(obj)) {
-      return false;
-    }
-    JavaType other = (JavaType) obj;
-    if (!Objects.equals(this.simpleName, other.simpleName)) {
-      return false;
-    }
-    if (!Objects.equals(this.category, other.category)) {
-      return false;
-    }
-    if (!Objects.equals(this.modifiers, other.modifiers)) {
-      return false;
-    }
-    if (!Objects.equals(this.file, other.file)) {
-      return false;
-    }
-    if (!Objects.equals(this.declaringType, other.declaringType)) {
-      return false;
-    }
-    return true;
-  }
-
-  @Override
-  public int hashCode() {
-
-    // TODO Auto-generated method stub
-    return super.hashCode();
   }
 
 }

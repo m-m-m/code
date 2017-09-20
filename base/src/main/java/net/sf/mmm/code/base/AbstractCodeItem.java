@@ -66,7 +66,7 @@ public abstract class AbstractCodeItem implements CodeItem {
 
     try {
       StringBuilder buffer = new StringBuilder();
-      doWrite(buffer, DEFAULT_NEWLINE, null, null);
+      doWrite(buffer, "", null, "");
       return buffer.toString();
     } catch (Exception e) {
       LOG.debug("{}.toString() failed!", getClass().getSimpleName(), e);

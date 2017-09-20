@@ -27,6 +27,7 @@ import net.sf.mmm.code.impl.java.type.JavaGenericType;
 import net.sf.mmm.code.impl.java.type.JavaParameterizedType;
 import net.sf.mmm.code.impl.java.type.JavaType;
 import net.sf.mmm.code.impl.java.type.JavaTypeVariable;
+import net.sf.mmm.code.impl.java.type.JavaTypeVariables;
 import net.sf.mmm.code.impl.java.type.JavaTypeWildcard;
 import net.sf.mmm.util.exception.api.IllegalCaseException;
 
@@ -89,7 +90,11 @@ public abstract class AbstractJavaCodeLoader extends JavaNodeItemContainerAccess
   @Override
   public JavaPackage getPackage(JavaSource source, Package pkg) {
 
-    return getPackage(source.getRootPackage(), pkg, this.context.parseName(pkg.getName()));
+    JavaPackage rootPackage = source.getRootPackage();
+    if (pkg == null) {
+      return rootPackage;
+    }
+    return getPackage(rootPackage, pkg, this.context.parseName(pkg.getName()));
   }
 
   private JavaPackage getPackage(JavaPackage root, Package pkg, CodeName qname) {
@@ -102,7 +107,8 @@ public abstract class AbstractJavaCodeLoader extends JavaNodeItemContainerAccess
     Package parentPkg = null; // Package.getPackage(parentName.getFullName());
     JavaPackage parentPackage = getPackage(root, parentPkg, parentName);
     String simpleName = qname.getSimpleName();
-    JavaPackage javaPackage = parentPackage.getChildren().getPackage(simpleName, false, false);
+    JavaPathElements children = parentPackage.getChildren();
+    JavaPackage javaPackage = children.getPackage(simpleName, false, false);
     if (javaPackage == null) {
       Package reflectiveObject = pkg;
       if (reflectiveObject == null) {
@@ -110,6 +116,7 @@ public abstract class AbstractJavaCodeLoader extends JavaNodeItemContainerAccess
       }
       JavaPackage superLayerPackage = null; // TODO
       javaPackage = new JavaPackage(parentPackage, simpleName, reflectiveObject, superLayerPackage);
+      children.addInternal(javaPackage);
     }
     return javaPackage;
   }
@@ -131,16 +138,16 @@ public abstract class AbstractJavaCodeLoader extends JavaNodeItemContainerAccess
         return new JavaTypeVariable(declaringType.getTypeParameters(), typeVar);
       } else if (declaringElement instanceof JavaOperation) {
         JavaOperation operation = (JavaOperation) declaringElement;
-        assert (typeVar.getGenericDeclaration() == operation.getReflectiveObject());
-        return new JavaTypeVariable(operation.getTypeParameters(), typeVar);
-      } else {
-        JavaTypeVariable typeVariable = findTypeVariable(declaringElement, typeVar.getName());
-        if (typeVariable != null) {
-          return typeVariable;
+        if (typeVar.getGenericDeclaration() == operation.getReflectiveObject()) {
+          return new JavaTypeVariable(operation.getTypeParameters(), typeVar);
         }
-        LOG.warn("Could not find type variable {} in {}", typeVar, declaringElement);
-        return new JavaTypeVariable(declaringElement.getDeclaringType().getTypeParameters(), typeVar);
       }
+      JavaTypeVariable typeVariable = findTypeVariable(declaringElement, typeVar.getName());
+      if (typeVariable != null) {
+        return typeVariable;
+      }
+      LOG.warn("Could not find type variable {} in {}", typeVar, declaringElement);
+      return new JavaTypeVariable(declaringElement.getDeclaringType().getTypeParameters(), typeVar);
     } else if (type instanceof WildcardType) {
       WildcardType wildcard = (WildcardType) type;
       JavaNodeItem parent;
@@ -171,6 +178,8 @@ public abstract class AbstractJavaCodeLoader extends JavaNodeItemContainerAccess
         return arg.getDeclaringType();
       }
     } else if (node instanceof JavaGenericType) {
+      return findElementWithTypeVariables(node.getParent());
+    } else if (node instanceof JavaTypeVariables) {
       return findElementWithTypeVariables(node.getParent());
     } else {
       throw new IllegalCaseException(node.getClass().getSimpleName());

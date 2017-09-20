@@ -101,7 +101,7 @@ public class JavaMethod extends JavaOperation implements CodeMethod, CodeNodeIte
   protected void doSetImmutable() {
 
     super.doSetImmutable();
-    this.returns.setImmutable();
+    getReturns().setImmutableIfNotSystemImmutable();
   }
 
   @Override

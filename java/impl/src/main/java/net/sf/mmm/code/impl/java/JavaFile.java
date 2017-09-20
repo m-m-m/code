@@ -96,7 +96,7 @@ public final class JavaFile extends JavaPathElement implements CodeFile, CodeNod
 
     super.doSetImmutable();
     this.types = makeImmutable(this.types);
-    this.imports.setImmutable();;
+    this.imports.setImmutableIfNotSystemImmutable();
   }
 
   @Override
@@ -195,7 +195,7 @@ public final class JavaFile extends JavaPathElement implements CodeFile, CodeNod
   @Override
   protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
 
-    if (currentIndent == null) {
+    if (defaultIndent == null) {
       getType().writeReference(sink, true);
     } else {
       doWriteComment(sink, newline, defaultIndent, currentIndent);

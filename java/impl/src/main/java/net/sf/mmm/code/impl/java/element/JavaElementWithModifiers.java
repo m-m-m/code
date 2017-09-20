@@ -61,7 +61,9 @@ public abstract class JavaElementWithModifiers extends JavaElement implements Co
   protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
 
     super.doWrite(sink, newline, defaultIndent, currentIndent);
-    sink.append(currentIndent);
+    if (currentIndent != null) {
+      sink.append(currentIndent);
+    }
     doWriteModifiers(sink);
   }
 

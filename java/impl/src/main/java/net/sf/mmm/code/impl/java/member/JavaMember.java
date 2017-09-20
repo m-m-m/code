@@ -3,7 +3,6 @@
 package net.sf.mmm.code.impl.java.member;
 
 import java.lang.reflect.AccessibleObject;
-import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
@@ -96,27 +95,5 @@ public abstract class JavaMember extends JavaElementWithModifiers implements Cod
 
   @Override
   public abstract JavaMember copy();
-
-  @Override
-  public int hashCode() {
-
-    return Objects.hashCode(getName());
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-
-    if (this == obj) {
-      return true;
-    }
-    if (!super.equals(obj)) {
-      return false;
-    }
-    JavaMember other = (JavaMember) obj;
-    if (!Objects.equals(getName(), other.getName())) {
-      return false;
-    }
-    return true;
-  }
 
 }

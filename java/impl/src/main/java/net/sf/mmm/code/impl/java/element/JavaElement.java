@@ -93,8 +93,8 @@ public abstract class JavaElement extends JavaNodeItem implements JavaElementNod
   protected void doSetImmutable() {
 
     super.doSetImmutable();
-    this.annotations.setImmutable();
-    this.doc.setImmutable();
+    this.annotations.setImmutableIfNotSystemImmutable();
+    this.doc.setImmutableIfNotSystemImmutable();
   }
 
   @Override
@@ -133,8 +133,8 @@ public abstract class JavaElement extends JavaNodeItem implements JavaElementNod
   protected void doWriteComment(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
 
     if (this.comment != null) {
-      if (currentIndent == null) {
-        if (defaultIndent == null) {
+      if (defaultIndent == null) {
+        if ("".equals(newline)) {
           return;
         }
         List<String> lines = this.comment.getComments();

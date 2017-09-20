@@ -2,8 +2,6 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.impl.java.element;
 
-import java.util.Objects;
-
 import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.element.CodeElementWithQualifiedName;
 import net.sf.mmm.code.impl.java.JavaPackage;
@@ -100,25 +98,4 @@ public abstract class JavaElementWithQualifiedName extends JavaElement implement
   @Override
   public abstract JavaElementWithQualifiedName copy();
 
-  @Override
-  public boolean equals(Object obj) {
-
-    if (obj == this) {
-      return true;
-    }
-    if (!super.equals(obj)) {
-      return false;
-    }
-    JavaElementWithQualifiedName other = (JavaElementWithQualifiedName) obj;
-    if (!Objects.equals(getQualifiedName(), other.getQualifiedName())) {
-      return false;
-    }
-    return true;
-  }
-
-  @Override
-  public int hashCode() {
-
-    return Objects.hashCode(getQualifiedName());
-  }
 }

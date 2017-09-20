@@ -26,9 +26,9 @@ public class JavaTypeVariables extends JavaGenericTypeParameters<JavaTypeVariabl
   /** The empty and {@link #isImmutable() immutable} instance of {@link JavaTypeVariables}. */
   public static final JavaTypeVariables EMPTY = new JavaTypeVariables();
 
-  private final JavaType declaringType;
-
   private final JavaOperation declaringOperation;
+
+  private JavaType declaringType;
 
   /**
    * The constructor for {@link #EMPTY}.
@@ -61,7 +61,7 @@ public class JavaTypeVariables extends JavaGenericTypeParameters<JavaTypeVariabl
   public JavaTypeVariables(JavaOperation declaringOperation) {
 
     super();
-    this.declaringType = declaringOperation.getDeclaringType();
+    this.declaringType = null;
     this.declaringOperation = declaringOperation;
   }
 
@@ -121,6 +121,9 @@ public class JavaTypeVariables extends JavaGenericTypeParameters<JavaTypeVariabl
   @Override
   public JavaType getDeclaringType() {
 
+    if ((this.declaringType == null) && (this.declaringOperation != null)) {
+      this.declaringType = this.declaringOperation.getDeclaringType();
+    }
     return this.declaringType;
   }
 
@@ -165,8 +168,8 @@ public class JavaTypeVariables extends JavaGenericTypeParameters<JavaTypeVariabl
     }
     JavaType parent = null;
     if ((this.declaringOperation != null) && !this.declaringOperation.getModifiers().isStatic()) {
-      parent = this.declaringType;
-    } else if (!this.declaringType.getModifiers().isStatic() && this.declaringType.isNested()) {
+      parent = getDeclaringType();
+    } else if (!getDeclaringType().getModifiers().isStatic() && this.declaringType.isNested()) {
       parent = this.declaringType.getDeclaringType();
     }
     if (parent != null) {

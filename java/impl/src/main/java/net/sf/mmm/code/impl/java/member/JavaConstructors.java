@@ -8,7 +8,7 @@ import java.util.List;
 import net.sf.mmm.code.api.member.CodeConstructors;
 import net.sf.mmm.code.api.member.CodeMethods;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
-import net.sf.mmm.code.api.type.CodeType;
+import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.impl.java.type.JavaType;
 
 /**
@@ -57,6 +57,7 @@ public class JavaConstructors extends JavaOperations<JavaConstructor>
   @Override
   public List<? extends JavaConstructor> getAll() {
 
+    initialize();
     return getList();
   }
 
@@ -72,7 +73,7 @@ public class JavaConstructors extends JavaOperations<JavaConstructor>
   }
 
   @Override
-  public JavaConstructor get(CodeType... parameterTypes) {
+  public JavaConstructor get(CodeGenericType... parameterTypes) {
 
     for (JavaConstructor constructor : getAll()) {
       if (constructor.getParameters().isInvokable(parameterTypes)) {

@@ -146,7 +146,7 @@ public class JavaParameterizedType extends JavaGenericType
   @Override
   public JavaType asType() {
 
-    return this.type.asType();
+    return getType().asType();
   }
 
   @Override
@@ -182,7 +182,7 @@ public class JavaParameterizedType extends JavaGenericType
   @Override
   protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
 
-    super.doWrite(sink, newline, null, null);
+    super.doWrite(sink, newline, null, "");
     writeReference(sink, true);
   }
 

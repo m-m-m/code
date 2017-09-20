@@ -73,6 +73,19 @@ public class JavaAnnotations extends JavaNodeItemContainerHierarchical<JavaAnnot
   }
 
   @Override
+  protected boolean isSystemImmutable() {
+
+    if (super.isSystemImmutable()) {
+      return true;
+    }
+    Object reflectiveObject = this.parent.getReflectiveObject();
+    if (reflectiveObject != null) {
+      return true;
+    }
+    return false;
+  }
+
+  @Override
   public JavaAnnotation getDeclared(CodeType type) {
 
     for (JavaAnnotation annotation : getDeclared()) {
@@ -132,7 +145,7 @@ public class JavaAnnotations extends JavaNodeItemContainerHierarchical<JavaAnnot
 
     String prefix = "";
     for (JavaAnnotation annotation : getDeclared()) {
-      if (currentIndent == null) {
+      if (defaultIndent == null) {
         sink.append(prefix);
         prefix = " ";
       } else {

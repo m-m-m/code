@@ -147,6 +147,12 @@ public class JavaExtendedContext extends JavaContext {
   }
 
   @Override
+  public JavaType getRootEnumerationType() {
+
+    return getRootContext().getRootEnumerationType();
+  }
+
+  @Override
   public JavaType getNonPrimitiveType(JavaType javaType) {
 
     return getRootContext().getNonPrimitiveType(javaType);

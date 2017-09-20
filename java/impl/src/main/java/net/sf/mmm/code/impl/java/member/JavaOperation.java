@@ -62,9 +62,9 @@ public abstract class JavaOperation extends JavaMember implements CodeOperation,
   protected void doSetImmutable() {
 
     super.doSetImmutable();
-    this.typeVariables.setImmutable();
-    this.parameters.setImmutable();
-    this.exceptions.setImmutable();
+    this.typeVariables.setImmutableIfNotSystemImmutable();
+    this.parameters.setImmutableIfNotSystemImmutable();
+    this.exceptions.setImmutableIfNotSystemImmutable();
   }
 
   @Override
@@ -110,7 +110,7 @@ public abstract class JavaOperation extends JavaMember implements CodeOperation,
     super.doWrite(sink, newline, defaultIndent, currentIndent);
     this.typeVariables.write(sink, newline, null, null);
     doWriteSignature(sink, newline);
-    if (this.body == null) {
+    if ((this.body == null) || (defaultIndent == null)) {
       sink.append(';');
     } else {
       sink.append(" {");

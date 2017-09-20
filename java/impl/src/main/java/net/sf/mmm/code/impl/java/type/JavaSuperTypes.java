@@ -3,6 +3,7 @@
 package net.sf.mmm.code.impl.java.type;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeSuperTypes;
+import net.sf.mmm.code.impl.java.JavaContext;
 import net.sf.mmm.code.impl.java.node.JavaNodeItemContainerHierarchical;
 import net.sf.mmm.util.collection.base.AbstractIterator;
 
@@ -49,6 +51,24 @@ public class JavaSuperTypes extends JavaNodeItemContainerHierarchical<JavaGeneri
 
     super(template);
     this.parent = parent;
+  }
+
+  @Override
+  protected void doInitialize() {
+
+    super.doInitialize();
+    Class<?> reflectiveObject = this.parent.getReflectiveObject();
+    if (reflectiveObject != null) {
+      JavaContext context = getContext();
+      Type superclass = reflectiveObject.getGenericSuperclass();
+      if (superclass != null) {
+        addInternal(context.getType(superclass, this.parent));
+      }
+      Type[] genericInterfaces = reflectiveObject.getGenericInterfaces();
+      for (Type superInterface : genericInterfaces) {
+        addInternal(context.getType(superInterface, this.parent));
+      }
+    }
   }
 
   @Override

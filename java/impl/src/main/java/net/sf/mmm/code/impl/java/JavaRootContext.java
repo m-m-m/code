@@ -122,6 +122,8 @@ public class JavaRootContext extends JavaContext {
 
   private JavaType rootType;
 
+  private JavaType rootEnumerationType;
+
   /**
    * The constructor.
    */
@@ -322,16 +324,25 @@ public class JavaRootContext extends JavaContext {
   public JavaType getRootType() {
 
     if (this.rootType == null) {
-      this.rootType = getTypeFromCache("java.lang.Object");
+      this.rootType = getTypeFromCache(Object.class.getName());
     }
     return this.rootType;
+  }
+
+  @Override
+  public JavaType getRootEnumerationType() {
+
+    if (this.rootEnumerationType == null) {
+      this.rootEnumerationType = getTypeFromCache(Enum.class.getName());
+    }
+    return this.rootEnumerationType;
   }
 
   @Override
   public JavaType getRootExceptionType() {
 
     if (this.rootExceptionType == null) {
-      this.rootExceptionType = getTypeFromCache("java.lang.Throwable");
+      this.rootExceptionType = getTypeFromCache(Throwable.class.getName());
     }
     return this.rootExceptionType;
   }

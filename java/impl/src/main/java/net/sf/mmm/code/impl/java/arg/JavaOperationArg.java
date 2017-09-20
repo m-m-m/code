@@ -86,7 +86,7 @@ public abstract class JavaOperationArg extends JavaElement implements CodeOperat
   protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
 
     doWriteAnnotations(sink, " ", null, null);
-    this.type.writeReference(sink, false);
+    getType().writeReference(sink, false);
   }
 
 }

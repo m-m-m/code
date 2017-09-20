@@ -4,7 +4,6 @@ package net.sf.mmm.code.impl.java.member;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.Objects;
 
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.member.CodeField;
@@ -63,9 +62,6 @@ public class JavaField extends JavaMember implements CodeField, CodeNodeItemWith
     super(CodeModifiers.MODIFIERS_PRIVATE, name);
     this.parent = parent;
     this.reflectiveObject = reflectiveObject;
-    if (this.reflectiveObject == null) {
-      this.type = getContext().getRootType();
-    }
   }
 
   /**
@@ -84,6 +80,13 @@ public class JavaField extends JavaMember implements CodeField, CodeNodeItemWith
   }
 
   @Override
+  protected void doInitialize() {
+
+    super.doInitialize();
+    getType();
+  }
+
+  @Override
   public JavaFields getParent() {
 
     return this.parent;
@@ -92,6 +95,13 @@ public class JavaField extends JavaMember implements CodeField, CodeNodeItemWith
   @Override
   public CodeGenericType getType() {
 
+    if (this.type == null) {
+      if (this.reflectiveObject != null) {
+        this.type = getContext().getType(this.reflectiveObject.getGenericType(), this);
+      } else {
+        this.type = getContext().getRootType();
+      }
+    }
     return this.type;
   }
 
@@ -122,29 +132,10 @@ public class JavaField extends JavaMember implements CodeField, CodeNodeItemWith
   }
 
   @Override
-  public boolean equals(Object obj) {
-
-    if (this == obj) {
-      return true;
-    }
-    if (!super.equals(obj)) {
-      return false;
-    }
-    JavaField other = (JavaField) obj;
-    if (!Objects.equals(this.type, other.type)) {
-      return false;
-    }
-    if (!Objects.equals(this.initializer, other.initializer)) {
-      return false;
-    }
-    return true;
-  }
-
-  @Override
   protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
 
     super.doWrite(sink, newline, defaultIndent, currentIndent);
-    this.type.writeReference(sink, false);
+    getType().writeReference(sink, false);
     sink.append(' ');
     sink.append(getName());
     if (this.initializer != null) {

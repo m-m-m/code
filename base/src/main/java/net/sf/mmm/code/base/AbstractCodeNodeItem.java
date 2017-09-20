@@ -130,7 +130,7 @@ public abstract class AbstractCodeNodeItem extends AbstractCodeItem implements C
   @Override
   public boolean isImmutable() {
 
-    if (this.lazyInit != null) {
+    if (isSystemImmutable()) {
       return true;
     }
     return this.immutable;
@@ -144,6 +144,18 @@ public abstract class AbstractCodeNodeItem extends AbstractCodeItem implements C
   protected boolean isSystemImmutable() {
 
     return (this.lazyInit != null);
+  }
+
+  /**
+   * Calls {@link #setImmutable()} but only if not {@link #isSystemImmutable() system immutable}. Use this
+   * method for implementations of {@link #doSetImmutable()} to propagate immutable-flag to children in order
+   * to prevent eager initialization.
+   */
+  public void setImmutableIfNotSystemImmutable() {
+
+    if (!isSystemImmutable()) {
+      setImmutable();
+    }
   }
 
   /**
@@ -219,23 +231,6 @@ public abstract class AbstractCodeNodeItem extends AbstractCodeItem implements C
     return copy;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-
-    // has to be overridden by every sub-class
-    if ((obj == null) || (obj.getClass() != getClass())) {
-      return false;
-    }
-    return true;
-  }
-
-  @Override
-  public int hashCode() {
-
-    // has to be overridden by every sub-class
-    return 1;
-  }
-
   /**
    * @return a {@link String} representation of the entire node tree to this node.
    */
@@ -254,7 +249,7 @@ public abstract class AbstractCodeNodeItem extends AbstractCodeItem implements C
     } else if (parent instanceof CodeSource) {
       buffer.append(parent.toString());
     } else if (parent instanceof AbstractCodeNodeItem) {
-      toPathString(buffer);
+      ((AbstractCodeNodeItem) parent).toPathString(buffer);
     } else {
       buffer.append(parent.toString());
     }
@@ -262,7 +257,7 @@ public abstract class AbstractCodeNodeItem extends AbstractCodeItem implements C
     buffer.append(getClass().getSimpleName());
     buffer.append(':');
     try {
-      doWrite(buffer, DEFAULT_NEWLINE, null, null);
+      doWrite(buffer, "", null, null);
     } catch (Exception e) {
       LOG.debug("{}.toString() failed!", getClass().getSimpleName(), e);
     }

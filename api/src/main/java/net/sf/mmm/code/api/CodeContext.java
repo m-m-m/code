@@ -31,6 +31,12 @@ public interface CodeContext extends CodeProvider {
   CodeType getRootType();
 
   /**
+   * @return the root {@link CodeType#isEnumeration() enumeration} type (for Java it represents {@link Enum}
+   *         for TypeScript {@code any}).
+   */
+  CodeType getRootEnumerationType();
+
+  /**
    * @return the {@link CodeType#isVoid() void} {@link CodeType} for a default
    *         {@link net.sf.mmm.code.api.arg.CodeReturn return}.
    */
