@@ -12,21 +12,22 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * subsequent calls to the same method if possible.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
+ * @param <P> the type of the contained {@link CodeProperty properties}.
  * @since 1.0.0
  */
-public interface CodeProperties extends CodeMembers<CodeProperty>, CodeNodeItemContainerHierarchicalWithName<CodeProperty> {
+public interface CodeProperties<P extends CodeProperty> extends CodeMembers<P>, CodeNodeItemContainerHierarchicalWithName<P> {
 
   /**
    * @deprecated instances of {@link CodeProperty} are dynamically created on the fly.
    */
   @Deprecated
   @Override
-  default CodeProperty add(String name) {
+  default P add(String name) {
 
     throw new ReadOnlyException(getDeclaringType().getSimpleName(), "properties");
   }
 
   @Override
-  CodeProperties copy();
+  CodeProperties<P> copy();
 
 }

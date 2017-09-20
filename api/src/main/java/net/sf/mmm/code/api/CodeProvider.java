@@ -24,13 +24,13 @@ public interface CodeProvider extends CodeNode, CodeLoader {
   CodePackage getRootPackage();
 
   /**
-   * @param qualifiedName the {@link CodeNodeItemWithQualifiedName#getQualifiedName() qualified name} to
-   *        parse.
+   * @param hierarchicalName the hierarchical name as plain {@link String} to parse. E.g. a
+   *        {@link CodeNodeItemWithQualifiedName#getQualifiedName() qualified name} or a part of it.
    * @return the parsed {@link CodeName}.
    */
-  default CodeName getHierarchicalName(String qualifiedName) {
+  default CodeName parseName(String hierarchicalName) {
 
-    return new CodeName(qualifiedName, getContext().getPackageSeparator());
+    return new CodeName(hierarchicalName, getContext().getPackageSeparator());
   }
 
   /**

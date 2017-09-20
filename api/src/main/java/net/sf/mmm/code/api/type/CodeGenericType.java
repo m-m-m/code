@@ -16,8 +16,8 @@ import net.sf.mmm.code.api.item.CodeItem;
 public abstract interface CodeGenericType extends CodeElement {
 
   /**
-   * @return the raw {@link CodeType}. Can not be changed as it is the type itself or calculated from
-   *         {@link #resolve(CodeGenericType) resolving}.
+   * @return the raw {@link CodeType}. In case of an {@link #isArray() array} the
+   *         {@link net.sf.mmm.code.api.CodeContext#getRootType() root type}.
    */
   CodeType asType();
 
@@ -28,29 +28,46 @@ public abstract interface CodeGenericType extends CodeElement {
   CodeGenericType getComponentType();
 
   /**
-   * @return the {@link CodeTypeVariable} if this type is a type variable (e.g. "{@code T extends String}") or
-   *         {@code null} otherwise.
-   * @see #getTypeVariables()
+   * @return the {@link CodeTypePlaceholder} if this type is a type placeholder or {@code null} otherwise.
+   * @see #getTypeParameters()
    */
-  default CodeTypeVariable asTypeVariable() {
-
-    return null;
-  }
+  CodeTypePlaceholder asTypePlaceholder();
 
   /**
-   * @return the {@link CodeComposedType} if this type is composed (e.g. "{@code Comparable & Serializable}")
-   *         or {@code null} otherwise.
+   * @return the {@link CodeTypeVariable} if this type is a type variable (e.g. "{@code T extends String}") or
+   *         {@code null} otherwise.
+   * @see #getTypeParameters()
    */
-  default CodeComposedType asComposedType() {
+  CodeTypeVariable asTypeVariable();
 
-    return null;
-  }
+  /**
+   * @return the {@link CodeTypeWildcard} if this type is a type wildcard (e.g. "{@code ? super String}") or
+   *         {@code null} otherwise.
+   * @see #getTypeParameters()
+   */
+  CodeTypeWildcard asTypeWildcard();
+
+  /**
+   * @return the {@link CodeComposedType} if this type is composed or {@code null} otherwise.
+   */
+  CodeComposedType asComposedType();
+
+  /**
+   * @return the unqualified {@link CodeGenericType} corresponding to this type if {@link #isQualified()
+   *         qualified} or this type itself if already unqualified.
+   */
+  CodeGenericType asUnqualifiedType();
+
+  /**
+   * @return an {@link #isArray() array} of this type.
+   */
+  CodeGenericType createArray();
 
   /**
    * @return the {@link CodeTypeVariables} containing the {@link CodeTypeVariable}s.
    * @see #asTypeVariable()
    */
-  CodeTypeVariables getTypeVariables();
+  CodeGenericTypeParameters<?> getTypeParameters();
 
   /**
    * @return {@code true} if the usage of this type in its place is {@link CodeType#getQualifiedName() fully
@@ -67,11 +84,27 @@ public abstract interface CodeGenericType extends CodeElement {
 
   /**
    * @param type the potential sub-type.
-   * @return {@code true} if this type is equal or a {@link CodeType#getSuperTypes() super type} of the given
-   *         {@code type}, {@code false} otherwise.
+   * @return {@code true} if this type is equal to or a {@link CodeType#getSuperTypes() super type} of the
+   *         given {@code type}, {@code false} otherwise.
    * @see Class#isAssignableFrom(Class)
    */
   boolean isAssignableFrom(CodeGenericType type);
+
+  /**
+   * Determines if this type can be assigned to the given {@link CodeGenericType}. Applies if instances of
+   * this type can be casted to the given {@link CodeGenericType}. This is the inverse operation of
+   * {@link #isAssignableFrom(CodeGenericType)} that was introduced as analogy to
+   * {@link Class#isAssignableFrom(Class)}. As however many people struggle with
+   * {@link #isAssignableFrom(CodeGenericType)} this method is more easy and natural to use and understand.
+   *
+   * @param type the potential super-type.
+   * @return {@code true} if this type is equal to or a sub type of the given {@code type}, {@code false}
+   *         otherwise.
+   */
+  default boolean isAssignableTo(CodeGenericType type) {
+
+    return type.isAssignableFrom(this);
+  }
 
   /**
    * @param context the {@link CodeGenericType type} in which to resolve this type.
@@ -132,7 +165,7 @@ public abstract interface CodeGenericType extends CodeElement {
    *
    * @param sink the {@link Appendable} where to {@link Appendable#append(CharSequence) append} the code from
    *        this {@link CodeItem}.
-   * @param declaration {@code true} if used as a declaration of {@link CodeType#getTypeVariables() type
+   * @param declaration {@code true} if used as a declaration of {@link CodeType#getTypeParameters() type
    *        variables} (where bounds have to be included), {@code false} otherwise.
    * @throws IOException if thrown by {@link Appendable}.
    */

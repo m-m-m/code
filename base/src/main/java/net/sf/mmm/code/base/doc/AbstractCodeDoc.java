@@ -35,6 +35,7 @@ import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.api.type.CodeTypeVariable;
+import net.sf.mmm.code.api.type.CodeTypeVariables;
 import net.sf.mmm.code.base.AbstractCodeNodeItem;
 
 /**
@@ -389,16 +390,19 @@ public abstract class AbstractCodeDoc extends AbstractCodeNodeItem implements Co
 
     int size = this.lines.size();
     CodeOperation operation = null;
+    CodeType type = null;
     CodeElement element = getParent();
     if (element instanceof CodeOperation) {
       operation = (CodeOperation) element;
+    } else if (element instanceof CodeType) {
+      type = (CodeType) element;
     }
     if ((size == 0) && (operation == null)) {
       return;
     }
     sink.append(currentIndent);
     sink.append("/**");
-    if ((size == 1) && (operation == null)) {
+    if ((size == 1) && (operation == null) && (type == null)) {
       sink.append(' ');
       sink.append(this.lines.get(0).trim());
     } else {
@@ -407,24 +411,23 @@ public abstract class AbstractCodeDoc extends AbstractCodeNodeItem implements Co
         doWriteLine(sink, newline, currentIndent, "", line);
       }
       sink.append(currentIndent);
-      if (operation != null) {
-        for (CodeTypeVariable variable : operation.getTypeVariables()) {
-          String tag = "@param <" + variable.getName() + ">";
-          doWriteElement(sink, newline, currentIndent, variable, tag, getSpaces(tag.length()));
-        }
+      if (type != null) {
+        doWriteTypeParameters(sink, newline, currentIndent, type.getTypeParameters());
+      } else if (operation != null) {
+        doWriteTypeParameters(sink, newline, currentIndent, operation.getTypeParameters());
         for (CodeParameter arg : operation.getParameters()) {
           String tag = "@param " + arg.getName();
-          doWriteElement(sink, newline, currentIndent, arg, tag, "       ");
+          doWriteElement(sink, newline, currentIndent, arg, tag, "      ");
         }
         for (CodeException ex : operation.getExceptions()) {
           String tag = "@throws " + ex.getType().asType().getSimpleName();
-          doWriteElement(sink, newline, currentIndent, ex, tag, "        ");
+          doWriteElement(sink, newline, currentIndent, ex, tag, "       ");
         }
         if (operation instanceof CodeMethod) {
           CodeReturn result = ((CodeMethod) operation).getReturns();
           if (!result.getType().asType().isVoid()) {
-            String tag = "@return ";
-            doWriteElement(sink, newline, currentIndent, result, tag, "        ");
+            String tag = "@return";
+            doWriteElement(sink, newline, currentIndent, result, tag, "       ");
           }
         }
       }
@@ -433,20 +436,39 @@ public abstract class AbstractCodeDoc extends AbstractCodeNodeItem implements Co
     sink.append(newline);
   }
 
+  private void doWriteTypeParameters(Appendable sink, String newline, String currentIndent, CodeTypeVariables<?> typeParameters) throws IOException {
+
+    for (CodeTypeVariable variable : typeParameters) {
+      if (!variable.isWildcard()) {
+        String tag = "@param <" + variable.getName() + ">";
+        doWriteElement(sink, newline, currentIndent, variable, tag, "      ");
+      }
+    }
+  }
+
   private void doWriteElement(Appendable sink, String newline, String currentIndent, CodeElement element, String tag, String spaces) throws IOException {
 
     String prefix = tag;
-    for (String line : element.getDoc().getLines()) {
+    List<String> docLines = element.getDoc().getLines();
+    if (docLines.isEmpty()) {
+      if (!tag.isEmpty()) {
+        doWriteLine(sink, newline, currentIndent, prefix, "");
+      }
+    }
+    for (String line : docLines) {
       doWriteLine(sink, newline, currentIndent, prefix, line);
       prefix = spaces;
     }
   }
 
-  private void doWriteLine(Appendable sink, String newline, String currentIndent, String tag, String line) throws IOException {
+  private void doWriteLine(Appendable sink, String newline, String currentIndent, String prefix, String line) throws IOException {
 
     sink.append(currentIndent);
     sink.append(" * ");
-    sink.append(tag);
+    sink.append(prefix);
+    if (!prefix.isEmpty()) {
+      sink.append(' ');
+    }
     sink.append(line.trim());
     sink.append(newline);
   }

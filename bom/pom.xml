@@ -48,7 +48,17 @@
       </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
-        <artifactId>mmm-code-impl-java</artifactId>
+        <artifactId>mmm-code-java-maven</artifactId>
+        <version>${net.sf.mmm.code.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>mmm-code-java-parser</artifactId>
+        <version>${net.sf.mmm.code.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>mmm-code-java-impl</artifactId>
         <version>${net.sf.mmm.code.version}</version>
       </dependency>
     </dependencies>

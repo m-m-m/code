@@ -46,6 +46,6 @@ public abstract interface CodeFile extends CodePathElement {
    * @return the {@link CodeImports} containing the {@link CodeImport}s. May be {@link List#isEmpty() empty}
    *         but is never {@code null}.
    */
-  CodeImports getImports();
+  CodeImports<?> getImports();
 
 }

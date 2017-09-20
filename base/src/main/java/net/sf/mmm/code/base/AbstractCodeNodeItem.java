@@ -117,8 +117,12 @@ public abstract class AbstractCodeNodeItem extends AbstractCodeItem implements C
     if (LOG.isTraceEnabled()) {
       LOG.trace("Initializing {}", toPathString());
     }
+    boolean systemImmutable = isSystemImmutable();
     if (this.lazyInit != null) {
       this.lazyInit.run();
+      this.lazyInit = null;
+    }
+    if (systemImmutable) {
       setImmutable();
     }
   }
@@ -129,11 +133,17 @@ public abstract class AbstractCodeNodeItem extends AbstractCodeItem implements C
     if (this.lazyInit != null) {
       return true;
     }
-    // if (this.immutable) {
-    // return true;
-    // }
-    // initialize();
     return this.immutable;
+  }
+
+  /**
+   * @return {@code true} if this is a system internal node item that is considered to be
+   *         {@link #isImmutable() immutable} but is technically {@link #setImmutable() set to immutable}
+   *         during (lazy) {@link #initialize() initialization}. Otherwise {@code false}.
+   */
+  protected boolean isSystemImmutable() {
+
+    return (this.lazyInit != null);
   }
 
   /**
@@ -156,7 +166,7 @@ public abstract class AbstractCodeNodeItem extends AbstractCodeItem implements C
    */
   protected void doSetImmutable() {
 
-    // nothing to do here...
+    initialize();
   }
 
   /**

@@ -10,9 +10,10 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * {@link CodeMembers} as a container for the {@link CodeConstructor}s.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
+ * @param <C> the type of the contained {@link CodeConstructor}s.
  * @since 1.0.0
  */
-public interface CodeConstructors extends CodeOperations<CodeConstructor>, CodeNodeItemContainerFlat<CodeConstructor> {
+public interface CodeConstructors<C extends CodeConstructor> extends CodeOperations<C>, CodeNodeItemContainerFlat<C> {
 
   /**
    * @param name the {@link CodeOperation#getName() name} of the requested {@link CodeOperation}.
@@ -20,7 +21,7 @@ public interface CodeConstructors extends CodeOperations<CodeConstructor>, CodeN
    *        of the {@link CodeOperation#getParameters() parameters}.
    * @return the requested {@link CodeOperation} or {@code null} if not found.
    */
-  CodeConstructor get(CodeType... parameterTypes);
+  C get(CodeType... parameterTypes);
 
   /**
    * @return a new {@link CodeConstructor} that has been added to {@link #getAll()}. It will not have any
@@ -28,9 +29,9 @@ public interface CodeConstructors extends CodeOperations<CodeConstructor>, CodeN
    *         Simply add those afterwards as needed.
    * @throws ReadOnlyException if {@link #isImmutable() immutable}.
    */
-  CodeConstructor add();
+  C add();
 
   @Override
-  CodeConstructors copy();
+  CodeConstructors<C> copy();
 
 }

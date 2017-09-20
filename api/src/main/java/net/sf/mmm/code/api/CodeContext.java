@@ -14,12 +14,6 @@ import net.sf.mmm.code.api.type.CodeType;
  */
 public interface CodeContext extends CodeProvider {
 
-  @Override
-  default CodeName getHierarchicalName(String qualifiedName) {
-
-    return new CodeName(qualifiedName, getPackageSeparator());
-  }
-
   /**
    * @return the package separator character.
    */

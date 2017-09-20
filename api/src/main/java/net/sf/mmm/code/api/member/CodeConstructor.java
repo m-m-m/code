@@ -17,7 +17,7 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
 public interface CodeConstructor extends CodeOperation {
 
   @Override
-  CodeConstructors getParent();
+  CodeConstructors<?> getParent();
 
   /**
    * @deprecated the {@link #getName() name} of a {@link CodeConstructor} has to be equal to the

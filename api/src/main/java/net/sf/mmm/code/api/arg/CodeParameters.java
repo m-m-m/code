@@ -17,9 +17,10 @@ import net.sf.mmm.code.api.type.CodeType;
  * @see CodeParameter
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
+ * @param <P> the type of the contained {@link CodeParameter}s.
  * @since 1.0.0
  */
-public abstract interface CodeParameters extends CodeOperationArgs<CodeParameter>, CodeNodeItemContainerFlatWithName<CodeParameter> {
+public abstract interface CodeParameters<P extends CodeParameter> extends CodeOperationArgs<P>, CodeNodeItemContainerFlatWithName<P> {
 
   /**
    * @param parameterTypes the {@link CodeType}s to use as parameters.
@@ -47,7 +48,7 @@ public abstract interface CodeParameters extends CodeOperationArgs<CodeParameter
    * @return {@code true} if this operation can be invoked with parameters of the given {@link CodeType}s,
    *         {@code false} otherwise.
    */
-  default boolean isInvokable(CodeParameters parameters) {
+  default boolean isInvokable(CodeParameters<P> parameters) {
 
     List<? extends CodeParameter> myParams = getAll();
     List<? extends CodeParameter> otherParams = parameters.getAll();
@@ -66,6 +67,6 @@ public abstract interface CodeParameters extends CodeOperationArgs<CodeParameter
   }
 
   @Override
-  CodeParameters copy();
+  CodeParameters<P> copy();
 
 }

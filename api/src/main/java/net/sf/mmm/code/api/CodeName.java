@@ -10,7 +10,7 @@ import net.sf.mmm.code.api.node.CodeNodeItemWithQualifiedName;
  * Represents a parsed hierarchical name like a {@link CodeNodeItemWithQualifiedName#getQualifiedName()
  * qualified name} or a part of it (e.g. "code.api.CodeName" as part of "net.sf.mmm.code.api.CodeName").
  *
- * @see CodeProvider#getHierarchicalName(String)
+ * @see CodeProvider#parseName(String)
  */
 public final class CodeName {
 

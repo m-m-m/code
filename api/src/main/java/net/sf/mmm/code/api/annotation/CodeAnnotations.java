@@ -10,9 +10,10 @@ import net.sf.mmm.code.api.type.CodeType;
  * {@link CodeNodeItemContainerHierarchical} containing {@link CodeAnnotation}s.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
+ * @param <A> the type of the contained {@link CodeAnnotation}s.
  * @since 1.0.0
  */
-public interface CodeAnnotations extends CodeNodeItemContainerHierarchical<CodeAnnotation> {
+public interface CodeAnnotations<A extends CodeAnnotation> extends CodeNodeItemContainerHierarchical<A> {
 
   @Override
   CodeElement getParent();
@@ -25,14 +26,14 @@ public interface CodeAnnotations extends CodeNodeItemContainerHierarchical<CodeA
    * @see net.sf.mmm.code.api.member.CodeMethod#getParentMethod()
    */
   @Override
-  Iterable<? extends CodeAnnotation> getAll();
+  Iterable<? extends A> getAll();
 
   /**
    * @param type the {@link CodeAnnotation#getType() type} reflecting the {@link CodeType#isAnnotation()
    *        annotation}.
    * @return the new {@link CodeAnnotation} that has been added.
    */
-  CodeAnnotation add(CodeType type);
+  A add(CodeType type);
 
   /**
    * @param type the {@link CodeAnnotation#getType() type} reflecting the {@link CodeType#isAnnotation()
@@ -40,7 +41,7 @@ public interface CodeAnnotations extends CodeNodeItemContainerHierarchical<CodeA
    * @return the {@link CodeAnnotation} from {@link #getDeclared()} {@link CodeAnnotation#getType() with} the
    *         give {@link CodeType} or {@code null} if not found.
    */
-  CodeAnnotation getDeclared(CodeType type);
+  A getDeclared(CodeType type);
 
   /**
    * @param type the {@link CodeAnnotation#getType() type} reflecting the {@link CodeType#isAnnotation()
@@ -48,9 +49,9 @@ public interface CodeAnnotations extends CodeNodeItemContainerHierarchical<CodeA
    * @return the {@link CodeAnnotation} from {@link #getDeclared()} {@link CodeAnnotation#getType() with} the
    *         give {@link CodeType} or a new {@link #add(CodeType) added} one.
    */
-  default CodeAnnotation getDeclaredOrAdd(CodeType type) {
+  default A getDeclaredOrAdd(CodeType type) {
 
-    CodeAnnotation annotation = getDeclared(type);
+    A annotation = getDeclared(type);
     if (annotation == null) {
       annotation = add(type);
     }
@@ -58,6 +59,6 @@ public interface CodeAnnotations extends CodeNodeItemContainerHierarchical<CodeA
   }
 
   @Override
-  CodeAnnotations copy();
+  CodeAnnotations<A> copy();
 
 }

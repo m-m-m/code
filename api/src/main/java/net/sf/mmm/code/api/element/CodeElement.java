@@ -29,7 +29,7 @@ public abstract interface CodeElement extends CodeNodeItemWithComment, CodeNodeI
    * @return the {@link CodeAnnotations} with the {@link net.sf.mmm.code.api.annotation.CodeAnnotation}s of
    *         this element.
    */
-  CodeAnnotations getAnnotations();
+  CodeAnnotations<?> getAnnotations();
 
   /**
    * Destroys this node and disconnects it from its parent.

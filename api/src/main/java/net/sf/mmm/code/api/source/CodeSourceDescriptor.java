@@ -17,8 +17,8 @@ public interface CodeSourceDescriptor {
 
   /**
    * @return the unique ID of this source. E.g. "«{@link #getGroupId() groupId}»:«{@link #getArtifactId()
-   *         artifactId}»" for a maven project. May be the {@link CodeSource#getUri() URI} if no other
-   *         information is available.
+   *         artifactId}»:«{@link #getVersion() version}»" (GAV coordinates) for a maven project. May be the
+   *         {@link CodeSource}-{@link CodeSource#getId() ID} if no other information is available.
    */
   String getId();
 

@@ -17,7 +17,7 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
 public interface CodeMethod extends CodeOperation {
 
   @Override
-  CodeMethods getParent();
+  CodeMethods<?> getParent();
 
   /**
    * @return the {@link CodeReturn} with the information about the returned result of this method. Will never

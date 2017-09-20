@@ -10,9 +10,10 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * {@link CodeMembers} as a container for the {@link CodeMethod}s.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
+ * @param <M> the type of the contained {@link CodeMethod}s.
  * @since 1.0.0
  */
-public interface CodeMethods extends CodeOperations<CodeMethod>, CodeNodeItemContainerHierarchical<CodeMethod> {
+public interface CodeMethods<M extends CodeMethod> extends CodeOperations<M>, CodeNodeItemContainerHierarchical<M> {
 
   /**
    * @param name the {@link CodeOperation#getName() name} of the requested {@link CodeOperation}.
@@ -20,7 +21,7 @@ public interface CodeMethods extends CodeOperations<CodeMethod>, CodeNodeItemCon
    *        of the {@link CodeOperation#getParameters() parameters}.
    * @return the requested {@link CodeOperation} or {@code null} if not found.
    */
-  CodeMethod getDeclared(String name, CodeType... parameterTypes);
+  M getDeclared(String name, CodeType... parameterTypes);
 
   /**
    * @param name the {@link CodeMethod#getName() method name}.
@@ -30,9 +31,9 @@ public interface CodeMethods extends CodeOperations<CodeMethod>, CodeNodeItemCon
    *         exceptions}. Simply add those afterwards as needed.
    * @throws ReadOnlyException if {@link #isImmutable() immutable}.
    */
-  CodeMethod add(String name);
+  M add(String name);
 
   @Override
-  CodeMethods copy();
+  CodeMethods<M> copy();
 
 }

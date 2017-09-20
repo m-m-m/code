@@ -16,7 +16,7 @@ import net.sf.mmm.code.api.member.CodeOperation;
 public interface CodeException extends CodeOperationArg {
 
   @Override
-  CodeExceptions getParent();
+  CodeExceptions<?> getParent();
 
   @Override
   CodeException copy();

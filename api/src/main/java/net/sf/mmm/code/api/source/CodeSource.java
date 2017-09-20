@@ -2,7 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.source;
 
-import java.net.URL;
+import java.io.File;
 
 import net.sf.mmm.code.api.CodeFile;
 import net.sf.mmm.code.api.CodePackage;
@@ -10,7 +10,7 @@ import net.sf.mmm.code.api.CodeProvider;
 import net.sf.mmm.code.api.node.CodeContainer;
 
 /**
- * A {@link CodeSource} represents a {@link #getUri() physical location} where {@link CodePackage}s and
+ * A {@link CodeSource} represents a {@link #getId() physical location} where {@link CodePackage}s and
  * {@link CodeFile}s are retrieved from.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
@@ -23,7 +23,7 @@ public interface CodeSource extends CodeProvider, CodeContainer {
    *         source. These can be considered of the dependencies of this source (like in Maven, Gradle, Yarn,
    *         etc.)
    */
-  CodeSourceDependencies getDependencies();
+  CodeSourceDependencies<?> getDependencies();
 
   /**
    * @return the first parent from {@link #getDependencies()} or {@code null} if the {@link #getDependencies()
@@ -34,30 +34,31 @@ public interface CodeSource extends CodeProvider, CodeContainer {
   CodeSource getParent();
 
   /**
-   * @return {@code true} if this source is pointing to actual source-code that will be parsed for analysis,
-   *         {@code false} otherwise (if only byte-code analysis e.g. via {@link ClassLoader} is available).
-   */
-  boolean isSourceCodeAvailable();
-
-  /**
    * @return the top-level package containing actual content in this source. When traversing the
    *         {@link #getRootPackage() root package} this is the first {@link CodePackage} that is empty or
-   *         contains more than just one single {@link #getPackage(CodePackage, String) child package}.
+   *         contains more than just one single {@link CodePackage#getChildren() child}.
    */
   CodePackage getToplevelPackage();
 
   /**
-   * @return the URI pointing to the physical source. May be used to find and select a particular source via
-   *         {@link String#equals(Object) equals} or {@link String#contains(CharSequence) contains}. E.g. you
-   *         might want to find the {@link CodeSource} for {@code "src/main/java"} of your current maven
-   *         project or the JAR source of an external dependency.
+   * @return the unique ID of this source. May be the {@link File#toString() string representation} of the
+   *         {@link #getByteCodeLocation() byte} or {@link #getSourceCodeLocation() source code location}.
    */
-  String getUri();
+  String getId();
 
   /**
-   * @return the {@link URL} to the physical source or {@code null} if not available.
+   * @return the {@link File} to the physical byte-code or {@code null} if not available. Can point to a
+   *         directory, archive (JAR, WAR, EAR, etc.), or whatever format may be used for the according
+   *         language. Therefore it is recommended to manually operate on this information.
    */
-  URL getLocation();
+  File getByteCodeLocation();
+
+  /**
+   * @return the {@link File} to the physical source-code or {@code null} if not available. Can point to a
+   *         directory, archive (ZIP, sources.jar, etc.), or whatever format may be used for the according
+   *         language. Therefore it is not recommended to manually operate on this information.
+   */
+  File getSourceCodeLocation();
 
   /**
    * @return the {@link CodeSourceDescriptor} of this source.

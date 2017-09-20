@@ -14,9 +14,10 @@ import net.sf.mmm.code.api.node.CodeNodeItemContainerHierarchical;
  * @see CodeType#getSuperTypes()
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
+ * @param <T> the type of the contained {@link CodeGenericType}s.
  * @since 1.0.0
  */
-public abstract interface CodeSuperTypes extends CodeNodeItemContainerHierarchical<CodeGenericType> {
+public interface CodeSuperTypes<T extends CodeGenericType> extends CodeNodeItemContainerHierarchical<T> {
 
   @Override
   CodeType getParent();
@@ -53,6 +54,6 @@ public abstract interface CodeSuperTypes extends CodeNodeItemContainerHierarchic
   void add(CodeGenericType superType);
 
   @Override
-  CodeSuperTypes copy();
+  CodeSuperTypes<T> copy();
 
 }

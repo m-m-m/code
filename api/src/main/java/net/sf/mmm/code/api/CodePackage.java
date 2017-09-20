@@ -40,7 +40,7 @@ public interface CodePackage extends CodePathElement, CodeContainer {
    * @return the {@link CodePathElements} containing the child {@link CodePackage}s and {@link CodeFile}s of
    *         this package.
    */
-  CodePathElements getChildren();
+  CodePathElements<?> getChildren();
 
   /**
    * @return {@code true} if this a regular package that requires an {@link CodeFile#getImports() import},

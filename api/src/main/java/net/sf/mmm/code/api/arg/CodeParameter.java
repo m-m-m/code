@@ -16,7 +16,7 @@ import net.sf.mmm.code.api.member.CodeOperation;
 public interface CodeParameter extends CodeOperationArg, CodeElementWithName {
 
   @Override
-  CodeParameters getParent();
+  CodeParameters<?> getParent();
 
   @Override
   CodeParameter copy();

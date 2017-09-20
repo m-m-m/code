@@ -51,32 +51,32 @@ public interface CodeType extends CodeGenericType, CodeElementWithModifiers, Cod
    *         distinguish {@code extends} vs. {@code inherits} and potentially allows multi-inheritance of
    *         classes for languages other than Java.
    */
-  CodeSuperTypes getSuperTypes();
+  CodeSuperTypes<?> getSuperTypes();
 
   /**
    * @return the {@link CodeFields} containing the actual {@link net.sf.mmm.code.api.member.CodeField}s.
    */
-  CodeFields getFields();
+  CodeFields<?> getFields();
 
   /**
    * @return the {@link CodeMethods} containing the actual {@link net.sf.mmm.code.api.member.CodeMethod}s.
    */
-  CodeMethods getMethods();
+  CodeMethods<?> getMethods();
 
   /**
    * @return the {@link CodeConstructors} containing the actual
    *         {@link net.sf.mmm.code.api.member.CodeConstructor}s.
    */
-  CodeConstructors getConstructors();
+  CodeConstructors<?> getConstructors();
 
   /**
    * @return the {@link CodeProperties} containing instances of {@link CodeProperty}.
    */
-  CodeProperties getProperties();
+  CodeProperties<?> getProperties();
 
   /**
-   * @return the {@link CodeType} containing this {@link CodeType} or {@code null} if not a {@link #isNested()
-   *         nested type}.
+   * @return the {@link CodeType} containing this {@link CodeType} or {@code this} type itself if not a
+   *         {@link #isNested() nested type}.
    */
   @Override
   CodeType getDeclaringType();
@@ -88,14 +88,14 @@ public interface CodeType extends CodeGenericType, CodeElementWithModifiers, Cod
    */
   default boolean isNested() {
 
-    return (getDeclaringType() != null);
+    return (getDeclaringType() != this);
   }
 
   /**
    * @return the {@link CodeNestedTypes} containing the {@link #isNested() nested} {@link CodeType}s. May be
    *         {@link List#isEmpty() empty} but is never {@code null}.
    */
-  CodeNestedTypes getNestedTypes();
+  CodeNestedTypes<?> getNestedTypes();
 
   /**
    * @return the static initializer block or {@code null} for none.
@@ -158,6 +158,16 @@ public interface CodeType extends CodeGenericType, CodeElementWithModifiers, Cod
 
     return this;
   }
+
+  /**
+   * This method should only be called if this type actually has {@link #getTypeParameters() type variables}.
+   *
+   * @param parent the {@link CodeParameterizedType#getParent() parent} of the new
+   *        {@link CodeParameterizedType}.
+   * @return a new {@link CodeParameterizedType} with this type as {@link CodeParameterizedType#getType() raw
+   *         type}.
+   */
+  CodeParameterizedType createParameterizedType(CodeElement parent);
 
   @Override
   default CodeType resolve(CodeGenericType context) {

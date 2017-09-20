@@ -19,7 +19,7 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
 public abstract interface CodeField extends CodeMember, CodeNodeItemWithType {
 
   @Override
-  CodeFields getParent();
+  CodeFields<?> getParent();
 
   /**
    * @return the {@link CodeExpression} assigned to this field on initialization or {@code null} for none.

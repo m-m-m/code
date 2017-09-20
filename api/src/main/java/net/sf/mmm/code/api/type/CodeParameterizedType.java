@@ -2,7 +2,9 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.type;
 
+import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.node.CodeNodeItemWithDeclaringOperation;
+import net.sf.mmm.code.api.node.CodeNodeItemWithType;
 
 /**
  * {@link CodeGenericType} representing a parameterized type. It is a variable as a placeholder for a
@@ -10,15 +12,23 @@ import net.sf.mmm.code.api.node.CodeNodeItemWithDeclaringOperation;
  *
  * @see java.lang.reflect.ParameterizedType
  * @see Class#getGenericSuperclass()
- * @see CodeTypeVariables#createParameterizedType(CodeType)
+ * @see CodeType#createParameterizedType(CodeElement)
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract interface CodeParameterizedType extends CodeGenericType, CodeNodeItemWithDeclaringOperation {
+public interface CodeParameterizedType extends CodeGenericType, CodeNodeItemWithType, CodeNodeItemWithDeclaringOperation {
 
   @Override
-  CodeTypeVariables getParent();
+  CodeElement getParent();
+
+  /**
+   * @return the raw {@link CodeType} that is parameterized here. In other words this method returns this
+   *         parameterized type with its {@link #getTypeParameters() type parameters} removed.
+   * @see java.lang.reflect.ParameterizedType#getRawType()
+   */
+  @Override
+  CodeType getType();
 
   @Override
   CodeParameterizedType copy();

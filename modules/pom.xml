@@ -15,7 +15,7 @@
   <modules>
     <module>../api</module>
     <module>../base</module>
-    <module>../impl-java</module>
+    <module>../java</module>
   </modules>
 
   <dependencyManagement>

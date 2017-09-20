@@ -20,7 +20,7 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
 public abstract interface CodeProperty extends CodeMember, CodeNodeItemWithType {
 
   @Override
-  CodeProperties getParent();
+  CodeProperties<?> getParent();
 
   /**
    * @return the {@link CodeField} corresponding to this property or {@code null} if no such field exists.

@@ -13,14 +13,15 @@ import net.sf.mmm.code.api.type.CodeTypeVariables;
  * {@link CodeGenericType generic} {@link CodeType type}.
  *
  * @see java.lang.reflect.TypeVariable
- * @see CodeType#getTypeVariables()
+ * @see CodeType#getTypeParameters()
  * @see CodeGenericType#asTypeVariable()
  * @see CodeTypeVariables
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
+ * @param <I> the type of the contained {@link CodeImport}s.
  * @since 1.0.0
  */
-public abstract interface CodeImports extends CodeNodeItemContainerFlat<CodeImport> {
+public abstract interface CodeImports<I extends CodeImport> extends CodeNodeItemContainerFlat<I> {
 
   @Override
   CodeFile getParent();
@@ -30,9 +31,9 @@ public abstract interface CodeImports extends CodeNodeItemContainerFlat<CodeImpo
    * @return the new {@link CodeImport} that has been added or {@code null} if no (additional) import is
    *         required.
    */
-  CodeImport add(CodeType type);
+  I add(CodeType type);
 
   @Override
-  CodeImports copy();
+  CodeImports<I> copy();
 
 }

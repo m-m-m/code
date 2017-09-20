@@ -12,9 +12,10 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * {@link CodeNodeItemContainerFlat} containing the {@link CodePathElement}s of a {@link CodePackage}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
+ * @param <P> the type of the contained {@link CodePathElement}s.
  * @since 1.0.0
  */
-public interface CodePathElements extends CodeNodeItemContainerFlat<CodePathElement> {
+public interface CodePathElements<P extends CodePathElement> extends CodeNodeItemContainerFlat<P> {
 
   @Override
   CodePackage getParent();
@@ -24,7 +25,7 @@ public interface CodePathElements extends CodeNodeItemContainerFlat<CodePathElem
    * This method can trigger expensive classpath scanning (or filesystem traversal) on its first call.
    */
   @Override
-  List<? extends CodePathElement> getAll();
+  List<? extends P> getAll();
 
   /**
    * @param simpleName the {@link CodePathElement#getSimpleName() simple name} of the requested
@@ -32,7 +33,7 @@ public interface CodePathElements extends CodeNodeItemContainerFlat<CodePathElem
    * @return the {@link CodePathElement} from {@link #getAll() all items} with the given {@code name} or
    *         {@code null} if not found.
    */
-  CodePathElement get(String simpleName);
+  P get(String simpleName);
 
   /**
    * @param simpleName the {@link CodePathElement#getSimpleName() simple name} of the requested
@@ -43,7 +44,7 @@ public interface CodePathElements extends CodeNodeItemContainerFlat<CodePathElem
    * @return the {@link CodePathElement} from {@link #getAll() all items} with the given {@code name} or
    *         {@code null} if not found.
    */
-  CodePathElement get(String simpleName, boolean withoutSuperLayer);
+  P get(String simpleName, boolean withoutSuperLayer);
 
   /**
    * @param simpleName the {@link CodeFile#getSimpleName() simple name} of the requested {@link CodeFile}.

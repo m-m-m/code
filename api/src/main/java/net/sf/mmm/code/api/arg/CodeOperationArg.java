@@ -4,6 +4,7 @@ package net.sf.mmm.code.api.arg;
 
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.member.CodeOperation;
+import net.sf.mmm.code.api.node.CodeNodeItemWithDeclaringOperation;
 import net.sf.mmm.code.api.node.CodeNodeItemWithType;
 
 /**
@@ -13,6 +14,6 @@ import net.sf.mmm.code.api.node.CodeNodeItemWithType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract interface CodeOperationArg extends CodeElement, CodeNodeItemWithType {
+public abstract interface CodeOperationArg extends CodeElement, CodeNodeItemWithType, CodeNodeItemWithDeclaringOperation {
 
 }

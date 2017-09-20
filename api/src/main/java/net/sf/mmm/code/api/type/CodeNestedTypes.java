@@ -4,7 +4,6 @@ package net.sf.mmm.code.api.type;
 
 import net.sf.mmm.code.api.node.CodeNodeItemContainerHierarchical;
 import net.sf.mmm.code.api.node.CodeNodeItemContainerHierarchicalWithName;
-import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
  * {@link CodeNodeItemContainerHierarchical} containing the nested {@link CodeType}s.
@@ -12,36 +11,15 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @see Class#getDeclaringClass()
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
+ * @param <T> the type of the contained {@link CodeType}s.
  * @since 1.0.0
  */
-public abstract interface CodeNestedTypes extends CodeNodeItemContainerHierarchicalWithName<CodeType> {
+public abstract interface CodeNestedTypes<T extends CodeType> extends CodeNodeItemContainerHierarchicalWithName<T> {
 
   @Override
-  CodeType getParent();
-
-  /**
-   * @param name the {@link CodeType#getSimpleName() simple name} of the requested {@link CodeType}.
-   * @return the nested {@link CodeType} from {@link #getDeclared()} or {@code null} if not found.
-   */
-  @Override
-  CodeType getDeclared(String name);
-
-  /**
-   * @param name the {@link CodeType#getSimpleName() simple name} of the requested {@link CodeType}.
-   * @return the nested {@link CodeType} from {@link #getAll()} or {@code null} if not found.
-   */
-  @Override
-  CodeType get(String name);
-
-  /**
-   * @param name the {@link CodeType#getSimpleName() simple name} of the {@link CodeType} to create.
-   * @return a new {@link CodeType} that has been added.
-   * @throws ReadOnlyException if {@link #isImmutable() immutable}.
-   */
-  @Override
-  CodeType add(String name);
+  T getParent();
 
   @Override
-  CodeNestedTypes copy();
+  CodeNestedTypes<T> copy();
 
 }

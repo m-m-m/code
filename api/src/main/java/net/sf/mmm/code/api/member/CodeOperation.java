@@ -28,13 +28,13 @@ public abstract interface CodeOperation extends CodeMember, CodeElementWithTypeV
    * @return the {@link CodeParameters} containing the {@link CodeParameter}s of this operation. May be
    *         {@link List#isEmpty() empty} but never <code>null</code>.
    */
-  CodeParameters getParameters();
+  CodeParameters<?> getParameters();
 
   /**
    * @return the {@link CodeExceptions} containing the {@link CodeException}s of this operation. May be
    *         {@link List#isEmpty() empty} but never <code>null</code>.
    */
-  CodeExceptions getExceptions();
+  CodeExceptions<?> getExceptions();
 
   /**
    * @return the {@link CodeBody} of this method. Will be {@code null} if not present (in case of an

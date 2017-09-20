@@ -19,7 +19,7 @@ import net.sf.mmm.code.api.type.CodeType;
 public interface CodeAnnotation extends CodeNodeItemWithType, CodeNodeItemWithDeclaringElement {
 
   @Override
-  CodeAnnotations getParent();
+  CodeAnnotations<?> getParent();
 
   /**
    * @return the {@link Map} with the parameters of this annotation. May be {@link Map#isEmpty() empty} but is
