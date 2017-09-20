@@ -114,7 +114,7 @@ public class JavaPathElements extends JavaNodeItemContainerFlat<JavaPathElement>
   @Override
   protected List<JavaPathElement> getList() {
 
-    return getList();
+    return super.getList();
   }
 
   @Override

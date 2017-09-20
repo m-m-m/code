@@ -205,7 +205,7 @@ public class JavaRootContext extends JavaContext {
     if (javaClass.isPrimitive()) {
       container.javaType = createPrimitiveType(javaClass);
     }
-    this.javaSystemTypeCache.put(javaClass.getSimpleName(), container);
+    this.javaSystemTypeCache.put(javaClass.getName(), container);
   }
 
   private JavaType createPrimitiveType(Class<?> clazz) {
@@ -258,7 +258,7 @@ public class JavaRootContext extends JavaContext {
   private JavaType getType(JavaTypeContainer typeContainer) {
 
     if (typeContainer.javaType == null) {
-      typeContainer.javaType = (JavaType) getType(typeContainer.javaClass);
+      typeContainer.javaType = (JavaType) super.getType(typeContainer.javaClass);
     }
     return typeContainer.javaType;
   }
