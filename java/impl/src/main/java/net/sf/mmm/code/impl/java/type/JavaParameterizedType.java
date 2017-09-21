@@ -206,7 +206,7 @@ public class JavaParameterizedType extends JavaGenericType
       sink.append("Undefined");
     } else {
       this.type.writeReference(sink, false);
-      getTypeParameters().write(sink, DEFAULT_NEWLINE, null, null);
+      getTypeParameters().write(sink, DEFAULT_NEWLINE, null, "");
     }
   }
 

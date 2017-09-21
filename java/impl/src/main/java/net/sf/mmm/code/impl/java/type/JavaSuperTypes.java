@@ -166,10 +166,11 @@ public class JavaSuperTypes extends JavaNodeItemContainerHierarchical<JavaGeneri
     }
     String separator = keywordInherit;
     for (JavaGenericType superType : getDeclared()) {
-      assert (superType.isInterface());
-      sink.append(separator);
-      superType.writeReference(sink, false);
-      separator = ", ";
+      if (superType.isInterface()) {
+        sink.append(separator);
+        superType.writeReference(sink, false);
+        separator = ", ";
+      }
     }
   }
 

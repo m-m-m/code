@@ -15,6 +15,8 @@ import net.sf.mmm.code.impl.java.element.JavaElement;
  */
 public abstract class JavaGenericType extends JavaElement implements CodeGenericType {
 
+  private JavaArrayType arrayType;
+
   /**
    * The constructor.
    */
@@ -76,7 +78,10 @@ public abstract class JavaGenericType extends JavaElement implements CodeGeneric
   @Override
   public JavaArrayType createArray() {
 
-    return new JavaArrayType(this, this);
+    if (this.arrayType == null) {
+      this.arrayType = new JavaArrayType(this, this);
+    }
+    return this.arrayType;
   }
 
   @Override

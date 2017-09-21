@@ -79,6 +79,22 @@ public class JavaContextTest extends Assertions {
   }
 
   /**
+   * Test of {@link JavaContext#getRootExceptionType()}
+   */
+  @Test
+  public void testThrowable() {
+
+    // given
+    JavaContext context = getContext();
+
+    // when
+    JavaType throwable = context.getRootExceptionType();
+
+    // then
+    verifyClass(throwable, Throwable.class, context);
+  }
+
+  /**
    * Test of {@link JavaContext#getRootEnumerationType()}.
    */
   @Test
@@ -94,6 +110,7 @@ public class JavaContextTest extends Assertions {
     verifyClass(enumeration, Enum.class, context);
     JavaSuperTypes superTypes = enumeration.getSuperTypes();
     assertThat(superTypes.getSuperClass()).isSameAs(context.getRootType());
+    // test "Enum implements Comparable<E>, Serializable"
     @SuppressWarnings("unchecked")
     List<JavaGenericType> superInterfaces = (List<JavaGenericType>) superTypes.getSuperInterfaces();
     JavaGenericType serializable = context.getType(Serializable.class);
@@ -104,12 +121,13 @@ public class JavaContextTest extends Assertions {
     }
     assertThat(comparable).isNotNull().isInstanceOf(JavaParameterizedType.class);
 
-    // Enum<E extends Enum<E>> is a great test with its recursive declaration
+    // test "Enum<E extends Enum<E>>" - great test with its recursive declaration
     JavaTypeVariables typeVariables = enumeration.getTypeParameters();
     List<? extends JavaTypeVariable> typeVariableList = typeVariables.getAll();
     assertThat(typeVariableList).hasSize(1);
     JavaTypeVariable typeVariable = typeVariableList.get(0);
     assertThat(typeVariable.getName()).isEqualTo("E");
+    assertThat(typeVariable.asType()).isSameAs(enumeration);
     assertThat(typeVariables.get("E")).isSameAs(typeVariable);
     assertThat(typeVariable.isSuper()).isFalse();
     assertThat(typeVariable.isExtends()).isTrue();
@@ -161,7 +179,11 @@ public class JavaContextTest extends Assertions {
     JavaField javaField = fields.get(field.getName());
     assertThat(javaField).as(field.toGenericString()).isNotNull();
     assertThat(javaField.getName()).isEqualTo(field.getName());
-    assertThat(javaField.getType()).isEqualTo(context.getType(field.getType()));
+    CodeGenericType type = javaField.getType();
+    if (!type.isArray()) {
+      type = type.asType();
+    }
+    assertThat(type).as("Type of " + javaField).isEqualTo(context.getType(field.getType()));
   }
 
   private void verifyConstructors(JavaConstructors constructors, Constructor<?>[] declaredConstructors, JavaContext context) {

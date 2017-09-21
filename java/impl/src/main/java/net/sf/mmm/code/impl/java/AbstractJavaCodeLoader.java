@@ -56,7 +56,7 @@ public abstract class AbstractJavaCodeLoader extends JavaNodeItemContainerAccess
     requireByteCodeSupport();
     if (clazz.isArray()) {
       JavaGenericType componentType = getType(clazz.getComponentType());
-      return new JavaArrayType(componentType);
+      return componentType.createArray();
     }
     CodeSource codeSource = clazz.getProtectionDomain().getCodeSource();
     JavaSource javaSource = this.context.getOrCreateSource(codeSource);

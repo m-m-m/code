@@ -48,7 +48,7 @@ public abstract class JavaGenericTypeParameters<P extends JavaGenericType> exten
       String prefix = "<";
       for (P parameter : typeParameters) {
         sink.append(prefix);
-        parameter.write(sink, newline, "", "");
+        parameter.write(sink, newline, null, "");
         prefix = ", ";
       }
       sink.append('>');
