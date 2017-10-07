@@ -2,14 +2,16 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.impl.java.arg;
 
+import java.io.IOException;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
-import java.util.regex.Pattern;
 
 import net.sf.mmm.code.api.arg.CodeParameter;
+import net.sf.mmm.code.api.expression.CodeLiteral;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.impl.java.item.JavaReflectiveObject;
 import net.sf.mmm.code.impl.java.member.JavaOperation;
+import net.sf.mmm.code.impl.java.type.JavaGenericType;
 import net.sf.mmm.code.impl.java.type.JavaType;
 
 /**
@@ -21,13 +23,13 @@ import net.sf.mmm.code.impl.java.type.JavaType;
 public class JavaParameter extends JavaOperationArg
     implements CodeParameter, CodeNodeItemWithGenericParent<JavaParameters, JavaParameter>, JavaReflectiveObject<Parameter> {
 
-  private static final Pattern NAME_PATTERN = Pattern.compile("[\\$_\\w]+");
-
   private final JavaParameters parent;
 
   private final Parameter reflectiveObject;
 
   private String name;
+
+  private boolean varArgs;
 
   /**
    * The constructor.
@@ -113,6 +115,19 @@ public class JavaParameter extends JavaOperationArg
   }
 
   @Override
+  public boolean isVarArgs() {
+
+    return this.varArgs;
+  }
+
+  @Override
+  public void setVarArgs(boolean varArgs) {
+
+    verifyMutalbe();
+    this.varArgs = varArgs;
+  }
+
+  @Override
   public Parameter getReflectiveObject() {
 
     return this.reflectiveObject;
@@ -128,6 +143,12 @@ public class JavaParameter extends JavaOperationArg
   }
 
   @Override
+  public CodeLiteral evaluate() {
+
+    return null;
+  }
+
+  @Override
   public JavaParameter copy() {
 
     return copy(this.parent);
@@ -137,6 +158,20 @@ public class JavaParameter extends JavaOperationArg
   public JavaParameter copy(JavaParameters newParent) {
 
     return new JavaParameter(this, newParent);
+  }
+
+  @Override
+  protected void doWriteType(Appendable sink) throws IOException {
+
+    if (this.varArgs) {
+      JavaGenericType type = getType();
+      JavaGenericType componentType = type.getComponentType();
+      if (componentType != null) {
+        componentType.writeReference(sink, false);
+        sink.append("...");
+      }
+    }
+    super.doWriteType(sink);
   }
 
 }

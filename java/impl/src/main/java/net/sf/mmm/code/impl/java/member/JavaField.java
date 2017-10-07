@@ -9,7 +9,9 @@ import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
+import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeGenericType;
+import net.sf.mmm.code.impl.java.expression.constant.JavaConstant;
 import net.sf.mmm.code.impl.java.item.JavaReflectiveObject;
 
 /**
@@ -126,15 +128,24 @@ public class JavaField extends JavaMember implements CodeField, CodeNodeItemWith
   }
 
   @Override
+  public JavaConstant<?> evaluate() {
+
+    if (this.initializer == null) {
+      return null;
+    }
+    return (JavaConstant<?>) this.initializer.evaluate();
+  }
+
+  @Override
   public Field getReflectiveObject() {
 
     return this.reflectiveObject;
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
 
-    super.doWrite(sink, newline, defaultIndent, currentIndent);
+    super.doWrite(sink, newline, defaultIndent, currentIndent, syntax);
     getType().writeReference(sink, false);
     sink.append(' ');
     sink.append(getName());

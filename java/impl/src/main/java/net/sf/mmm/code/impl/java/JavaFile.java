@@ -9,6 +9,7 @@ import java.util.List;
 import net.sf.mmm.code.api.CodeFile;
 import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
+import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.impl.java.imports.JavaImports;
 import net.sf.mmm.code.impl.java.item.JavaReflectiveObject;
 import net.sf.mmm.code.impl.java.type.JavaType;
@@ -131,7 +132,7 @@ public final class JavaFile extends JavaPathElement implements CodeFile, CodeNod
 
   /**
    * @param simpleName the {@link JavaType#getSimpleName() simple name} of the requested {@link JavaType} to
-   *        search {@link JavaType#getNestedTypes() recursively}.
+   *        resolve in the context of this {@link JavaFile}.
    * @return the requested {@link JavaType} or {@code null} if not found.
    */
   public JavaType getType(String simpleName) {
@@ -139,7 +140,34 @@ public final class JavaFile extends JavaPathElement implements CodeFile, CodeNod
     return getType(simpleName, true);
   }
 
-  JavaType getType(String simpleName, boolean init) {
+  /**
+   * @param simpleName the {@link JavaType#getSimpleName() simple name} of the requested {@link JavaType} to
+   *        resolve in the context of this {@link JavaFile}.
+   * @param init - {@code true} to ensure the child types are properly initialized and the result is adequate,
+   *        {@code false} otherwise (to avoid initialization e.g. for internal calls during initialization).
+   * @return the requested {@link JavaType} or {@code null} if not found.
+   */
+  public JavaType getType(String simpleName, boolean init) {
+
+    JavaType type = getChildType(simpleName, init);
+    if (type == null) {
+      String qualifiedName = getContext().getQualifiedName(simpleName, this, false);
+      type = getContext().getType(qualifiedName);
+    }
+    return type;
+  }
+
+  /**
+   * @param simpleName the {@link JavaType#getSimpleName() simple name} of the requested {@link JavaType}
+   *        {@link JavaType#getNestedTypes() recursively} contained in this {@link JavaFile}.
+   * @return the requested {@link JavaType} or {@code null} if not found.
+   */
+  public JavaType getChildType(String simpleName) {
+
+    return getChildType(simpleName, true);
+  }
+
+  JavaType getChildType(String simpleName, boolean init) {
 
     for (JavaType type : getTypes(init)) {
       if (type.getSimpleName().equals(simpleName)) {
@@ -193,16 +221,16 @@ public final class JavaFile extends JavaPathElement implements CodeFile, CodeNod
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
 
     if (defaultIndent == null) {
       getType().writeReference(sink, true);
     } else {
-      doWriteComment(sink, newline, defaultIndent, currentIndent);
-      getParentPackage().doWrite(sink, newline, defaultIndent, currentIndent);
-      getImports().write(sink, newline, defaultIndent, currentIndent);
-      doWriteDoc(sink, newline, defaultIndent, currentIndent);
-      doWriteAnnotations(sink, newline, defaultIndent, currentIndent);
+      doWriteComment(sink, newline, defaultIndent, currentIndent, syntax);
+      getParentPackage().doWrite(sink, newline, defaultIndent, currentIndent, syntax);
+      getImports().write(sink, newline, defaultIndent, currentIndent, syntax);
+      doWriteDoc(sink, newline, defaultIndent, currentIndent, syntax);
+      doWriteAnnotations(sink, newline, defaultIndent, currentIndent, syntax);
       sink.append(newline);
       for (JavaType type : getTypes()) {
         type.write(sink, newline, defaultIndent, currentIndent);

@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
+import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.impl.java.item.JavaReflectiveObject;
 import net.sf.mmm.code.impl.java.node.JavaContainer;
@@ -267,12 +268,12 @@ public final class JavaPackage extends JavaPathElement
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
 
     if (isRoot()) {
       return;
     }
-    super.doWrite(sink, newline, defaultIndent, currentIndent);
+    super.doWrite(sink, newline, defaultIndent, currentIndent, syntax);
     if (currentIndent != null) {
       sink.append(currentIndent);
     }

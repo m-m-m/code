@@ -3,15 +3,16 @@
 package net.sf.mmm.code.api.node;
 
 import net.sf.mmm.code.api.element.CodeElement;
+import net.sf.mmm.code.api.item.CodeItemWithDeclaringType;
 import net.sf.mmm.code.api.type.CodeType;
 
 /**
- * {@link CodeNodeItemWithDeclaringType} that has a {@link #getDeclaringElement() declaring element}.
+ * {@link CodeItemWithDeclaringType} that has a {@link #getDeclaringElement() declaring element}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract interface CodeNodeItemWithDeclaringElement extends CodeNodeItemWithDeclaringType {
+public abstract interface CodeNodeItemWithDeclaringElement extends CodeItemWithDeclaringType {
 
   /**
    * @return the {@link CodeElement} declaring this item.

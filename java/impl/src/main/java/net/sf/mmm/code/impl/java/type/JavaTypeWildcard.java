@@ -159,6 +159,18 @@ public class JavaTypeWildcard extends JavaTypePlaceholder
   }
 
   @Override
+  public String getSimpleName() {
+
+    return getName();
+  }
+
+  @Override
+  public String getQualifiedName() {
+
+    return getName();
+  }
+
+  @Override
   public JavaTypeWildcard copy() {
 
     return copy(this.parent);

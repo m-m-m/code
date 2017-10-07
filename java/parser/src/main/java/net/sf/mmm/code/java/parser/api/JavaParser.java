@@ -9,10 +9,12 @@ import java.nio.file.Path;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import net.sf.mmm.code.java.parser.base.JavaSourceCodeLexer;
 import net.sf.mmm.code.java.parser.base.JavaSourceCodeParser;
 import net.sf.mmm.code.java.parser.base.JavaSourceCodeParser.CompilationUnitContext;
+import net.sf.mmm.code.java.parser.base.JavaSourceCodeParserListenerImpl;
 import net.sf.mmm.util.io.api.IoMode;
 import net.sf.mmm.util.io.api.RuntimeIoException;
 
@@ -60,8 +62,9 @@ public class JavaParser {
 
     JavaSourceCodeLexer lexer = new JavaSourceCodeLexer(charStream);
     JavaSourceCodeParser parser = new JavaSourceCodeParser(new CommonTokenStream(lexer));
-
-    return parser.compilationUnit();
+    CompilationUnitContext compilationUnit = parser.compilationUnit();
+    ParseTreeWalker.DEFAULT.walk(new JavaSourceCodeParserListenerImpl(), compilationUnit);
+    return compilationUnit;
   }
 
 }

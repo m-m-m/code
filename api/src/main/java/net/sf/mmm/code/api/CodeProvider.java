@@ -3,8 +3,8 @@
 package net.sf.mmm.code.api;
 
 import net.sf.mmm.code.api.element.CodeElement;
+import net.sf.mmm.code.api.item.CodeMutableItemWithQualifiedName;
 import net.sf.mmm.code.api.node.CodeNode;
-import net.sf.mmm.code.api.node.CodeNodeItemWithQualifiedName;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.util.exception.api.ObjectNotFoundException;
 
@@ -25,7 +25,7 @@ public interface CodeProvider extends CodeNode, CodeLoader {
 
   /**
    * @param hierarchicalName the hierarchical name as plain {@link String} to parse. E.g. a
-   *        {@link CodeNodeItemWithQualifiedName#getQualifiedName() qualified name} or a part of it.
+   *        {@link CodeMutableItemWithQualifiedName#getQualifiedName() qualified name} or a part of it.
    * @return the parsed {@link CodeName}.
    */
   default CodeName parseName(String hierarchicalName) {

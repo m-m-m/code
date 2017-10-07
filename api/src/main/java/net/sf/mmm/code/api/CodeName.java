@@ -4,10 +4,10 @@ package net.sf.mmm.code.api;
 
 import java.util.Objects;
 
-import net.sf.mmm.code.api.node.CodeNodeItemWithQualifiedName;
+import net.sf.mmm.code.api.item.CodeMutableItemWithQualifiedName;
 
 /**
- * Represents a parsed hierarchical name like a {@link CodeNodeItemWithQualifiedName#getQualifiedName()
+ * Represents a parsed hierarchical name like a {@link CodeMutableItemWithQualifiedName#getQualifiedName()
  * qualified name} or a part of it (e.g. "code.api.CodeName" as part of "net.sf.mmm.code.api.CodeName").
  *
  * @see CodeProvider#parseName(String)
@@ -45,7 +45,7 @@ public final class CodeName {
   }
 
   /**
-   * @return the {@link CodeNodeItemWithQualifiedName#getSimpleName() simple name}.
+   * @return the {@link CodeMutableItemWithQualifiedName#getSimpleName() simple name}.
    */
   public String getSimpleName() {
 

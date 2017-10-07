@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
+import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeParameterizedType;
 import net.sf.mmm.code.impl.java.arg.JavaOperationArg;
@@ -180,9 +181,21 @@ public class JavaParameterizedType extends JavaGenericType
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
+  public String getSimpleName() {
 
-    super.doWrite(sink, newline, null, "");
+    return getType().getSimpleName();
+  }
+
+  @Override
+  public String getQualifiedName() {
+
+    return getType().getQualifiedName();
+  }
+
+  @Override
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+
+    super.doWrite(sink, newline, null, "", syntax);
     writeReference(sink, true);
   }
 

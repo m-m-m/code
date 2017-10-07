@@ -11,6 +11,7 @@ import java.util.Set;
 
 import net.sf.mmm.code.api.annotation.CodeAnnotations;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
+import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.impl.java.element.JavaElement;
 import net.sf.mmm.code.impl.java.member.JavaMethod;
@@ -66,7 +67,7 @@ public class JavaAnnotations extends JavaNodeItemContainerHierarchical<JavaAnnot
     Object reflectiveObject = this.parent.getReflectiveObject();
     if (reflectiveObject instanceof AnnotatedElement) {
       for (Annotation annotation : ((AnnotatedElement) reflectiveObject).getDeclaredAnnotations()) {
-        JavaAnnotation child = new JavaAnnotation(this, annotation);
+        JavaAnnotation child = new JavaAnnotation(getContext(), annotation);
         getList().add(child);
       }
     }
@@ -100,8 +101,7 @@ public class JavaAnnotations extends JavaNodeItemContainerHierarchical<JavaAnnot
   public JavaAnnotation add(CodeType type) {
 
     verifyMutalbe();
-    JavaAnnotation annotation = new JavaAnnotation(this, null);
-    annotation.setType(type);
+    JavaAnnotation annotation = new JavaAnnotation(getContext(), (JavaType) type);
     add(annotation);
     return annotation;
   }
@@ -141,7 +141,7 @@ public class JavaAnnotations extends JavaNodeItemContainerHierarchical<JavaAnnot
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
 
     String prefix = "";
     for (JavaAnnotation annotation : getDeclared()) {
@@ -152,7 +152,7 @@ public class JavaAnnotations extends JavaNodeItemContainerHierarchical<JavaAnnot
         sink.append(newline);
         sink.append(currentIndent);
       }
-      annotation.write(sink, defaultIndent, currentIndent);
+      annotation.write(sink, newline, defaultIndent, currentIndent, syntax);
     }
     sink.append(prefix);
   }

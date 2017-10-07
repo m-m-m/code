@@ -10,6 +10,7 @@ import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.imports.CodeImport;
 import net.sf.mmm.code.api.imports.CodeImports;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
+import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.impl.java.JavaFile;
 import net.sf.mmm.code.impl.java.JavaPackage;
@@ -93,7 +94,7 @@ public class JavaImports extends JavaNodeItemContainerFlat<JavaImport>
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
 
     List<JavaImport> imports = getList();
     if (imports.isEmpty()) {

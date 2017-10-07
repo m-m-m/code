@@ -14,13 +14,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.annotation.CodeAnnotation;
+import net.sf.mmm.code.api.comment.CodeComment;
 import net.sf.mmm.code.api.expression.CodeExpression;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
+import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeGenericType;
-import net.sf.mmm.code.impl.java.element.JavaElement;
-import net.sf.mmm.code.impl.java.expression.JavaLiteral;
+import net.sf.mmm.code.impl.java.JavaContext;
+import net.sf.mmm.code.impl.java.expression.constant.JavaConstant;
+import net.sf.mmm.code.impl.java.item.JavaChildItem;
 import net.sf.mmm.code.impl.java.item.JavaReflectiveObject;
-import net.sf.mmm.code.impl.java.node.JavaNodeItem;
 import net.sf.mmm.code.impl.java.type.JavaType;
 import net.sf.mmm.util.nls.api.NlsBundleOptions;
 
@@ -31,30 +32,58 @@ import net.sf.mmm.util.nls.api.NlsBundleOptions;
  * @since 1.0.0
  */
 @NlsBundleOptions(productive = true)
-public class JavaAnnotation extends JavaNodeItem
-    implements CodeAnnotation, CodeNodeItemWithGenericParent<JavaAnnotations, JavaAnnotation>, JavaReflectiveObject<Annotation> {
+public class JavaAnnotation extends JavaChildItem implements CodeAnnotation, JavaReflectiveObject<Annotation> {
 
   private static final Logger LOG = LoggerFactory.getLogger(JavaAnnotation.class);
 
-  private final JavaAnnotations parent;
-
   private final Annotation reflectiveObject;
 
+  private CodeComment comment;
+
   private JavaType type;
+
+  private String typeName;
 
   private Map<String, CodeExpression> parameters;
 
   /**
    * The constructor.
    *
-   * @param parent the {@link #getParent() parent}.
+   * @param context the {@link #getContext() context}.
    * @param reflectiveObject the {@link #getReflectiveObject() reflective object}.
    */
-  public JavaAnnotation(JavaAnnotations parent, Annotation reflectiveObject) {
+  public JavaAnnotation(JavaContext context, Annotation reflectiveObject) {
 
-    super();
-    this.parent = parent;
+    super(context);
     this.reflectiveObject = reflectiveObject;
+    this.parameters = new HashMap<>();
+  }
+
+  /**
+   * The constructor.
+   *
+   * @param context the {@link #getContext() context}.
+   * @param type the {@link #getType() type}.
+   */
+  public JavaAnnotation(JavaContext context, JavaType type) {
+
+    super(context);
+    this.reflectiveObject = null;
+    this.type = type;
+    this.parameters = new HashMap<>();
+  }
+
+  /**
+   * The constructor.
+   *
+   * @param context the {@link #getContext() context}.
+   * @param typeName the qualified name of the {@link #getType() type}.
+   */
+  public JavaAnnotation(JavaContext context, String typeName) {
+
+    super(context);
+    this.reflectiveObject = null;
+    this.typeName = typeName;
     this.parameters = new HashMap<>();
   }
 
@@ -62,12 +91,10 @@ public class JavaAnnotation extends JavaNodeItem
    * The copy-constructor.
    *
    * @param template the {@link JavaAnnotation} to copy.
-   * @param parent the {@link #getParent() parent}.
    */
-  public JavaAnnotation(JavaAnnotation template, JavaAnnotations parent) {
+  public JavaAnnotation(JavaAnnotation template) {
 
     super(template);
-    this.parent = parent;
     this.type = template.type;
     this.parameters = new HashMap<>(template.parameters);
     this.reflectiveObject = null;
@@ -84,7 +111,8 @@ public class JavaAnnotation extends JavaNodeItem
         String key = method.getName();
         try {
           Object value = method.invoke(this.reflectiveObject, (Object[]) null);
-          this.parameters.put(key, JavaLiteral.of(value, method.getReturnType().isPrimitive()));
+          Class<?> returnType = method.getReturnType();
+          this.parameters.put(key, JavaConstant.of(value, returnType.isPrimitive()));
         } catch (Exception e) {
           LOG.warn("Failed to read attribute {} of annotation {}.", key, this.reflectiveObject, e);
         }
@@ -100,27 +128,13 @@ public class JavaAnnotation extends JavaNodeItem
   }
 
   @Override
-  public JavaAnnotations getParent() {
-
-    return this.parent;
-  }
-
-  @Override
-  public JavaElement getDeclaringElement() {
-
-    return getParent().getParent();
-  }
-
-  @Override
-  public JavaType getDeclaringType() {
-
-    return getParent().getDeclaringType();
-  }
-
-  @Override
   public JavaType getType() {
 
     initialize();
+    if ((this.type == null) && (this.typeName != null)) {
+      this.type = getContext().getType(this.typeName);
+      this.typeName = null;
+    }
     return this.type;
   }
 
@@ -132,6 +146,7 @@ public class JavaAnnotation extends JavaNodeItem
     }
     verifyMutalbe();
     this.type = (JavaType) type;
+    this.typeName = null;
   }
 
   @Override
@@ -142,17 +157,33 @@ public class JavaAnnotation extends JavaNodeItem
   }
 
   @Override
+  public CodeComment getComment() {
+
+    return this.comment;
+  }
+
+  @Override
+  public void setComment(CodeComment comment) {
+
+    verifyMutalbe();
+    this.comment = comment;
+  }
+
+  @Override
   public Annotation getReflectiveObject() {
 
     return this.reflectiveObject;
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
 
+    if (this.comment != null) {
+      this.comment.write(sink, newline, defaultIndent, currentIndent);
+    }
     sink.append('@');
     if (this.type == null) {
-      LOG.warn("Annotation without type in {}.", getDeclaringType().getSimpleName());
+      LOG.warn("Annotation without type.");
       sink.append("Undefined");
     } else {
       this.type.writeReference(sink, false);
@@ -178,13 +209,7 @@ public class JavaAnnotation extends JavaNodeItem
   @Override
   public JavaAnnotation copy() {
 
-    return copy(this.parent);
-  }
-
-  @Override
-  public JavaAnnotation copy(JavaAnnotations newParent) {
-
-    return new JavaAnnotation(this, newParent);
+    return new JavaAnnotation(this);
   }
 
 }

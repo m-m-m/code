@@ -157,6 +157,18 @@ public class JavaTypeVariable extends JavaTypePlaceholder
   }
 
   @Override
+  public String getSimpleName() {
+
+    return this.name;
+  }
+
+  @Override
+  public String getQualifiedName() {
+
+    return this.name;
+  }
+
+  @Override
   public JavaTypeVariable copy() {
 
     return copy(this.parent);

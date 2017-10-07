@@ -3,11 +3,12 @@
 package net.sf.mmm.code.impl.java.element;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Iterator;
 
+import net.sf.mmm.code.api.comment.CodeComment;
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.node.CodeNodeItemContainer;
-import net.sf.mmm.code.api.statement.CodeComment;
+import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.impl.java.annotation.JavaAnnotations;
 import net.sf.mmm.code.impl.java.doc.JavaDoc;
 import net.sf.mmm.code.impl.java.node.JavaNode;
@@ -114,11 +115,11 @@ public abstract class JavaElement extends JavaNodeItem implements JavaElementNod
   public abstract JavaType getDeclaringType();
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
 
-    doWriteComment(sink, newline, defaultIndent, currentIndent);
-    doWriteDoc(sink, newline, defaultIndent, currentIndent);
-    doWriteAnnotations(sink, newline, defaultIndent, currentIndent);
+    doWriteComment(sink, newline, defaultIndent, currentIndent, syntax);
+    doWriteDoc(sink, newline, defaultIndent, currentIndent, syntax);
+    doWriteAnnotations(sink, newline, defaultIndent, currentIndent, syntax);
   }
 
   /**
@@ -128,19 +129,21 @@ public abstract class JavaElement extends JavaNodeItem implements JavaElementNod
    * @param newline the newline {@link String}.
    * @param defaultIndent the default indent.
    * @param currentIndent the current indent.
+   * @param syntax the {@link CodeSyntax}.
    * @throws IOException if thrown by {@link Appendable}.
    */
-  protected void doWriteComment(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
+  protected void doWriteComment(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
 
     if (this.comment != null) {
       if (defaultIndent == null) {
         if ("".equals(newline)) {
           return;
         }
-        List<String> lines = this.comment.getComments();
-        if (!lines.isEmpty()) {
+        Iterator<? extends String> lines = this.comment.iterator();
+        if (lines.hasNext()) {
           String separator = "/* ";
-          for (String line : lines) {
+          while (lines.hasNext()) {
+            String line = lines.next();
             sink.append(separator);
             line = line.trim();
             sink.append(line);
@@ -149,7 +152,7 @@ public abstract class JavaElement extends JavaNodeItem implements JavaElementNod
           sink.append(" */");
         }
       } else {
-        this.comment.write(sink, newline, defaultIndent, currentIndent);
+        this.comment.write(sink, newline, defaultIndent, currentIndent, syntax);
       }
     }
   }
@@ -161,8 +164,9 @@ public abstract class JavaElement extends JavaNodeItem implements JavaElementNod
    * @param newline the newline {@link String}.
    * @param defaultIndent the default indent.
    * @param currentIndent the current indent.
+   * @param syntax TODO
    */
-  protected void doWriteDoc(Appendable sink, String newline, String defaultIndent, String currentIndent) {
+  protected void doWriteDoc(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) {
 
     if ((this.doc != null) && (currentIndent != null)) {
       this.doc.write(sink, newline, defaultIndent, currentIndent);
@@ -176,11 +180,12 @@ public abstract class JavaElement extends JavaNodeItem implements JavaElementNod
    * @param newline the newline {@link String}.
    * @param defaultIndent the default indent.
    * @param currentIndent the current indent.
+   * @param syntax TODO
    */
-  protected void doWriteAnnotations(Appendable sink, String newline, String defaultIndent, String currentIndent) {
+  protected void doWriteAnnotations(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) {
 
     if (this.annotations != null) {
-      this.annotations.write(sink, newline, defaultIndent, currentIndent);
+      this.annotations.write(sink, newline, defaultIndent, currentIndent, syntax);
     }
   }
 

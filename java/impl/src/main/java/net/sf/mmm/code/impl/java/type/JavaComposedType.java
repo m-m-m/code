@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
+import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeComposedType;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.impl.java.JavaContext;
@@ -117,6 +118,32 @@ public class JavaComposedType extends JavaGenericType
   }
 
   @Override
+  public String getSimpleName() {
+
+    StringBuilder sb = new StringBuilder();
+    String prefix = "";
+    for (JavaType type : getTypes()) {
+      sb.append(prefix);
+      sb.append(type.getSimpleName());
+      prefix = " & ";
+    }
+    return sb.toString();
+  }
+
+  @Override
+  public String getQualifiedName() {
+
+    StringBuilder sb = new StringBuilder();
+    String prefix = "";
+    for (JavaType type : getTypes()) {
+      sb.append(prefix);
+      sb.append(type.getQualifiedName());
+      prefix = " & ";
+    }
+    return sb.toString();
+  }
+
+  @Override
   public JavaComposedType copy() {
 
     return copy(this.parent);
@@ -129,9 +156,9 @@ public class JavaComposedType extends JavaGenericType
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
 
-    super.doWrite(sink, newline, null, "");
+    super.doWrite(sink, newline, null, "", syntax);
     writeReference(sink, true);
   }
 

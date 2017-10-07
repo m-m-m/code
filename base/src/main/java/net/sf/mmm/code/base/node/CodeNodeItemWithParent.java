@@ -5,10 +5,9 @@ package net.sf.mmm.code.base.node;
 import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.node.CodeNode;
 import net.sf.mmm.code.api.node.CodeNodeItem;
-import net.sf.mmm.code.api.node.CodeNodeItemWithDeclaringType;
 
 /**
- * {@link CodeNodeItemWithDeclaringType} that has a {@link #getParent() parent}.
+ * {@link CodeNodeItem} that has a {@link #getParent() parent}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @param <P> type of {@link #getParent()}.

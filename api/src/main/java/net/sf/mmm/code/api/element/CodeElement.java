@@ -4,20 +4,21 @@ package net.sf.mmm.code.api.element;
 
 import net.sf.mmm.code.api.annotation.CodeAnnotations;
 import net.sf.mmm.code.api.doc.CodeDoc;
+import net.sf.mmm.code.api.item.CodeItemWithDeclaringType;
+import net.sf.mmm.code.api.item.CodeMutableItemWithComment;
+import net.sf.mmm.code.api.item.CodeMutableItemWithType;
 import net.sf.mmm.code.api.node.CodeNode;
-import net.sf.mmm.code.api.node.CodeNodeItemWithComment;
-import net.sf.mmm.code.api.node.CodeNodeItemWithDeclaringType;
-import net.sf.mmm.code.api.node.CodeNodeItemWithType;
+import net.sf.mmm.code.api.node.CodeNodeItem;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
- * {@link CodeNodeItemWithType} that might be {@link #getAnnotations() annotated} or {@link #getDoc()
+ * {@link CodeMutableItemWithType} that might be {@link #getAnnotations() annotated} or {@link #getDoc()
  * documented}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract interface CodeElement extends CodeNodeItemWithComment, CodeNodeItemWithDeclaringType {
+public abstract interface CodeElement extends CodeNodeItem, CodeMutableItemWithComment, CodeItemWithDeclaringType {
 
   /**
    * @return the {@link CodeDoc documentation} of this element. May be {@link CodeDoc#isEmpty() empty} but

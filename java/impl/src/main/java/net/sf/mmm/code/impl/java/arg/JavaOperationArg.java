@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 
 import net.sf.mmm.code.api.arg.CodeOperationArg;
+import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.impl.java.element.JavaElement;
 import net.sf.mmm.code.impl.java.member.JavaOperation;
@@ -83,9 +84,18 @@ public abstract class JavaOperationArg extends JavaElement implements CodeOperat
   protected abstract Type getReflectiveObjectType();
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
 
-    doWriteAnnotations(sink, " ", null, null);
+    doWriteAnnotations(sink, newline, null, "", syntax);
+    doWriteType(sink);
+  }
+
+  /**
+   * @param sink the {@link Appendable}.
+   * @throws IOException if thrown by {@link Appendable}.
+   */
+  protected void doWriteType(Appendable sink) throws IOException {
+
     getType().writeReference(sink, false);
   }
 

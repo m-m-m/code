@@ -3,7 +3,7 @@
 package net.sf.mmm.code.api.expression;
 
 /**
- * {@link CodeExpression} representing a condition. Such condition evaluates to a boolean result (like a
+ * {@link CodeExpression} representing a condition. A condition evaluates to a boolean result (like a
  * {@link java.util.function.Predicate}).
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)

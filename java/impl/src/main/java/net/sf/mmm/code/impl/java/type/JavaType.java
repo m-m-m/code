@@ -6,13 +6,15 @@ import java.io.IOException;
 import java.util.Objects;
 
 import net.sf.mmm.code.api.CodePackage;
+import net.sf.mmm.code.api.block.CodeBlockInitializer;
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
-import net.sf.mmm.code.api.statement.CodeStaticBlock;
+import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.api.type.CodeTypeCategory;
+import net.sf.mmm.code.base.block.GenericBlockInitializer;
 import net.sf.mmm.code.impl.java.JavaFile;
 import net.sf.mmm.code.impl.java.JavaPackage;
 import net.sf.mmm.code.impl.java.element.JavaElement;
@@ -58,7 +60,9 @@ public class JavaType extends JavaGenericType
 
   private CodeTypeCategory category;
 
-  private CodeStaticBlock initializer;
+  private CodeBlockInitializer staticInitializer;
+
+  private CodeBlockInitializer nonStaticInitializer;
 
   /**
    * The constructor.
@@ -128,7 +132,8 @@ public class JavaType extends JavaGenericType
     this.simpleName = template.simpleName;
     this.reflectiveObject = null;
     this.category = template.category;
-    this.initializer = template.initializer;
+    this.staticInitializer = template.staticInitializer;
+    this.nonStaticInitializer = template.nonStaticInitializer;
     this.modifiers = template.modifiers;
     this.nestedTypes = template.nestedTypes.copy(this);
     this.superTypes = template.superTypes.copy(this);
@@ -339,16 +344,21 @@ public class JavaType extends JavaGenericType
   }
 
   @Override
-  public CodeStaticBlock getStaticInitializer() {
+  public CodeBlockInitializer getStaticInitializer() {
 
-    return this.initializer;
+    if (this.staticInitializer == null) {
+      this.staticInitializer = new GenericBlockInitializer(this);
+    }
+    return this.staticInitializer;
   }
 
   @Override
-  public void setStaticInitializer(CodeStaticBlock initializer) {
+  public CodeBlockInitializer getNonStaticInitializer() {
 
-    verifyMutalbe();
-    this.initializer = initializer;
+    if (this.nonStaticInitializer == null) {
+      this.nonStaticInitializer = new GenericBlockInitializer(this);
+    }
+    return this.nonStaticInitializer;
   }
 
   @Override
@@ -431,13 +441,13 @@ public class JavaType extends JavaGenericType
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
 
     if (defaultIndent == null) {
       writeReference(sink, true);
       return;
     }
-    super.doWrite(sink, newline, defaultIndent, currentIndent);
+    super.doWrite(sink, newline, defaultIndent, currentIndent, syntax);
     doWriteDeclaration(sink, currentIndent);
     sink.append(" {");
     sink.append(newline);

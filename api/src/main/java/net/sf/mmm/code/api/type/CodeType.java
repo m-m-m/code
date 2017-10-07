@@ -5,16 +5,16 @@ package net.sf.mmm.code.api.type;
 import java.util.List;
 
 import net.sf.mmm.code.api.CodeFile;
+import net.sf.mmm.code.api.block.CodeBlockInitializer;
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.element.CodeElementWithModifiers;
-import net.sf.mmm.code.api.element.CodeElementWithQualifiedName;
 import net.sf.mmm.code.api.element.CodeElementWithTypeVariables;
+import net.sf.mmm.code.api.item.CodeMutableItemWithQualifiedName;
 import net.sf.mmm.code.api.member.CodeConstructors;
 import net.sf.mmm.code.api.member.CodeFields;
 import net.sf.mmm.code.api.member.CodeMethods;
 import net.sf.mmm.code.api.member.CodeProperties;
 import net.sf.mmm.code.api.member.CodeProperty;
-import net.sf.mmm.code.api.statement.CodeStaticBlock;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
@@ -23,7 +23,7 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeType extends CodeGenericType, CodeElementWithModifiers, CodeElementWithQualifiedName, CodeElementWithTypeVariables {
+public interface CodeType extends CodeGenericType, CodeElementWithModifiers, CodeMutableItemWithQualifiedName, CodeElementWithTypeVariables {
 
   /**
    * @return the parent element of this type. Will either be the {@link #getFile() file} or the
@@ -98,15 +98,19 @@ public interface CodeType extends CodeGenericType, CodeElementWithModifiers, Cod
   CodeNestedTypes<?> getNestedTypes();
 
   /**
-   * @return the static initializer block or {@code null} for none.
+   * @return the static initializer block. Will be omitted if empty. To create an empty static initializer
+   *         simply add an empty statement to it. For simplicity only a single static initializer is supported
+   *         by this API. Multiple static initializers will be joined (appended) automatically.
    */
-  CodeStaticBlock getStaticInitializer();
+  CodeBlockInitializer getStaticInitializer();
 
   /**
-   * @param initializer the new {@link #getStaticInitializer() static initializer}.
-   * @throws ReadOnlyException if {@link #isImmutable() immutable}.
+   * @return the non-static initializer block. Will be omitted if empty. To create an empty non-static
+   *         initializer simply add an empty statement to it. For simplicity only a single non-static
+   *         initializer is supported by this API. Multiple non-static initializers will be joined (appended)
+   *         automatically.
    */
-  void setStaticInitializer(CodeStaticBlock initializer);
+  CodeBlockInitializer getNonStaticInitializer();
 
   /**
    * @return {@code true} if this is a primitive type, {@code false} otherwise.

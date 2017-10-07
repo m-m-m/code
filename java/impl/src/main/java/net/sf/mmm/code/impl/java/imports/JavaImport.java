@@ -9,7 +9,8 @@ import java.util.Objects;
 
 import net.sf.mmm.code.api.imports.CodeImport;
 import net.sf.mmm.code.api.imports.CodeImportItem;
-import net.sf.mmm.code.base.AbstractCodeItem;
+import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.base.item.AbstractCodeItem;
 import net.sf.mmm.code.impl.java.item.JavaItem;
 
 /**
@@ -97,7 +98,7 @@ public class JavaImport extends AbstractCodeItem implements CodeImport, JavaItem
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String indent, String currentIndent) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String indent, String currentIndent, CodeSyntax syntax) throws IOException {
 
     sink.append(currentIndent); // indendation pointless...
     sink.append("import ");

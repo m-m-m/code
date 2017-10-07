@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
+import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeNestedTypes;
 import net.sf.mmm.code.api.type.CodeTypeVariables;
 import net.sf.mmm.code.impl.java.node.JavaNodeItemContainerHierarchicalWithName;
@@ -118,7 +119,7 @@ public class JavaNestedTypes extends JavaNodeItemContainerHierarchicalWithName<J
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
 
     List<? extends JavaType> nestedTypes = getDeclared();
     if (nestedTypes.isEmpty()) {

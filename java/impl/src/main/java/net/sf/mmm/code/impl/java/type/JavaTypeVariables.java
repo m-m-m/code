@@ -10,6 +10,7 @@ import java.util.function.Consumer;
 
 import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
+import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeTypeVariables;
 import net.sf.mmm.code.impl.java.element.JavaElementWithTypeVariables;
 import net.sf.mmm.code.impl.java.member.JavaOperation;
@@ -191,7 +192,7 @@ public class JavaTypeVariables extends JavaGenericTypeParameters<JavaTypeVariabl
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
 
     writeReference(sink, true);
   }

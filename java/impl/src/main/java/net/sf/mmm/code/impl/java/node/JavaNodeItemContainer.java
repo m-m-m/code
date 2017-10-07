@@ -12,9 +12,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.item.CodeItemWithName;
+import net.sf.mmm.code.api.item.CodeItemWithQualifiedName;
 import net.sf.mmm.code.api.node.CodeNodeItemContainer;
 import net.sf.mmm.code.api.node.CodeNodeItemContainerWithName;
-import net.sf.mmm.code.api.node.CodeNodeItemWithQualifiedName;
 import net.sf.mmm.code.impl.java.element.JavaElementNode;
 import net.sf.mmm.code.impl.java.item.JavaItem;
 import net.sf.mmm.code.impl.java.member.JavaMember;
@@ -203,8 +203,8 @@ public abstract class JavaNodeItemContainer<I extends JavaItem> extends JavaNode
   protected String getKey(I item) {
 
     String key;
-    if (item instanceof CodeNodeItemWithQualifiedName) {
-      key = ((CodeNodeItemWithQualifiedName) item).getSimpleName();
+    if (item instanceof CodeItemWithQualifiedName) {
+      key = ((CodeItemWithQualifiedName) item).getSimpleName();
     } else {
       key = ((CodeItemWithName) item).getName();
     }

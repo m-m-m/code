@@ -4,27 +4,30 @@ package net.sf.mmm.code.api.annotation;
 
 import java.util.Map;
 
-import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.expression.CodeExpression;
-import net.sf.mmm.code.api.node.CodeNodeItemWithDeclaringElement;
-import net.sf.mmm.code.api.node.CodeNodeItemWithType;
+import net.sf.mmm.code.api.item.CodeChildItem;
+import net.sf.mmm.code.api.item.CodeMutableItemWithComment;
+import net.sf.mmm.code.api.item.CodeMutableItemWithType;
 import net.sf.mmm.code.api.type.CodeType;
 
 /**
- * {@link CodeNodeItemWithType} that represents an {@link java.lang.annotation.Annotation} instance.
+ * {@link CodeMutableItemWithType} that represents an {@link java.lang.annotation.Annotation} instance.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeAnnotation extends CodeNodeItemWithType, CodeNodeItemWithDeclaringElement {
+public interface CodeAnnotation extends CodeChildItem, CodeMutableItemWithType, CodeMutableItemWithComment {
 
-  @Override
-  CodeAnnotations<?> getParent();
+  /** The character used as prefix for an annotation. */
+  char PREFIX_CHAR = '@';
+
+  /** The {@link String} used as prefix for an annotation. */
+  String PREFIX = "@";
 
   /**
    * @return the {@link Map} with the parameters of this annotation. May be {@link Map#isEmpty() empty} but is
    *         never <code>null</code>. The {@link CodeExpression}s are most likely a
-   *         {@link net.sf.mmm.code.api.expression.CodeLiteral}.
+   *         {@link net.sf.mmm.code.api.expression.CodeConstant}.
    */
   Map<String, CodeExpression> getParameters();
 
@@ -33,11 +36,5 @@ public interface CodeAnnotation extends CodeNodeItemWithType, CodeNodeItemWithDe
 
   @Override
   CodeAnnotation copy();
-
-  @Override
-  default CodeElement getDeclaringElement() {
-
-    return getParent().getParent();
-  }
 
 }

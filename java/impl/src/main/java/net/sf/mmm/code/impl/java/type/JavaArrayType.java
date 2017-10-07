@@ -115,6 +115,18 @@ public class JavaArrayType extends JavaGenericType implements CodeNodeItemWithGe
   }
 
   @Override
+  public String getQualifiedName() {
+
+    return getComponentType().getQualifiedName() + "[]";
+  }
+
+  @Override
+  public String getSimpleName() {
+
+    return getComponentType().getSimpleName() + "[]";
+  }
+
+  @Override
   public final boolean isArray() {
 
     return true;

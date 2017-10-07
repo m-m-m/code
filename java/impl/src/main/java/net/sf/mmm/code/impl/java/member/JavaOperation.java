@@ -5,10 +5,14 @@ package net.sf.mmm.code.impl.java.member;
 import java.io.IOException;
 import java.lang.reflect.Executable;
 
+import net.sf.mmm.code.api.block.CodeBlockBody;
+import net.sf.mmm.code.api.expression.CodeVariable;
 import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
-import net.sf.mmm.code.api.statement.CodeBody;
+import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.base.block.GenericBlockBody;
 import net.sf.mmm.code.impl.java.arg.JavaExceptions;
+import net.sf.mmm.code.impl.java.arg.JavaParameter;
 import net.sf.mmm.code.impl.java.arg.JavaParameters;
 import net.sf.mmm.code.impl.java.element.JavaElementWithTypeVariables;
 import net.sf.mmm.code.impl.java.type.JavaTypeVariables;
@@ -27,7 +31,7 @@ public abstract class JavaOperation extends JavaMember implements CodeOperation,
 
   private JavaExceptions exceptions;
 
-  private CodeBody body;
+  private CodeBlockBody body;
 
   /**
    * The constructor.
@@ -59,6 +63,17 @@ public abstract class JavaOperation extends JavaMember implements CodeOperation,
   public abstract JavaOperations<?> getParent();
 
   @Override
+  public CodeVariable getVariable(String name) {
+
+    JavaParameter parameter = this.parameters.get(name);
+    if (parameter != null) {
+      return parameter;
+    }
+    JavaField javaField = getParent().getParent().getFields().get(name);
+    return javaField;
+  }
+
+  @Override
   protected void doSetImmutable() {
 
     super.doSetImmutable();
@@ -86,16 +101,12 @@ public abstract class JavaOperation extends JavaMember implements CodeOperation,
   }
 
   @Override
-  public CodeBody getBody() {
+  public CodeBlockBody getBody() {
 
+    if (this.body == null) {
+      this.body = new GenericBlockBody(this);
+    }
     return this.body;
-  }
-
-  @Override
-  public void setBody(CodeBody body) {
-
-    verifyMutalbe();
-    this.body = body;
   }
 
   @Override
@@ -105,9 +116,9 @@ public abstract class JavaOperation extends JavaMember implements CodeOperation,
   public abstract JavaOperation copy();
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
 
-    super.doWrite(sink, newline, defaultIndent, currentIndent);
+    super.doWrite(sink, newline, defaultIndent, currentIndent, syntax);
     this.typeVariables.write(sink, newline, null, null);
     doWriteSignature(sink, newline);
     if ((this.body == null) || (defaultIndent == null)) {

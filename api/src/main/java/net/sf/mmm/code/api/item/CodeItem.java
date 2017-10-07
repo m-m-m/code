@@ -2,6 +2,9 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.item;
 
+import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.syntax.DefaultCodeSyntax;
+
 /**
  * Abstract top-level interface for any item of code as defined by this API. It reflects code structure.
  *
@@ -56,7 +59,30 @@ public abstract interface CodeItem {
    * @param currentIndent the current indent (number of spaces). Initially the empty string ({@code ""}).
    *        Before a recursion the {@code indent} will be appended.
    */
-  void write(Appendable sink, String newline, String defaultIndent, String currentIndent);
+  default void write(Appendable sink, String newline, String defaultIndent, String currentIndent) {
+
+    write(sink, newline, defaultIndent, currentIndent, getSyntax());
+  }
+
+  /**
+   * @return the {@link CodeSyntax} to use.
+   */
+  default CodeSyntax getSyntax() {
+
+    return DefaultCodeSyntax.INSTANCE;
+  }
+
+  /**
+   * @param sink the {@link Appendable} where to {@link Appendable#append(CharSequence) append} the
+   *        {@link #getSourceCode() source code} from this {@link CodeItem}.
+   * @param defaultIndent the {@link String} used for indentation (e.g. a number of spaces to insert per
+   *        indent level).
+   * @param newline the newline {@link String}.
+   * @param currentIndent the current indent (number of spaces). Initially the empty string ({@code ""}).
+   *        Before a recursion the {@code indent} will be appended.
+   * @param syntax the {@link CodeSyntax} to use.
+   */
+  void write(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax);
 
   /**
    * @return the source code of this item.

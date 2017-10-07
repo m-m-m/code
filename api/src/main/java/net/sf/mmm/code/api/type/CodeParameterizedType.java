@@ -3,8 +3,8 @@
 package net.sf.mmm.code.api.type;
 
 import net.sf.mmm.code.api.element.CodeElement;
+import net.sf.mmm.code.api.item.CodeMutableItemWithType;
 import net.sf.mmm.code.api.node.CodeNodeItemWithDeclaringOperation;
-import net.sf.mmm.code.api.node.CodeNodeItemWithType;
 
 /**
  * {@link CodeGenericType} representing a parameterized type. It is a variable as a placeholder for a
@@ -17,7 +17,7 @@ import net.sf.mmm.code.api.node.CodeNodeItemWithType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeParameterizedType extends CodeGenericType, CodeNodeItemWithType, CodeNodeItemWithDeclaringOperation {
+public interface CodeParameterizedType extends CodeGenericType, CodeMutableItemWithType, CodeNodeItemWithDeclaringOperation {
 
   @Override
   CodeElement getParent();

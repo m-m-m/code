@@ -2,6 +2,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.statement;
 
+import net.sf.mmm.code.api.block.CodeBlock;
+
 /**
  * An atomic {@link CodeStatement} (unlike a {@link CodeBlock}).
  *

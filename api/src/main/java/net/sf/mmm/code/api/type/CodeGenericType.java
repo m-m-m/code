@@ -2,10 +2,11 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.type;
 
-import java.io.IOException;
-
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.item.CodeItem;
+import net.sf.mmm.code.api.item.CodeItemWithDeclaration;
+import net.sf.mmm.code.api.item.CodeItemWithQualifiedFlag;
+import net.sf.mmm.code.api.item.CodeItemWithQualifiedName;
 
 /**
  * {@link CodeItem} that represents a (potentially generic) type (similar to {@link java.lang.reflect.Type}).
@@ -13,7 +14,7 @@ import net.sf.mmm.code.api.item.CodeItem;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract interface CodeGenericType extends CodeElement {
+public abstract interface CodeGenericType extends CodeElement, CodeItemWithDeclaration, CodeItemWithQualifiedFlag, CodeItemWithQualifiedName {
 
   /**
    * @return the raw {@link CodeType}. In case of an {@link #isArray() array} the
@@ -68,13 +69,6 @@ public abstract interface CodeGenericType extends CodeElement {
    * @see #asTypeVariable()
    */
   CodeGenericTypeParameters<?> getTypeParameters();
-
-  /**
-   * @return {@code true} if the usage of this type in its place is {@link CodeType#getQualifiedName() fully
-   *         qualified}, {@code false} otherwise (if the {@link CodeType#getSimpleName() simple name} shall be
-   *         used what is the default).
-   */
-  boolean isQualified();
 
   /**
    * @return {@code true} if this represents an array of the {@link #getComponentType()} and potential
@@ -159,17 +153,6 @@ public abstract interface CodeGenericType extends CodeElement {
 
     return CodeTypeCategory.ANNOTATION.equals(getCategory());
   }
-
-  /**
-   * Internal variant of {@link #write(Appendable)} to write a reference for the usage of this type.
-   *
-   * @param sink the {@link Appendable} where to {@link Appendable#append(CharSequence) append} the code from
-   *        this {@link CodeItem}.
-   * @param declaration {@code true} if used as a declaration of {@link CodeType#getTypeParameters() type
-   *        variables} (where bounds have to be included), {@code false} otherwise.
-   * @throws IOException if thrown by {@link Appendable}.
-   */
-  void writeReference(Appendable sink, boolean declaration) throws IOException;
 
   @Override
   CodeGenericType copy();

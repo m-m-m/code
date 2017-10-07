@@ -11,6 +11,7 @@ import java.util.function.Predicate;
 import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.member.CodeFields;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
+import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.impl.java.type.JavaGenericType;
 import net.sf.mmm.code.impl.java.type.JavaType;
 import net.sf.mmm.util.collection.base.AbstractIterator;
@@ -128,7 +129,7 @@ public class JavaFields extends JavaMembers<JavaField> implements CodeFields<Jav
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
 
     doWriteFields(sink, newline, defaultIndent, currentIndent, f -> f.getModifiers().isStatic());
     doWriteFields(sink, newline, defaultIndent, currentIndent, f -> !f.getModifiers().isStatic());

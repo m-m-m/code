@@ -5,6 +5,7 @@ package net.sf.mmm.code.impl.java.element;
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.impl.java.annotation.JavaAnnotations;
 import net.sf.mmm.code.impl.java.node.JavaNode;
+import net.sf.mmm.code.impl.java.source.JavaSource;
 import net.sf.mmm.code.impl.java.type.JavaType;
 
 /**
@@ -17,6 +18,12 @@ public interface JavaElementNode extends CodeElement, JavaNode {
 
   @Override
   JavaAnnotations getAnnotations();
+
+  @Override
+  default JavaSource getSource() {
+
+    return JavaNode.super.getSource();
+  }
 
   @Override
   JavaType getDeclaringType();

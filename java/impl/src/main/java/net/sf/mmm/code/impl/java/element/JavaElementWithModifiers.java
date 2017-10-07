@@ -7,6 +7,7 @@ import java.util.Objects;
 
 import net.sf.mmm.code.api.element.CodeElementWithModifiers;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
+import net.sf.mmm.code.api.syntax.CodeSyntax;
 
 /**
  * Implementation of {@link CodeElementWithModifiers} for Java.
@@ -58,9 +59,9 @@ public abstract class JavaElementWithModifiers extends JavaElement implements Co
   public abstract JavaElementWithModifiers copy();
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
 
-    super.doWrite(sink, newline, defaultIndent, currentIndent);
+    super.doWrite(sink, newline, defaultIndent, currentIndent, syntax);
     if (currentIndent != null) {
       sink.append(currentIndent);
     }

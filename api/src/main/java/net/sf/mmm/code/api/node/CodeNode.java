@@ -3,6 +3,7 @@
 package net.sf.mmm.code.api.node;
 
 import net.sf.mmm.code.api.CodeContext;
+import net.sf.mmm.code.api.CodeWithContext;
 import net.sf.mmm.code.api.source.CodeSource;
 
 /**
@@ -12,7 +13,7 @@ import net.sf.mmm.code.api.source.CodeSource;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract interface CodeNode {
+public abstract interface CodeNode extends CodeWithContext {
 
   /**
    * @return the parent of this {@link CodeNode}. May only be {@code null} for instances of
@@ -24,6 +25,7 @@ public abstract interface CodeNode {
    * @return the owning {@link CodeContext}. In case of a {@link CodeContext} this method will return the
    *         object itself ({@code this}).
    */
+  @Override
   default CodeContext getContext() {
 
     return getSource().getContext();

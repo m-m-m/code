@@ -7,6 +7,7 @@ import java.security.CodeSource;
 import java.util.List;
 
 import net.sf.mmm.code.api.CodeContext;
+import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.impl.java.element.JavaElementNode;
 import net.sf.mmm.code.impl.java.source.JavaSource;
 import net.sf.mmm.code.impl.java.type.JavaGenericType;
@@ -52,6 +53,12 @@ public abstract class JavaContext extends JavaProvider implements CodeContext, J
   public JavaSource getSource() {
 
     return this.source;
+  }
+
+  @Override
+  public CodeSyntax getSyntax() {
+
+    return getRootContext().getSyntax();
   }
 
   /**

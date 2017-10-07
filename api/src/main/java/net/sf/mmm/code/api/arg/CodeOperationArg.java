@@ -3,17 +3,17 @@
 package net.sf.mmm.code.api.arg;
 
 import net.sf.mmm.code.api.element.CodeElement;
+import net.sf.mmm.code.api.item.CodeMutableItemWithType;
 import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.node.CodeNodeItemWithDeclaringOperation;
-import net.sf.mmm.code.api.node.CodeNodeItemWithType;
 
 /**
- * A {@link CodeNodeItemWithType} representing a argument of a {@link CodeOperation} such as
+ * A {@link CodeMutableItemWithType} representing a argument of a {@link CodeOperation} such as
  * {@link CodeParameter}, {@link CodeException} or {@link CodeReturn}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract interface CodeOperationArg extends CodeElement, CodeNodeItemWithType, CodeNodeItemWithDeclaringOperation {
+public abstract interface CodeOperationArg extends CodeElement, CodeMutableItemWithType, CodeNodeItemWithDeclaringOperation {
 
 }

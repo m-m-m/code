@@ -8,6 +8,7 @@ import java.util.List;
 import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.api.CodePathElements;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
+import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.impl.java.node.JavaNodeItemContainerFlat;
 import net.sf.mmm.code.impl.java.type.JavaType;
 
@@ -289,7 +290,7 @@ public class JavaPathElements extends JavaNodeItemContainerFlat<JavaPathElement>
     }
     for (JavaPathElement child : getList()) {
       if (child.isFile()) {
-        JavaType type = ((JavaFile) child).getType(simpleName, init);
+        JavaType type = ((JavaFile) child).getChildType(simpleName, init);
         if (type != null) {
           return type;
         }
@@ -329,7 +330,7 @@ public class JavaPathElements extends JavaNodeItemContainerFlat<JavaPathElement>
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
 
     // packages write their children to separate files - nothing to do...
   }

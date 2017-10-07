@@ -3,7 +3,8 @@
 package net.sf.mmm.code.api.member;
 
 import net.sf.mmm.code.api.expression.CodeExpression;
-import net.sf.mmm.code.api.node.CodeNodeItemWithType;
+import net.sf.mmm.code.api.expression.CodeVariable;
+import net.sf.mmm.code.api.item.CodeMutableItemWithType;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
@@ -16,7 +17,7 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract interface CodeField extends CodeMember, CodeNodeItemWithType {
+public abstract interface CodeField extends CodeMember, CodeMutableItemWithType, CodeVariable {
 
   @Override
   CodeFields<?> getParent();

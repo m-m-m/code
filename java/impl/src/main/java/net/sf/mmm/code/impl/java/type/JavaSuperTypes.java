@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
+import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeSuperTypes;
 import net.sf.mmm.code.impl.java.JavaContext;
@@ -84,18 +85,18 @@ public class JavaSuperTypes extends JavaNodeItemContainerHierarchical<JavaGeneri
   }
 
   @Override
+  public void add(CodeGenericType superType) {
+
+    add((JavaGenericType) superType);
+  }
+
+  @Override
   public void add(JavaGenericType superType) {
 
     if (superType.asType().equals(this.parent)) {
       throw new IllegalStateException("Type " + this.parent.getQualifiedName() + " can not extend itself");
     }
     super.add(superType);
-  }
-
-  @Override
-  public void add(CodeGenericType superType) {
-
-    add((JavaGenericType) superType);
   }
 
   @Override
@@ -145,7 +146,7 @@ public class JavaSuperTypes extends JavaNodeItemContainerHierarchical<JavaGeneri
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
 
     String keywordInherit;
     JavaType declaringType = getDeclaringType();

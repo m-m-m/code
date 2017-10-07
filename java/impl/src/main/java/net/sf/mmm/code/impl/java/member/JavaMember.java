@@ -19,9 +19,6 @@ import net.sf.mmm.code.impl.java.type.JavaType;
  */
 public abstract class JavaMember extends JavaElementWithModifiers implements CodeMember {
 
-  /** @see #getNamePattern() */
-  protected static final Pattern NAME_PATTERN = Pattern.compile("[\\$_\\w]+");
-
   private String name;
 
   /**

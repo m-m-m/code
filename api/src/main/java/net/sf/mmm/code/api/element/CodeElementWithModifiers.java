@@ -2,6 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.element;
 
+import net.sf.mmm.code.api.item.CodeItemWithModifiers;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
@@ -11,12 +12,7 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract interface CodeElementWithModifiers extends CodeElement {
-
-  /**
-   * @return the {@link CodeModifiers} of this element.
-   */
-  CodeModifiers getModifiers();
+public abstract interface CodeElementWithModifiers extends CodeElement, CodeItemWithModifiers {
 
   /**
    * @param modifiers the new {@link #getModifiers() modifiers}.

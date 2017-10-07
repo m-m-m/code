@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.function.Consumer;
 
 import net.sf.mmm.code.api.member.CodeMembers;
+import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.impl.java.node.JavaNodeItemContainer;
 import net.sf.mmm.code.impl.java.type.JavaType;
 
@@ -60,7 +61,7 @@ public abstract class JavaMembers<M extends JavaMember> extends JavaNodeItemCont
   public abstract JavaMembers<M> copy();
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
 
     for (M declaredMember : getList()) {
       sink.append(newline);

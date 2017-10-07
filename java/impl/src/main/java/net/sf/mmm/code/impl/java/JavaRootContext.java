@@ -64,6 +64,8 @@ import java.util.regex.Pattern;
 
 import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.api.source.CodeSourceDescriptor;
+import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.syntax.DefaultCodeSyntax;
 import net.sf.mmm.code.base.source.CodeSourceDescriptorType;
 import net.sf.mmm.code.impl.java.source.JavaSource;
 import net.sf.mmm.code.impl.java.type.JavaGenericType;
@@ -246,6 +248,12 @@ public class JavaRootContext extends JavaContext {
   public JavaRootContext getRootContext() {
 
     return this;
+  }
+
+  @Override
+  public CodeSyntax getSyntax() {
+
+    return DefaultCodeSyntax.INSTANCE;
   }
 
   @Override

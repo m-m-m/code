@@ -19,7 +19,7 @@ public final class CodeTypeCategory {
   public static final CodeTypeCategory INTERFACE = new CodeTypeCategory("interface");
 
   /** {@link CodeTypeCategory} for an {@link Class#isEnum() enumeration}. */
-  public static final CodeTypeCategory ENUMERAION = new CodeTypeCategory("enum");
+  public static final CodeTypeCategory ENUMERAION = new CodeTypeCategory("enumeration");
 
   /** {@link CodeTypeCategory} for an {@link Class#isAnnotation() annotation}. */
   public static final CodeTypeCategory ANNOTATION = new CodeTypeCategory("annotation");
@@ -36,6 +36,38 @@ public final class CodeTypeCategory {
     super();
     assert (value != null);
     this.value = value;
+  }
+
+  /**
+   * @return {@code true} for {@link #CLASS}, {@code false} otherwise.
+   */
+  public boolean isClass() {
+
+    return (this == CLASS);
+  }
+
+  /**
+   * @return {@code true} for {@link #INTERFACE}, {@code false} otherwise.
+   */
+  public boolean isInterface() {
+
+    return (this == INTERFACE);
+  }
+
+  /**
+   * @return {@code true} for {@link #ENUMERAION}, {@code false} otherwise.
+   */
+  public boolean isEnumeration() {
+
+    return (this == ENUMERAION);
+  }
+
+  /**
+   * @return {@code true} for {@link #ANNOTATION}, {@code false} otherwise.
+   */
+  public boolean isAnnotation() {
+
+    return (this == ANNOTATION);
   }
 
   @Override

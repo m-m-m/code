@@ -51,7 +51,7 @@
             <include>JavaSourceCodeLexer.g4</include>
             <include>JavaSourceCodeParser.g4</include>
           </includes>
-          <listener>false</listener>
+          <listener>true</listener>
         </configuration>
         <executions>
           <execution>

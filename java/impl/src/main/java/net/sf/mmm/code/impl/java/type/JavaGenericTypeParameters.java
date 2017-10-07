@@ -5,6 +5,7 @@ package net.sf.mmm.code.impl.java.type;
 import java.io.IOException;
 import java.util.List;
 
+import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeGenericTypeParameters;
 import net.sf.mmm.code.impl.java.node.JavaNodeItemContainerFlat;
 
@@ -36,7 +37,7 @@ public abstract class JavaGenericTypeParameters<P extends JavaGenericType> exten
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
 
     writeReference(sink, newline, true);
   }

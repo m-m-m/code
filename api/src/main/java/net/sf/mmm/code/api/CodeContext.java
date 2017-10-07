@@ -3,6 +3,7 @@
 package net.sf.mmm.code.api;
 
 import net.sf.mmm.code.api.imports.CodeImport;
+import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeType;
 
 /**
@@ -21,6 +22,11 @@ public interface CodeContext extends CodeProvider {
 
     return '.';
   }
+
+  /**
+   * @return the {@link CodeSyntax} for the current programming language.
+   */
+  CodeSyntax getSyntax();
 
   @Override
   CodeContext getParent();
@@ -50,8 +56,8 @@ public interface CodeContext extends CodeProvider {
 
   /**
    * @param simpleName the {@link CodeType#getSimpleName() simple name} of the {@link CodeType} to resolve.
-   * @param owningType the owning {@link CodeType} where the {@code simpleName} origins from used as context
-   *        for resolution.
+   * @param owningType the owning {@link CodeType} where the {@code simpleName} origins from. It is used as
+   *        context for the resolution.
    * @param omitStandardPackages {@code true} to omit standard package(s) (for
    *        {@link #getQualifiedNameForStandardType(String, boolean) standard types}), {@code false} otherwise
    *        (to enforce {@link CodeType#getQualifiedName() qualified name} also for standard types).
@@ -63,9 +69,25 @@ public interface CodeContext extends CodeProvider {
     if (owningType.getSimpleName().equals(simpleName)) {
       return owningType.getQualifiedName();
     }
+    CodeFile file = owningType.getFile();
+    return getQualifiedName(simpleName, file, omitStandardPackages);
+  }
+
+  /**
+   * @param simpleName the {@link CodeType#getSimpleName() simple name} of the {@link CodeType} to resolve.
+   * @param file the owning {@link CodeFile} where the {@code simpleName} origins from. It is used as context
+   *        for the resolution.
+   * @param omitStandardPackages {@code true} to omit standard package(s) (for
+   *        {@link #getQualifiedNameForStandardType(String, boolean) standard types}), {@code false} otherwise
+   *        (to enforce {@link CodeType#getQualifiedName() qualified name} also for standard types).
+   * @return the resolved {@link CodeType#getQualifiedName() qualified name} corresponding to the given
+   *         {@code simpleName}.
+   */
+  default String getQualifiedName(String simpleName, CodeFile file, boolean omitStandardPackages) {
+
     char separator = getPackageSeparator();
     String suffix = separator + simpleName;
-    for (CodeImport imp : owningType.getFile().getImports()) {
+    for (CodeImport imp : file.getImports()) {
       if (!imp.isStatic()) {
         String reference = imp.getReference();
         if (reference.endsWith(suffix)) {
@@ -77,12 +99,11 @@ public interface CodeContext extends CodeProvider {
     if (qname != null) {
       return qname;
     }
-    String pkgName = owningType.getParentPackage().getQualifiedName();
+    String pkgName = file.getParentPackage().getQualifiedName();
     if (pkgName.isEmpty()) {
       return simpleName;
     }
     return pkgName + suffix;
-
   }
 
   /**

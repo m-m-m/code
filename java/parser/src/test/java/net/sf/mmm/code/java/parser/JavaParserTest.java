@@ -15,7 +15,7 @@ public class JavaParserTest {
   public void testAllInOneJava8() throws Exception {
 
     CompilationUnitContext compilationUnit = JavaParser.parse("src/test/resources/AllInOneJava8.java");
-    dump(compilationUnit);
+    // dump(compilationUnit);
   }
 
   @Test

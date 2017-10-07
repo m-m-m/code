@@ -3,7 +3,7 @@
 package net.sf.mmm.code.impl.java.node;
 
 import net.sf.mmm.code.api.item.CodeItem;
-import net.sf.mmm.code.base.AbstractCodeNodeItem;
+import net.sf.mmm.code.base.node.AbstractCodeNodeItem;
 import net.sf.mmm.code.impl.java.JavaContext;
 import net.sf.mmm.code.impl.java.item.JavaItem;
 import net.sf.mmm.code.impl.java.source.JavaSource;

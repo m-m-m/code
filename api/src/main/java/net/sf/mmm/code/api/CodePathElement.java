@@ -2,7 +2,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api;
 
-import net.sf.mmm.code.api.element.CodeElementWithQualifiedName;
+import net.sf.mmm.code.api.element.CodeElement;
+import net.sf.mmm.code.api.item.CodeItemWithQualifiedNameAndParentPackage;
 
 /**
  * Abstract top-level interface for any item of code as defined by this API. It reflects code structure.
@@ -10,6 +11,6 @@ import net.sf.mmm.code.api.element.CodeElementWithQualifiedName;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract interface CodePathElement extends CodeElementWithQualifiedName {
+public abstract interface CodePathElement extends CodeElement, CodeItemWithQualifiedNameAndParentPackage {
 
 }

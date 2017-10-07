@@ -8,7 +8,7 @@ import net.sf.mmm.code.api.doc.CodeDocLink;
 import net.sf.mmm.code.api.doc.CodeDocMethodLink;
 
 /**
- * A link of a {@link AbstractCodeDoc doc} tag.
+ * A link of a {@link GenericCodeDoc doc} tag.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0

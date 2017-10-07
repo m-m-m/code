@@ -4,7 +4,6 @@ package net.sf.mmm.code.api.expression;
 
 import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.statement.CodeStatement;
-import net.sf.mmm.code.api.type.CodeType;
 
 /**
  * {@link CodeItem} for an expression. An expression is a sub-item of a {@link CodeStatement} that is
@@ -16,10 +15,9 @@ import net.sf.mmm.code.api.type.CodeType;
 public abstract interface CodeExpression extends CodeItem {
 
   /**
-   * @param type the optional {@link CodeType} as context for evaluation. May be {@code null}.
-   * @return the evaluated value. May be {@code null}. Will also be {@code null} if the expression can not be
-   *         evaluated.
+   * @return this expression evaluated as {@link CodeConstant} or {@code null} if not a constant expression.
+   * @see net.sf.mmm.code.api.member.CodeField#getInitializer()
    */
-  Object evaluate(CodeType type);
+  CodeConstant evaluate();
 
 }

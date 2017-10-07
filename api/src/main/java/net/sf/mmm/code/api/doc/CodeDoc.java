@@ -16,6 +16,24 @@ import net.sf.mmm.code.api.node.CodeNodeItem;
  */
 public interface CodeDoc extends CodeNodeItem {
 
+  /**
+   * Tag for the documentation of the parameter of a function. This tag will be invisible via this API as the
+   * according doc is accessed via the according {@link net.sf.mmm.code.api.arg.CodeParameter}.
+   */
+  String TAG_PARAM = "param";
+
+  /**
+   * Tag for the documentation of an exception. This tag will be invisible via this API as the according doc
+   * is accessed via the according {@link net.sf.mmm.code.api.arg.CodeException}.
+   */
+  String TAG_THROWS = "throws";
+
+  /**
+   * Tag for the documentation of returned result of a function. This tag will be invisible via this API as
+   * the according doc is accessed via the according {@link net.sf.mmm.code.api.arg.CodeReturn}.
+   */
+  String TAG_RETURN = "return";
+
   /** {@link CodeDocFormat#replaceDocTag(String, java.util.function.Supplier, String) Doc tag} for a link. */
   String TAG_LINK = "link";
 

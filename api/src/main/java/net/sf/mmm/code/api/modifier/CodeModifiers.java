@@ -5,6 +5,8 @@ package net.sf.mmm.code.api.modifier;
 import java.beans.Visibility;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -78,6 +80,18 @@ public class CodeModifiers {
   /** {@link CodeModifiers} for {@code protected final}. */
   public static final CodeModifiers MODIFIERS_PROTECTED_FINAL = new CodeModifiers(CodeVisibility.PROTECTED, KEY_FINAL);
 
+  /** {@link CodeModifiers} that is empty (no modifiers). */
+  public static final CodeModifiers MODIFIERS = new CodeModifiers(CodeVisibility.DEFAULT);
+
+  /** {@link CodeModifiers} for {@code static}. */
+  public static final CodeModifiers MODIFIERS_STATIC = new CodeModifiers(CodeVisibility.DEFAULT, KEY_STATIC);
+
+  /** {@link CodeModifiers} for {@code static final}. */
+  public static final CodeModifiers MODIFIERS_STATIC_FINAL = new CodeModifiers(CodeVisibility.DEFAULT, KEY_STATIC, KEY_FINAL);
+
+  /** {@link CodeModifiers} for {@code final}. */
+  public static final CodeModifiers MODIFIERS_FINAL = new CodeModifiers(CodeVisibility.DEFAULT, KEY_FINAL);
+
   private final CodeVisibility visibility;
 
   private final Set<String> modifiers;
@@ -90,33 +104,27 @@ public class CodeModifiers {
    */
   public CodeModifiers(CodeVisibility visibility, String... modifiers) {
 
-    this(visibility, createModifiers(visibility, modifiers));
+    this(visibility, Arrays.asList(modifiers));
   }
 
   /**
    * The constructor.
    *
-   * @param visibility the {@link Visibility}.
-   * @param modifiers the {@link #getModifiers() modifiers}.
+   * @param visibility the {@link CodeVisibility}.
+   * @param modifiers the {@link #getModifiers() modifiers} excluding the {@link CodeVisibility}.
    */
-  private CodeModifiers(CodeVisibility visibility, Set<String> modifiers) {
+  public CodeModifiers(CodeVisibility visibility, Collection<String> modifiers) {
 
     super();
     this.visibility = visibility;
-    this.modifiers = Collections.unmodifiableSet(modifiers);
-  }
-
-  private static Set<String> createModifiers(CodeVisibility visibility, String... modifiers) {
-
-    Set<String> set = new HashSet<>(modifiers.length + 1);
+    Set<String> set = new HashSet<>(modifiers);
+    for (String modifier : set) {
+      verifyModifier(modifier);
+    }
     if (!CodeVisibility.DEFAULT.equals(visibility)) {
       set.add(visibility.toString());
     }
-    for (String modifier : modifiers) {
-      verifyModifier(modifier);
-      set.add(modifier);
-    }
-    return set;
+    this.modifiers = Collections.unmodifiableSet(set);
   }
 
   private static void verifyModifier(String modifier) {
@@ -139,7 +147,7 @@ public class CodeModifiers {
   }
 
   /**
-   * @return the {@link Set} with all modifiers including the visiblity.
+   * @return the {@link Set} with all modifiers including the {@link #getVisibility() visibility}.
    */
   public Set<String> getModifiers() {
 
