@@ -5,7 +5,7 @@ package net.sf.mmm.code.impl.java.type;
 import java.lang.reflect.Type;
 
 import net.sf.mmm.code.api.type.CodeGenericType;
-import net.sf.mmm.code.impl.java.element.JavaElement;
+import net.sf.mmm.code.impl.java.element.JavaElementImpl;
 
 /**
  * Implementation of {@link CodeGenericType} for Java.
@@ -13,7 +13,7 @@ import net.sf.mmm.code.impl.java.element.JavaElement;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class JavaGenericType extends JavaElement implements CodeGenericType {
+public abstract class JavaGenericType extends JavaElementImpl implements CodeGenericType {
 
   private JavaArrayType arrayType;
 

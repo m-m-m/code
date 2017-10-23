@@ -4,6 +4,7 @@ package net.sf.mmm.code.api.node;
 
 import net.sf.mmm.code.api.block.CodeBlockBody;
 import net.sf.mmm.code.api.item.CodeItemWithVariables;
+import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
  * {@link CodeNodeItem} representing a function such as a {@link net.sf.mmm.code.api.member.CodeMethod} or a
@@ -19,5 +20,11 @@ public interface CodeFunction extends CodeNodeItem, CodeItemWithVariables {
    *         {@link CodeBlockBody#getStatements() statements}) but never {@code null}.
    */
   CodeBlockBody getBody();
+
+  /**
+   * @param body the new value of {@link #getBody()}.
+   * @throws ReadOnlyException if {@link #isImmutable() immutable}.
+   */
+  void setBody(CodeBlockBody body);
 
 }

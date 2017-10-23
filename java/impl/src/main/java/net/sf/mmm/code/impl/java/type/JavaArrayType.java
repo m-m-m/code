@@ -164,9 +164,13 @@ public class JavaArrayType extends JavaGenericType implements CodeNodeItemWithGe
   }
 
   @Override
-  public void writeReference(Appendable sink, boolean declaration) throws IOException {
+  public void writeReference(Appendable sink, boolean declaration, Boolean qualified) throws IOException {
 
-    this.componentType.writeReference(sink, false);
+    boolean withDeclaration = declaration;
+    if (this.componentType instanceof JavaType) {
+      withDeclaration = false;
+    }
+    this.componentType.writeReference(sink, withDeclaration, qualified);
     sink.append("[]");
   }
 

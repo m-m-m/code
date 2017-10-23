@@ -8,10 +8,12 @@ import java.util.List;
 
 import net.sf.mmm.code.api.CodeContext;
 import net.sf.mmm.code.api.syntax.CodeSyntax;
-import net.sf.mmm.code.impl.java.element.JavaElementNode;
+import net.sf.mmm.code.impl.java.element.JavaElement;
+import net.sf.mmm.code.impl.java.loader.JavaCodeLoader;
 import net.sf.mmm.code.impl.java.source.JavaSource;
 import net.sf.mmm.code.impl.java.type.JavaGenericType;
 import net.sf.mmm.code.impl.java.type.JavaType;
+import net.sf.mmm.code.impl.java.type.JavaTypeWildcard;
 
 /**
  * Implementation of {@link net.sf.mmm.code.api.CodeContext} for Java.
@@ -120,7 +122,7 @@ public abstract class JavaContext extends JavaProvider implements CodeContext, J
   }
 
   @Override
-  public JavaGenericType getType(Type type, JavaElementNode declaringElement) {
+  public JavaGenericType getType(Type type, JavaElement declaringElement) {
 
     // TODO this is nuts. We need to reuse the package caching to retrieve existing objects instead of
     // creating new ones...
@@ -156,6 +158,9 @@ public abstract class JavaContext extends JavaProvider implements CodeContext, J
 
   @Override
   public abstract JavaType getRootExceptionType();
+
+  @Override
+  public abstract JavaTypeWildcard getUnboundedWildcard();
 
   /**
    * @param javaType the {@link JavaType} that might be {@link JavaType#isPrimitive() primitive}.

@@ -13,7 +13,7 @@ import net.sf.mmm.code.impl.java.type.JavaTypeVariables;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface JavaElementWithTypeVariables extends CodeElementWithTypeVariables, JavaElementNode {
+public abstract interface JavaElementWithTypeVariables extends CodeElementWithTypeVariables, JavaElement {
 
   @Override
   JavaTypeVariables getTypeParameters();

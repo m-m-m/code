@@ -5,7 +5,6 @@ package net.sf.mmm.code.impl.java.parser;
 import java.io.Reader;
 
 import net.sf.mmm.code.api.java.parser.JavaSourceCodeParser;
-import net.sf.mmm.code.impl.java.JavaCodeLoader;
 import net.sf.mmm.code.impl.java.JavaFile;
 import net.sf.mmm.code.impl.java.type.JavaType;
 
@@ -16,6 +15,8 @@ import net.sf.mmm.code.impl.java.type.JavaType;
  * @since 1.0.0
  */
 public class JavaSourceCodeParserImpl implements JavaSourceCodeParser {
+
+  private static JavaSourceCodeParserImpl instance;
 
   private final JavaSourceCodeReaderHighlevel codeReader;
 
@@ -29,9 +30,24 @@ public class JavaSourceCodeParserImpl implements JavaSourceCodeParser {
   }
 
   @Override
-  public JavaType parse(Reader reader, JavaFile file, JavaCodeLoader byteCodeLoader) {
+  public JavaType parse(Reader reader, JavaFile file) {
 
-    return this.codeReader.parse(reader, file, byteCodeLoader);
+    return this.codeReader.parse(reader, file);
+  }
+
+  /**
+   * @return the default instance of this class.
+   */
+  public static JavaSourceCodeParserImpl get() {
+
+    if (instance == null) {
+      synchronized (JavaSourceCodeParserImpl.class) {
+        if (instance == null) {
+          instance = new JavaSourceCodeParserImpl();
+        }
+      }
+    }
+    return instance;
   }
 
 }

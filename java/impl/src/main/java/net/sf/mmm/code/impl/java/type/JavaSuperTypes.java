@@ -93,7 +93,7 @@ public class JavaSuperTypes extends JavaNodeItemContainerHierarchical<JavaGeneri
   @Override
   public void add(JavaGenericType superType) {
 
-    if (superType.asType().equals(this.parent)) {
+    if (!(superType instanceof JavaGenericTypeProxy) && superType.asType().equals(this.parent)) {
       throw new IllegalStateException("Type " + this.parent.getQualifiedName() + " can not extend itself");
     }
     super.add(superType);

@@ -11,6 +11,7 @@ import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.impl.java.arg.JavaReturn;
 import net.sf.mmm.code.impl.java.item.JavaReflectiveObject;
+import net.sf.mmm.code.impl.java.parser.JavaTypeVariablesFromSource;
 import net.sf.mmm.code.impl.java.type.JavaGenericType;
 import net.sf.mmm.code.impl.java.type.JavaSuperTypes;
 import net.sf.mmm.code.impl.java.type.JavaType;
@@ -38,6 +39,20 @@ public class JavaMethod extends JavaOperation implements CodeMethod, CodeNodeIte
   public JavaMethod(JavaMethods parent, String name) {
 
     this(parent, name, null);
+  }
+
+  /**
+   * The constructor.
+   *
+   * @param typeVariables the {@link #getTypeParameters() type variables}.
+   * @param parent the {@link #getParent() parent}.
+   * @param name the {@link #getName() name}.
+   */
+  public JavaMethod(JavaTypeVariablesFromSource typeVariables, JavaMethods parent, String name) {
+
+    super(name, typeVariables);
+    this.parent = parent;
+    this.reflectiveObject = null;
   }
 
   /**

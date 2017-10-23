@@ -1,8 +1,9 @@
 /* Copyright (c) The m-m-m Team, Licensed under the Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0 */
-package net.sf.mmm.code.impl.java;
+package net.sf.mmm.code.impl.java.loader;
 
 import net.sf.mmm.code.api.CodeLoader;
+import net.sf.mmm.code.impl.java.JavaPackage;
 import net.sf.mmm.code.impl.java.type.JavaType;
 
 /**

@@ -117,7 +117,7 @@ public abstract class JavaTypePlaceholder extends JavaGenericType implements Cod
   public abstract JavaTypePlaceholder copy();
 
   @Override
-  public void writeReference(Appendable sink, boolean declaration) throws IOException {
+  public void writeReference(Appendable sink, boolean declaration, Boolean qualified) throws IOException {
 
     sink.append(getName());
     if (declaration) {
@@ -126,7 +126,7 @@ public abstract class JavaTypePlaceholder extends JavaGenericType implements Cod
       } else {
         sink.append(" extends ");
       }
-      getBound().writeReference(sink, false);
+      getBound().writeReference(sink, false, qualified);
     }
   }
 

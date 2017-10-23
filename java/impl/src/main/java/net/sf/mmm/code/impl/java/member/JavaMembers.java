@@ -58,6 +58,15 @@ public abstract class JavaMembers<M extends JavaMember> extends JavaNodeItemCont
   }
 
   @Override
+  public void add(M item) {
+
+    if (item.getParent() != this) {
+      throw new IllegalStateException();
+    }
+    super.add(item);
+  }
+
+  @Override
   public abstract JavaMembers<M> copy();
 
   @Override
@@ -65,7 +74,8 @@ public abstract class JavaMembers<M extends JavaMember> extends JavaNodeItemCont
 
     for (M declaredMember : getList()) {
       sink.append(newline);
-      declaredMember.write(sink, defaultIndent, currentIndent);
+      sink.append(currentIndent);
+      declaredMember.write(sink, newline, defaultIndent, currentIndent, syntax);
     }
   }
 }

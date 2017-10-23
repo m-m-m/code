@@ -121,9 +121,6 @@ public class CodeModifiers {
     for (String modifier : set) {
       verifyModifier(modifier);
     }
-    if (!CodeVisibility.DEFAULT.equals(visibility)) {
-      set.add(visibility.toString());
-    }
     this.modifiers = Collections.unmodifiableSet(set);
   }
 
@@ -147,7 +144,7 @@ public class CodeModifiers {
   }
 
   /**
-   * @return the {@link Set} with all modifiers including the {@link #getVisibility() visibility}.
+   * @return the {@link Set} with all modifiers (not including the {@link #getVisibility() visibility}).
    */
   public Set<String> getModifiers() {
 

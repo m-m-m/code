@@ -37,6 +37,12 @@ public abstract class JavaGenericTypeParameters<P extends JavaGenericType> exten
   }
 
   @Override
+  public void add(P item) {
+
+    super.add(item);
+  }
+
+  @Override
   protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
 
     writeReference(sink, newline, true);

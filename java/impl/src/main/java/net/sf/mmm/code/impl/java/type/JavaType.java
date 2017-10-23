@@ -17,7 +17,7 @@ import net.sf.mmm.code.api.type.CodeTypeCategory;
 import net.sf.mmm.code.base.block.GenericBlockInitializer;
 import net.sf.mmm.code.impl.java.JavaFile;
 import net.sf.mmm.code.impl.java.JavaPackage;
-import net.sf.mmm.code.impl.java.element.JavaElement;
+import net.sf.mmm.code.impl.java.element.JavaElementImpl;
 import net.sf.mmm.code.impl.java.element.JavaElementWithTypeVariables;
 import net.sf.mmm.code.impl.java.item.JavaReflectiveObject;
 import net.sf.mmm.code.impl.java.member.JavaConstructors;
@@ -32,7 +32,7 @@ import net.sf.mmm.code.impl.java.member.JavaProperties;
  * @since 1.0.0
  */
 public class JavaType extends JavaGenericType
-    implements CodeType, JavaElementWithTypeVariables, CodeNodeItemWithGenericParent<JavaElement, JavaType>, JavaReflectiveObject<Class<?>> {
+    implements CodeType, JavaElementWithTypeVariables, CodeNodeItemWithGenericParent<JavaElementImpl, JavaType>, JavaReflectiveObject<Class<?>> {
 
   private final JavaFile file;
 
@@ -53,6 +53,8 @@ public class JavaType extends JavaGenericType
   private final JavaNestedTypes nestedTypes;
 
   private final Class<?> reflectiveObject;
+
+  private JavaGenericType qualifiedType;
 
   private String simpleName;
 
@@ -173,7 +175,7 @@ public class JavaType extends JavaGenericType
   }
 
   @Override
-  public JavaElement getParent() {
+  public JavaElementImpl getParent() {
 
     if (this.declaringType != null) {
       return this.declaringType;
@@ -353,12 +355,26 @@ public class JavaType extends JavaGenericType
   }
 
   @Override
+  public void setStaticInitializer(CodeBlockInitializer initializer) {
+
+    verifyMutalbe();
+    this.staticInitializer = initializer;
+  }
+
+  @Override
   public CodeBlockInitializer getNonStaticInitializer() {
 
     if (this.nonStaticInitializer == null) {
       this.nonStaticInitializer = new GenericBlockInitializer(this);
     }
     return this.nonStaticInitializer;
+  }
+
+  @Override
+  public void setNonStaticInitializer(CodeBlockInitializer initializer) {
+
+    verifyMutalbe();
+    this.nonStaticInitializer = initializer;
   }
 
   @Override
@@ -417,7 +433,20 @@ public class JavaType extends JavaGenericType
   @Override
   public JavaParameterizedType createParameterizedType(CodeElement parent) {
 
-    return new JavaParameterizedType((JavaElement) parent, this);
+    return new JavaParameterizedType((JavaElementImpl) parent, this);
+  }
+
+  @Override
+  public JavaGenericType getQualifiedType() {
+
+    if (this.qualifiedType == null) {
+      if (getParentPackage().isRoot()) {
+        this.qualifiedType = this;
+      } else {
+        this.qualifiedType = JavaTypeProxy.ofQualified(this);
+      }
+    }
+    return this.qualifiedType;
   }
 
   @Override
@@ -427,7 +456,7 @@ public class JavaType extends JavaGenericType
   }
 
   @Override
-  public JavaType copy(JavaElement newParent) {
+  public JavaType copy(JavaElementImpl newParent) {
 
     if (newParent instanceof JavaFile) {
       assert (this.declaringType == null);
@@ -449,19 +478,34 @@ public class JavaType extends JavaGenericType
     }
     super.doWrite(sink, newline, defaultIndent, currentIndent, syntax);
     doWriteDeclaration(sink, currentIndent);
+    doWriteBody(sink, newline, defaultIndent, currentIndent, syntax);
+  }
+
+  void doWriteBody(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+
     sink.append(" {");
     sink.append(newline);
     String bodyIndent = currentIndent + defaultIndent;
     this.fields.write(sink, newline, defaultIndent, bodyIndent);
-    this.constructors.write(sink, newline, defaultIndent, bodyIndent);
-    this.methods.write(sink, newline, defaultIndent, bodyIndent);
-    this.nestedTypes.write(sink, newline, defaultIndent, currentIndent);
+    if (this.staticInitializer != null) {
+      sink.append(newline);
+      sink.append(bodyIndent);
+      this.staticInitializer.write(sink, newline, defaultIndent, currentIndent, syntax);
+    }
+    if (this.nonStaticInitializer != null) {
+      sink.append(newline);
+      sink.append(bodyIndent);
+      this.nonStaticInitializer.write(sink, newline, defaultIndent, currentIndent, syntax);
+    }
+    this.constructors.write(sink, newline, defaultIndent, bodyIndent, syntax);
+    this.methods.write(sink, newline, defaultIndent, bodyIndent, syntax);
+    this.nestedTypes.write(sink, newline, defaultIndent, currentIndent, syntax);
     sink.append(currentIndent);
     sink.append("}");
     sink.append(newline);
   }
 
-  private void doWriteDeclaration(Appendable sink, String currentIndent) throws IOException {
+  void doWriteDeclaration(Appendable sink, String currentIndent) throws IOException {
 
     sink.append(currentIndent);
     sink.append(this.modifiers.toString());
@@ -472,9 +516,9 @@ public class JavaType extends JavaGenericType
   }
 
   @Override
-  public void writeReference(Appendable sink, boolean declaration) throws IOException {
+  public void writeReference(Appendable sink, boolean declaration, Boolean qualified) throws IOException {
 
-    if (isQualified()) {
+    if (Boolean.TRUE.equals(qualified) || ((qualified == null) && isQualified())) {
       sink.append(getQualifiedName());
     } else {
       sink.append(getSimpleName());

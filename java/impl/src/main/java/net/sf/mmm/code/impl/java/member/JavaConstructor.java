@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import net.sf.mmm.code.api.member.CodeConstructor;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.impl.java.item.JavaReflectiveObject;
+import net.sf.mmm.code.impl.java.parser.JavaTypeVariablesFromSource;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
@@ -27,6 +28,16 @@ public class JavaConstructor extends JavaOperation
    * The constructor.
    *
    * @param parent the {@link #getParent() parent}.
+   */
+  public JavaConstructor(JavaConstructors parent) {
+
+    this(parent, null);
+  }
+
+  /**
+   * The constructor.
+   *
+   * @param parent the {@link #getParent() parent}.
    * @param reflectiveObject the {@link #getReflectiveObject() reflective object}. May be {@code null}.
    */
   public JavaConstructor(JavaConstructors parent, Constructor<?> reflectiveObject) {
@@ -34,6 +45,19 @@ public class JavaConstructor extends JavaOperation
     super("");
     this.parent = parent;
     this.reflectiveObject = reflectiveObject;
+  }
+
+  /**
+   * The constructor.
+   *
+   * @param typeVariables the {@link #getTypeParameters() type variables}.
+   * @param parent the {@link #getParent() parent}.
+   */
+  public JavaConstructor(JavaTypeVariablesFromSource typeVariables, JavaConstructors parent) {
+
+    super("", typeVariables);
+    this.parent = parent;
+    this.reflectiveObject = null;
   }
 
   /**

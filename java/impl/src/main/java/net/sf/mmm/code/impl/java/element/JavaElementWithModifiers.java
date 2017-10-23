@@ -15,7 +15,7 @@ import net.sf.mmm.code.api.syntax.CodeSyntax;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class JavaElementWithModifiers extends JavaElement implements CodeElementWithModifiers {
+public abstract class JavaElementWithModifiers extends JavaElementImpl implements CodeElementWithModifiers {
 
   private CodeModifiers modifiers;
 

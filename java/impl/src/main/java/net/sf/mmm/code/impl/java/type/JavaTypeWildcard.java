@@ -8,7 +8,7 @@ import java.lang.reflect.WildcardType;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeTypeVariable;
 import net.sf.mmm.code.api.type.CodeTypeWildcard;
-import net.sf.mmm.code.impl.java.element.JavaElement;
+import net.sf.mmm.code.impl.java.element.JavaElementImpl;
 import net.sf.mmm.code.impl.java.item.JavaReflectiveObject;
 import net.sf.mmm.code.impl.java.node.JavaNodeItem;
 import net.sf.mmm.code.impl.java.node.JavaNodeItemContainer;
@@ -46,10 +46,12 @@ public class JavaTypeWildcard extends JavaTypePlaceholder
    *
    * @param parent the {@link #getParent() parent}.
    * @param bound the {@link #getBound() bound}.
+   * @param superWildcard the {@link #isSuper() super wildcard flag}.
    */
-  public JavaTypeWildcard(JavaNodeItem parent, JavaGenericType bound) {
+  public JavaTypeWildcard(JavaNodeItem parent, JavaGenericType bound, boolean superWildcard) {
 
     this(parent, null, bound);
+    this.superWildcard = superWildcard;
   }
 
   /**
@@ -136,7 +138,7 @@ public class JavaTypeWildcard extends JavaTypePlaceholder
     if (this.parent instanceof JavaNodeItemContainer) {
       return ((JavaNodeItemContainer<?>) this.parent).getDeclaringType();
     } else {
-      return ((JavaElement) this.parent).getDeclaringType();
+      return ((JavaElementImpl) this.parent).getDeclaringType();
     }
   }
 

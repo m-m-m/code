@@ -7,6 +7,7 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
@@ -29,7 +30,17 @@ public class JavaComposedType extends JavaGenericType
 
   private Type[] bounds;
 
-  private List<JavaType> types;
+  private List<JavaGenericType> types;
+
+  /**
+   * The constructor.
+   *
+   * @param parent the {@link #getParent() parent}.
+   */
+  public JavaComposedType(JavaTypePlaceholder parent) {
+
+    this(parent, null);
+  }
 
   /**
    * The constructor.
@@ -56,7 +67,21 @@ public class JavaComposedType extends JavaGenericType
     this.parent = parent;
     this.bounds = null;
     template.getTypes();
-    this.types = doCopy(template.types, this);
+    this.types = new ArrayList<>(template.types);
+  }
+
+  @Override
+  protected void doSetImmutable() {
+
+    super.doSetImmutable();
+    this.types = Collections.unmodifiableList(this.types);
+  }
+
+  @Override
+  protected void doInitialize() {
+
+    super.doInitialize();
+    getTypes();
   }
 
   @Override
@@ -81,7 +106,7 @@ public class JavaComposedType extends JavaGenericType
   }
 
   @Override
-  public List<? extends JavaType> getTypes() {
+  public List<? extends JavaGenericType> getTypes() {
 
     if (this.types == null) {
       if (this.bounds == null) {
@@ -98,7 +123,14 @@ public class JavaComposedType extends JavaGenericType
       }
     }
     return this.types;
+  }
 
+  @Override
+  public void add(CodeGenericType type) {
+
+    verifyMutalbe();
+    getTypes();
+    this.types.add((JavaType) type);
   }
 
   @Override
@@ -122,7 +154,7 @@ public class JavaComposedType extends JavaGenericType
 
     StringBuilder sb = new StringBuilder();
     String prefix = "";
-    for (JavaType type : getTypes()) {
+    for (JavaGenericType type : getTypes()) {
       sb.append(prefix);
       sb.append(type.getSimpleName());
       prefix = " & ";
@@ -135,7 +167,7 @@ public class JavaComposedType extends JavaGenericType
 
     StringBuilder sb = new StringBuilder();
     String prefix = "";
-    for (JavaType type : getTypes()) {
+    for (JavaGenericType type : getTypes()) {
       sb.append(prefix);
       sb.append(type.getQualifiedName());
       prefix = " & ";
@@ -163,12 +195,12 @@ public class JavaComposedType extends JavaGenericType
   }
 
   @Override
-  public void writeReference(Appendable sink, boolean declaration) throws IOException {
+  public void writeReference(Appendable sink, boolean declaration, Boolean qualified) throws IOException {
 
     String prefix = "";
     for (JavaGenericType type : this.types) {
       sink.append(prefix);
-      type.writeReference(sink, declaration);
+      type.writeReference(sink, declaration, qualified);
       prefix = " & ";
     }
   }

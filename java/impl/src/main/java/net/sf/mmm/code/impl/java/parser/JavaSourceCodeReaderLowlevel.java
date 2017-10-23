@@ -34,7 +34,6 @@ import net.sf.mmm.code.impl.java.expression.literal.JavaLiteralInt;
 import net.sf.mmm.code.impl.java.expression.literal.JavaLiteralLong;
 import net.sf.mmm.code.impl.java.expression.literal.JavaLiteralString;
 import net.sf.mmm.util.filter.api.CharFilter;
-import net.sf.mmm.util.lang.base.StringUtilImpl;
 import net.sf.mmm.util.scanner.base.CharReaderScanner;
 
 /**
@@ -47,26 +46,32 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
 
   private static final Logger LOG = LoggerFactory.getLogger(JavaSourceCodeReaderLowlevel.class);
 
-  private static final CharFilter CHAR_FILTER_SPACES = c -> ((c == ' ') || (c == '\t'));
+  static final CharFilter CHAR_FILTER_SPACES = c -> ((c == ' ') || (c == '\t'));
 
-  private static final CharFilter CHAR_FILTER_IDENTIFIER = c -> Character.isJavaIdentifierPart(c);
+  static final CharFilter CHAR_FILTER_IDENTIFIER = c -> Character.isJavaIdentifierPart(c);
 
-  private static final CharFilter CHAR_FILTER_QNAME = c -> Character.isJavaIdentifierPart(c) || (c == '.');
+  static final CharFilter CHAR_FILTER_QNAME = c -> Character.isJavaIdentifierPart(c) || (c == '.');
 
-  private static final CharFilter CHAR_FILTER_ANNOTATION_KEY = c -> ((c == '{') || (c == '=') || (c == ','));
+  static final CharFilter CHAR_FILTER_ANNOTATION_KEY = c -> ((c == '{') || (c == '=') || (c == ','));
 
-  private static final CharFilter CHAR_FILTER_OPERATOR = c -> ((c == '+') || (c == '-') || (c == '*') || (c == '/') || (c == '^') || (c == '%') || (c == '>')
+  static final CharFilter CHAR_FILTER_OPERATOR = c -> ((c == '+') || (c == '-') || (c == '*') || (c == '/') || (c == '^') || (c == '%') || (c == '>')
       || (c == '<') || (c == '!') || (c == '~') || (c == '='));
 
-  private static final CharFilter CHAR_FILTER_NUMBER_LITERAL_START = c -> ((c >= '0') && (c <= '9') || (c == '+') || (c == '-'));
+  static final CharFilter CHAR_FILTER_NUMBER_LITERAL_START = c -> ((c >= '0') && (c <= '9') || (c == '+') || (c == '-'));
 
+  static final CharFilter CHAR_FILTER_STATEMENT_END = c -> ((c == ';') || (c == '\r') || (c == '\n'));
+
+  /** {@link List} of plain JavaDoc lines collected whilst parsing. */
   protected final List<String> javaDocLines;
 
+  /** {@link List} of {@link CodeComment}s collected whilst parsing. */
   protected final List<CodeComment> comments;
 
+  /** @see #getElementComment() */
   protected CodeComment elementComment;
 
-  private final List<JavaAnnotation> annotations;
+  /** {@link #getAnnotations()} */
+  protected final List<JavaAnnotation> annotations;
 
   /** The current {@link JavaFile} to parse. */
   protected JavaFile file;
@@ -134,6 +139,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
       } else if (size > 1) {
         this.elementComment = new GenericComments(new ArrayList<>(this.comments));
       }
+      this.comments.clear();
     }
     return this.elementComment;
   }
@@ -158,25 +164,27 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
 
   /**
    * Consumes all standard text like spaces, comments, JavaDoc and annotations
-   *
-   * @return the {@link #forcePeek() peeked} character (no whitespace, doc or comment).
    */
-  public char consume() {
+  public void consume() {
 
     // clearConsumeState();
-    skipWhile(CHAR_FILTER_SPACES);
+    skipWhile(CharFilter.WHITESPACE_FILTER);
     char c = forcePeek();
     if (c == '/') { // comment or doc?
       next();
       parseDocOrComment();
+      consume();
     } else if (c == '@') { // annotation?
       next();
-      this.elementComment = getAndClearComments();
+      getElementComment();
       parseAnnotations();
+      consume();
     }
-    return c;
   }
 
+  /**
+   * Skips all whitespaces and parses all {@link CodeComment}s.
+   */
   protected void parseWhitespacesAndComments() {
 
     skipWhile(CharFilter.WHITESPACE_FILTER);
@@ -200,6 +208,9 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
     return comment;
   }
 
+  /**
+   * @return the current identifier or {@code null} if not pointing to such.
+   */
   protected String parseIdentifier() {
 
     if (Character.isJavaIdentifierStart(forcePeek())) {
@@ -208,6 +219,9 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
     return null;
   }
 
+  /**
+   * @return the current (qualified) name or {@code null} if not pointing to such.
+   */
   protected String parseQName() {
 
     if (Character.isJavaIdentifierStart(forcePeek())) {
@@ -218,9 +232,9 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
 
   private void parseAnnotations() {
 
-    String annotationTypeName = readWhile(CHAR_FILTER_IDENTIFIER);
+    String annotationTypeName = parseQName();
     String annotationQName = getQualifiedName(annotationTypeName);
-    JavaAnnotation annotation = new JavaAnnotation(this.file.getContext(), annotationQName);
+    JavaAnnotation annotation = new JavaAnnotation(this.file.getContext(), annotationTypeName, annotationQName);
     if (expect('(')) {
       parseAnnotationParameters(annotation, annotationTypeName);
     }
@@ -259,7 +273,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
 
   }
 
-  private CodeExpression parseAssignmentValue() {
+  CodeExpression parseAssignmentValue() {
 
     parseWhitespacesAndComments();
     CodeExpression expression = parseSingleAssignmentValue();
@@ -306,66 +320,22 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
 
   private JavaLiteral<?> parseLiteral() {
 
-    JavaLiteral<?> literal = parseStringLiteral();
+    String stringLiteral = readJavaStringLiteral(true);
+    if (stringLiteral != null) {
+      return JavaLiteralString.of(stringLiteral);
+    }
+    JavaLiteral<?> literal = parseBooleanLiteral();
     if (literal != null) {
       return literal;
     }
-    literal = parseBooleanLiteral();
-    if (literal != null) {
-      return literal;
-    }
-    literal = parseCharLiteral();
-    if (literal != null) {
-      return literal;
+    Character charLiteral = readJavaCharLiteral(true);
+    if (charLiteral != null) {
+      return JavaLiteralChar.of(charLiteral);
     }
     if (CHAR_FILTER_NUMBER_LITERAL_START.accept(forcePeek())) {
       return parseNumberLiteral();
     }
     return literal;
-  }
-
-  private JavaLiteral<Character> parseCharLiteral() {
-
-    if (expect('\'')) {
-      char c = forceNext();
-      if (c == '\\') {
-        StringBuilder error = null;
-        c = forceNext();
-        char next = forceNext();
-        if (next == '\'') {
-          Character character = StringUtilImpl.getInstance().resolveEscape(c);
-          if (character != null) {
-            return JavaLiteralChar.of(character.charValue());
-          }
-        } else if (CharFilter.OCTAL_DIGIT_FILTER.accept(c) && CharFilter.OCTAL_DIGIT_FILTER.accept(next)) {
-          int value = ((c - '0') * 7) + (next - 'c');
-          char last = forceNext();
-          if (CharFilter.OCTAL_DIGIT_FILTER.accept(last) && (value <= 37)) {
-            value = (value * 7) + (last - 'c');
-            last = forceNext();
-          }
-          if (last == '\'') {
-            return JavaLiteralChar.of((char) value);
-          }
-          error = new StringBuilder("'\\");
-          error.append(Integer.toString(value, 8));
-          error.append(last);
-        }
-        if (error == null) {
-          error = new StringBuilder("'\\");
-          error.append(c);
-          error.append(next);
-        }
-        String rest = readUntil('\'', true);
-        error.append(rest);
-        LOG.warn("Invalid char literal {} in {}.", error.toString(), this.file);
-        return JavaLiteralChar.of('?');
-      } else {
-        return JavaLiteralChar.of(c);
-      }
-    }
-    return null;
-
   }
 
   private JavaLiteral<Boolean> parseBooleanLiteral() {
@@ -374,15 +344,6 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
       return JavaLiteralBoolean.TRUE;
     } else if (expectStrict("false")) {
       return JavaLiteralBoolean.FALSE;
-    }
-    return null;
-  }
-
-  private JavaLiteral<String> parseStringLiteral() {
-
-    if (forcePeek() == '"') {
-      String value = readJavaStringLiteral();
-      return JavaLiteralString.of(value);
     }
     return null;
   }
@@ -423,6 +384,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
       next();
       c = forcePeek();
       if (c == '*') { // JavaDoc or regular comment
+        next();
         if (!this.javaDocLines.isEmpty()) {
           LOG.warn("Duplicate JavaDoc in {}.", this.file);
         }
@@ -465,6 +427,11 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
     }
   }
 
+  /**
+   * @param inInterface - {@code true} if in the context of an interface (where public is the default),
+   *        {@code false} otherwise.
+   * @return the parsed {@link CodeModifiers}.
+   */
   protected CodeModifiers parseModifiers(boolean inInterface) {
 
     CodeVisibility visibility = parseVisibility(getVisibilityFallback(inInterface));

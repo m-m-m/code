@@ -5,6 +5,7 @@ package net.sf.mmm.code.api;
 import net.sf.mmm.code.api.imports.CodeImport;
 import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeType;
+import net.sf.mmm.code.api.type.CodeTypeWildcard;
 
 /**
  * A {@link CodeContext} is the main entry point of this API. It allows to retrieve and create instances of
@@ -35,6 +36,13 @@ public interface CodeContext extends CodeProvider {
    * @return the root type (for Java it represents {@link Object} for TypeScript {@code any}).
    */
   CodeType getRootType();
+
+  /**
+   * @return the unbounded instance of {@link CodeTypeWildcard} (that has no
+   *         {@link CodeTypeWildcard#getBound() bound}). This is typically represented by the type "{@code ?}"
+   *         (e.g. in {@code List<?>}).
+   */
+  CodeTypeWildcard getUnboundedWildcard();
 
   /**
    * @return the root {@link CodeType#isEnumeration() enumeration} type (for Java it represents {@link Enum}

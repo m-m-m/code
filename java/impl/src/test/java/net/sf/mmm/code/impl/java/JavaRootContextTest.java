@@ -29,9 +29,9 @@ import net.sf.mmm.code.impl.java.type.JavaTypeVariable;
 import net.sf.mmm.code.impl.java.type.JavaTypeVariables;
 
 /**
- * Test of {@link JavaContext}.
+ * Test of {@link JavaRootContext}.
  */
-public class JavaContextTest extends Assertions {
+public class JavaRootContextTest extends Assertions {
 
   private JavaRootContext getContext() {
 

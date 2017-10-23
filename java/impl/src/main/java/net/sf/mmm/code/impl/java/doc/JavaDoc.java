@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.base.doc.GenericCodeDoc;
-import net.sf.mmm.code.impl.java.element.JavaElement;
+import net.sf.mmm.code.impl.java.element.JavaElementImpl;
 import net.sf.mmm.code.impl.java.node.JavaNode;
 import net.sf.mmm.code.impl.java.source.JavaSource;
 
@@ -16,18 +16,18 @@ import net.sf.mmm.code.impl.java.source.JavaSource;
  * @author hohwille
  * @since 1.0.0
  */
-public final class JavaDoc extends GenericCodeDoc implements JavaNode, CodeNodeItemWithGenericParent<JavaElement, JavaDoc> {
+public final class JavaDoc extends GenericCodeDoc implements JavaNode, CodeNodeItemWithGenericParent<JavaElementImpl, JavaDoc> {
 
   private static final Pattern PATTERN_INLINE_JAVADOC_TAG = Pattern.compile("\\{@([a-zA-Z]+) ([^}]*)\\}");
 
-  private final JavaElement parent;
+  private final JavaElementImpl parent;
 
   /**
    * The constructor.
    *
    * @param parent the {@link #getParent() parent element}.
    */
-  public JavaDoc(JavaElement parent) {
+  public JavaDoc(JavaElementImpl parent) {
 
     super();
     this.parent = parent;
@@ -39,14 +39,14 @@ public final class JavaDoc extends GenericCodeDoc implements JavaNode, CodeNodeI
    * @param template the {@link JavaDoc} to copy.
    * @param parent the new {@link #getParent() parent element}.
    */
-  public JavaDoc(JavaDoc template, JavaElement parent) {
+  public JavaDoc(JavaDoc template, JavaElementImpl parent) {
 
     super(template);
     this.parent = parent;
   }
 
   @Override
-  public JavaElement getParent() {
+  public JavaElementImpl getParent() {
 
     return this.parent;
   }
@@ -70,7 +70,7 @@ public final class JavaDoc extends GenericCodeDoc implements JavaNode, CodeNodeI
   }
 
   @Override
-  public JavaDoc copy(JavaElement newParent) {
+  public JavaDoc copy(JavaElementImpl newParent) {
 
     return new JavaDoc(this, newParent);
   }

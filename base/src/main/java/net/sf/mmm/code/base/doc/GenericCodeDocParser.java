@@ -14,6 +14,7 @@ import net.sf.mmm.code.api.arg.CodeParameter;
 import net.sf.mmm.code.api.doc.CodeDoc;
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.element.CodeElementWithTypeVariables;
+import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.type.CodeGenericType;
@@ -250,10 +251,20 @@ public class GenericCodeDocParser {
    * @param javaDocLines the {@link List} of plain {@link CodeDoc} {@link CodeDoc#getLines() lines} to parse
    *        and apply to the given {@link CodeType}.
    */
-  public void applyDoc(CodeType type, List<String> javaDocLines) {
+  public void parseDoc(CodeType type, List<String> javaDocLines) {
 
     parseDocForElement(type, javaDocLines);
     applyTypeVariablesDoc(type);
+  }
+
+  /**
+   * @param field the {@link CodeField}.
+   * @param javaDocLines the {@link List} of plain {@link CodeDoc} {@link CodeDoc#getLines() lines} to parse
+   *        and apply to the given {@link CodeField}.
+   */
+  public void parseDoc(CodeField field, List<String> javaDocLines) {
+
+    parseDocForElement(field, javaDocLines);
   }
 
   private GenericCodeDocTag getArgumentDoc(String name) {

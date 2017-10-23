@@ -27,7 +27,7 @@ public class JavaTypeVariables extends JavaGenericTypeParameters<JavaTypeVariabl
   /** The empty and {@link #isImmutable() immutable} instance of {@link JavaTypeVariables}. */
   public static final JavaTypeVariables EMPTY = new JavaTypeVariables();
 
-  private final JavaOperation declaringOperation;
+  private JavaOperation declaringOperation;
 
   private JavaType declaringType;
 
@@ -89,6 +89,20 @@ public class JavaTypeVariables extends JavaGenericTypeParameters<JavaTypeVariabl
 
     super(template);
     this.declaringType = declaringOperation.getDeclaringType();
+    this.declaringOperation = declaringOperation;
+  }
+
+  protected void setParent(JavaType declaringType) {
+
+    verifyMutalbe();
+    this.declaringType = declaringType;
+    this.declaringOperation = null;
+  }
+
+  protected void setParent(JavaOperation declaringOperation) {
+
+    verifyMutalbe();
+    this.declaringType = null;
     this.declaringOperation = declaringOperation;
   }
 

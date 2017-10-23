@@ -6,6 +6,7 @@ import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.node.CodeNodeItemContainer;
 import net.sf.mmm.code.api.node.CodeNodeItemContainerFlat;
 import net.sf.mmm.code.api.node.CodeNodeItemWithDeclaringOperation;
+import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
  * {@link CodeNodeItemContainer} containing the {@link CodeTypeVariable}s of a {@link CodeType} or
@@ -22,6 +23,12 @@ import net.sf.mmm.code.api.node.CodeNodeItemWithDeclaringOperation;
  * @since 1.0.0
  */
 public abstract interface CodeGenericTypeParameters<P extends CodeGenericType> extends CodeNodeItemContainerFlat<P>, CodeNodeItemWithDeclaringOperation {
+
+  /**
+   * @param parameter the type to add as parameter.
+   * @throws ReadOnlyException if {@link #isImmutable() immutable}.
+   */
+  void add(P parameter);
 
   @Override
   CodeGenericTypeParameters<P> copy();

@@ -81,6 +81,19 @@ public class JavaImports extends JavaNodeItemContainerFlat<JavaImport>
     return imp;
   }
 
+  /**
+   * @param reference the {@link JavaImport#getReference() reference} to import.
+   * @param staticFlag the {@link JavaImport#isStatic() static} flag.
+   * @return the {@link JavaImport} that has been created and added.
+   */
+  public JavaImport add(String reference, boolean staticFlag) {
+
+    verifyMutalbe();
+    JavaImport imp = new JavaImport(reference, staticFlag);
+    add(imp);
+    return imp;
+  }
+
   @Override
   public JavaImports copy() {
 

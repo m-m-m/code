@@ -7,12 +7,12 @@ import net.sf.mmm.code.api.item.CodeMutableItemWithQualifiedName;
 import net.sf.mmm.code.impl.java.JavaPackage;
 
 /**
- * Implementation of {@link CodeMutableItemWithQualifiedName} as {@link JavaElement}.
+ * Implementation of {@link CodeMutableItemWithQualifiedName} as {@link JavaElementImpl}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class JavaElementWithQualifiedName extends JavaElement implements CodeMutableItemWithQualifiedName {
+public abstract class JavaElementWithQualifiedName extends JavaElementImpl implements CodeMutableItemWithQualifiedName {
 
   private String simpleName;
 

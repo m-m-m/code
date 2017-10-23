@@ -8,7 +8,6 @@ import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.item.CodeChildItem;
 import net.sf.mmm.code.api.item.CodeMutableItemWithComment;
 import net.sf.mmm.code.api.item.CodeMutableItemWithType;
-import net.sf.mmm.code.api.type.CodeType;
 
 /**
  * {@link CodeMutableItemWithType} that represents an {@link java.lang.annotation.Annotation} instance.
@@ -30,9 +29,6 @@ public interface CodeAnnotation extends CodeChildItem, CodeMutableItemWithType, 
    *         {@link net.sf.mmm.code.api.expression.CodeConstant}.
    */
   Map<String, CodeExpression> getParameters();
-
-  @Override
-  CodeType getType();
 
   @Override
   CodeAnnotation copy();

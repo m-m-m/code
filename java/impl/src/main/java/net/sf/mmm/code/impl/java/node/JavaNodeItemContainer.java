@@ -15,7 +15,7 @@ import net.sf.mmm.code.api.item.CodeItemWithName;
 import net.sf.mmm.code.api.item.CodeItemWithQualifiedName;
 import net.sf.mmm.code.api.node.CodeNodeItemContainer;
 import net.sf.mmm.code.api.node.CodeNodeItemContainerWithName;
-import net.sf.mmm.code.impl.java.element.JavaElementNode;
+import net.sf.mmm.code.impl.java.element.JavaElement;
 import net.sf.mmm.code.impl.java.item.JavaItem;
 import net.sf.mmm.code.impl.java.member.JavaMember;
 import net.sf.mmm.code.impl.java.type.JavaType;
@@ -29,7 +29,7 @@ import net.sf.mmm.util.exception.api.ObjectNotFoundException;
  * @param <I> the type of the contained {@link JavaItem}.
  * @since 1.0.0
  */
-public abstract class JavaNodeItemContainer<I extends JavaItem> extends JavaNodeItem implements CodeNodeItemContainer<I> {
+public abstract class JavaNodeItemContainer<I extends JavaItem> extends JavaNodeItemImpl implements CodeNodeItemContainer<I> {
 
   private static final Logger LOG = LoggerFactory.getLogger(JavaNodeItemContainer.class);
 
@@ -225,7 +225,7 @@ public abstract class JavaNodeItemContainer<I extends JavaItem> extends JavaNode
   }
 
   @Override
-  public abstract JavaElementNode getParent();
+  public abstract JavaElement getParent();
 
   @Override
   public JavaType getDeclaringType() {

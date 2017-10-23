@@ -1,10 +1,11 @@
 /* Copyright (c) The m-m-m Team, Licensed under the Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0 */
-package net.sf.mmm.code.impl.java;
+package net.sf.mmm.code.impl.java.loader;
 
 import java.lang.reflect.Type;
 
-import net.sf.mmm.code.impl.java.element.JavaElementNode;
+import net.sf.mmm.code.impl.java.JavaPackage;
+import net.sf.mmm.code.impl.java.element.JavaElement;
 import net.sf.mmm.code.impl.java.source.JavaSource;
 import net.sf.mmm.code.impl.java.type.JavaArrayType;
 import net.sf.mmm.code.impl.java.type.JavaGenericType;
@@ -46,10 +47,10 @@ public interface JavaCodeLoader extends JavaLoader {
 
   /**
    * @param type the {@link Type} to get as {@link JavaGenericType}.
-   * @param declaringElement the owning {@link JavaElementNode} declaring the {@link Type}.
+   * @param declaringElement the owning {@link JavaElement} declaring the {@link Type}.
    * @return the existing or otherwise newly created {@link JavaGenericType}.
    */
-  JavaGenericType getType(Type type, JavaElementNode declaringElement);
+  JavaGenericType getType(Type type, JavaElement declaringElement);
 
   /**
    * @param pkg the {@link JavaPackage} to scan. Will load all {@link JavaPackage#getChildren() children} of

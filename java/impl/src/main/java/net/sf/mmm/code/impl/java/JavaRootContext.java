@@ -67,9 +67,11 @@ import net.sf.mmm.code.api.source.CodeSourceDescriptor;
 import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.syntax.DefaultCodeSyntax;
 import net.sf.mmm.code.base.source.CodeSourceDescriptorType;
+import net.sf.mmm.code.impl.java.loader.JavaByteCodeLoader;
 import net.sf.mmm.code.impl.java.source.JavaSource;
 import net.sf.mmm.code.impl.java.type.JavaGenericType;
 import net.sf.mmm.code.impl.java.type.JavaType;
+import net.sf.mmm.code.impl.java.type.JavaTypeWildcard;
 
 /**
  * Implementation of {@link JavaContext} for the {@link #getParent() root} context.
@@ -126,12 +128,14 @@ public class JavaRootContext extends JavaContext {
 
   private JavaType rootEnumerationType;
 
+  private JavaTypeWildcard unboundedWildcard;
+
   /**
    * The constructor.
    */
   private JavaRootContext() {
 
-    super(new JavaClassLoader(ClassLoader.getSystemClassLoader()), createSource()); // TODO
+    super(new JavaByteCodeLoader(ClassLoader.getSystemClassLoader()), createSource()); // TODO
     this.javaSystemTypeCache = new HashMap<>();
     add2SystemTypeCache(Object.class, String.class, Enum.class, Class.class, Package.class, Number.class, //
         Void.class, Boolean.class, Short.class, Byte.class, Double.class, Float.class, Long.class, Integer.class, Character.class, //
@@ -263,6 +267,15 @@ public class JavaRootContext extends JavaContext {
       this.voidType = this.javaSystemTypeCache.get(PRIMITVE_TYPE_VOID).javaType;
     }
     return this.voidType;
+  }
+
+  @Override
+  public JavaTypeWildcard getUnboundedWildcard() {
+
+    if (this.unboundedWildcard == null) {
+      this.unboundedWildcard = new JavaTypeWildcard(getRootType(), JavaWildcardType.UNBOUNDED_WILDCARD);
+    }
+    return this.unboundedWildcard;
   }
 
   private JavaType getType(JavaTypeContainer typeContainer) {
@@ -402,9 +415,9 @@ public class JavaRootContext extends JavaContext {
   }
 
   /**
-   * @return
+   * @return the default instance of this class.
    */
-  static JavaRootContext get() {
+  public static JavaRootContext get() {
 
     if (instance == null) {
       instance = new JavaRootContext();

@@ -5,7 +5,10 @@ package net.sf.mmm.code.impl.java;
 import net.sf.mmm.code.api.CodeContext;
 import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.api.CodeProvider;
+import net.sf.mmm.code.api.type.CodeType;
+import net.sf.mmm.code.impl.java.loader.JavaLoader;
 import net.sf.mmm.code.impl.java.type.JavaType;
+import net.sf.mmm.util.exception.api.ObjectNotFoundException;
 
 /**
  * Base implementation of {@link CodeContext}.
@@ -78,6 +81,16 @@ public abstract class JavaProvider implements CodeProvider, JavaLoader {
       return file.getType();
     }
     return children.getType(simpleName);
+  }
+
+  @Override
+  public JavaType getRequiredType(String qualifiedName) {
+
+    JavaType type = getType(qualifiedName);
+    if (type == null) {
+      throw new ObjectNotFoundException(CodeType.class, qualifiedName);
+    }
+    return type;
   }
 
 }

@@ -105,12 +105,24 @@ public interface CodeType extends CodeGenericType, CodeElementWithModifiers, Cod
   CodeBlockInitializer getStaticInitializer();
 
   /**
+   * @param initializer the new value of {@link #getStaticInitializer()}.
+   * @throws ReadOnlyException if {@link #isImmutable() immutable}.
+   */
+  void setStaticInitializer(CodeBlockInitializer initializer);
+
+  /**
    * @return the non-static initializer block. Will be omitted if empty. To create an empty non-static
    *         initializer simply add an empty statement to it. For simplicity only a single non-static
    *         initializer is supported by this API. Multiple non-static initializers will be joined (appended)
    *         automatically.
    */
   CodeBlockInitializer getNonStaticInitializer();
+
+  /**
+   * @param initializer the new value of {@link #getNonStaticInitializer()}.
+   * @throws ReadOnlyException if {@link #isImmutable() immutable}.
+   */
+  void setNonStaticInitializer(CodeBlockInitializer initializer);
 
   /**
    * @return {@code true} if this is a primitive type, {@code false} otherwise.
@@ -172,6 +184,13 @@ public interface CodeType extends CodeGenericType, CodeElementWithModifiers, Cod
    *         type}.
    */
   CodeParameterizedType createParameterizedType(CodeElement parent);
+
+  /**
+   * @return the {@link CodeGenericType} representing this {@link CodeType} as {@link #isQualified() fully
+   *         qualified} type. If this {@link CodeType} {@link #getParentPackage() is contained} in the default
+   *         package this will return this type itself (e.g. for primitive types).
+   */
+  CodeGenericType getQualifiedType();
 
   @Override
   default CodeType resolve(CodeGenericType context) {

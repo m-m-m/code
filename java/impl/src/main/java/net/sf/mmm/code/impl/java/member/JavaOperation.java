@@ -15,6 +15,7 @@ import net.sf.mmm.code.impl.java.arg.JavaExceptions;
 import net.sf.mmm.code.impl.java.arg.JavaParameter;
 import net.sf.mmm.code.impl.java.arg.JavaParameters;
 import net.sf.mmm.code.impl.java.element.JavaElementWithTypeVariables;
+import net.sf.mmm.code.impl.java.parser.JavaTypeVariablesFromSource;
 import net.sf.mmm.code.impl.java.type.JavaTypeVariables;
 
 /**
@@ -42,6 +43,22 @@ public abstract class JavaOperation extends JavaMember implements CodeOperation,
 
     super(CodeModifiers.MODIFIERS_PUBLIC, name);
     this.typeVariables = new JavaTypeVariables(this);
+    this.parameters = new JavaParameters(this);
+    this.exceptions = new JavaExceptions(this);
+  }
+
+  /**
+   * The constructor.
+   *
+   * @param name the {@link #getName() name}.
+   * @param typeVariables the {@link #getTypeParameters() type variables}.
+   */
+  protected JavaOperation(String name, JavaTypeVariablesFromSource typeVariables) {
+
+    super(CodeModifiers.MODIFIERS_PUBLIC, name);
+    typeVariables.setParent(this);
+    typeVariables.setImmutable();
+    this.typeVariables = typeVariables;
     this.parameters = new JavaParameters(this);
     this.exceptions = new JavaExceptions(this);
   }
@@ -107,6 +124,16 @@ public abstract class JavaOperation extends JavaMember implements CodeOperation,
       this.body = new GenericBlockBody(this);
     }
     return this.body;
+  }
+
+  @Override
+  public void setBody(CodeBlockBody body) {
+
+    verifyMutalbe();
+    if (body.getParent() != this) {
+      throw new IllegalArgumentException();
+    }
+    this.body = body;
   }
 
   @Override

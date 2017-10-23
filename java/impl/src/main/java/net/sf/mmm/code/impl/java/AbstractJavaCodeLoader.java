@@ -14,12 +14,13 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.impl.java.arg.JavaOperationArg;
+import net.sf.mmm.code.impl.java.element.JavaElementImpl;
 import net.sf.mmm.code.impl.java.element.JavaElement;
-import net.sf.mmm.code.impl.java.element.JavaElementNode;
 import net.sf.mmm.code.impl.java.element.JavaElementWithTypeVariables;
+import net.sf.mmm.code.impl.java.loader.JavaCodeLoader;
 import net.sf.mmm.code.impl.java.member.JavaOperation;
 import net.sf.mmm.code.impl.java.node.JavaNode;
-import net.sf.mmm.code.impl.java.node.JavaNodeItem;
+import net.sf.mmm.code.impl.java.node.JavaNodeItemImpl;
 import net.sf.mmm.code.impl.java.node.JavaNodeItemContainerAccess;
 import net.sf.mmm.code.impl.java.source.JavaSource;
 import net.sf.mmm.code.impl.java.type.JavaArrayType;
@@ -122,14 +123,14 @@ public abstract class AbstractJavaCodeLoader extends JavaNodeItemContainerAccess
   }
 
   @Override
-  public JavaGenericType getType(Type type, JavaElementNode declaringElement) {
+  public JavaGenericType getType(Type type, JavaElement declaringElement) {
 
     requireByteCodeSupport();
     if (type instanceof Class) {
       return getType((Class<?>) type);
     } else if (type instanceof ParameterizedType) {
       ParameterizedType parameterizedType = (ParameterizedType) type;
-      return new JavaParameterizedType((JavaElement) declaringElement, parameterizedType);
+      return new JavaParameterizedType((JavaElementImpl) declaringElement, parameterizedType);
     } else if (type instanceof TypeVariable) {
       TypeVariable<?> typeVar = (TypeVariable<?>) type;
       if (declaringElement instanceof JavaType) {
@@ -150,16 +151,16 @@ public abstract class AbstractJavaCodeLoader extends JavaNodeItemContainerAccess
       return new JavaTypeVariable(declaringElement.getDeclaringType().getTypeParameters(), typeVar);
     } else if (type instanceof WildcardType) {
       WildcardType wildcard = (WildcardType) type;
-      JavaNodeItem parent;
+      JavaNodeItemImpl parent;
       if (declaringElement instanceof JavaParameterizedType) {
         parent = ((JavaParameterizedType) declaringElement).getTypeParameters();
       } else {
-        parent = (JavaElement) declaringElement;
+        parent = (JavaElementImpl) declaringElement;
       }
       return new JavaTypeWildcard(parent, wildcard);
     } else if (type instanceof GenericArrayType) {
       // GenericArrayType arrayType = (GenericArrayType) type;
-      return new JavaArrayType((JavaElement) declaringElement, type);
+      return new JavaArrayType((JavaElementImpl) declaringElement, type);
     } else {
       throw new IllegalCaseException(type.getClass().getSimpleName());
     }

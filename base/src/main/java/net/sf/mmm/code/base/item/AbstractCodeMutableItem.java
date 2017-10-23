@@ -181,7 +181,7 @@ public abstract class AbstractCodeMutableItem extends AbstractCodeItem implement
 
     initialize();
     if (this.immutable) {
-      throw new ReadOnlyException(getClass().getSimpleName());
+      throw new ReadOnlyException(getClass().getSimpleName() + ":" + toString());
     }
   }
 

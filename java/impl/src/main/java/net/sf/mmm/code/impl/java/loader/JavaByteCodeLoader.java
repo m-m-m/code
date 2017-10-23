@@ -1,30 +1,32 @@
 /* Copyright (c) The m-m-m Team, Licensed under the Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0 */
-package net.sf.mmm.code.impl.java;
+package net.sf.mmm.code.impl.java.loader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.mmm.code.impl.java.AbstractJavaCodeLoader;
+import net.sf.mmm.code.impl.java.JavaPackage;
 import net.sf.mmm.code.impl.java.source.JavaSource;
 import net.sf.mmm.code.impl.java.type.JavaType;
 
 /**
- * Implementation of {@link AbstractJavaCodeLoader} using {@link #isSupportByteCode() byte code} analysis via
- * reflection.
+ * Implementation of {@link AbstractJavaCodeLoader} using {@link ClassLoader} and {@link #isSupportByteCode()
+ * byte code} analysis via reflection.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaClassLoader extends AbstractJavaCodeLoader {
+public class JavaByteCodeLoader extends AbstractJavaCodeLoader {
 
-  private static final Logger LOG = LoggerFactory.getLogger(JavaClassLoader.class);
+  private static final Logger LOG = LoggerFactory.getLogger(JavaByteCodeLoader.class);
 
   private final ClassLoader classloader;
 
   /**
    * The constructor.
    */
-  public JavaClassLoader() {
+  public JavaByteCodeLoader() {
 
     this(Thread.currentThread().getContextClassLoader());
   }
@@ -34,7 +36,7 @@ public class JavaClassLoader extends AbstractJavaCodeLoader {
    *
    * @param classloader the underlying {@link ClassLoader} to adopt.
    */
-  public JavaClassLoader(ClassLoader classloader) {
+  public JavaByteCodeLoader(ClassLoader classloader) {
 
     super();
     this.classloader = classloader;

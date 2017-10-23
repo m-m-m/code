@@ -22,6 +22,7 @@ import net.sf.mmm.code.impl.java.JavaContext;
 import net.sf.mmm.code.impl.java.expression.constant.JavaConstant;
 import net.sf.mmm.code.impl.java.item.JavaChildItem;
 import net.sf.mmm.code.impl.java.item.JavaReflectiveObject;
+import net.sf.mmm.code.impl.java.type.JavaGenericType;
 import net.sf.mmm.code.impl.java.type.JavaType;
 import net.sf.mmm.util.nls.api.NlsBundleOptions;
 
@@ -40,9 +41,11 @@ public class JavaAnnotation extends JavaChildItem implements CodeAnnotation, Jav
 
   private CodeComment comment;
 
-  private JavaType type;
+  private JavaGenericType type;
 
   private String typeName;
+
+  private String qualifiedTypeName;
 
   private Map<String, CodeExpression> parameters;
 
@@ -77,13 +80,18 @@ public class JavaAnnotation extends JavaChildItem implements CodeAnnotation, Jav
    * The constructor.
    *
    * @param context the {@link #getContext() context}.
-   * @param typeName the qualified name of the {@link #getType() type}.
+   * @param typeName the name of the {@link #getType() type} from the source-code.
+   * @param qualifiedTypeName the qualified {@link #getType() type}.
    */
-  public JavaAnnotation(JavaContext context, String typeName) {
+  public JavaAnnotation(JavaContext context, String typeName, String qualifiedTypeName) {
 
     super(context);
+    if ((typeName != qualifiedTypeName) && !qualifiedTypeName.endsWith("." + typeName)) {
+      throw new IllegalArgumentException(typeName + "::" + qualifiedTypeName);
+    }
     this.reflectiveObject = null;
     this.typeName = typeName;
+    this.qualifiedTypeName = qualifiedTypeName;
     this.parameters = new HashMap<>();
   }
 
@@ -106,7 +114,7 @@ public class JavaAnnotation extends JavaChildItem implements CodeAnnotation, Jav
     super.doInitialize();
     if (this.reflectiveObject != null) {
       Class<? extends Annotation> annotationType = this.reflectiveObject.annotationType();
-      this.type = (JavaType) getContext().getType(annotationType);
+      this.type = getContext().getType(annotationType);
       for (Method method : annotationType.getDeclaredMethods()) {
         String key = method.getName();
         try {
@@ -128,12 +136,20 @@ public class JavaAnnotation extends JavaChildItem implements CodeAnnotation, Jav
   }
 
   @Override
-  public JavaType getType() {
+  public JavaGenericType getType() {
 
-    initialize();
-    if ((this.type == null) && (this.typeName != null)) {
-      this.type = getContext().getType(this.typeName);
-      this.typeName = null;
+    if (this.type == null) {
+      if (this.qualifiedTypeName != null) {
+        JavaType rawType = getContext().getType(this.qualifiedTypeName);
+        if ((this.typeName == this.qualifiedTypeName) && (this.typeName.indexOf('.') > 0)) {
+          this.type = rawType.getQualifiedType();
+        }
+        this.type = rawType;
+        this.qualifiedTypeName = null;
+        this.typeName = null;
+      } else {
+        initialize();
+      }
     }
     return this.type;
   }
@@ -182,7 +198,9 @@ public class JavaAnnotation extends JavaChildItem implements CodeAnnotation, Jav
       this.comment.write(sink, newline, defaultIndent, currentIndent);
     }
     sink.append('@');
-    if (this.type == null) {
+    if (this.typeName != null) {
+      sink.append(this.typeName);
+    } else if (getType() == null) {
       LOG.warn("Annotation without type.");
       sink.append("Undefined");
     } else {

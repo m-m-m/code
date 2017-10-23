@@ -212,13 +212,14 @@ public class JavaParameterizedType extends JavaGenericType
   }
 
   @Override
-  public void writeReference(Appendable sink, boolean declaration) throws IOException {
+  public void writeReference(Appendable sink, boolean declaration, Boolean qualified) throws IOException {
 
-    if (getType() == null) {
+    JavaType myType = getType();
+    if (myType == null) {
       LOG.warn("Parameterized type with undefined type declared in {}", getDeclaringType().getSimpleName());
       sink.append("Undefined");
     } else {
-      this.type.writeReference(sink, false);
+      myType.writeReference(sink, false, qualified);
       getTypeParameters().write(sink, DEFAULT_NEWLINE, null, "");
     }
   }

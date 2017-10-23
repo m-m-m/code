@@ -13,7 +13,7 @@ import net.sf.mmm.code.api.annotation.CodeAnnotations;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeType;
-import net.sf.mmm.code.impl.java.element.JavaElement;
+import net.sf.mmm.code.impl.java.element.JavaElementImpl;
 import net.sf.mmm.code.impl.java.member.JavaMethod;
 import net.sf.mmm.code.impl.java.node.JavaNodeItemContainerHierarchical;
 import net.sf.mmm.code.impl.java.type.InternalSuperTypeIterator;
@@ -27,16 +27,16 @@ import net.sf.mmm.util.collection.base.AbstractIterator;
  * @since 1.0.0
  */
 public class JavaAnnotations extends JavaNodeItemContainerHierarchical<JavaAnnotation>
-    implements CodeAnnotations<JavaAnnotation>, CodeNodeItemWithGenericParent<JavaElement, JavaAnnotations> {
+    implements CodeAnnotations<JavaAnnotation>, CodeNodeItemWithGenericParent<JavaElementImpl, JavaAnnotations> {
 
-  private final JavaElement parent;
+  private final JavaElementImpl parent;
 
   /**
    * The constructor.
    *
    * @param parent the {@link #getParent() parent}.
    */
-  public JavaAnnotations(JavaElement parent) {
+  public JavaAnnotations(JavaElementImpl parent) {
 
     super();
     this.parent = parent;
@@ -48,14 +48,14 @@ public class JavaAnnotations extends JavaNodeItemContainerHierarchical<JavaAnnot
    * @param template the {@link JavaAnnotations} to copy.
    * @param parent the {@link #getParent() parent}.
    */
-  public JavaAnnotations(JavaAnnotations template, JavaElement parent) {
+  public JavaAnnotations(JavaAnnotations template, JavaElementImpl parent) {
 
     super(template);
     this.parent = parent;
   }
 
   @Override
-  public JavaElement getParent() {
+  public JavaElementImpl getParent() {
 
     return this.parent;
   }
@@ -107,6 +107,12 @@ public class JavaAnnotations extends JavaNodeItemContainerHierarchical<JavaAnnot
   }
 
   @Override
+  public void add(JavaAnnotation item) {
+
+    super.add(item);
+  }
+
+  @Override
   public JavaAnnotation getDeclaredOrAdd(CodeType type) {
 
     JavaAnnotation annotation = getDeclared(type);
@@ -135,7 +141,7 @@ public class JavaAnnotations extends JavaNodeItemContainerHierarchical<JavaAnnot
   }
 
   @Override
-  public JavaAnnotations copy(JavaElement newParent) {
+  public JavaAnnotations copy(JavaElementImpl newParent) {
 
     return new JavaAnnotations(this, newParent);
   }
@@ -175,7 +181,7 @@ public class JavaAnnotations extends JavaNodeItemContainerHierarchical<JavaAnnot
 
       while (this.currentIterator.hasNext()) {
         JavaAnnotation annotation = this.currentIterator.next();
-        JavaType annotationType = annotation.getType();
+        JavaType annotationType = annotation.getType().asType();
         boolean added = this.iteratedAnnotations.add(annotationType);
         if (added) {
           return annotation;

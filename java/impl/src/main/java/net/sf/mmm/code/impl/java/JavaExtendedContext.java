@@ -11,10 +11,11 @@ import java.util.Map;
 import net.sf.mmm.code.impl.java.source.JavaSource;
 import net.sf.mmm.code.impl.java.source.JavaSourceProvider;
 import net.sf.mmm.code.impl.java.type.JavaType;
+import net.sf.mmm.code.impl.java.type.JavaTypeWildcard;
 import net.sf.mmm.util.exception.api.DuplicateObjectException;
 
 /**
- * TODO: this class ...
+ * {@link JavaContext} that inherits from a {@link #getParent() parent} context.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
@@ -150,6 +151,12 @@ public class JavaExtendedContext extends JavaContext {
   public JavaType getRootEnumerationType() {
 
     return getRootContext().getRootEnumerationType();
+  }
+
+  @Override
+  public JavaTypeWildcard getUnboundedWildcard() {
+
+    return getRootContext().getUnboundedWildcard();
   }
 
   @Override
