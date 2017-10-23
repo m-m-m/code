@@ -20,7 +20,6 @@ import net.sf.mmm.code.impl.java.item.JavaItem;
 import net.sf.mmm.code.impl.java.member.JavaMember;
 import net.sf.mmm.code.impl.java.type.JavaType;
 import net.sf.mmm.util.exception.api.DuplicateObjectException;
-import net.sf.mmm.util.exception.api.ObjectNotFoundException;
 
 /**
  * Implementation of {@link CodeNodeItemContainer} for Java.
@@ -134,22 +133,6 @@ public abstract class JavaNodeItemContainer<I extends JavaItem> extends JavaNode
   protected I getByName(String name) {
 
     return this.map.get(name);
-  }
-
-  /**
-   * @param name the {@link CodeItemWithName#getName() name} of the requested item.
-   * @return the requested item.
-   * @throws ObjectNotFoundException if the requested item was not found.
-   * @see CodeNodeItemContainerWithName#getRequired(String)
-   */
-  protected I getRequired(String name) {
-
-    initialize();
-    I item = getByName(name);
-    if (item == null) {
-      throw new ObjectNotFoundException(getClass().getSimpleName(), name);
-    }
-    return item;
   }
 
   /**

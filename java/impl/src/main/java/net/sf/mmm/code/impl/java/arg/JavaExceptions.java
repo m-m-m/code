@@ -60,7 +60,7 @@ public class JavaExceptions extends JavaOperationArgs<JavaException>
   @Override
   public JavaException get(CodeGenericType type) {
 
-    for (JavaException exception : getAll()) {
+    for (JavaException exception : getDeclared()) {
       if (exception.getType().equals(type)) {
         return exception;
       }

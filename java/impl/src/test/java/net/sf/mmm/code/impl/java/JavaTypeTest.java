@@ -50,7 +50,7 @@ public class JavaTypeTest extends Assertions {
     assertThat(type.getAnnotations().getDeclared()).isEmpty();
     assertThat(type.getFields().getDeclared()).isEmpty();
     assertThat(type.getMethods().getDeclared()).isEmpty();
-    assertThat(type.getConstructors().getAll()).isEmpty();
+    assertThat(type.getConstructors().getDeclared()).isEmpty();
     assertThat(type.getFile().toString()).isEqualTo("MyClass");
     assertThat(type.getFile().getSourceCode()).isEqualTo("package mydomain;\n" + //
         "\n" + //

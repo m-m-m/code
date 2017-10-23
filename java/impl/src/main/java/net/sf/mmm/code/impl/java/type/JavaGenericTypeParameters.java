@@ -50,7 +50,7 @@ public abstract class JavaGenericTypeParameters<P extends JavaGenericType> exten
 
   void writeReference(Appendable sink, String newline, boolean declaration) throws IOException {
 
-    List<? extends P> typeParameters = getAll();
+    List<? extends P> typeParameters = getDeclared();
     if (!typeParameters.isEmpty()) {
       String prefix = "<";
       for (P parameter : typeParameters) {

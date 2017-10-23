@@ -3,6 +3,7 @@
 package net.sf.mmm.code.api.node;
 
 import java.util.Iterator;
+import java.util.List;
 
 import net.sf.mmm.code.api.item.CodeItem;
 
@@ -22,15 +23,15 @@ import net.sf.mmm.code.api.item.CodeItem;
 public abstract interface CodeNodeContainer<I> extends CodeNode, Iterable<I> {
 
   /**
-   * @return all contained items.
+   * @return all items directly contained in this container.
    */
-  Iterable<? extends I> getAll();
+  List<? extends I> getDeclared();
 
   @SuppressWarnings("unchecked")
   @Override
   default Iterator<I> iterator() {
 
-    return (Iterator<I>) getAll().iterator();
+    return (Iterator<I>) getDeclared().iterator();
   }
 
 }

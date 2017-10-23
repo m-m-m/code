@@ -163,7 +163,7 @@ public class JavaTypeVariables extends JavaGenericTypeParameters<JavaTypeVariabl
   }
 
   @Override
-  public JavaTypeVariable get(String name) {
+  public JavaTypeVariable getDeclared(String name) {
 
     return get(name, false, true);
   }
@@ -191,12 +191,6 @@ public class JavaTypeVariables extends JavaGenericTypeParameters<JavaTypeVariabl
       return parent.getTypeParameters().get(name, includeDeclaringTypes, init);
     }
     return null;
-  }
-
-  @Override
-  public JavaTypeVariable getRequired(String name) {
-
-    return super.getRequired(name);
   }
 
   @Override

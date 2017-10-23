@@ -25,12 +25,12 @@ public interface CodePathElements<P extends CodePathElement> extends CodeNodeIte
    * This method can trigger expensive classpath scanning (or filesystem traversal) on its first call.
    */
   @Override
-  List<? extends P> getAll();
+  List<? extends P> getDeclared();
 
   /**
    * @param simpleName the {@link CodePathElement#getSimpleName() simple name} of the requested
    *        {@link CodePathElement}.
-   * @return the {@link CodePathElement} from {@link #getAll() all items} with the given {@code name} or
+   * @return the {@link CodePathElement} from {@link #getDeclared() all items} with the given {@code name} or
    *         {@code null} if not found.
    */
   P get(String simpleName);
@@ -41,7 +41,7 @@ public interface CodePathElements<P extends CodePathElement> extends CodeNodeIte
    * @param withoutSuperLayer {@code false} to recursively traverse {@link CodePackage#getSuperLayerPackage()
    *        super layer packages} during the search what is the default if this flag is omitted, {@code true}
    *        to only consider the direct children of the package.
-   * @return the {@link CodePathElement} from {@link #getAll() all items} with the given {@code name} or
+   * @return the {@link CodePathElement} from {@link #getDeclared() all items} with the given {@code name} or
    *         {@code null} if not found.
    */
   P get(String simpleName, boolean withoutSuperLayer);

@@ -258,11 +258,11 @@ public class JavaProperty extends JavaMember implements CodeProperty, CodeNodeIt
     String propertyName = getPropertyName(methodName);
     if (checkSignature && (propertyName != null)) {
       if (methodName.startsWith("set")) {
-        if (method.getParameters().getAll().size() != 1) {
+        if (method.getParameters().getDeclared().size() != 1) {
           return null;
         }
       } else {
-        if (method.getParameters().getAll().size() != 0) {
+        if (method.getParameters().getDeclared().size() != 0) {
           return null;
         }
         if (method.getReturns().getType().asType().isVoid()) {

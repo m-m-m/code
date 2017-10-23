@@ -35,7 +35,7 @@ public abstract class JavaNodeItemContainerFlat<I extends JavaItem> extends Java
   }
 
   @Override
-  public final List<? extends I> getAll() {
+  public final List<? extends I> getDeclared() {
 
     initialize();
     return getList();

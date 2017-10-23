@@ -55,7 +55,7 @@ public class JavaConstructors extends JavaOperations<JavaConstructor>
   }
 
   @Override
-  public List<? extends JavaConstructor> getAll() {
+  public List<? extends JavaConstructor> getDeclared() {
 
     initialize();
     return getList();
@@ -64,7 +64,7 @@ public class JavaConstructors extends JavaOperations<JavaConstructor>
   @Override
   public JavaConstructor get(JavaConstructor constructor) {
 
-    for (JavaConstructor myConstructor : getAll()) {
+    for (JavaConstructor myConstructor : getDeclared()) {
       if (myConstructor.getParameters().isInvokable(constructor.getParameters())) {
         return constructor;
       }
@@ -75,7 +75,7 @@ public class JavaConstructors extends JavaOperations<JavaConstructor>
   @Override
   public JavaConstructor get(CodeGenericType... parameterTypes) {
 
-    for (JavaConstructor constructor : getAll()) {
+    for (JavaConstructor constructor : getDeclared()) {
       if (constructor.getParameters().isInvokable(parameterTypes)) {
         return constructor;
       }

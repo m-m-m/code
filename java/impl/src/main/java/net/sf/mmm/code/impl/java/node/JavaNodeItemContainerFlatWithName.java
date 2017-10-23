@@ -54,12 +54,6 @@ public abstract class JavaNodeItemContainerFlatWithName<I extends JavaItem> exte
   }
 
   @Override
-  public I getRequired(String name) {
-
-    return super.getRequired(name);
-  }
-
-  @Override
   public abstract I add(String name);
 
 }

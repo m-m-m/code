@@ -71,7 +71,7 @@ public class JavaImports extends JavaNodeItemContainerFlat<JavaImport>
       return null;
     }
     String qname = type.getQualifiedName();
-    for (JavaImport imp : getAll()) {
+    for (JavaImport imp : getDeclared()) {
       if (!imp.isStatic() && imp.getReference().equals(qname)) {
         return null;
       }

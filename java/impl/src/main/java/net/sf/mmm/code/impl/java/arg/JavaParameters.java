@@ -58,16 +58,10 @@ public class JavaParameters extends JavaOperationArgs<JavaParameter>
   }
 
   @Override
-  public JavaParameter get(String name) {
+  public JavaParameter getDeclared(String name) {
 
     initialize();
     return getByName(name);
-  }
-
-  @Override
-  public JavaParameter getRequired(String name) {
-
-    return super.getRequired(name);
   }
 
   @Override

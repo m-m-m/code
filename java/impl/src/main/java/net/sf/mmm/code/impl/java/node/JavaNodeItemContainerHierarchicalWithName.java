@@ -69,10 +69,4 @@ public abstract class JavaNodeItemContainerHierarchicalWithName<I extends JavaIt
    */
   protected abstract I get(String name, boolean init);
 
-  @Override
-  public I getRequired(String name) {
-
-    return super.getRequired(name);
-  }
-
 }

@@ -112,7 +112,7 @@ public class JavaSourceCodeParserImplTest extends Assertions {
     assertThat(type.getFile().getComment().getCommentLines()).containsExactly("Copyright (c) The m-m-m Team, Licensed under the Apache License, Version 2.0",
         "http://www.apache.org/licenses/LICENSE-2.0");
     assertThat(type.getFields().getDeclared()).isEmpty();
-    assertThat(type.getConstructors().getAll()).isEmpty();
+    assertThat(type.getConstructors().getDeclared()).isEmpty();
     List<? extends JavaMethod> methods = type.getMethods().getDeclared();
     assertThat(methods.stream().map(x -> x.getName())).containsExactlyInAnyOrder("getParser", "getContext", "createPackage", "createFile", "parse",
         "testMyself");

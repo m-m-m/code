@@ -50,7 +50,7 @@ public class JavaSourceDependencies implements CodeSourceDependencies<JavaSource
   }
 
   @Override
-  public Iterable<? extends JavaSource> getAll() {
+  public List<? extends JavaSource> getDeclared() {
 
     if (this.dependencies == null) {
       if (this.lazyInit == null) {

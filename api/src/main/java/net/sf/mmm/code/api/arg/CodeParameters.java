@@ -29,7 +29,7 @@ public abstract interface CodeParameters<P extends CodeParameter> extends CodeOp
    */
   default boolean isInvokable(CodeGenericType... parameterTypes) {
 
-    List<? extends CodeParameter> parameters = getAll();
+    List<? extends CodeParameter> parameters = getDeclared();
     if (parameters.size() != parameterTypes.length) {
       return false;
     }
@@ -50,8 +50,8 @@ public abstract interface CodeParameters<P extends CodeParameter> extends CodeOp
    */
   default boolean isInvokable(CodeParameters<P> parameters) {
 
-    List<? extends CodeParameter> myParams = getAll();
-    List<? extends CodeParameter> otherParams = parameters.getAll();
+    List<? extends CodeParameter> myParams = getDeclared();
+    List<? extends CodeParameter> otherParams = parameters.getDeclared();
     int size = myParams.size();
     if (size != otherParams.size()) {
       return false;

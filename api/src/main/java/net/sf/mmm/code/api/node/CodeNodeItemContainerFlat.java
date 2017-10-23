@@ -2,8 +2,6 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.node;
 
-import java.util.List;
-
 import net.sf.mmm.code.api.item.CodeItem;
 
 /**
@@ -15,13 +13,6 @@ import net.sf.mmm.code.api.item.CodeItem;
  * @since 1.0.0
  */
 public abstract interface CodeNodeItemContainerFlat<I extends CodeItem> extends CodeNodeItemContainer<I> {
-
-  /**
-   * @return the {@link List} of all contained {@link CodeItem}s. May be {@link java.util.Collection#isEmpty()
-   *         empty} but is never {@code null}.
-   */
-  @Override
-  List<? extends I> getAll();
 
   @Override
   CodeNodeItemContainerFlat<I> copy();

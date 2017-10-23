@@ -83,12 +83,6 @@ public class JavaProperties extends JavaMembers<JavaProperty> implements CodePro
   }
 
   @Override
-  public JavaProperty getRequired(String name) {
-
-    return super.getRequired(name);
-  }
-
-  @Override
   public JavaProperty add(String name) {
 
     verifyMutalbe();

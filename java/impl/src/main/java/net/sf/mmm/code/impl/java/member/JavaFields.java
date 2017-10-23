@@ -99,12 +99,6 @@ public class JavaFields extends JavaMembers<JavaField> implements CodeFields<Jav
   }
 
   @Override
-  public JavaField getRequired(String name) {
-
-    return super.getRequired(name);
-  }
-
-  @Override
   public JavaField add(String name) {
 
     verifyMutalbe();

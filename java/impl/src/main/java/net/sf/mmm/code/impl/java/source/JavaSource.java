@@ -122,7 +122,7 @@ public class JavaSource extends JavaProvider implements net.sf.mmm.code.api.sour
   @Override
   public JavaSource getParent() {
 
-    Iterator<? extends JavaSource> iterator = getDependencies().getAll().iterator();
+    Iterator<? extends JavaSource> iterator = getDependencies().iterator();
     if (iterator.hasNext()) {
       return iterator.next();
     }

@@ -16,26 +16,6 @@ import net.sf.mmm.code.api.item.CodeItemWithName;
 public abstract interface CodeNodeItemContainerHierarchicalWithName<I extends CodeItem>
     extends CodeNodeItemContainerHierarchical<I>, CodeNodeItemContainerWithName<I> {
 
-  /**
-   * @param name the {@link CodeItemWithName#getName() name} of the requested {@link CodeItem}.
-   * @return the {@link CodeItem} from the {@link #getDeclared() declared items} with the given {@code name}
-   *         or {@code null} if no such item exists.
-   */
-  I getDeclared(String name);
-
-  /**
-   * @param name the {@link CodeItemWithName#getName() name} of the requested {@link CodeItem}.
-   * @return the {@link #getDeclared(String) existing} or {@link #add(String) added} {@link CodeItem}.
-   */
-  default I getDeclaredOrCreate(String name) {
-
-    I item = getDeclared(name);
-    if (item == null) {
-      item = add(name);
-    }
-    return item;
-  }
-
   @Override
   CodeNodeItemContainerHierarchicalWithName<I> copy();
 

@@ -38,7 +38,7 @@ public class GenericMethodInvocation extends GenericMemberReference implements C
   public GenericMethodInvocation(CodeMethod method) {
 
     this(method, Collections.emptyList(), null, null, null);
-    List<? extends CodeParameter> parameters = method.getParameters().getAll();
+    List<? extends CodeParameter> parameters = method.getParameters().getDeclared();
     int size = parameters.size();
     if ((size > 1) || ((size == 1) && !parameters.get(0).isVarArgs())) {
       throw new IllegalArgumentException(method.toString());

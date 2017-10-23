@@ -16,6 +16,12 @@ import net.sf.mmm.code.api.item.CodeItemWithName;
 public abstract interface CodeNodeItemContainerFlatWithName<I extends CodeItem> extends CodeNodeItemContainerFlat<I>, CodeNodeItemContainerWithName<I> {
 
   @Override
+  default I get(String name) {
+
+    return getDeclared(name);
+  }
+
+  @Override
   CodeNodeItemContainerFlatWithName<I> copy();
 
 }

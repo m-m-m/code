@@ -123,7 +123,7 @@ public class JavaRootContextTest extends Assertions {
 
     // test "Enum<E extends Enum<E>>" - great test with its recursive declaration
     JavaTypeVariables typeVariables = enumeration.getTypeParameters();
-    List<? extends JavaTypeVariable> typeVariableList = typeVariables.getAll();
+    List<? extends JavaTypeVariable> typeVariableList = typeVariables.getDeclared();
     assertThat(typeVariableList).hasSize(1);
     JavaTypeVariable typeVariable = typeVariableList.get(0);
     assertThat(typeVariable.getName()).isEqualTo("E");
@@ -135,7 +135,7 @@ public class JavaRootContextTest extends Assertions {
     JavaGenericType bound = typeVariable.getBound();
     assertThat(bound).isNotNull().isInstanceOf(JavaParameterizedType.class);
     JavaGenericTypeParameters<?> typeParameters = bound.getTypeParameters();
-    List<? extends JavaGenericType> typeParameterList = typeParameters.getAll();
+    List<? extends JavaGenericType> typeParameterList = typeParameters.getDeclared();
     assertThat(typeParameterList).hasSize(1);
     JavaGenericType boundTypeVariable = typeParameterList.get(0);
     assertThat(boundTypeVariable).isSameAs(typeVariable);
@@ -188,7 +188,7 @@ public class JavaRootContextTest extends Assertions {
 
   private void verifyConstructors(JavaConstructors constructors, Constructor<?>[] declaredConstructors, JavaContext context) {
 
-    assertThat(constructors.getAll()).hasSameSizeAs(declaredConstructors);
+    assertThat(constructors.getDeclared()).hasSameSizeAs(declaredConstructors);
     for (Constructor<?> constructor : declaredConstructors) {
       verifyConstructor(constructors, constructor, context);
     }
