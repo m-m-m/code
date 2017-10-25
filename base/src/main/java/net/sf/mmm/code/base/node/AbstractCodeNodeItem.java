@@ -8,6 +8,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.node.CodeNode;
 import net.sf.mmm.code.api.node.CodeNodeItem;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
@@ -101,6 +102,30 @@ public abstract class AbstractCodeNodeItem extends AbstractCodeMutableItem imple
     } catch (Exception e) {
       LOG.debug("{}.toString() failed!", getClass().getSimpleName(), e);
     }
+  }
+
+  /**
+   * @param <I> type of the {@link CodeItem}.
+   * @param container the {@link AbstractCodeNodeItemContainerWithName}.
+   * @param name - see {@link AbstractCodeNodeItemContainerWithName#get(String, boolean)}.
+   * @param init - see {@link AbstractCodeNodeItemContainerWithName#get(String, boolean)}.
+   * @return see {@link AbstractCodeNodeItemContainerWithName#get(String, boolean)}.
+   */
+  protected static <I extends CodeItem> I getContainerItem(AbstractCodeNodeItemContainerWithName<I> container, String name, boolean init) {
+
+    return container.get(name, init);
+  }
+
+  /**
+   * @param <I> type of the {@link CodeItem}.
+   * @param container the {@link AbstractCodeNodeItemContainerWithName}.
+   * @param name - see {@link AbstractCodeNodeItemContainerWithName#getDeclared(String, boolean)}.
+   * @param init - see {@link AbstractCodeNodeItemContainerWithName#getDeclared(String, boolean)}.
+   * @return see {@link AbstractCodeNodeItemContainerWithName#getDeclared(String, boolean)}.
+   */
+  protected static <I extends CodeItem> I getContainerItemDeclared(AbstractCodeNodeItemContainerWithName<I> container, String name, boolean init) {
+
+    return container.getDeclared(name, init);
   }
 
 }

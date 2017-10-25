@@ -7,9 +7,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import net.sf.mmm.code.api.CodeContext;
 import net.sf.mmm.code.api.block.CodeBlock;
 import net.sf.mmm.code.api.expression.CodeVariable;
 import net.sf.mmm.code.api.item.CodeItem;
+import net.sf.mmm.code.api.source.CodeSource;
 import net.sf.mmm.code.api.statement.CodeReturnStatement;
 import net.sf.mmm.code.api.statement.CodeStatement;
 import net.sf.mmm.code.api.syntax.CodeSyntax;
@@ -97,6 +99,18 @@ public abstract class GenericBlock extends AbstractCodeNodeItem implements CodeB
   public List<CodeStatement> getStatements() {
 
     return this.statements;
+  }
+
+  @Override
+  public CodeSource getSource() {
+
+    return getParent().getSource();
+  }
+
+  @Override
+  public CodeContext getContext() {
+
+    return getParent().getContext();
   }
 
   @Override

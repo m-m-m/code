@@ -8,7 +8,7 @@ package net.sf.mmm.code.api.type;
  *
  * @see java.lang.reflect.WildcardType
  * @see CodeParameterizedType#getTypeParameters()
- * @see CodeTypeParameters#getAll()
+ * @see CodeTypeParameters#getDeclared()
  * @see CodeTypeVariable
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)

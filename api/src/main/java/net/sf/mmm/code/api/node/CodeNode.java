@@ -26,10 +26,7 @@ public abstract interface CodeNode extends CodeWithContext {
    *         object itself ({@code this}).
    */
   @Override
-  default CodeContext getContext() {
-
-    return getSource().getContext();
-  }
+  CodeContext getContext();
 
   /**
    * @return the owning {@link CodeSource}. Shall never be {@code null}.

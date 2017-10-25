@@ -3,7 +3,6 @@
 package net.sf.mmm.code.impl.java.member;
 
 import java.lang.reflect.Constructor;
-import java.util.List;
 
 import net.sf.mmm.code.api.member.CodeConstructors;
 import net.sf.mmm.code.api.member.CodeMethods;
@@ -52,13 +51,6 @@ public class JavaConstructors extends JavaOperations<JavaConstructor>
         addInternal(javaConstructor);
       }
     }
-  }
-
-  @Override
-  public List<? extends JavaConstructor> getDeclared() {
-
-    initialize();
-    return getList();
   }
 
   @Override

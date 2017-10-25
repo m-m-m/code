@@ -1,6 +1,6 @@
 /* Copyright (c) The m-m-m Team, Licensed under the Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0 */
-package net.sf.mmm.code.impl.java.node;
+package net.sf.mmm.code.base.node;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,26 +11,23 @@ import java.util.function.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.item.CodeItemWithName;
 import net.sf.mmm.code.api.item.CodeItemWithQualifiedName;
 import net.sf.mmm.code.api.node.CodeNodeItemContainer;
 import net.sf.mmm.code.api.node.CodeNodeItemContainerWithName;
-import net.sf.mmm.code.impl.java.element.JavaElement;
-import net.sf.mmm.code.impl.java.item.JavaItem;
-import net.sf.mmm.code.impl.java.member.JavaMember;
-import net.sf.mmm.code.impl.java.type.JavaType;
 import net.sf.mmm.util.exception.api.DuplicateObjectException;
 
 /**
- * Implementation of {@link CodeNodeItemContainer} for Java.
+ * Abstract implementation of {@link CodeNodeItemContainer}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
- * @param <I> the type of the contained {@link JavaItem}.
+ * @param <I> the type of the contained {@link CodeItem}.
  * @since 1.0.0
  */
-public abstract class JavaNodeItemContainer<I extends JavaItem> extends JavaNodeItemImpl implements CodeNodeItemContainer<I> {
+public abstract class AbstractCodeNodeItemContainer<I extends CodeItem> extends AbstractCodeNodeItem implements CodeNodeItemContainer<I> {
 
-  private static final Logger LOG = LoggerFactory.getLogger(JavaNodeItemContainer.class);
+  private static final Logger LOG = LoggerFactory.getLogger(AbstractCodeNodeItemContainer.class);
 
   private List<I> list;
 
@@ -41,7 +38,7 @@ public abstract class JavaNodeItemContainer<I extends JavaItem> extends JavaNode
   /**
    * The constructor.
    */
-  protected JavaNodeItemContainer() {
+  protected AbstractCodeNodeItemContainer() {
 
     super();
     this.mutableList = new ArrayList<>();
@@ -56,10 +53,10 @@ public abstract class JavaNodeItemContainer<I extends JavaItem> extends JavaNode
   /**
    * The copy-constructor.
    *
-   * @param template the {@link JavaNodeItemContainer} to copy.
+   * @param template the {@link AbstractCodeNodeItemContainer} to copy.
    */
   @SuppressWarnings({ "rawtypes", "unchecked" })
-  public JavaNodeItemContainer(JavaNodeItemContainer<I> template) {
+  public AbstractCodeNodeItemContainer(AbstractCodeNodeItemContainer<I> template) {
 
     super(template);
     this.list = doCopy((List) template.list, this);
@@ -89,6 +86,13 @@ public abstract class JavaNodeItemContainer<I extends JavaItem> extends JavaNode
     return this instanceof CodeNodeItemContainerWithName;
   }
 
+  @Override
+  public final List<? extends I> getDeclared() {
+
+    initialize();
+    return getList();
+  }
+
   /**
    * @return the actual {@link List} of items.
    */
@@ -107,8 +111,8 @@ public abstract class JavaNodeItemContainer<I extends JavaItem> extends JavaNode
 
   /**
    * @param child the child to rename.
-   * @param oldName the old {@link JavaMember#getName() name}.
-   * @param newName the new {@link JavaMember#getName() name} to be {@link JavaMember#setName(String) set}.
+   * @param oldName the old {@link CodeItemWithName#getName() name}.
+   * @param newName the new {@link CodeItemWithName#getName() name} to be set.
    * @param renamer the {@link Consumer} to actually perform the renaming (that may change the
    *        {@link #hashCode()} of the child).
    */
@@ -205,15 +209,6 @@ public abstract class JavaNodeItemContainer<I extends JavaItem> extends JavaNode
       }
     }
     return getList().remove(item);
-  }
-
-  @Override
-  public abstract JavaElement getParent();
-
-  @Override
-  public JavaType getDeclaringType() {
-
-    return getParent().getDeclaringType();
   }
 
 }

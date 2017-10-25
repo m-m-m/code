@@ -9,7 +9,8 @@ import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.api.CodePathElements;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.syntax.CodeSyntax;
-import net.sf.mmm.code.impl.java.node.JavaNodeItemContainerFlat;
+import net.sf.mmm.code.base.node.AbstractCodeNodeItemContainerFlat;
+import net.sf.mmm.code.impl.java.node.JavaNodeItem;
 import net.sf.mmm.code.impl.java.type.JavaType;
 
 /**
@@ -18,8 +19,8 @@ import net.sf.mmm.code.impl.java.type.JavaType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaPathElements extends JavaNodeItemContainerFlat<JavaPathElement>
-    implements CodePathElements<JavaPathElement>, CodeNodeItemWithGenericParent<JavaPackage, JavaPathElements> {
+public class JavaPathElements extends AbstractCodeNodeItemContainerFlat<JavaPathElement>
+    implements CodePathElements<JavaPathElement>, CodeNodeItemWithGenericParent<JavaPackage, JavaPathElements>, JavaNodeItem {
 
   private final JavaPackage parent;
 
@@ -56,6 +57,12 @@ public class JavaPathElements extends JavaNodeItemContainerFlat<JavaPathElement>
   public JavaPackage getParent() {
 
     return this.parent;
+  }
+
+  @Override
+  public JavaType getDeclaringType() {
+
+    return null;
   }
 
   @Override

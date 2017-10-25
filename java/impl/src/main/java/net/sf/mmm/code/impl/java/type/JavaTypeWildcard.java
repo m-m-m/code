@@ -8,10 +8,10 @@ import java.lang.reflect.WildcardType;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeTypeVariable;
 import net.sf.mmm.code.api.type.CodeTypeWildcard;
+import net.sf.mmm.code.base.node.AbstractCodeNodeItemContainer;
 import net.sf.mmm.code.impl.java.element.JavaElementImpl;
 import net.sf.mmm.code.impl.java.item.JavaReflectiveObject;
 import net.sf.mmm.code.impl.java.node.JavaNodeItem;
-import net.sf.mmm.code.impl.java.node.JavaNodeItemContainer;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
@@ -135,8 +135,8 @@ public class JavaTypeWildcard extends JavaTypePlaceholder
   @Override
   public JavaType getDeclaringType() {
 
-    if (this.parent instanceof JavaNodeItemContainer) {
-      return ((JavaNodeItemContainer<?>) this.parent).getDeclaringType();
+    if (this.parent instanceof AbstractCodeNodeItemContainer) {
+      return (JavaType) ((AbstractCodeNodeItemContainer<?>) this.parent).getDeclaringType();
     } else {
       return ((JavaElementImpl) this.parent).getDeclaringType();
     }

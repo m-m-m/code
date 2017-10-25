@@ -3,7 +3,6 @@
 package net.sf.mmm.code.impl.java.member;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import net.sf.mmm.code.api.member.CodeProperties;
@@ -38,12 +37,6 @@ public class JavaProperties extends JavaMembers<JavaProperty> implements CodePro
   public JavaProperties(JavaProperties template, JavaType parent) {
 
     super(template, parent);
-  }
-
-  @Override
-  public List<? extends JavaProperty> getDeclared() {
-
-    return getList();
   }
 
   @Override

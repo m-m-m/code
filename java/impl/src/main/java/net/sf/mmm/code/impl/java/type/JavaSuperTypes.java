@@ -14,8 +14,9 @@ import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeSuperTypes;
+import net.sf.mmm.code.base.node.AbstractCodeNodeItemContainerHierarchical;
 import net.sf.mmm.code.impl.java.JavaContext;
-import net.sf.mmm.code.impl.java.node.JavaNodeItemContainerHierarchical;
+import net.sf.mmm.code.impl.java.node.JavaNodeItem;
 import net.sf.mmm.util.collection.base.AbstractIterator;
 
 /**
@@ -24,8 +25,8 @@ import net.sf.mmm.util.collection.base.AbstractIterator;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaSuperTypes extends JavaNodeItemContainerHierarchical<JavaGenericType>
-    implements CodeSuperTypes<JavaGenericType>, CodeNodeItemWithGenericParent<JavaType, JavaSuperTypes> {
+public class JavaSuperTypes extends AbstractCodeNodeItemContainerHierarchical<JavaGenericType>
+    implements CodeSuperTypes<JavaGenericType>, CodeNodeItemWithGenericParent<JavaType, JavaSuperTypes>, JavaNodeItem {
 
   private static final Logger LOG = LoggerFactory.getLogger(JavaSuperTypes.class);
 
@@ -74,6 +75,12 @@ public class JavaSuperTypes extends JavaNodeItemContainerHierarchical<JavaGeneri
 
   @Override
   public JavaType getParent() {
+
+    return this.parent;
+  }
+
+  @Override
+  public JavaType getDeclaringType() {
 
     return this.parent;
   }

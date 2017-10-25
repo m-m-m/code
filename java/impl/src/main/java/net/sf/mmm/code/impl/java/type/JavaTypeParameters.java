@@ -5,10 +5,10 @@ package net.sf.mmm.code.impl.java.type;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
-import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeTypeParameters;
 import net.sf.mmm.code.impl.java.JavaContext;
+import net.sf.mmm.code.impl.java.member.JavaOperation;
 
 /**
  * Implementation of {@link CodeTypeParameters} for Java.
@@ -77,7 +77,13 @@ public class JavaTypeParameters extends JavaGenericTypeParameters<JavaGenericTyp
   }
 
   @Override
-  public CodeOperation getDeclaringOperation() {
+  public JavaType getDeclaringType() {
+
+    return this.parent.getDeclaringType();
+  }
+
+  @Override
+  public JavaOperation getDeclaringOperation() {
 
     return this.parent.getDeclaringOperation();
   }

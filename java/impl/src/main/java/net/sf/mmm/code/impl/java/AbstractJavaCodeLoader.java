@@ -13,15 +13,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.CodeName;
+import net.sf.mmm.code.base.node.AbstractCodeNodeItemContainerAccess;
 import net.sf.mmm.code.impl.java.arg.JavaOperationArg;
-import net.sf.mmm.code.impl.java.element.JavaElementImpl;
 import net.sf.mmm.code.impl.java.element.JavaElement;
+import net.sf.mmm.code.impl.java.element.JavaElementImpl;
 import net.sf.mmm.code.impl.java.element.JavaElementWithTypeVariables;
 import net.sf.mmm.code.impl.java.loader.JavaCodeLoader;
 import net.sf.mmm.code.impl.java.member.JavaOperation;
 import net.sf.mmm.code.impl.java.node.JavaNode;
-import net.sf.mmm.code.impl.java.node.JavaNodeItemImpl;
-import net.sf.mmm.code.impl.java.node.JavaNodeItemContainerAccess;
+import net.sf.mmm.code.impl.java.node.JavaNodeItem;
 import net.sf.mmm.code.impl.java.source.JavaSource;
 import net.sf.mmm.code.impl.java.type.JavaArrayType;
 import net.sf.mmm.code.impl.java.type.JavaGenericType;
@@ -38,7 +38,7 @@ import net.sf.mmm.util.exception.api.IllegalCaseException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class AbstractJavaCodeLoader extends JavaNodeItemContainerAccess implements JavaCodeLoader {
+public abstract class AbstractJavaCodeLoader extends AbstractCodeNodeItemContainerAccess implements JavaCodeLoader {
 
   private static final Logger LOG = LoggerFactory.getLogger(AbstractJavaCodeLoader.class);
 
@@ -130,7 +130,7 @@ public abstract class AbstractJavaCodeLoader extends JavaNodeItemContainerAccess
       return getType((Class<?>) type);
     } else if (type instanceof ParameterizedType) {
       ParameterizedType parameterizedType = (ParameterizedType) type;
-      return new JavaParameterizedType((JavaElementImpl) declaringElement, parameterizedType);
+      return new JavaParameterizedType(declaringElement, parameterizedType);
     } else if (type instanceof TypeVariable) {
       TypeVariable<?> typeVar = (TypeVariable<?>) type;
       if (declaringElement instanceof JavaType) {
@@ -151,7 +151,7 @@ public abstract class AbstractJavaCodeLoader extends JavaNodeItemContainerAccess
       return new JavaTypeVariable(declaringElement.getDeclaringType().getTypeParameters(), typeVar);
     } else if (type instanceof WildcardType) {
       WildcardType wildcard = (WildcardType) type;
-      JavaNodeItemImpl parent;
+      JavaNodeItem parent;
       if (declaringElement instanceof JavaParameterizedType) {
         parent = ((JavaParameterizedType) declaringElement).getTypeParameters();
       } else {
@@ -160,7 +160,7 @@ public abstract class AbstractJavaCodeLoader extends JavaNodeItemContainerAccess
       return new JavaTypeWildcard(parent, wildcard);
     } else if (type instanceof GenericArrayType) {
       // GenericArrayType arrayType = (GenericArrayType) type;
-      return new JavaArrayType((JavaElementImpl) declaringElement, type);
+      return new JavaArrayType(declaringElement, type);
     } else {
       throw new IllegalCaseException(type.getClass().getSimpleName());
     }

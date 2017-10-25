@@ -5,7 +5,6 @@ package net.sf.mmm.code.api.type;
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.item.CodeItemWithDeclaration;
-import net.sf.mmm.code.api.item.CodeItemWithQualifiedFlag;
 import net.sf.mmm.code.api.item.CodeItemWithQualifiedName;
 
 /**
@@ -14,7 +13,7 @@ import net.sf.mmm.code.api.item.CodeItemWithQualifiedName;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract interface CodeGenericType extends CodeElement, CodeItemWithDeclaration, CodeItemWithQualifiedFlag, CodeItemWithQualifiedName {
+public abstract interface CodeGenericType extends CodeElement, CodeItemWithDeclaration, CodeItemWithQualifiedName {
 
   /**
    * @return the raw {@link CodeType}. In case of an {@link #isArray() array} the

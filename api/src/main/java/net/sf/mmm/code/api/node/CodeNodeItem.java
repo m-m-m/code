@@ -4,8 +4,6 @@ package net.sf.mmm.code.api.node;
 
 import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.item.CodeMutableItem;
-import net.sf.mmm.code.api.source.CodeSource;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
 
 /**
  * {@link CodeNode} that is also a {@link CodeItem}.
@@ -14,18 +12,6 @@ import net.sf.mmm.code.api.syntax.CodeSyntax;
  * @since 1.0.0
  */
 public abstract interface CodeNodeItem extends CodeNode, CodeMutableItem {
-
-  @Override
-  default CodeSource getSource() {
-
-    return getParent().getSource();
-  }
-
-  @Override
-  default CodeSyntax getSyntax() {
-
-    return getContext().getSyntax();
-  }
 
   /**
    * @return a new {@link #isMutable() mutable} copy of this {@link CodeNodeItem}. Will be a deep-copy with

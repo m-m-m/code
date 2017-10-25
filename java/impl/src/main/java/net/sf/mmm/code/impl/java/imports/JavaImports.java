@@ -12,9 +12,11 @@ import net.sf.mmm.code.api.imports.CodeImports;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeType;
+import net.sf.mmm.code.base.node.AbstractCodeNodeItemContainerFlat;
 import net.sf.mmm.code.impl.java.JavaFile;
 import net.sf.mmm.code.impl.java.JavaPackage;
-import net.sf.mmm.code.impl.java.node.JavaNodeItemContainerFlat;
+import net.sf.mmm.code.impl.java.node.JavaNodeItem;
+import net.sf.mmm.code.impl.java.type.JavaType;
 
 /**
  * Implementation of {@link CodeImports} for Java.
@@ -22,8 +24,8 @@ import net.sf.mmm.code.impl.java.node.JavaNodeItemContainerFlat;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaImports extends JavaNodeItemContainerFlat<JavaImport>
-    implements CodeImports<JavaImport>, CodeNodeItemWithGenericParent<JavaFile, JavaImports> {
+public class JavaImports extends AbstractCodeNodeItemContainerFlat<JavaImport>
+    implements CodeImports<JavaImport>, CodeNodeItemWithGenericParent<JavaFile, JavaImports>, JavaNodeItem {
 
   private static final String DUMMY_PACKAGE_PREFIX = ".";
 
@@ -56,6 +58,12 @@ public class JavaImports extends JavaNodeItemContainerFlat<JavaImport>
   public JavaFile getParent() {
 
     return this.parent;
+  }
+
+  @Override
+  public JavaType getDeclaringType() {
+
+    return null;
   }
 
   @Override

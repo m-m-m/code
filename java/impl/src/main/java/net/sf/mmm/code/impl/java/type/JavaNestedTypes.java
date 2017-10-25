@@ -11,7 +11,8 @@ import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeNestedTypes;
 import net.sf.mmm.code.api.type.CodeTypeVariables;
-import net.sf.mmm.code.impl.java.node.JavaNodeItemContainerHierarchicalWithName;
+import net.sf.mmm.code.base.node.AbstractCodeNodeItemContainerHierarchicalWithName;
+import net.sf.mmm.code.impl.java.node.JavaNodeItem;
 
 /**
  * Implementation of {@link CodeTypeVariables} for Java.
@@ -19,8 +20,8 @@ import net.sf.mmm.code.impl.java.node.JavaNodeItemContainerHierarchicalWithName;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaNestedTypes extends JavaNodeItemContainerHierarchicalWithName<JavaType>
-    implements CodeNestedTypes<JavaType>, CodeNodeItemWithGenericParent<JavaType, JavaNestedTypes> {
+public class JavaNestedTypes extends AbstractCodeNodeItemContainerHierarchicalWithName<JavaType>
+    implements CodeNestedTypes<JavaType>, CodeNodeItemWithGenericParent<JavaType, JavaNestedTypes>, JavaNodeItem {
 
   private final JavaType parent;
 
@@ -49,6 +50,12 @@ public class JavaNestedTypes extends JavaNodeItemContainerHierarchicalWithName<J
 
   @Override
   public JavaType getParent() {
+
+    return this.parent;
+  }
+
+  @Override
+  public JavaType getDeclaringType() {
 
     return this.parent;
   }

@@ -5,7 +5,6 @@ package net.sf.mmm.code.impl.java.node;
 import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.base.node.AbstractCodeNodeItem;
 import net.sf.mmm.code.impl.java.JavaContext;
-import net.sf.mmm.code.impl.java.item.JavaItem;
 import net.sf.mmm.code.impl.java.source.JavaSource;
 
 /**
@@ -44,42 +43,6 @@ public abstract class JavaNodeItemImpl extends AbstractCodeNodeItem implements J
   public JavaSource getSource() {
 
     return getParent().getSource();
-  }
-
-  /**
-   * @param <I> type of the {@link JavaItem}.
-   * @param container the {@link JavaNodeItemContainerFlatWithName}.
-   * @param name - see {@link JavaNodeItemContainerFlatWithName#get(String, boolean)}.
-   * @param init - see {@link JavaNodeItemContainerFlatWithName#get(String, boolean)}.
-   * @return see {@link JavaNodeItemContainerFlatWithName#get(String, boolean)}.
-   */
-  protected static <I extends JavaItem> I getContainerItem(JavaNodeItemContainerFlatWithName<I> container, String name, boolean init) {
-
-    return container.get(name, init);
-  }
-
-  /**
-   * @param <I> type of the {@link JavaItem}.
-   * @param container the {@link JavaNodeItemContainerHierarchicalWithName}.
-   * @param name - see {@link JavaNodeItemContainerHierarchicalWithName#get(String, boolean)}.
-   * @param init - see {@link JavaNodeItemContainerHierarchicalWithName#get(String, boolean)}.
-   * @return see {@link JavaNodeItemContainerHierarchicalWithName#get(String, boolean)}.
-   */
-  protected static <I extends JavaItem> I getContainerItem(JavaNodeItemContainerHierarchicalWithName<I> container, String name, boolean init) {
-
-    return container.get(name, init);
-  }
-
-  /**
-   * @param <I> type of the {@link JavaItem}.
-   * @param container the {@link JavaNodeItemContainerHierarchicalWithName}.
-   * @param name - see {@link JavaNodeItemContainerHierarchicalWithName#getDeclared(String, boolean)}.
-   * @param init - see {@link JavaNodeItemContainerHierarchicalWithName#getDeclared(String, boolean)}.
-   * @return see {@link JavaNodeItemContainerHierarchicalWithName#getDeclared(String, boolean)}.
-   */
-  protected static <I extends JavaItem> I getContainerItemDeclared(JavaNodeItemContainerHierarchicalWithName<I> container, String name, boolean init) {
-
-    return container.getDeclared(name, init);
   }
 
 }

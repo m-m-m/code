@@ -7,7 +7,8 @@ import java.util.function.Consumer;
 
 import net.sf.mmm.code.api.member.CodeMembers;
 import net.sf.mmm.code.api.syntax.CodeSyntax;
-import net.sf.mmm.code.impl.java.node.JavaNodeItemContainer;
+import net.sf.mmm.code.base.node.AbstractCodeNodeItemContainer;
+import net.sf.mmm.code.impl.java.node.JavaNodeItem;
 import net.sf.mmm.code.impl.java.type.JavaType;
 
 /**
@@ -17,7 +18,7 @@ import net.sf.mmm.code.impl.java.type.JavaType;
  * @param <M> type of the contained {@link JavaMember}s.
  * @since 1.0.0
  */
-public abstract class JavaMembers<M extends JavaMember> extends JavaNodeItemContainer<M> implements CodeMembers<M> {
+public abstract class JavaMembers<M extends JavaMember> extends AbstractCodeNodeItemContainer<M> implements CodeMembers<M>, JavaNodeItem {
 
   private final JavaType parent;
 
@@ -64,6 +65,12 @@ public abstract class JavaMembers<M extends JavaMember> extends JavaNodeItemCont
       throw new IllegalStateException();
     }
     super.add(item);
+  }
+
+  @Override
+  public JavaType getDeclaringType() {
+
+    return getParent().getDeclaringType();
   }
 
   @Override

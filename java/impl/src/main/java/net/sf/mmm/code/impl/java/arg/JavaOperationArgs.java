@@ -3,8 +3,10 @@
 package net.sf.mmm.code.impl.java.arg;
 
 import net.sf.mmm.code.api.arg.CodeOperationArgs;
+import net.sf.mmm.code.base.node.AbstractCodeNodeItemContainerFlat;
 import net.sf.mmm.code.impl.java.member.JavaOperation;
-import net.sf.mmm.code.impl.java.node.JavaNodeItemContainerFlat;
+import net.sf.mmm.code.impl.java.node.JavaNodeItem;
+import net.sf.mmm.code.impl.java.type.JavaType;
 
 /**
  * Implementation of {@link CodeOperationArgs} for Java.
@@ -13,7 +15,7 @@ import net.sf.mmm.code.impl.java.node.JavaNodeItemContainerFlat;
  * @param <A> type of the contained {@link JavaOperationArg}s.
  * @since 1.0.0
  */
-public abstract class JavaOperationArgs<A extends JavaOperationArg> extends JavaNodeItemContainerFlat<A> implements CodeOperationArgs<A> {
+public abstract class JavaOperationArgs<A extends JavaOperationArg> extends AbstractCodeNodeItemContainerFlat<A> implements CodeOperationArgs<A>, JavaNodeItem {
 
   private final JavaOperation parent;
 
@@ -44,6 +46,12 @@ public abstract class JavaOperationArgs<A extends JavaOperationArg> extends Java
   public JavaOperation getParent() {
 
     return this.parent;
+  }
+
+  @Override
+  public JavaType getDeclaringType() {
+
+    return this.parent.getDeclaringType();
   }
 
   @Override

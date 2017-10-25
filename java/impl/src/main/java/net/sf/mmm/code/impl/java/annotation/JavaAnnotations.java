@@ -13,9 +13,10 @@ import net.sf.mmm.code.api.annotation.CodeAnnotations;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeType;
+import net.sf.mmm.code.base.node.AbstractCodeNodeItemContainerHierarchical;
 import net.sf.mmm.code.impl.java.element.JavaElementImpl;
 import net.sf.mmm.code.impl.java.member.JavaMethod;
-import net.sf.mmm.code.impl.java.node.JavaNodeItemContainerHierarchical;
+import net.sf.mmm.code.impl.java.node.JavaNodeItem;
 import net.sf.mmm.code.impl.java.type.InternalSuperTypeIterator;
 import net.sf.mmm.code.impl.java.type.JavaType;
 import net.sf.mmm.util.collection.base.AbstractIterator;
@@ -26,8 +27,8 @@ import net.sf.mmm.util.collection.base.AbstractIterator;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaAnnotations extends JavaNodeItemContainerHierarchical<JavaAnnotation>
-    implements CodeAnnotations<JavaAnnotation>, CodeNodeItemWithGenericParent<JavaElementImpl, JavaAnnotations> {
+public class JavaAnnotations extends AbstractCodeNodeItemContainerHierarchical<JavaAnnotation>
+    implements CodeAnnotations<JavaAnnotation>, CodeNodeItemWithGenericParent<JavaElementImpl, JavaAnnotations>, JavaNodeItem {
 
   private final JavaElementImpl parent;
 
@@ -132,6 +133,12 @@ public class JavaAnnotations extends JavaNodeItemContainerHierarchical<JavaAnnot
     } else {
       return getDeclared();
     }
+  }
+
+  @Override
+  public JavaType getDeclaringType() {
+
+    return this.parent.getDeclaringType();
   }
 
   @Override

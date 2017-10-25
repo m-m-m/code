@@ -5,7 +5,6 @@ package net.sf.mmm.code.impl.java.member;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Iterator;
-import java.util.List;
 import java.util.function.Predicate;
 
 import net.sf.mmm.code.api.member.CodeField;
@@ -57,13 +56,6 @@ public class JavaFields extends JavaMembers<JavaField> implements CodeFields<Jav
         addInternal(javaField);
       }
     }
-  }
-
-  @Override
-  public List<? extends JavaField> getDeclared() {
-
-    initialize();
-    return getList();
   }
 
   @Override

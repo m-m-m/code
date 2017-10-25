@@ -56,13 +56,6 @@ public class JavaMethods extends JavaOperations<JavaMethod> implements CodeMetho
   }
 
   @Override
-  public List<? extends JavaMethod> getDeclared() {
-
-    initialize();
-    return getList();
-  }
-
-  @Override
   public Iterable<? extends JavaMethod> getAll() {
 
     List<JavaMethod> list = new ArrayList<>(getDeclared());

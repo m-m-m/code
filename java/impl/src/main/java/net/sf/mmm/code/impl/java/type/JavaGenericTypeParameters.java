@@ -7,7 +7,8 @@ import java.util.List;
 
 import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeGenericTypeParameters;
-import net.sf.mmm.code.impl.java.node.JavaNodeItemContainerFlat;
+import net.sf.mmm.code.base.node.AbstractCodeNodeItemContainerFlat;
+import net.sf.mmm.code.impl.java.node.JavaNodeItem;
 
 /**
  * Implementation of {@link CodeGenericTypeParameters} for Java.
@@ -16,7 +17,8 @@ import net.sf.mmm.code.impl.java.node.JavaNodeItemContainerFlat;
  * @param <P> the type of the contained {@link JavaGenericType}s.
  * @since 1.0.0
  */
-public abstract class JavaGenericTypeParameters<P extends JavaGenericType> extends JavaNodeItemContainerFlat<P> implements CodeGenericTypeParameters<P> {
+public abstract class JavaGenericTypeParameters<P extends JavaGenericType> extends AbstractCodeNodeItemContainerFlat<P>
+    implements CodeGenericTypeParameters<P>, JavaNodeItem {
 
   /**
    * The constructor.
