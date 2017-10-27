@@ -3,8 +3,8 @@
 package net.sf.mmm.code.impl.java.loader;
 
 import net.sf.mmm.code.api.CodeLoader;
-import net.sf.mmm.code.impl.java.JavaPackage;
-import net.sf.mmm.code.impl.java.type.JavaType;
+import net.sf.mmm.code.base.BasePackage;
+import net.sf.mmm.code.base.type.BaseType;
 
 /**
  * {@link CodeLoader} for Java.
@@ -15,9 +15,9 @@ import net.sf.mmm.code.impl.java.type.JavaType;
 public interface JavaLoader extends CodeLoader {
 
   @Override
-  JavaPackage getPackage(String qualifiedName);
+  BasePackage getPackage(String qualifiedName);
 
   @Override
-  JavaType getType(String qualifiedName);
+  BaseType getType(String qualifiedName);
 
 }

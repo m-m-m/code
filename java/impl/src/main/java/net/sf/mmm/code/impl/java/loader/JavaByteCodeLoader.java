@@ -5,10 +5,10 @@ package net.sf.mmm.code.impl.java.loader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.mmm.code.base.BasePackage;
+import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.impl.java.AbstractJavaCodeLoader;
-import net.sf.mmm.code.impl.java.JavaPackage;
 import net.sf.mmm.code.impl.java.source.JavaSource;
-import net.sf.mmm.code.impl.java.type.JavaType;
 
 /**
  * Implementation of {@link AbstractJavaCodeLoader} using {@link ClassLoader} and {@link #isSupportByteCode()
@@ -55,14 +55,14 @@ public class JavaByteCodeLoader extends AbstractJavaCodeLoader {
   }
 
   @Override
-  public void scan(JavaPackage pkg) {
+  public void scan(BasePackage pkg) {
 
     // TODO Auto-generated method stub
 
   }
 
   @Override
-  public JavaPackage getPackage(String qualifiedName) {
+  public BasePackage getPackage(String qualifiedName) {
 
     Package pkg = Package.getPackage(qualifiedName);
     if (pkg == null) {
@@ -73,11 +73,11 @@ public class JavaByteCodeLoader extends AbstractJavaCodeLoader {
   }
 
   @Override
-  public JavaType getType(String qualifiedName) {
+  public BaseType getType(String qualifiedName) {
 
     try {
       Class<?> clazz = this.classloader.loadClass(qualifiedName);
-      return (JavaType) getType(clazz);
+      return (BaseType) getType(clazz);
     } catch (ClassNotFoundException e) {
       LOG.debug("Class {} not found.", qualifiedName, e);
       return null;

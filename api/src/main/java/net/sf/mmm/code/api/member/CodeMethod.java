@@ -2,6 +2,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.member;
 
+import java.lang.reflect.Method;
+
 import net.sf.mmm.code.api.arg.CodeReturn;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
@@ -43,6 +45,9 @@ public interface CodeMethod extends CodeOperation {
    *         hierarchy} is searched first, then the interface hierarchy in left recursive order.
    */
   CodeMethod getParentMethod();
+
+  @Override
+  Method getReflectiveObject();
 
   @Override
   CodeMethod copy();

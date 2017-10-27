@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import net.sf.mmm.code.api.expression.CodeVariable;
 import net.sf.mmm.code.api.statement.CodeLocalVariable;
+import net.sf.mmm.code.api.type.CodeTypeCategory;
 
 /**
  * Interface to abstract from a concrete syntax.
@@ -25,7 +26,7 @@ public interface CodeSyntax {
    * @param variable the {@link CodeLocalVariable}.
    * @return the keyword for the declaration (e.g. "let ", "final ", "var ", or "val ").
    */
-  String getKeyword(CodeLocalVariable variable);
+  String getKeywordForVariable(CodeLocalVariable variable);
 
   /**
    * Writes a variable declaration. E.g.
@@ -39,9 +40,36 @@ public interface CodeSyntax {
   void writeDeclaration(CodeVariable variable, Appendable sink) throws IOException;
 
   /**
+   * @param category the {@link CodeTypeCategory}.
+   * @return the keyword for the given {@code category} to use in the source-code.
+   */
+  String getKeywordForCategory(CodeTypeCategory category);
+
+  /**
    * @return the {@link String} used as suffix to terminate a
    *         {@link net.sf.mmm.code.api.statement.CodeAtomicStatement}. E.g. ";".
    */
   String getStatementTerminator();
+
+  /**
+   * @return the {@link String} to signal the start of an
+   *         {@link net.sf.mmm.code.api.annotation.CodeAnnotation}.
+   */
+  default String getAnnotationStart() {
+
+    return "@";
+  }
+
+  /**
+   * @return the {@link String} to signal the end of an empty
+   *         {@link net.sf.mmm.code.api.annotation.CodeAnnotation}. Here empty means that the
+   *         {@link net.sf.mmm.code.api.annotation.CodeAnnotation#getParameters() parameters} are
+   *         {@link java.util.Map#isEmpty() empty}. E.g. for TypeScript even an empty annotation has to be
+   *         terminated with "()".
+   */
+  default String getAnnotationEndIfEmpty() {
+
+    return "";
+  }
 
 }

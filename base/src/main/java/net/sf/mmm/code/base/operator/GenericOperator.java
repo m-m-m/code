@@ -9,7 +9,7 @@ import java.util.Objects;
 
 import net.sf.mmm.code.api.operator.CodeOperator;
 import net.sf.mmm.code.api.syntax.CodeSyntax;
-import net.sf.mmm.code.base.item.AbstractCodeItem;
+import net.sf.mmm.code.base.item.BaseItem;
 import net.sf.mmm.util.exception.api.DuplicateObjectException;
 import net.sf.mmm.util.exception.api.WrongValueTypeException;
 
@@ -19,7 +19,7 @@ import net.sf.mmm.util.exception.api.WrongValueTypeException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class GenericOperator extends AbstractCodeItem implements CodeOperator {
+public abstract class GenericOperator extends BaseItem implements CodeOperator {
 
   private static final Map<String, GenericOperator> MAP = new HashMap<>();
 

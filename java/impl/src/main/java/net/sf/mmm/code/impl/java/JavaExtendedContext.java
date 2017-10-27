@@ -8,10 +8,10 @@ import java.security.CodeSource;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sf.mmm.code.base.type.BaseType;
+import net.sf.mmm.code.base.type.BaseTypeWildcard;
 import net.sf.mmm.code.impl.java.source.JavaSource;
 import net.sf.mmm.code.impl.java.source.JavaSourceProvider;
-import net.sf.mmm.code.impl.java.type.JavaType;
-import net.sf.mmm.code.impl.java.type.JavaTypeWildcard;
 import net.sf.mmm.util.exception.api.DuplicateObjectException;
 
 /**
@@ -130,37 +130,37 @@ public class JavaExtendedContext extends JavaContext {
   }
 
   @Override
-  public JavaType getRootType() {
+  public BaseType getRootType() {
 
     return getRootContext().getRootType();
   }
 
   @Override
-  public JavaType getVoidType() {
+  public BaseType getVoidType() {
 
     return getRootContext().getVoidType();
   }
 
   @Override
-  public JavaType getRootExceptionType() {
+  public BaseType getRootExceptionType() {
 
     return getRootContext().getRootExceptionType();
   }
 
   @Override
-  public JavaType getRootEnumerationType() {
+  public BaseType getRootEnumerationType() {
 
     return getRootContext().getRootEnumerationType();
   }
 
   @Override
-  public JavaTypeWildcard getUnboundedWildcard() {
+  public BaseTypeWildcard getUnboundedWildcard() {
 
     return getRootContext().getUnboundedWildcard();
   }
 
   @Override
-  public JavaType getNonPrimitiveType(JavaType javaType) {
+  public BaseType getNonPrimitiveType(BaseType javaType) {
 
     return getRootContext().getNonPrimitiveType(javaType);
   }

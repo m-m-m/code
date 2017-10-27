@@ -55,6 +55,9 @@ public interface CodePackage extends CodePathElement, CodeContainer {
    */
   boolean isRoot();
 
+  @Override
+  Package getReflectiveObject();
+
   /**
    * @deprecated a {@link CodePackage} contains {@link CodeType}s and not vice versa. Therefore this method
    *             will always return {@code null} here.

@@ -2,6 +2,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.arg;
 
+import java.lang.reflect.AnnotatedType;
+
 import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.member.CodeOperation;
 
@@ -17,6 +19,9 @@ public interface CodeReturn extends CodeOperationArg {
 
   @Override
   CodeOperation getParent();
+
+  @Override
+  AnnotatedType getReflectiveObject();
 
   @Override
   CodeReturn copy();

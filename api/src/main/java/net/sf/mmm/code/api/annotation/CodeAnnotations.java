@@ -10,10 +10,9 @@ import net.sf.mmm.code.api.type.CodeType;
  * {@link CodeNodeItemContainerHierarchical} containing {@link CodeAnnotation}s.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
- * @param <A> the type of the contained {@link CodeAnnotation}s.
  * @since 1.0.0
  */
-public interface CodeAnnotations<A extends CodeAnnotation> extends CodeNodeItemContainerHierarchical<A> {
+public interface CodeAnnotations extends CodeNodeItemContainerHierarchical<CodeAnnotation> {
 
   @Override
   CodeElement getParent();
@@ -26,14 +25,19 @@ public interface CodeAnnotations<A extends CodeAnnotation> extends CodeNodeItemC
    * @see net.sf.mmm.code.api.member.CodeMethod#getParentMethod()
    */
   @Override
-  Iterable<? extends A> getAll();
+  Iterable<? extends CodeAnnotation> getAll();
 
   /**
    * @param type the {@link CodeAnnotation#getType() type} reflecting the {@link CodeType#isAnnotation()
    *        annotation}.
-   * @return the new {@link CodeAnnotation} that has been added.
+   * @return the new {@link CodeAnnotation} that has been created and added.
    */
-  A add(CodeType type);
+  CodeAnnotation add(CodeType type);
+
+  /**
+   * @param annotation the {@link CodeAnnotation} to add.
+   */
+  void add(CodeAnnotation annotation);
 
   /**
    * @param type the {@link CodeAnnotation#getType() type} reflecting the {@link CodeType#isAnnotation()
@@ -41,7 +45,7 @@ public interface CodeAnnotations<A extends CodeAnnotation> extends CodeNodeItemC
    * @return the {@link CodeAnnotation} from {@link #getDeclared()} {@link CodeAnnotation#getType() with} the
    *         give {@link CodeType} or {@code null} if not found.
    */
-  A getDeclared(CodeType type);
+  CodeAnnotation getDeclared(CodeType type);
 
   /**
    * @param type the {@link CodeAnnotation#getType() type} reflecting the {@link CodeType#isAnnotation()
@@ -49,9 +53,9 @@ public interface CodeAnnotations<A extends CodeAnnotation> extends CodeNodeItemC
    * @return the {@link CodeAnnotation} from {@link #getDeclared()} {@link CodeAnnotation#getType() with} the
    *         give {@link CodeType} or a new {@link #add(CodeType) added} one.
    */
-  default A getDeclaredOrAdd(CodeType type) {
+  default CodeAnnotation getDeclaredOrAdd(CodeType type) {
 
-    A annotation = getDeclared(type);
+    CodeAnnotation annotation = getDeclared(type);
     if (annotation == null) {
       annotation = add(type);
     }
@@ -59,6 +63,6 @@ public interface CodeAnnotations<A extends CodeAnnotation> extends CodeNodeItemC
   }
 
   @Override
-  CodeAnnotations<A> copy();
+  CodeAnnotations copy();
 
 }

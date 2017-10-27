@@ -66,12 +66,15 @@ import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.api.source.CodeSourceDescriptor;
 import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.syntax.DefaultCodeSyntax;
-import net.sf.mmm.code.base.source.CodeSourceDescriptorType;
+import net.sf.mmm.code.base.BaseFile;
+import net.sf.mmm.code.base.BasePackage;
+import net.sf.mmm.code.base.BasePathElements;
+import net.sf.mmm.code.base.source.BaseSourceDescriptorType;
+import net.sf.mmm.code.base.type.BaseGenericType;
+import net.sf.mmm.code.base.type.BaseType;
+import net.sf.mmm.code.base.type.BaseTypeWildcard;
 import net.sf.mmm.code.impl.java.loader.JavaByteCodeLoader;
 import net.sf.mmm.code.impl.java.source.JavaSource;
-import net.sf.mmm.code.impl.java.type.JavaGenericType;
-import net.sf.mmm.code.impl.java.type.JavaType;
-import net.sf.mmm.code.impl.java.type.JavaTypeWildcard;
 
 /**
  * Implementation of {@link JavaContext} for the {@link #getParent() root} context.
@@ -120,15 +123,15 @@ public class JavaRootContext extends JavaContext {
 
   private final Map<String, JavaTypeContainer> javaSystemTypeCache;
 
-  private JavaType voidType;
+  private BaseType voidType;
 
-  private JavaType rootExceptionType;
+  private BaseType rootExceptionType;
 
-  private JavaType rootType;
+  private BaseType rootType;
 
-  private JavaType rootEnumerationType;
+  private BaseType rootEnumerationType;
 
-  private JavaTypeWildcard unboundedWildcard;
+  private BaseTypeWildcard unboundedWildcard;
 
   /**
    * The constructor.
@@ -175,7 +178,7 @@ public class JavaRootContext extends JavaContext {
       artifactId = "jdk";
       sourceCodeLocation = srcZip;
     }
-    CodeSourceDescriptor descriptor = new CodeSourceDescriptorType(groupId, artifactId, version, docUrl);
+    CodeSourceDescriptor descriptor = new BaseSourceDescriptorType(groupId, artifactId, version, docUrl);
     return new JavaSource(byteCodeLocation, sourceCodeLocation, id, descriptor);
   }
 
@@ -216,14 +219,14 @@ public class JavaRootContext extends JavaContext {
     this.javaSystemTypeCache.put(javaClass.getName(), container);
   }
 
-  private JavaType createPrimitiveType(Class<?> clazz) {
+  private BaseType createPrimitiveType(Class<?> clazz) {
 
     assert (clazz.isPrimitive());
-    JavaPackage rootPackage = getRootPackage();
-    JavaPathElements children = rootPackage.getChildren();
-    JavaFile file = new JavaFile(rootPackage, clazz);
+    BasePackage rootPackage = getRootPackage();
+    BasePathElements children = rootPackage.getChildren();
+    BaseFile file = new BaseFile(rootPackage, clazz);
     file.setImmutable();
-    children.addInternal(file);
+    addPathElementInternal(children, file);
     return file.getType();
   }
 
@@ -261,7 +264,7 @@ public class JavaRootContext extends JavaContext {
   }
 
   @Override
-  public JavaType getVoidType() {
+  public BaseType getVoidType() {
 
     if (this.voidType == null) {
       this.voidType = this.javaSystemTypeCache.get(PRIMITVE_TYPE_VOID).javaType;
@@ -270,26 +273,26 @@ public class JavaRootContext extends JavaContext {
   }
 
   @Override
-  public JavaTypeWildcard getUnboundedWildcard() {
+  public BaseTypeWildcard getUnboundedWildcard() {
 
     if (this.unboundedWildcard == null) {
-      this.unboundedWildcard = new JavaTypeWildcard(getRootType(), JavaWildcardType.UNBOUNDED_WILDCARD);
+      this.unboundedWildcard = new BaseTypeWildcard(getRootType(), JavaWildcardType.UNBOUNDED_WILDCARD);
     }
     return this.unboundedWildcard;
   }
 
-  private JavaType getType(JavaTypeContainer typeContainer) {
+  private BaseType getType(JavaTypeContainer typeContainer) {
 
     if (typeContainer.javaType == null) {
-      typeContainer.javaType = (JavaType) super.getType(typeContainer.javaClass);
+      typeContainer.javaType = (BaseType) super.getType(typeContainer.javaClass);
     }
     return typeContainer.javaType;
   }
 
   @Override
-  public JavaGenericType getType(Class<?> clazz) {
+  public BaseGenericType getType(Class<?> clazz) {
 
-    JavaType type = getTypeFromCache(clazz.getName());
+    BaseType type = getTypeFromCache(clazz.getName());
     if (type != null) {
       return type;
     }
@@ -297,16 +300,16 @@ public class JavaRootContext extends JavaContext {
   }
 
   @Override
-  public JavaType getType(String qualifiedName) {
+  public BaseType getType(String qualifiedName) {
 
-    JavaType type = getTypeFromCache(qualifiedName);
+    BaseType type = getTypeFromCache(qualifiedName);
     if (type != null) {
       return type;
     }
     return getType(parseName(qualifiedName), false);
   }
 
-  private JavaType getTypeFromCache(String qualifiedName) {
+  private BaseType getTypeFromCache(String qualifiedName) {
 
     JavaTypeContainer typeContainer = this.javaSystemTypeCache.get(qualifiedName);
     if (typeContainer != null) {
@@ -316,15 +319,15 @@ public class JavaRootContext extends JavaContext {
   }
 
   @Override
-  public JavaType getType(CodeName qualifiedName) {
+  public BaseType getType(CodeName qualifiedName) {
 
     return getType(qualifiedName, true);
   }
 
-  private JavaType getType(CodeName qualifiedName, boolean lookup) {
+  private BaseType getType(CodeName qualifiedName, boolean lookup) {
 
     if (lookup) {
-      JavaType type = getTypeFromCache(qualifiedName.getFullName());
+      BaseType type = getTypeFromCache(qualifiedName.getFullName());
       if (type != null) {
         return type;
       }
@@ -342,7 +345,7 @@ public class JavaRootContext extends JavaContext {
   }
 
   @Override
-  public JavaType getRootType() {
+  public BaseType getRootType() {
 
     if (this.rootType == null) {
       this.rootType = getTypeFromCache(Object.class.getName());
@@ -351,7 +354,7 @@ public class JavaRootContext extends JavaContext {
   }
 
   @Override
-  public JavaType getRootEnumerationType() {
+  public BaseType getRootEnumerationType() {
 
     if (this.rootEnumerationType == null) {
       this.rootEnumerationType = getTypeFromCache(Enum.class.getName());
@@ -360,7 +363,7 @@ public class JavaRootContext extends JavaContext {
   }
 
   @Override
-  public JavaType getRootExceptionType() {
+  public BaseType getRootExceptionType() {
 
     if (this.rootExceptionType == null) {
       this.rootExceptionType = getTypeFromCache(Throwable.class.getName());
@@ -368,12 +371,8 @@ public class JavaRootContext extends JavaContext {
     return this.rootExceptionType;
   }
 
-  /**
-   * @param javaType the {@link JavaType} that might be {@link JavaType#isPrimitive() primitive}.
-   * @return the corresponding {@link JavaType#getNonPrimitiveType() non-primitive type}.
-   */
   @Override
-  public JavaType getNonPrimitiveType(JavaType javaType) {
+  public BaseType getNonPrimitiveType(BaseType javaType) {
 
     if (javaType.isPrimitive()) {
       String qualifiedName = JAVA_PRIMITIVE_TYPES_MAP.get(javaType.getSimpleName());
@@ -405,7 +404,7 @@ public class JavaRootContext extends JavaContext {
 
     private final Class<?> javaClass;
 
-    private JavaType javaType;
+    private BaseType javaType;
 
     private JavaTypeContainer(Class<?> javaClass) {
 

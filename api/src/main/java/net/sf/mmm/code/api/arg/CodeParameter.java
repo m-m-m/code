@@ -2,6 +2,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.arg;
 
+import java.lang.reflect.Parameter;
+
 import net.sf.mmm.code.api.element.CodeElementWithName;
 import net.sf.mmm.code.api.expression.CodeVariable;
 import net.sf.mmm.code.api.member.CodeOperation;
@@ -36,6 +38,9 @@ public interface CodeParameter extends CodeOperationArg, CodeElementWithName, Co
    * @throws ReadOnlyException if {@link #isImmutable() immutable}.
    */
   void setVarArgs(boolean varArgs);
+
+  @Override
+  Parameter getReflectiveObject();
 
   @Override
   CodeParameter copy();

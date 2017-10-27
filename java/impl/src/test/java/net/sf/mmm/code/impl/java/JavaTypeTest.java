@@ -10,11 +10,12 @@ import org.junit.Test;
 
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.api.type.CodeTypeCategory;
-import net.sf.mmm.code.impl.java.type.JavaGenericType;
-import net.sf.mmm.code.impl.java.type.JavaType;
+import net.sf.mmm.code.base.BasePackage;
+import net.sf.mmm.code.base.type.BaseGenericType;
+import net.sf.mmm.code.base.type.BaseType;
 
 /**
- * Test of {@link JavaType}.
+ * Test of {@link BaseType}.
  */
 public class JavaTypeTest extends Assertions {
 
@@ -24,20 +25,20 @@ public class JavaTypeTest extends Assertions {
   }
 
   /**
-   * Test of {@link JavaType} for empty class.
+   * Test of {@link BaseType} for empty class.
    */
   @Test
   public void testEmptyClass() {
 
     // given
     JavaContext context = createContext();
-    JavaPackage rootPackage = context.getRootPackage();
+    BasePackage rootPackage = context.getRootPackage();
     String pkgName = "mydomain";
-    JavaPackage pkg = rootPackage.getChildren().createPackage(pkgName);
+    BasePackage pkg = rootPackage.getChildren().createPackage(pkgName);
     String simpleName = "MyClass";
 
     // when
-    JavaType type = pkg.getChildren().createFile(simpleName).getType();
+    BaseType type = pkg.getChildren().createFile(simpleName).getType();
 
     // then
     assertThat(type.getSimpleName()).isEqualTo(simpleName);
@@ -68,9 +69,9 @@ public class JavaTypeTest extends Assertions {
 
     // given
     JavaContext context = createContext();
-    JavaPackage rootPackage = context.getRootPackage();
+    BasePackage rootPackage = context.getRootPackage();
     String pkgName = "mydomain";
-    JavaPackage pkg = rootPackage.getChildren().createPackage(pkgName);
+    BasePackage pkg = rootPackage.getChildren().createPackage(pkgName);
     String simpleNameTop = "ClassToplevel";
     String simpleNameNested1 = "StaticClassNested1";
     String simpleNameNested2 = "InterfaceClassNested2";
@@ -79,15 +80,15 @@ public class JavaTypeTest extends Assertions {
     String simpleNameNested212 = "EnumNested2_1_2";
 
     // when
-    JavaType classTop = pkg.getChildren().createType(simpleNameTop);
-    JavaType classStaticNested1 = classTop.getNestedTypes().add(simpleNameNested1);
+    BaseType classTop = pkg.getChildren().createType(simpleNameTop);
+    BaseType classStaticNested1 = classTop.getNestedTypes().add(simpleNameNested1);
     classStaticNested1.setModifiers(CodeModifiers.MODIFIERS_PUBLIC_STATIC);
-    JavaType interfacetypeNested2 = classTop.getNestedTypes().add(simpleNameNested2);
+    BaseType interfacetypeNested2 = classTop.getNestedTypes().add(simpleNameNested2);
     interfacetypeNested2.setCategory(CodeTypeCategory.INTERFACE);
-    JavaType classNested21 = interfacetypeNested2.getNestedTypes().add(simpleNameNested21);
-    JavaType annotationNested211 = classNested21.getNestedTypes().add(simpleNameNested211);
+    BaseType classNested21 = interfacetypeNested2.getNestedTypes().add(simpleNameNested21);
+    BaseType annotationNested211 = classNested21.getNestedTypes().add(simpleNameNested211);
     annotationNested211.setCategory(CodeTypeCategory.ANNOTATION);
-    JavaType enumNested212 = classNested21.getNestedTypes().add(simpleNameNested212);
+    BaseType enumNested212 = classNested21.getNestedTypes().add(simpleNameNested212);
     enumNested212.setCategory(CodeTypeCategory.ENUMERAION);
     addDummyDoc(classTop);
 
@@ -98,9 +99,9 @@ public class JavaTypeTest extends Assertions {
     assertThat(classNested21.getSimpleName()).isEqualTo(simpleNameNested21);
     assertThat(annotationNested211.getSimpleName()).isEqualTo(simpleNameNested211);
     assertThat(enumNested212.getSimpleName()).isEqualTo(simpleNameNested212);
-    assertThat((List<JavaType>) classTop.getNestedTypes().getDeclared()).containsExactly(classStaticNested1, interfacetypeNested2);
-    assertThat((List<JavaType>) interfacetypeNested2.getNestedTypes().getDeclared()).containsExactly(classNested21);
-    assertThat((List<JavaType>) classNested21.getNestedTypes().getDeclared()).containsExactly(annotationNested211, enumNested212);
+    assertThat((List<BaseType>) classTop.getNestedTypes().getDeclared()).containsExactly(classStaticNested1, interfacetypeNested2);
+    assertThat((List<BaseType>) interfacetypeNested2.getNestedTypes().getDeclared()).containsExactly(classNested21);
+    assertThat((List<BaseType>) classNested21.getNestedTypes().getDeclared()).containsExactly(annotationNested211, enumNested212);
     assertThat(classTop.getFile().toString()).isEqualTo("ClassToplevel");
     assertThat(classTop.getFile().getSourceCode()).isEqualTo("package mydomain;\n" + //
         "\n" + //
@@ -141,35 +142,35 @@ public class JavaTypeTest extends Assertions {
         "}\n");
   }
 
-  private void addDummyDoc(JavaType type) {
+  private void addDummyDoc(BaseType type) {
 
     type.getDoc().getLines().add("Doc for {@link " + type.getSimpleName() + "}.");
-    for (JavaType child : type.getNestedTypes().getDeclared()) {
+    for (BaseType child : type.getNestedTypes().getDeclared()) {
       addDummyDoc(child);
     }
   }
 
   /**
-   * Test of {@link JavaType#getSuperTypes()}.
+   * Test of {@link BaseType#getSuperTypes()}.
    */
   @Test
   public void testSuperTypes() {
 
     // given
     JavaContext context = createContext();
-    JavaPackage rootPackage = context.getRootPackage();
+    BasePackage rootPackage = context.getRootPackage();
     String pkgName1 = "pkg1";
-    JavaPackage pkg1 = rootPackage.getChildren().createPackage(pkgName1);
+    BasePackage pkg1 = rootPackage.getChildren().createPackage(pkgName1);
     String pkgName2 = "pkg2";
-    JavaPackage pkg2 = rootPackage.getChildren().createPackage(pkgName2);
+    BasePackage pkg2 = rootPackage.getChildren().createPackage(pkgName2);
 
     // when
-    JavaType interface1Other = pkg1.getChildren().createType("Other");
-    JavaType interface2Bar = pkg1.getChildren().createType("Bar");
-    JavaType interface3Some = pkg2.getChildren().createType("Some");
-    JavaType interface4Foo = pkg2.getChildren().createType("Foo");
-    JavaType class1Other = pkg1.getChildren().createType("OtherClass");
-    JavaType class2Foo = pkg2.getChildren().createType("FooClass");
+    BaseType interface1Other = pkg1.getChildren().createType("Other");
+    BaseType interface2Bar = pkg1.getChildren().createType("Bar");
+    BaseType interface3Some = pkg2.getChildren().createType("Some");
+    BaseType interface4Foo = pkg2.getChildren().createType("Foo");
+    BaseType class1Other = pkg1.getChildren().createType("OtherClass");
+    BaseType class2Foo = pkg2.getChildren().createType("FooClass");
     interface3Some.getSuperTypes().add(interface2Bar);
     interface4Foo.getSuperTypes().add(interface3Some);
     interface4Foo.getSuperTypes().add(interface1Other);
@@ -182,10 +183,10 @@ public class JavaTypeTest extends Assertions {
     assertThat(getAllSuperTypesAsList(class2Foo)).containsExactly(class1Other, interface1Other, interface2Bar, interface4Foo, interface3Some);
   }
 
-  private List<JavaGenericType> getAllSuperTypesAsList(JavaType class2Foo) {
+  private List<BaseGenericType> getAllSuperTypesAsList(BaseType class2Foo) {
 
-    List<JavaGenericType> superTypeList = new ArrayList<>();
-    for (JavaGenericType superType : class2Foo.getSuperTypes().getAll()) {
+    List<BaseGenericType> superTypeList = new ArrayList<>();
+    for (BaseGenericType superType : class2Foo.getSuperTypes().getAll()) {
       superTypeList.add(superType);
     }
     return superTypeList;

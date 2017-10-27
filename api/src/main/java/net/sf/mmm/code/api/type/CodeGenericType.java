@@ -2,6 +2,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.type;
 
+import java.lang.reflect.Type;
+
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.item.CodeItemWithDeclaration;
@@ -152,6 +154,9 @@ public abstract interface CodeGenericType extends CodeElement, CodeItemWithDecla
 
     return CodeTypeCategory.ANNOTATION.equals(getCategory());
   }
+
+  @Override
+  Type getReflectiveObject();
 
   @Override
   CodeGenericType copy();

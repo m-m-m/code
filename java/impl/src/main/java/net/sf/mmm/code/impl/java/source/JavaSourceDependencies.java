@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import net.sf.mmm.code.api.source.CodeSourceDependencies;
-import net.sf.mmm.code.impl.java.node.JavaNode;
+import net.sf.mmm.code.base.node.BaseNode;
 
 /**
  * Implementation of {@link CodeSourceDependencies} for Java.
@@ -15,7 +15,7 @@ import net.sf.mmm.code.impl.java.node.JavaNode;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaSourceDependencies implements CodeSourceDependencies<JavaSource>, JavaNode {
+public class JavaSourceDependencies implements CodeSourceDependencies<JavaSource>, BaseNode {
 
   private final JavaSource parent;
 
@@ -27,7 +27,7 @@ public class JavaSourceDependencies implements CodeSourceDependencies<JavaSource
    * The constructor.
    *
    * @param parent the {@link #getParent() parent}.
-   * @param lazyInit the lazy initializer for the {@link #getAll() dependencies}.
+   * @param lazyInit the lazy initializer for the {@link #getDeclared() dependencies}.
    */
   public JavaSourceDependencies(JavaSource parent, Supplier<List<JavaSource>> lazyInit) {
 
@@ -40,7 +40,7 @@ public class JavaSourceDependencies implements CodeSourceDependencies<JavaSource
    * The constructor.
    *
    * @param parent the {@link #getParent() parent}.
-   * @param dependencies the {@link #getAll() dependencies}.
+   * @param dependencies the {@link #getDeclared() dependencies}.
    */
   public JavaSourceDependencies(JavaSource parent, List<JavaSource> dependencies) {
 

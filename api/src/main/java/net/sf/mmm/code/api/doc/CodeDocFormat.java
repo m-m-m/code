@@ -7,6 +7,9 @@ import java.util.function.Supplier;
 import net.sf.mmm.util.xml.base.XmlUtilImpl;
 
 /**
+ * Definition of format(s) to be able to convert {@link CodeDoc} to.
+ *
+ * @see CodeDoc#getFormatted(CodeDocFormat)
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0

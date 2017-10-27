@@ -12,18 +12,19 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.mmm.code.api.annotation.CodeAnnotation;
 import net.sf.mmm.code.api.comment.CodeComment;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.api.modifier.CodeVisibility;
 import net.sf.mmm.code.api.operator.CodeNAryOperator;
 import net.sf.mmm.code.api.operator.CodeOperator;
-import net.sf.mmm.code.base.comment.GenericBlockComment;
-import net.sf.mmm.code.base.comment.GenericComments;
-import net.sf.mmm.code.base.comment.GenericSingleLineComment;
+import net.sf.mmm.code.base.BaseFile;
+import net.sf.mmm.code.base.annoation.BaseAnnotation;
+import net.sf.mmm.code.base.comment.BaseBlockComment;
+import net.sf.mmm.code.base.comment.BaseComments;
+import net.sf.mmm.code.base.comment.BaseSingleLineComment;
 import net.sf.mmm.code.base.operator.GenericOperator;
-import net.sf.mmm.code.impl.java.JavaFile;
-import net.sf.mmm.code.impl.java.annotation.JavaAnnotation;
 import net.sf.mmm.code.impl.java.expression.JavaNAryOperatorExpression;
 import net.sf.mmm.code.impl.java.expression.literal.JavaLiteral;
 import net.sf.mmm.code.impl.java.expression.literal.JavaLiteralBoolean;
@@ -71,10 +72,10 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
   protected CodeComment elementComment;
 
   /** {@link #getAnnotations()} */
-  protected final List<JavaAnnotation> annotations;
+  protected final List<CodeAnnotation> annotations;
 
-  /** The current {@link JavaFile} to parse. */
-  protected JavaFile file;
+  /** The current {@link BaseFile} to parse. */
+  protected BaseFile file;
 
   /**
    * The constructor.
@@ -137,7 +138,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
       if (size == 1) {
         this.elementComment = this.comments.get(0);
       } else if (size > 1) {
-        this.elementComment = new GenericComments(new ArrayList<>(this.comments));
+        this.elementComment = new BaseComments(new ArrayList<>(this.comments));
       }
       this.comments.clear();
     }
@@ -154,10 +155,10 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
   }
 
   /**
-   * @return the {@link List} of {@link JavaAnnotation}s that have been parsed by the last invocation of
+   * @return the {@link List} of {@link CodeAnnotation}s that have been parsed by the last invocation of
    *         {@link #consume()}.
    */
-  public List<JavaAnnotation> getAnnotations() {
+  public List<CodeAnnotation> getAnnotations() {
 
     return this.annotations;
   }
@@ -201,7 +202,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
       if (commentCount == 1) {
         comment = this.comments.get(0);
       } else {
-        comment = new GenericComments(new ArrayList<>(this.comments));
+        comment = new BaseComments(new ArrayList<>(this.comments));
       }
       this.comments.clear();
     }
@@ -234,7 +235,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
 
     String annotationTypeName = parseQName();
     String annotationQName = getQualifiedName(annotationTypeName);
-    JavaAnnotation annotation = new JavaAnnotation(this.file.getContext(), annotationTypeName, annotationQName);
+    CodeAnnotation annotation = new BaseAnnotation(this.file.getContext(), annotationTypeName, annotationQName);
     if (expect('(')) {
       parseAnnotationParameters(annotation, annotationTypeName);
     }
@@ -245,7 +246,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
     this.annotations.add(annotation);
   }
 
-  private void parseAnnotationParameters(JavaAnnotation annotation, String annotationTypeName) {
+  private void parseAnnotationParameters(CodeAnnotation annotation, String annotationTypeName) {
 
     parseWhitespacesAndComments();
     if (expect(')')) {
@@ -379,7 +380,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
     char c = forcePeek();
     if (c == '/') {
       String line = readLine(true);
-      this.comments.add(new GenericSingleLineComment(line));
+      this.comments.add(new BaseSingleLineComment(line));
     } else if (c == '*') {
       next();
       c = forcePeek();
@@ -392,7 +393,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
       } else {
         List<String> lines = new ArrayList<>();
         parseDocOrBlockComment(lines);
-        GenericBlockComment comment = new GenericBlockComment(lines);
+        BaseBlockComment comment = new BaseBlockComment(lines);
         this.comments.add(comment);
       }
     } else {

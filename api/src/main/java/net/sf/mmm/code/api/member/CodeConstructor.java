@@ -2,6 +2,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.member;
 
+import java.lang.reflect.Constructor;
+
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
@@ -9,7 +11,7 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * {@link CodeOperation} representing a constructor of a {@link CodeType}.
  *
  * @see CodeType#getConstructors()
- * @see CodeConstructors#getAll()
+ * @see CodeConstructors#getDeclared()
  * @see java.lang.reflect.Constructor
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
@@ -30,6 +32,9 @@ public interface CodeConstructor extends CodeOperation {
 
     throw new ReadOnlyException(getClass().getSimpleName(), "name");
   }
+
+  @Override
+  Constructor<?> getReflectiveObject();
 
   @Override
   CodeConstructor copy();

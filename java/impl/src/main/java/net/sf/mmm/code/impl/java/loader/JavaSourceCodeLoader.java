@@ -3,11 +3,11 @@
 package net.sf.mmm.code.impl.java.loader;
 
 import net.sf.mmm.code.api.java.parser.JavaSourceCodeParser;
+import net.sf.mmm.code.base.BaseFile;
+import net.sf.mmm.code.base.BasePackage;
+import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.impl.java.AbstractJavaCodeLoader;
-import net.sf.mmm.code.impl.java.JavaFile;
-import net.sf.mmm.code.impl.java.JavaPackage;
 import net.sf.mmm.code.impl.java.parser.JavaSourceCodeParserImpl;
-import net.sf.mmm.code.impl.java.type.JavaType;
 
 /**
  * Implementation of {@link AbstractJavaCodeLoader} to load from {@link #isSupportSourceCode() source code}.
@@ -64,12 +64,12 @@ public abstract class JavaSourceCodeLoader extends AbstractJavaCodeLoader {
   }
 
   @Override
-  public JavaType getType(String qualifiedName) {
+  public BaseType getType(String qualifiedName) {
 
     if (this.byteCodeLoader != null) {
-      JavaType type = this.byteCodeLoader.getType(qualifiedName);
+      BaseType type = this.byteCodeLoader.getType(qualifiedName);
       if (type != null) {
-        JavaFile file = type.getFile();
+        BaseFile file = type.getFile();
         parseType(file, file.getType().getSimpleName());
         return type;
       }
@@ -84,12 +84,12 @@ public abstract class JavaSourceCodeLoader extends AbstractJavaCodeLoader {
       simpleName = qualifiedName;
       pkgName = "";
     }
-    JavaPackage pkg = getContext().getSource().getPackage(pkgName);
-    JavaFile file = pkg.getChildren().createFile(simpleName);
+    BasePackage pkg = getContext().getSource().getPackage(pkgName);
+    BaseFile file = pkg.getChildren().createFile(simpleName);
     parseType(file, simpleName);
     return file.getType(); // TODO: nested types?
   }
 
-  protected abstract void parseType(JavaFile file, String simpleName);
+  protected abstract void parseType(BaseFile file, String simpleName);
 
 }

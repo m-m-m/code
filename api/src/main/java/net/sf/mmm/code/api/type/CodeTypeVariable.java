@@ -2,6 +2,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.type;
 
+import java.lang.reflect.TypeVariable;
+
 import net.sf.mmm.code.api.node.CodeNodeItemWithDeclaringOperation;
 
 /**
@@ -39,6 +41,9 @@ public interface CodeTypeVariable extends CodeTypePlaceholder, CodeNodeItemWithD
 
     return this;
   }
+
+  @Override
+  TypeVariable<?> getReflectiveObject();
 
   @Override
   CodeTypeVariable copy();

@@ -2,6 +2,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.member;
 
+import java.lang.reflect.Field;
+
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.expression.CodeVariable;
 import net.sf.mmm.code.api.item.CodeMutableItemWithType;
@@ -32,6 +34,9 @@ public abstract interface CodeField extends CodeMember, CodeMutableItemWithType,
    * @throws ReadOnlyException if {@link #isImmutable() immutable}.
    */
   void setInitializer(CodeExpression initializer);
+
+  @Override
+  Field getReflectiveObject();
 
   @Override
   CodeField copy();

@@ -65,4 +65,9 @@ public interface CodeSource extends CodeProvider, CodeContainer {
    */
   CodeSourceDescriptor getDescriptor();
 
+  /**
+   * @return see {@link net.sf.mmm.code.api.item.CodeMutableItem#getReflectiveObject()}.
+   */
+  java.security.CodeSource getReflectiveObject();
+
 }

@@ -6,26 +6,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import net.sf.mmm.code.api.annotation.CodeAnnotation;
+import net.sf.mmm.code.api.annotation.CodeAnnotations;
 import net.sf.mmm.code.api.comment.CodeComment;
 import net.sf.mmm.code.api.type.CodeTypePlaceholder;
-import net.sf.mmm.code.impl.java.JavaContext;
-import net.sf.mmm.code.impl.java.JavaFile;
-import net.sf.mmm.code.impl.java.annotation.JavaAnnotation;
-import net.sf.mmm.code.impl.java.annotation.JavaAnnotations;
-import net.sf.mmm.code.impl.java.element.JavaElementWithTypeVariables;
-import net.sf.mmm.code.impl.java.type.JavaComposedType;
-import net.sf.mmm.code.impl.java.type.JavaGenericType;
-import net.sf.mmm.code.impl.java.type.JavaGenericTypeProxy;
-import net.sf.mmm.code.impl.java.type.JavaParameterizedType;
-import net.sf.mmm.code.impl.java.type.JavaType;
-import net.sf.mmm.code.impl.java.type.JavaTypeParameters;
-import net.sf.mmm.code.impl.java.type.JavaTypePlaceholder;
-import net.sf.mmm.code.impl.java.type.JavaTypeProxy;
-import net.sf.mmm.code.impl.java.type.JavaTypeVariable;
-import net.sf.mmm.code.impl.java.type.JavaTypeWildcard;
+import net.sf.mmm.code.base.BaseContext;
+import net.sf.mmm.code.base.BaseFile;
+import net.sf.mmm.code.base.element.BaseElementWithTypeVariables;
+import net.sf.mmm.code.base.type.BaseComposedType;
+import net.sf.mmm.code.base.type.BaseGenericType;
+import net.sf.mmm.code.base.type.BaseGenericTypeProxy;
+import net.sf.mmm.code.base.type.BaseParameterizedType;
+import net.sf.mmm.code.base.type.BaseType;
+import net.sf.mmm.code.base.type.BaseTypeParameters;
+import net.sf.mmm.code.base.type.BaseTypePlaceholder;
+import net.sf.mmm.code.base.type.BaseTypeProxy;
+import net.sf.mmm.code.base.type.BaseTypeVariable;
+import net.sf.mmm.code.base.type.BaseTypeWildcard;
 
 /**
- * {@link JavaGenericTypeProxy} used to create types from source code with lazy evaluation. In Java types can
+ * {@link BaseGenericTypeProxy} used to create types from source code with lazy evaluation. In Java types can
  * be referenced before they are actually declared (e.g. a nested class can be used in its parent class before
  * it is defined in the source code). Therefore instances of this class can be created whilst parsing the
  * source code and will be resolved via lazy initialization after the parsing has completed.
@@ -33,23 +33,23 @@ import net.sf.mmm.code.impl.java.type.JavaTypeWildcard;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaGenericTypeFromSource extends JavaGenericTypeProxy {
+public class JavaGenericTypeFromSource extends BaseGenericTypeProxy {
 
-  private final JavaElementWithTypeVariables parent;
+  private final BaseElementWithTypeVariables parent;
 
   private final String name;
 
-  private final JavaFile file;
+  private final BaseFile file;
 
-  private JavaGenericType type;
+  private BaseGenericType type;
 
-  private List<JavaGenericType> composedTypes;
+  private List<BaseGenericType> composedTypes;
 
-  private List<JavaGenericType> typeParameters;
+  private List<BaseGenericType> typeParameters;
 
-  private JavaGenericType extendsBound;
+  private BaseGenericType extendsBound;
 
-  private JavaGenericType superBound;
+  private BaseGenericType superBound;
 
   private int arrayCount;
 
@@ -62,9 +62,9 @@ public class JavaGenericTypeFromSource extends JavaGenericTypeProxy {
    *
    * @param parent the (potential) {@link #getParent() parent}.
    * @param name the name of the type from the source code.
-   * @param file the declaring {@link JavaFile}.
+   * @param file the declaring {@link BaseFile}.
    */
-  public JavaGenericTypeFromSource(JavaElementWithTypeVariables parent, String name, JavaFile file) {
+  public JavaGenericTypeFromSource(BaseElementWithTypeVariables parent, String name, BaseFile file) {
 
     super();
     Objects.requireNonNull(parent, "parent");
@@ -75,11 +75,8 @@ public class JavaGenericTypeFromSource extends JavaGenericTypeProxy {
     this.file = file;
   }
 
-  /**
-   * @return the {@link JavaGenericType} this proxy delegates to. May be initialized lazy by this method.
-   */
   @Override
-  public JavaGenericType getDelegate() {
+  public BaseGenericType getDelegate() {
 
     if (this.type == null) {
       this.type = toGenericType(null);
@@ -95,16 +92,16 @@ public class JavaGenericTypeFromSource extends JavaGenericTypeProxy {
     return this.name;
   }
 
-  private JavaGenericType toGenericType(JavaTypePlaceholder placeholder) {
+  private BaseGenericType toGenericType(BaseTypePlaceholder placeholder) {
 
     if (CodeTypePlaceholder.NAME_WILDCARD.equals(this.name)) {
       return toWildcardType();
     }
-    JavaGenericType genericType = toGenericTypeByName(this.name);
+    BaseGenericType genericType = toGenericTypeByName(this.name);
     if (this.composedTypes != null) {
-      JavaComposedType composedType = new JavaComposedType(placeholder);
+      BaseComposedType composedType = new BaseComposedType(placeholder);
       composedType.add(genericType);
-      for (JavaGenericType interfaceType : this.composedTypes) {
+      for (BaseGenericType interfaceType : this.composedTypes) {
         composedType.add(resolve(interfaceType, placeholder));
       }
       applyCommentAndAnnotations(composedType);
@@ -112,10 +109,10 @@ public class JavaGenericTypeFromSource extends JavaGenericTypeProxy {
       genericType = composedType;
     }
     if ((this.typeParameters != null) && !this.typeParameters.isEmpty()) {
-      JavaType javaType = (JavaType) genericType;
-      JavaParameterizedType parameterizedType = javaType.createParameterizedType(this.parent);
-      JavaTypeParameters parameters = parameterizedType.getTypeParameters();
-      for (JavaGenericType typeParam : this.typeParameters) {
+      BaseType javaType = (BaseType) genericType;
+      BaseParameterizedType parameterizedType = javaType.createParameterizedType(this.parent);
+      BaseTypeParameters parameters = parameterizedType.getTypeParameters();
+      for (BaseGenericType typeParam : this.typeParameters) {
         parameters.add(resolve(typeParam, placeholder));
       }
       applyCommentAndAnnotations(parameterizedType);
@@ -131,21 +128,21 @@ public class JavaGenericTypeFromSource extends JavaGenericTypeProxy {
     return genericType;
   }
 
-  private JavaGenericType toGenericTypeByName(String typeName) {
+  private BaseGenericType toGenericTypeByName(String typeName) {
 
-    JavaTypeVariable typeVariable = this.parent.getTypeParameters().get(typeName, true);
+    BaseTypeVariable typeVariable = this.parent.getTypeParameters().get(typeName, true);
     if (typeVariable != null) {
       return typeVariable;
     }
-    JavaContext context = this.parent.getContext();
+    BaseContext context = this.parent.getContext();
     String qualifiedName = typeName;
     boolean qualified = typeName.indexOf('.') > 0;
     if (!qualified) {
       qualifiedName = context.getQualifiedName(typeName, this.file, false);
     }
-    JavaType javaType = context.getRequiredType(qualifiedName);
+    BaseType javaType = context.getRequiredType(qualifiedName);
     if (qualified) {
-      JavaTypeProxy qualifiedType = new JavaTypeProxy(this.parent, javaType);
+      BaseTypeProxy qualifiedType = new BaseTypeProxy(this.parent, javaType);
       qualifiedType.setQualified(true);
       applyCommentAndAnnotations(qualifiedType);
       qualifiedType.setImmutable();
@@ -154,26 +151,26 @@ public class JavaGenericTypeFromSource extends JavaGenericTypeProxy {
     return javaType;
   }
 
-  private JavaGenericType applyCommentAndAnnotations(JavaGenericType genericType) {
+  private BaseGenericType applyCommentAndAnnotations(BaseGenericType genericType) {
 
     if (this.commentAndAnnotationsApplied) {
       return genericType;
     }
-    JavaGenericType result = genericType;
-    JavaAnnotations annotations = getAnnotations();
+    BaseGenericType result = genericType;
+    CodeAnnotations annotations = getAnnotations();
     if (annotations != null) {
-      if (result instanceof JavaType) {
-        result = new JavaTypeProxy(this.parent, (JavaType) genericType);
+      if (result instanceof BaseType) {
+        result = new BaseTypeProxy(this.parent, (BaseType) genericType);
       }
       assert (result.getAnnotations().getDeclared().isEmpty());
-      for (JavaAnnotation annotation : annotations) {
+      for (CodeAnnotation annotation : annotations) {
         result.getAnnotations().add(annotation);
       }
     }
     CodeComment comment = getComment();
     if (comment != null) {
-      if (result instanceof JavaType) {
-        result = new JavaTypeProxy(this.parent, (JavaType) genericType);
+      if (result instanceof BaseType) {
+        result = new BaseTypeProxy(this.parent, (BaseType) genericType);
       }
       assert (result.getComment() == null);
       result.setComment(comment);
@@ -182,7 +179,7 @@ public class JavaGenericTypeFromSource extends JavaGenericTypeProxy {
     return result;
   }
 
-  private static JavaGenericType resolve(JavaGenericType type, JavaTypePlaceholder placeholder) {
+  private static BaseGenericType resolve(BaseGenericType type, BaseTypePlaceholder placeholder) {
 
     if (type instanceof JavaGenericTypeFromSource) {
       return ((JavaGenericTypeFromSource) type).toGenericType(placeholder);
@@ -190,15 +187,15 @@ public class JavaGenericTypeFromSource extends JavaGenericTypeProxy {
     return type;
   }
 
-  private JavaGenericType toWildcardType() {
+  private BaseGenericType toWildcardType() {
 
-    JavaTypeWildcard wildcard;
-    JavaGenericType bound = null;
+    BaseTypeWildcard wildcard;
+    BaseGenericType bound = null;
     if (this.extendsBound != null) {
-      wildcard = new JavaTypeWildcard(this.parent, null, false);
+      wildcard = new BaseTypeWildcard(this.parent, null, false);
       bound = resolve(this.extendsBound, wildcard);
     } else if (this.superBound != null) {
-      wildcard = new JavaTypeWildcard(this.parent, null, true);
+      wildcard = new BaseTypeWildcard(this.parent, null, true);
       bound = resolve(this.superBound, wildcard);
     } else {
       wildcard = this.parent.getContext().getUnboundedWildcard();
@@ -235,7 +232,7 @@ public class JavaGenericTypeFromSource extends JavaGenericTypeProxy {
   /**
    * @param typeParameter the type parameter to add.
    */
-  public void addTypeParameter(JavaGenericType typeParameter) {
+  public void addTypeParameter(BaseGenericType typeParameter) {
 
     ensureTypeParameters();
     this.typeParameters.add(typeParameter);
@@ -244,7 +241,7 @@ public class JavaGenericTypeFromSource extends JavaGenericTypeProxy {
   /**
    * @param composedType the composed type to add.
    */
-  public void addComposedType(JavaGenericType composedType) {
+  public void addComposedType(BaseGenericType composedType) {
 
     if (this.composedTypes == null) {
       this.composedTypes = new ArrayList<>();
@@ -255,7 +252,7 @@ public class JavaGenericTypeFromSource extends JavaGenericTypeProxy {
   /**
    * @return the upper bound of a wildcard or {@code null}.
    */
-  public JavaGenericType getExtendsBound() {
+  public BaseGenericType getExtendsBound() {
 
     return this.extendsBound;
   }
@@ -263,7 +260,7 @@ public class JavaGenericTypeFromSource extends JavaGenericTypeProxy {
   /**
    * @param extendsBound the new value of {@link #getExtendsBound()}.
    */
-  public void setExtendsBound(JavaGenericType extendsBound) {
+  public void setExtendsBound(BaseGenericType extendsBound) {
 
     this.extendsBound = extendsBound;
   }
@@ -271,7 +268,7 @@ public class JavaGenericTypeFromSource extends JavaGenericTypeProxy {
   /**
    * @return the lower bound of a wildcard or {@code null}.
    */
-  public JavaGenericType getSuperBound() {
+  public BaseGenericType getSuperBound() {
 
     return this.superBound;
   }
@@ -279,13 +276,13 @@ public class JavaGenericTypeFromSource extends JavaGenericTypeProxy {
   /**
    * @param superBound the new value of {@link #getSuperBound()}.
    */
-  public void setSuperBound(JavaGenericType superBound) {
+  public void setSuperBound(BaseGenericType superBound) {
 
     this.superBound = superBound;
   }
 
   /**
-   * @return the number of {@link JavaGenericType#isArray() array} dimensions. Will be zero (0) for no array.
+   * @return the number of {@link BaseGenericType#isArray() array} dimensions. Will be zero (0) for no array.
    */
   public int getArrayCount() {
 
@@ -327,9 +324,9 @@ public class JavaGenericTypeFromSource extends JavaGenericTypeProxy {
   }
 
   @Override
-  public JavaGenericType copy() {
+  public BaseGenericType copy() {
 
-    JavaGenericType delegate = getDelegate();
+    BaseGenericType delegate = getDelegate();
     if (delegate.isImmutable()) {
       delegate = delegate.copy();
     }

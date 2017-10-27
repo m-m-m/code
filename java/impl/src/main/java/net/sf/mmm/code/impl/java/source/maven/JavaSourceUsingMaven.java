@@ -13,9 +13,9 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 
 import net.sf.mmm.code.api.source.CodeSourceDescriptor;
-import net.sf.mmm.code.base.source.CodeSourceDescriptorType;
+import net.sf.mmm.code.base.BasePackage;
+import net.sf.mmm.code.base.source.BaseSourceDescriptorType;
 import net.sf.mmm.code.impl.java.JavaContext;
-import net.sf.mmm.code.impl.java.JavaPackage;
 import net.sf.mmm.code.impl.java.source.JavaSource;
 import net.sf.mmm.code.impl.java.source.JavaSourceDependencies;
 import net.sf.mmm.code.java.maven.api.MavenConstants;
@@ -78,11 +78,11 @@ public class JavaSourceUsingMaven extends JavaSource implements MavenConstants {
    *        fabrication of {@link #getDependencies() dependencies}.
    * @param byteCodeLocation the {@link #getByteCodeLocation() byte code location}.
    * @param sourceCodeLocation the {@link #getSourceCodeLocation() source code location}.
-   * @param superLayerPackage the {@link JavaPackage#getSuperLayerPackage() super layer package} to inherit
+   * @param superLayerPackage the {@link BasePackage#getSuperLayerPackage() super layer package} to inherit
    *        from.
    * @param modelSupplier the {@link Supplier} for the maven {@link Model}.
    */
-  public JavaSourceUsingMaven(JavaSourceProviderUsingMaven sourceProvider, File byteCodeLocation, File sourceCodeLocation, JavaPackage superLayerPackage,
+  public JavaSourceUsingMaven(JavaSourceProviderUsingMaven sourceProvider, File byteCodeLocation, File sourceCodeLocation, BasePackage superLayerPackage,
       Supplier<Model> modelSupplier) {
 
     this(sourceProvider, null, byteCodeLocation, sourceCodeLocation, null, superLayerPackage, modelSupplier, null, null, false);
@@ -107,7 +107,7 @@ public class JavaSourceUsingMaven extends JavaSource implements MavenConstants {
   }
 
   private JavaSourceUsingMaven(JavaSourceProviderUsingMaven sourceProvider, CodeSource reflectiveObject, File byteCodeLocation, File sourceCodeLocation,
-      String id, JavaPackage superLayerPackage, Supplier<Model> modelSupplier, JavaSource compileDependency, List<JavaSource> dependencies, boolean testScope) {
+      String id, BasePackage superLayerPackage, Supplier<Model> modelSupplier, JavaSource compileDependency, List<JavaSource> dependencies, boolean testScope) {
 
     super(reflectiveObject, byteCodeLocation, sourceCodeLocation, id, null, dependencies, superLayerPackage);
     this.sourceProvider = sourceProvider;
@@ -136,7 +136,7 @@ public class JavaSourceUsingMaven extends JavaSource implements MavenConstants {
 
     Model mavenModel = getModel();
     String javadocUrl = null; // TODO
-    return new CodeSourceDescriptorType(mavenModel.getGroupId(), mavenModel.getArtifactId(), mavenModel.getVersion(), javadocUrl);
+    return new BaseSourceDescriptorType(mavenModel.getGroupId(), mavenModel.getArtifactId(), mavenModel.getVersion(), javadocUrl);
   }
 
   @Override

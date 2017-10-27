@@ -4,37 +4,39 @@ package net.sf.mmm.code.impl.java.parser;
 
 import java.lang.reflect.GenericDeclaration;
 
+import net.sf.mmm.code.api.annotation.CodeAnnotations;
 import net.sf.mmm.code.api.comment.CodeComment;
 import net.sf.mmm.code.api.doc.CodeDoc;
-import net.sf.mmm.code.impl.java.annotation.JavaAnnotations;
-import net.sf.mmm.code.impl.java.element.JavaElementWithTypeVariables;
-import net.sf.mmm.code.impl.java.member.JavaOperation;
-import net.sf.mmm.code.impl.java.type.JavaType;
-import net.sf.mmm.code.impl.java.type.JavaTypeVariables;
+import net.sf.mmm.code.base.element.BaseElementWithTypeVariables;
+import net.sf.mmm.code.base.member.BaseOperation;
+import net.sf.mmm.code.base.type.BaseType;
+import net.sf.mmm.code.base.type.BaseTypeVariables;
 
 /**
- * {@link JavaTypeVariables} for operations that have to be created before the operation is parsed.
+ * {@link BaseTypeVariables} for operations that have to be created before the operation is parsed.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaTypeVariablesFromSource extends JavaTypeVariables implements JavaElementWithTypeVariables {
+public class JavaTypeVariablesFromSource extends BaseTypeVariables implements BaseElementWithTypeVariables
+
+{
 
   /**
    * The constructor.
    */
   public JavaTypeVariablesFromSource() {
 
-    super((JavaType) null);
+    super((BaseType) null);
   }
 
   /**
    * The copy-constructor.
    *
-   * @param template the {@link JavaTypeVariables} to copy.
+   * @param template the {@link BaseTypeVariables} to copy.
    * @param declaringOperation the {@link #getDeclaringOperation() declaring operation}.
    */
-  public JavaTypeVariablesFromSource(JavaTypeVariablesFromSource template, JavaOperation declaringOperation) {
+  public JavaTypeVariablesFromSource(JavaTypeVariablesFromSource template, BaseOperation declaringOperation) {
 
     super(template, declaringOperation);
   }
@@ -42,28 +44,28 @@ public class JavaTypeVariablesFromSource extends JavaTypeVariables implements Ja
   /**
    * The copy-constructor.
    *
-   * @param template the {@link JavaTypeVariables} to copy.
+   * @param template the {@link BaseTypeVariables} to copy.
    * @param declaringType the {@link #getDeclaringType() declaring type}.
    */
-  public JavaTypeVariablesFromSource(JavaTypeVariablesFromSource template, JavaType declaringType) {
+  public JavaTypeVariablesFromSource(JavaTypeVariablesFromSource template, BaseType declaringType) {
 
     super(template, declaringType);
   }
 
   @Override
-  public void setParent(JavaOperation declaringOperation) {
+  public void setParent(BaseOperation declaringOperation) {
 
     super.setParent(declaringOperation);
   }
 
   @Override
-  public void setParent(JavaType declaringType) {
+  public void setParent(BaseType declaringType) {
 
     super.setParent(declaringType);
   }
 
   @Override
-  public JavaTypeVariables getTypeParameters() {
+  public BaseTypeVariables getTypeParameters() {
 
     return this;
   }
@@ -75,12 +77,12 @@ public class JavaTypeVariablesFromSource extends JavaTypeVariables implements Ja
   }
 
   @Override
-  public JavaTypeVariablesFromSource copy(JavaElementWithTypeVariables newParent) {
+  public JavaTypeVariablesFromSource copy(BaseElementWithTypeVariables newParent) {
 
-    if (newParent instanceof JavaType) {
-      return new JavaTypeVariablesFromSource(this, (JavaType) newParent);
-    } else if (newParent instanceof JavaOperation) {
-      return new JavaTypeVariablesFromSource(this, (JavaOperation) newParent);
+    if (newParent instanceof BaseType) {
+      return new JavaTypeVariablesFromSource(this, (BaseType) newParent);
+    } else if (newParent instanceof BaseOperation) {
+      return new JavaTypeVariablesFromSource(this, (BaseOperation) newParent);
     } else {
       throw new IllegalArgumentException("" + newParent);
     }
@@ -89,7 +91,7 @@ public class JavaTypeVariablesFromSource extends JavaTypeVariables implements Ja
   // sick stuff from here...
 
   @Override
-  public JavaAnnotations getAnnotations() {
+  public CodeAnnotations getAnnotations() {
 
     return null;
   }

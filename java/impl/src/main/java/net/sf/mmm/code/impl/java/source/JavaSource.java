@@ -10,12 +10,11 @@ import java.util.List;
 import java.util.Objects;
 
 import net.sf.mmm.code.api.source.CodeSourceDescriptor;
-import net.sf.mmm.code.base.source.CodeSourceHelper;
+import net.sf.mmm.code.base.BasePackage;
+import net.sf.mmm.code.base.source.BaseSource;
+import net.sf.mmm.code.base.source.BaseSourceHelper;
 import net.sf.mmm.code.impl.java.JavaContext;
-import net.sf.mmm.code.impl.java.JavaPackage;
 import net.sf.mmm.code.impl.java.JavaProvider;
-import net.sf.mmm.code.impl.java.item.JavaReflectiveObject;
-import net.sf.mmm.code.impl.java.node.JavaContainer;
 import net.sf.mmm.util.component.api.ResourceMissingException;
 
 /**
@@ -24,11 +23,11 @@ import net.sf.mmm.util.component.api.ResourceMissingException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaSource extends JavaProvider implements net.sf.mmm.code.api.source.CodeSource, JavaContainer, JavaReflectiveObject<CodeSource> {
+public class JavaSource extends JavaProvider implements BaseSource {
 
   private final CodeSource reflectiveObject;
 
-  private final JavaPackage rootPackage;
+  private final BasePackage rootPackage;
 
   private JavaContext context;
 
@@ -78,11 +77,11 @@ public class JavaSource extends JavaProvider implements net.sf.mmm.code.api.sour
    * @param id the {@link #getId() ID}.
    * @param descriptor the {@link #getDescriptor() descriptor}.
    * @param dependencies the {@link #getDependencies()} dependencies.
-   * @param superLayerPackage the {@link JavaPackage#getSuperLayerPackage() super layer package} to inherit
+   * @param superLayerPackage the {@link BasePackage#getSuperLayerPackage() super layer package} to inherit
    *        from.
    */
   public JavaSource(CodeSource reflectiveObject, File byteCodeLocation, File sourceCodeLocation, String id, CodeSourceDescriptor descriptor,
-      List<JavaSource> dependencies, JavaPackage superLayerPackage) {
+      List<JavaSource> dependencies, BasePackage superLayerPackage) {
 
     super();
     if ((byteCodeLocation != null) && (id != null)) {
@@ -94,7 +93,7 @@ public class JavaSource extends JavaProvider implements net.sf.mmm.code.api.sour
     this.byteCodeLocation = byteCodeLocation;
     this.id = id;
     this.reflectiveObject = reflectiveObject;
-    this.rootPackage = new JavaPackage(this, superLayerPackage);
+    this.rootPackage = new BasePackage(this, superLayerPackage);
     if (dependencies != null) {
       this.dependencies = new JavaSourceDependencies(this, dependencies);
     }
@@ -102,13 +101,13 @@ public class JavaSource extends JavaProvider implements net.sf.mmm.code.api.sour
   }
 
   @Override
-  public JavaPackage getRootPackage() {
+  public BasePackage getRootPackage() {
 
     return this.rootPackage;
   }
 
   @Override
-  public JavaPackage getToplevelPackage() {
+  public BasePackage getToplevelPackage() {
 
     return getContext().getToplevelPackage();
   }
@@ -199,7 +198,7 @@ public class JavaSource extends JavaProvider implements net.sf.mmm.code.api.sour
 
     if (this.byteCodeLocation == null) {
       if (this.reflectiveObject != null) {
-        this.byteCodeLocation = CodeSourceHelper.asFile(this.reflectiveObject.getLocation());
+        this.byteCodeLocation = BaseSourceHelper.asFile(this.reflectiveObject.getLocation());
       }
     }
     return this.byteCodeLocation;

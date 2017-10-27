@@ -9,6 +9,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.mmm.code.api.annotation.CodeAnnotation;
+import net.sf.mmm.code.api.annotation.CodeAnnotations;
 import net.sf.mmm.code.api.block.CodeBlockInitializer;
 import net.sf.mmm.code.api.comment.CodeComment;
 import net.sf.mmm.code.api.expression.CodeExpression;
@@ -18,28 +20,26 @@ import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.api.statement.CodeStatement;
 import net.sf.mmm.code.api.type.CodeTypeCategory;
 import net.sf.mmm.code.api.type.CodeTypePlaceholder;
-import net.sf.mmm.code.base.block.GenericBlockBody;
-import net.sf.mmm.code.base.block.GenericBlockInitializer;
-import net.sf.mmm.code.base.doc.GenericCodeDocParser;
-import net.sf.mmm.code.base.statement.GenericTextStatement;
-import net.sf.mmm.code.impl.java.JavaFile;
-import net.sf.mmm.code.impl.java.annotation.JavaAnnotation;
-import net.sf.mmm.code.impl.java.annotation.JavaAnnotations;
-import net.sf.mmm.code.impl.java.arg.JavaExceptions;
-import net.sf.mmm.code.impl.java.arg.JavaParameter;
-import net.sf.mmm.code.impl.java.arg.JavaParameters;
-import net.sf.mmm.code.impl.java.element.JavaElement;
-import net.sf.mmm.code.impl.java.element.JavaElementWithTypeVariables;
-import net.sf.mmm.code.impl.java.member.JavaConstructor;
-import net.sf.mmm.code.impl.java.member.JavaConstructors;
-import net.sf.mmm.code.impl.java.member.JavaField;
-import net.sf.mmm.code.impl.java.member.JavaMember;
-import net.sf.mmm.code.impl.java.member.JavaMethod;
-import net.sf.mmm.code.impl.java.member.JavaOperation;
-import net.sf.mmm.code.impl.java.type.JavaGenericType;
-import net.sf.mmm.code.impl.java.type.JavaType;
-import net.sf.mmm.code.impl.java.type.JavaTypeVariable;
-import net.sf.mmm.code.impl.java.type.JavaTypeVariables;
+import net.sf.mmm.code.base.BaseFile;
+import net.sf.mmm.code.base.arg.BaseExceptions;
+import net.sf.mmm.code.base.arg.BaseParameter;
+import net.sf.mmm.code.base.arg.BaseParameters;
+import net.sf.mmm.code.base.block.BaseBlockBody;
+import net.sf.mmm.code.base.block.BaseBlockInitializer;
+import net.sf.mmm.code.base.doc.BaseDocParser;
+import net.sf.mmm.code.base.element.BaseElement;
+import net.sf.mmm.code.base.element.BaseElementWithTypeVariables;
+import net.sf.mmm.code.base.member.BaseConstructor;
+import net.sf.mmm.code.base.member.BaseConstructors;
+import net.sf.mmm.code.base.member.BaseField;
+import net.sf.mmm.code.base.member.BaseMember;
+import net.sf.mmm.code.base.member.BaseMethod;
+import net.sf.mmm.code.base.member.BaseOperation;
+import net.sf.mmm.code.base.statement.BaseTextStatement;
+import net.sf.mmm.code.base.type.BaseGenericType;
+import net.sf.mmm.code.base.type.BaseType;
+import net.sf.mmm.code.base.type.BaseTypeVariable;
+import net.sf.mmm.code.base.type.BaseTypeVariables;
 import net.sf.mmm.util.filter.api.CharFilter;
 
 /**
@@ -52,7 +52,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
 
   private static final Logger LOG = LoggerFactory.getLogger(JavaSourceCodeReaderHighlevel.class);
 
-  private GenericCodeDocParser docParser;
+  private BaseDocParser docParser;
 
   /**
    * The constructor.
@@ -70,15 +70,15 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
   public JavaSourceCodeReaderHighlevel(int capacity) {
 
     super(capacity);
-    this.docParser = new GenericCodeDocParser();
+    this.docParser = new BaseDocParser();
   }
 
   /**
    * @param reader the {@link Reader} to read the source-code from.
-   * @param javaFile the {@link JavaFile} to read.
-   * @return the parsed {@link JavaType}.
+   * @param javaFile the {@link BaseFile} to read.
+   * @return the parsed {@link BaseType}.
    */
-  public JavaType parse(Reader reader, JavaFile javaFile) {
+  public BaseType parse(Reader reader, BaseFile javaFile) {
 
     if (this.file != null) {
       throw new IllegalStateException();
@@ -130,13 +130,13 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
 
   private void parseTypes() {
 
-    JavaType type;
+    BaseType type;
     do {
       type = parseType(null);
     } while ((type != null) && hasNext());
   }
 
-  private JavaType parseType(JavaType declaringType) {
+  private BaseType parseType(BaseType declaringType) {
 
     consume();
     CodeModifiers modifiers = parseModifiers(false);
@@ -144,17 +144,17 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     return parseType(declaringType, modifiers, category);
   }
 
-  private JavaType parseType(JavaType declaringType, CodeModifiers modifiers, CodeTypeCategory category) {
+  private BaseType parseType(BaseType declaringType, CodeModifiers modifiers, CodeTypeCategory category) {
 
     consume();
     String simpleName = parseIdentifier();
     if (simpleName == null) {
       return null;
     }
-    JavaType type = this.file.getType(simpleName, false);
+    BaseType type = this.file.getType(simpleName, false);
     boolean merge;
     if (type == null) {
-      type = new JavaType(this.file, simpleName, declaringType, null);
+      type = new BaseType(this.file, simpleName, declaringType, null);
       this.file.getTypes().add(type);
       merge = false;
     } else {
@@ -179,8 +179,8 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     parseTypeVariables(type, type);
     this.docParser.parseDoc(type, this.javaDocLines);
     if (!this.annotations.isEmpty()) {
-      JavaAnnotations typeAnnotations = type.getAnnotations();
-      for (JavaAnnotation annotation : this.annotations) {
+      CodeAnnotations typeAnnotations = type.getAnnotations();
+      for (CodeAnnotation annotation : this.annotations) {
         typeAnnotations.add(annotation);
       }
     }
@@ -196,7 +196,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     return type;
   }
 
-  private void parseTypeBody(JavaType type) {
+  private void parseTypeBody(BaseType type) {
 
     boolean elementFound;
     do {
@@ -208,7 +208,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     }
   }
 
-  private boolean parseTypeElement(JavaType type) {
+  private boolean parseTypeElement(BaseType type) {
 
     consume();
     CodeModifiers modifiers = parseModifiers(type.isInterface());
@@ -219,7 +219,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     }
     CodeComment memberComment = getElementComment();
     this.elementComment = null;
-    List<JavaAnnotation> memberAnnotations = null;
+    List<CodeAnnotation> memberAnnotations = null;
     if (!this.annotations.isEmpty()) {
       memberAnnotations = new ArrayList<>(this.annotations);
       this.annotations.clear();
@@ -243,7 +243,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
       if (initializer != null) {
         statements.addAll(initializer.getStatements());
       }
-      initializer = new GenericBlockInitializer(type, statements);
+      initializer = new BaseBlockInitializer(type, statements);
       if (modifiers.isStatic()) {
         type.setStaticInitializer(initializer);
       } else {
@@ -251,14 +251,14 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
       }
       return true;
     }
-    JavaMember member = null;
+    BaseMember member = null;
     if (name.equals(type.getSimpleName())) { // constructor
-      JavaConstructors constructors = type.getConstructors();
-      JavaConstructor constructor;
+      BaseConstructors constructors = type.getConstructors();
+      BaseConstructor constructor;
       if (typeVariables == null) {
-        constructor = new JavaConstructor(constructors);
+        constructor = new BaseConstructor(constructors);
       } else {
-        constructor = new JavaConstructor(typeVariables, constructors);
+        constructor = new BaseConstructor(typeVariables, constructors);
       }
       parseWhitespacesAndComments();
       if (!expect('(')) {
@@ -269,21 +269,21 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
       constructors.add(constructor);
       member = constructor;
     } else { // field or method
-      JavaElementWithTypeVariables element = type;
+      BaseElementWithTypeVariables element = type;
       if (typeVariables != null) {
         element = typeVariables;
       }
-      JavaGenericType memberType = parseGenericType(name, element, true, true, false);
+      BaseGenericType memberType = parseGenericType(name, element, true, true, false);
       consume();
       name = parseIdentifier();
       parseWhitespacesAndComments();
       if (expect('(')) { // method?
-        JavaMethod method = type.getMethods().add(name);
+        BaseMethod method = type.getMethods().add(name);
         method.getReturns().setType(memberType);
         parseOperation(method);
         member = method;
       } else {
-        JavaField field = type.getFields().add(name);
+        BaseField field = type.getFields().add(name);
         field.setType(memberType);
         parseWhitespacesAndComments();
         if (!expect(';')) {
@@ -302,7 +302,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
         member.setComment(memberComment);
       }
       if (memberAnnotations != null) {
-        for (JavaAnnotation annotation : memberAnnotations) {
+        for (CodeAnnotation annotation : memberAnnotations) {
           member.getAnnotations().add(annotation);
         }
       }
@@ -319,23 +319,23 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     return false;
   }
 
-  private void parseOperation(JavaOperation operation) {
+  private void parseOperation(BaseOperation operation) {
 
     parseOperationArgs(operation);
     parseOperationThrows(operation);
     parseOperationBody(operation);
   }
 
-  private void parseOperationArgs(JavaOperation operation) {
+  private void parseOperationArgs(BaseOperation operation) {
 
-    JavaParameters parameters = operation.getParameters();
+    BaseParameters parameters = operation.getParameters();
     boolean todo = !(expect(')'));
     while (todo) {
       parseWhitespacesAndComments();
-      JavaGenericType argType = parseGenericType(operation, true, true, false);
+      BaseGenericType argType = parseGenericType(operation, true, true, false);
       requireWhitespace(operation, operation.getName(), operation.getParent().getParent());
       String name = parseIdentifier();
-      JavaParameter parameter = parameters.add(name);
+      BaseParameter parameter = parameters.add(name);
       parameter.setType(argType);
       todo = !(expect(')'));
       if (todo && !expect(',')) {
@@ -344,18 +344,18 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     }
   }
 
-  private void parseOperationThrows(JavaOperation operation) {
+  private void parseOperationThrows(BaseOperation operation) {
 
     parseWhitespacesAndComments();
     if (!expectStrict("throws")) {
       return;
     }
     requireWhitespace(operation, operation.getName(), operation.getParent().getParent());
-    JavaExceptions exceptions = operation.getExceptions();
+    BaseExceptions exceptions = operation.getExceptions();
     boolean todo = true;
     while (todo) {
       parseWhitespacesAndComments();
-      JavaGenericType exceptionType = parseGenericType(operation, true, true, false);
+      BaseGenericType exceptionType = parseGenericType(operation, true, true, false);
       exceptions.add(exceptionType);
       parseWhitespacesAndComments();
       todo = expect(',');
@@ -363,7 +363,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
 
   }
 
-  private void parseOperationBody(JavaOperation operation) {
+  private void parseOperationBody(BaseOperation operation) {
 
     parseWhitespacesAndComments();
     if (expect(';')) {
@@ -374,7 +374,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
       LOG.warn("Expecting ';' or '{' to terminate signature of operation {} but found '{}' in {}", operation, "" + forcePeek(), this.file.getQualifiedName());
       return;
     }
-    operation.setBody(new GenericBlockBody(operation, statements));
+    operation.setBody(new BaseBlockBody(operation, statements));
   }
 
   private List<CodeStatement> parseBlock() {
@@ -391,7 +391,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
       braceCount += countMatches(statement, '{');
       braceCount -= countMatches(statement, '}');
       if (braceCount > 0) {
-        statements.add(new GenericTextStatement(statement));
+        statements.add(new BaseTextStatement(statement));
       } else {
         assert (statement.equals("}"));
       }
@@ -410,11 +410,11 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     return count;
   }
 
-  private JavaTypeVariablesFromSource parseTypeVariables(JavaElementWithTypeVariables element, JavaElement owner) {
+  private JavaTypeVariablesFromSource parseTypeVariables(BaseElementWithTypeVariables element, BaseElement owner) {
 
     JavaTypeVariablesFromSource result = null;
     if (expect('<')) {
-      JavaTypeVariables typeVariables;
+      BaseTypeVariables typeVariables;
       if (element == null) {
         result = new JavaTypeVariablesFromSource();
         typeVariables = result;
@@ -425,7 +425,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
       while (todo) {
         consume();
         String identifier = parseIdentifier();
-        JavaTypeVariable typeVariable = new JavaTypeVariable(typeVariables, identifier);
+        BaseTypeVariable typeVariable = new BaseTypeVariable(typeVariables, identifier);
         CodeComment comment = getElementComment();
         if (comment != null) {
           typeVariable.setComment(comment);
@@ -449,14 +449,14 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     return result;
   }
 
-  private void parseTypeParameters(JavaGenericTypeFromSource type, JavaElementWithTypeVariables element, boolean withTypeParams) {
+  private void parseTypeParameters(JavaGenericTypeFromSource type, BaseElementWithTypeVariables element, boolean withTypeParams) {
 
     if (expect('<')) {
       type.ensureTypeParameters();
       boolean todo = true;
       while (todo) {
         parseWhitespacesAndComments();
-        JavaGenericType typeParam = parseGenericType(element, withTypeParams, true, false);
+        BaseGenericType typeParam = parseGenericType(element, withTypeParams, true, false);
         type.addTypeParameter(typeParam);
         parseWhitespacesAndComments();
         todo = !expect('>');
@@ -469,7 +469,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     }
   }
 
-  private void parseImplements(JavaType type) {
+  private void parseImplements(BaseType type) {
 
     consume();
     boolean found = expectStrict("implements");
@@ -483,7 +483,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     parseSuperTypes(type);
   }
 
-  private void parseExtends(JavaType type) {
+  private void parseExtends(BaseType type) {
 
     consume();
     boolean found = expectStrict("extends");
@@ -497,11 +497,11 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     parseSuperTypes(type);
   }
 
-  private void parseSuperTypes(JavaType type) {
+  private void parseSuperTypes(BaseType type) {
 
     boolean todo = true;
     while (todo) {
-      JavaGenericType superType = parseGenericType(type, true, false, false);
+      BaseGenericType superType = parseGenericType(type, true, false, false);
       type.getSuperTypes().add(superType);
       parseWhitespacesAndComments();
       todo = expect(',');
@@ -509,7 +509,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     }
   }
 
-  private JavaGenericType parseGenericType(JavaElementWithTypeVariables element, boolean withTypeParams, boolean withArray, boolean withComposedTypes) {
+  private BaseGenericType parseGenericType(BaseElementWithTypeVariables element, boolean withTypeParams, boolean withArray, boolean withComposedTypes) {
 
     String typeName = parseQName();
     if (typeName == null) {
@@ -522,7 +522,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     return parseGenericType(typeName, element, withTypeParams, withArray, withComposedTypes);
   }
 
-  private JavaGenericType parseGenericType(String typeName, JavaElementWithTypeVariables element, boolean withTypeParams, boolean withArray,
+  private BaseGenericType parseGenericType(String typeName, BaseElementWithTypeVariables element, boolean withTypeParams, boolean withArray,
       boolean withComposedTypes) {
 
     JavaGenericTypeFromSource type = new JavaGenericTypeFromSource(element, typeName, this.file);
@@ -540,7 +540,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     if (withComposedTypes) {
       while (expect('&')) {
         parseWhitespacesAndComments();
-        JavaGenericType composedType = parseGenericType(element, withTypeParams, false, false);
+        BaseGenericType composedType = parseGenericType(element, withTypeParams, false, false);
         type.addComposedType(composedType);
       }
     }
@@ -565,13 +565,13 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     return type;
   }
 
-  private boolean parseBound(JavaTypeVariable typeVariable, JavaElementWithTypeVariables element) {
+  private boolean parseBound(BaseTypeVariable typeVariable, BaseElementWithTypeVariables element) {
 
     String keyword = "extends";
     if (expectStrict(keyword)) {
       String name = typeVariable.getName();
       requireWhitespace(element, keyword, name);
-      JavaGenericType bound = parseGenericType(element, true, true, true);
+      BaseGenericType bound = parseGenericType(element, true, true, true);
       if (bound == null) {
         LOG.warn("Missing {} bound after type parameter {} at {} of {}", keyword, name, element, this.file.getQualifiedName());
         return false;
@@ -582,7 +582,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     return false;
   }
 
-  private void requireWhitespace(JavaElement element, String keyword, Object context) {
+  private void requireWhitespace(BaseElement element, String keyword, Object context) {
 
     int count = skipWhile(CharFilter.WHITESPACE_FILTER);
     if (count == 0) {
@@ -590,7 +590,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     }
   }
 
-  private boolean parseBound(JavaGenericTypeFromSource type, boolean superBound, JavaElementWithTypeVariables element, boolean withComposedTypes) {
+  private boolean parseBound(JavaGenericTypeFromSource type, boolean superBound, BaseElementWithTypeVariables element, boolean withComposedTypes) {
 
     String keyword;
     if (superBound) {
@@ -603,7 +603,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
       if (count == 0) {
         LOG.warn("Missing whitespace after {} expression of type parameter {} at {} of {}", keyword, type.getName(), element, this.file.getQualifiedName());
       }
-      JavaGenericType bound = parseGenericType(element, true, true, withComposedTypes);
+      BaseGenericType bound = parseGenericType(element, true, true, withComposedTypes);
       if (bound == null) {
         LOG.warn("Missing {} bound after type parameter {} at {} of {}", keyword, type.getName(), element, this.file.getQualifiedName());
         return false;
@@ -618,7 +618,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     return false;
   }
 
-  private void applyCommentAndAnnotations(JavaElement element) {
+  private void applyCommentAndAnnotations(BaseElement element) {
 
     CodeComment comment = getElementComment();
     if (comment != null) {
@@ -626,7 +626,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
       this.elementComment = null;
     }
     if (!this.annotations.isEmpty()) {
-      for (JavaAnnotation annotation : this.annotations) {
+      for (CodeAnnotation annotation : this.annotations) {
         element.getAnnotations().add(annotation);
       }
       this.annotations.clear();

@@ -193,6 +193,9 @@ public interface CodeType extends CodeGenericType, CodeElementWithModifiers, Cod
   CodeGenericType getQualifiedType();
 
   @Override
+  Class<?> getReflectiveObject();
+
+  @Override
   default CodeType resolve(CodeGenericType context) {
 
     return this;

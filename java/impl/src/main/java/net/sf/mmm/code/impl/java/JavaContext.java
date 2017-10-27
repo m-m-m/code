@@ -6,14 +6,18 @@ import java.lang.reflect.Type;
 import java.security.CodeSource;
 import java.util.List;
 
-import net.sf.mmm.code.api.CodeContext;
+import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.syntax.CodeSyntax;
-import net.sf.mmm.code.impl.java.element.JavaElement;
+import net.sf.mmm.code.base.BaseContext;
+import net.sf.mmm.code.base.BasePackage;
+import net.sf.mmm.code.base.BasePathElement;
+import net.sf.mmm.code.base.element.BaseElement;
+import net.sf.mmm.code.base.type.BaseGenericType;
+import net.sf.mmm.code.base.type.BaseType;
+import net.sf.mmm.code.base.type.BaseTypeWildcard;
+import net.sf.mmm.code.impl.java.expression.constant.JavaConstant;
 import net.sf.mmm.code.impl.java.loader.JavaCodeLoader;
 import net.sf.mmm.code.impl.java.source.JavaSource;
-import net.sf.mmm.code.impl.java.type.JavaGenericType;
-import net.sf.mmm.code.impl.java.type.JavaType;
-import net.sf.mmm.code.impl.java.type.JavaTypeWildcard;
 
 /**
  * Implementation of {@link net.sf.mmm.code.api.CodeContext} for Java.
@@ -21,7 +25,7 @@ import net.sf.mmm.code.impl.java.type.JavaTypeWildcard;
  * @author hohwille
  * @since 1.0.0
  */
-public abstract class JavaContext extends JavaProvider implements CodeContext, JavaCodeLoader {
+public abstract class JavaContext extends JavaProvider implements BaseContext, JavaCodeLoader {
 
   private final AbstractJavaCodeLoader loader;
 
@@ -69,7 +73,7 @@ public abstract class JavaContext extends JavaProvider implements CodeContext, J
   public abstract JavaRootContext getRootContext();
 
   @Override
-  public JavaPackage getRootPackage() {
+  public BasePackage getRootPackage() {
 
     return this.source.getRootPackage();
   }
@@ -77,17 +81,17 @@ public abstract class JavaContext extends JavaProvider implements CodeContext, J
   /**
    * @return the {@link JavaSource#getToplevelPackage() top-level package}.
    */
-  public JavaPackage getToplevelPackage() {
+  public BasePackage getToplevelPackage() {
 
-    JavaPackage pkg = getRootPackage();
+    BasePackage pkg = getRootPackage();
     boolean todo = true;
     while (todo) {
       todo = false;
-      List<JavaPathElement> children = pkg.getChildren().getList();
+      List<BasePathElement> children = pkg.getChildren().getInternalList();
       if (children.size() == 1) {
-        JavaPathElement child = children.get(0);
+        BasePathElement child = children.get(0);
         if (child.isFile()) {
-          pkg = (JavaPackage) child;
+          pkg = (BasePackage) child;
           todo = true;
         }
       }
@@ -104,7 +108,7 @@ public abstract class JavaContext extends JavaProvider implements CodeContext, J
   }
 
   @Override
-  public JavaGenericType getType(Class<?> clazz) {
+  public BaseGenericType getType(Class<?> clazz) {
 
     return this.loader.getType(clazz);
   }
@@ -122,23 +126,23 @@ public abstract class JavaContext extends JavaProvider implements CodeContext, J
   }
 
   @Override
-  public JavaGenericType getType(Type type, JavaElement declaringElement) {
+  public BaseGenericType getType(Type type, BaseElement declaringElement) {
 
     // TODO this is nuts. We need to reuse the package caching to retrieve existing objects instead of
     // creating new ones...
-    return declaringElement.getSource().getContext().getLoader().getType(type, declaringElement);
+    return ((JavaContext) declaringElement.getSource().getContext()).getLoader().getType(type, declaringElement);
   }
 
   @Override
-  public JavaPackage getPackage(JavaSource javaSource, Package pkg) {
+  public BasePackage getPackage(JavaSource javaSource, Package pkg) {
 
     return javaSource.getContext().getLoader().getPackage(javaSource, pkg);
   }
 
   @Override
-  public void scan(JavaPackage pkg) {
+  public void scan(BasePackage pkg) {
 
-    pkg.getContext().getLoader().scan(pkg);
+    ((JavaContext) pkg.getContext()).getLoader().scan(pkg);
   }
 
   /**
@@ -148,24 +152,24 @@ public abstract class JavaContext extends JavaProvider implements CodeContext, J
   protected abstract JavaSource getOrCreateSource(CodeSource codeSource);
 
   @Override
-  public abstract JavaType getRootType();
+  public abstract BaseType getRootType();
 
   @Override
-  public abstract JavaType getRootEnumerationType();
+  public abstract BaseType getRootEnumerationType();
 
   @Override
-  public abstract JavaType getVoidType();
+  public abstract BaseType getVoidType();
 
   @Override
-  public abstract JavaType getRootExceptionType();
+  public abstract BaseType getRootExceptionType();
 
   @Override
-  public abstract JavaTypeWildcard getUnboundedWildcard();
+  public abstract BaseTypeWildcard getUnboundedWildcard();
 
-  /**
-   * @param javaType the {@link JavaType} that might be {@link JavaType#isPrimitive() primitive}.
-   * @return the corresponding {@link JavaType#getNonPrimitiveType() non-primitive type}.
-   */
-  public abstract JavaType getNonPrimitiveType(JavaType javaType);
+  @Override
+  public CodeExpression createExpression(Object value, boolean primitive) {
+
+    return JavaConstant.of(value, primitive);
+  }
 
 }

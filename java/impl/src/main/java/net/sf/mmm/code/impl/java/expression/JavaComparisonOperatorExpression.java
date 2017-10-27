@@ -7,6 +7,7 @@ import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.operator.CodeComparisonOperator;
 import net.sf.mmm.code.base.expression.GenericComparisonOperatorExpression;
 import net.sf.mmm.code.impl.java.expression.literal.JavaLiteral;
+import net.sf.mmm.code.impl.java.expression.literal.JavaLiteralBoolean;
 import net.sf.mmm.util.lang.api.CompareOperator;
 
 /**
@@ -53,7 +54,7 @@ public class JavaComparisonOperatorExpression extends GenericComparisonOperatorE
       return null;
     }
     boolean result = op.eval(leftVal, rightVal);
-    return JavaLiteral.of(result);
+    return JavaLiteralBoolean.of(result);
   }
 
 }

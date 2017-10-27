@@ -24,7 +24,7 @@ public interface CodeConstructors<C extends CodeConstructor> extends CodeOperati
   C get(CodeGenericType... parameterTypes);
 
   /**
-   * @return a new {@link CodeConstructor} that has been added to {@link #getAll()}. It will not have any
+   * @return a new {@link CodeConstructor} that has been added to {@link #getDeclared()}. It will not have any
    *         {@link CodeMethod#getParameters() parameters} or {@link CodeMethod#getExceptions() exceptions}.
    *         Simply add those afterwards as needed.
    * @throws ReadOnlyException if {@link #isImmutable() immutable}.

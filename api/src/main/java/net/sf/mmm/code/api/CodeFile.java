@@ -48,4 +48,7 @@ public abstract interface CodeFile extends CodePathElement {
    */
   CodeImports<?> getImports();
 
+  @Override
+  Class<?> getReflectiveObject();
+
 }

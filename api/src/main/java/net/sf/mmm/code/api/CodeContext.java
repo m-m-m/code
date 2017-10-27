@@ -2,6 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api;
 
+import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.imports.CodeImport;
 import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeType;
@@ -123,5 +124,12 @@ public interface CodeContext extends CodeProvider {
    *         standard type (import is required).
    */
   public String getQualifiedNameForStandardType(String simpleName, boolean omitStandardPackages);
+
+  /**
+   * @param value the Java value to wrap as constant/literal {@link CodeExpression}.
+   * @param primitive - {@code true} for a primitive type literal, {@code false} otherwise.
+   * @return the according {@link CodeExpression}.
+   */
+  CodeExpression createExpression(Object value, boolean primitive);
 
 }

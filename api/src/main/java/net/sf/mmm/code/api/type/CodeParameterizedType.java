@@ -2,6 +2,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.type;
 
+import java.lang.reflect.ParameterizedType;
+
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.item.CodeMutableItemWithType;
 import net.sf.mmm.code.api.node.CodeNodeItemWithDeclaringOperation;
@@ -29,6 +31,9 @@ public interface CodeParameterizedType extends CodeGenericType, CodeMutableItemW
    */
   @Override
   CodeType getType();
+
+  @Override
+  ParameterizedType getReflectiveObject();
 
   @Override
   CodeParameterizedType copy();

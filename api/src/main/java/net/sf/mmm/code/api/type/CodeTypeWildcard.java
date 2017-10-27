@@ -2,6 +2,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.type;
 
+import java.lang.reflect.WildcardType;
+
 /**
  * {@link CodeGenericType} representing a type variable. It is a variable as a placeholder for a
  * {@link CodeGenericType generic} {@link CodeType type}.
@@ -33,6 +35,9 @@ public interface CodeTypeWildcard extends CodeTypePlaceholder {
 
     return this;
   }
+
+  @Override
+  WildcardType getReflectiveObject();
 
   @Override
   CodeTypeWildcard copy();

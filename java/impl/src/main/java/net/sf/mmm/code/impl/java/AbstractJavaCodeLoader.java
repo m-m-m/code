@@ -13,23 +13,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.CodeName;
-import net.sf.mmm.code.base.node.AbstractCodeNodeItemContainerAccess;
-import net.sf.mmm.code.impl.java.arg.JavaOperationArg;
-import net.sf.mmm.code.impl.java.element.JavaElement;
-import net.sf.mmm.code.impl.java.element.JavaElementImpl;
-import net.sf.mmm.code.impl.java.element.JavaElementWithTypeVariables;
+import net.sf.mmm.code.base.BaseFile;
+import net.sf.mmm.code.base.BasePackage;
+import net.sf.mmm.code.base.BasePathElements;
+import net.sf.mmm.code.base.arg.BaseOperationArg;
+import net.sf.mmm.code.base.element.BaseElement;
+import net.sf.mmm.code.base.element.BaseElementWithTypeVariables;
+import net.sf.mmm.code.base.member.BaseOperation;
+import net.sf.mmm.code.base.node.BaseNode;
+import net.sf.mmm.code.base.node.BaseNodeItem;
+import net.sf.mmm.code.base.node.BaseNodeItemContainerAccess;
+import net.sf.mmm.code.base.type.BaseArrayType;
+import net.sf.mmm.code.base.type.BaseGenericType;
+import net.sf.mmm.code.base.type.BaseParameterizedType;
+import net.sf.mmm.code.base.type.BaseType;
+import net.sf.mmm.code.base.type.BaseTypeVariable;
+import net.sf.mmm.code.base.type.BaseTypeVariables;
+import net.sf.mmm.code.base.type.BaseTypeWildcard;
 import net.sf.mmm.code.impl.java.loader.JavaCodeLoader;
-import net.sf.mmm.code.impl.java.member.JavaOperation;
-import net.sf.mmm.code.impl.java.node.JavaNode;
-import net.sf.mmm.code.impl.java.node.JavaNodeItem;
 import net.sf.mmm.code.impl.java.source.JavaSource;
-import net.sf.mmm.code.impl.java.type.JavaArrayType;
-import net.sf.mmm.code.impl.java.type.JavaGenericType;
-import net.sf.mmm.code.impl.java.type.JavaParameterizedType;
-import net.sf.mmm.code.impl.java.type.JavaType;
-import net.sf.mmm.code.impl.java.type.JavaTypeVariable;
-import net.sf.mmm.code.impl.java.type.JavaTypeVariables;
-import net.sf.mmm.code.impl.java.type.JavaTypeWildcard;
 import net.sf.mmm.util.exception.api.IllegalCaseException;
 
 /**
@@ -38,7 +40,7 @@ import net.sf.mmm.util.exception.api.IllegalCaseException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class AbstractJavaCodeLoader extends AbstractCodeNodeItemContainerAccess implements JavaCodeLoader {
+public abstract class AbstractJavaCodeLoader extends BaseNodeItemContainerAccess implements JavaCodeLoader {
 
   private static final Logger LOG = LoggerFactory.getLogger(AbstractJavaCodeLoader.class);
 
@@ -52,53 +54,53 @@ public abstract class AbstractJavaCodeLoader extends AbstractCodeNodeItemContain
   }
 
   @Override
-  public JavaGenericType getType(Class<?> clazz) {
+  public BaseGenericType getType(Class<?> clazz) {
 
     requireByteCodeSupport();
     if (clazz.isArray()) {
-      JavaGenericType componentType = getType(clazz.getComponentType());
+      BaseGenericType componentType = getType(clazz.getComponentType());
       return componentType.createArray();
     }
     CodeSource codeSource = clazz.getProtectionDomain().getCodeSource();
     JavaSource javaSource = this.context.getOrCreateSource(codeSource);
     Package pkg = clazz.getPackage();
-    JavaPackage javaPackage = getPackage(javaSource, pkg);
-    return getType(clazz, javaPackage);
+    BasePackage basePackage = getPackage(javaSource, pkg);
+    return getType(clazz, basePackage);
   }
 
-  private JavaType getType(Class<?> clazz, JavaPackage javaPackage) {
+  private BaseType getType(Class<?> clazz, BasePackage pkg) {
 
     String simpleName = clazz.getSimpleName();
-    JavaType type = javaPackage.getChildren().getType(simpleName, false, false);
+    BaseType type = pkg.getChildren().getType(simpleName, false, false);
     if (type != null) {
       return type;
     }
-    JavaType declaringType = null;
+    BaseType declaringType = null;
     Class<?> declaringClass = clazz.getDeclaringClass();
     if (declaringClass != null) {
-      declaringType = getType(declaringClass, javaPackage);
-      JavaFile file = declaringType.getFile();
-      type = new JavaType(file, simpleName, declaringType, clazz);
+      declaringType = getType(declaringClass, pkg);
+      BaseFile file = declaringType.getFile();
+      type = new BaseType(file, simpleName, declaringType, clazz);
       addContainerItem(declaringType.getNestedTypes(), type);
     } else {
-      JavaFile file = new JavaFile(javaPackage, clazz);
-      javaPackage.getChildren().addInternal(file);
+      BaseFile file = new BaseFile(pkg, clazz);
+      addPathElementInternal(pkg.getChildren(), file);
       type = file.getType();
     }
     return type;
   }
 
   @Override
-  public JavaPackage getPackage(JavaSource source, Package pkg) {
+  public BasePackage getPackage(JavaSource source, Package pkg) {
 
-    JavaPackage rootPackage = source.getRootPackage();
+    BasePackage rootPackage = source.getRootPackage();
     if (pkg == null) {
       return rootPackage;
     }
     return getPackage(rootPackage, pkg, this.context.parseName(pkg.getName()));
   }
 
-  private JavaPackage getPackage(JavaPackage root, Package pkg, CodeName qname) {
+  private BasePackage getPackage(BasePackage root, Package pkg, CodeName qname) {
 
     requireByteCodeSupport();
     if (qname == null) {
@@ -106,90 +108,90 @@ public abstract class AbstractJavaCodeLoader extends AbstractCodeNodeItemContain
     }
     CodeName parentName = qname.getParent();
     Package parentPkg = null; // Package.getPackage(parentName.getFullName());
-    JavaPackage parentPackage = getPackage(root, parentPkg, parentName);
+    BasePackage parentPackage = getPackage(root, parentPkg, parentName);
     String simpleName = qname.getSimpleName();
-    JavaPathElements children = parentPackage.getChildren();
-    JavaPackage javaPackage = children.getPackage(simpleName, false, false);
-    if (javaPackage == null) {
+    BasePathElements children = parentPackage.getChildren();
+    BasePackage childPackage = children.getPackage(simpleName, false, false);
+    if (childPackage == null) {
       Package reflectiveObject = pkg;
       if (reflectiveObject == null) {
         reflectiveObject = Package.getPackage(qname.getFullName());
       }
-      JavaPackage superLayerPackage = null; // TODO
-      javaPackage = new JavaPackage(parentPackage, simpleName, reflectiveObject, superLayerPackage);
-      children.addInternal(javaPackage);
+      BasePackage superLayerPackage = null; // TODO
+      childPackage = new BasePackage(parentPackage, simpleName, reflectiveObject, superLayerPackage);
+      addPathElementInternal(children, childPackage);
     }
-    return javaPackage;
+    return childPackage;
   }
 
   @Override
-  public JavaGenericType getType(Type type, JavaElement declaringElement) {
+  public BaseGenericType getType(Type type, BaseElement declaringElement) {
 
     requireByteCodeSupport();
     if (type instanceof Class) {
       return getType((Class<?>) type);
     } else if (type instanceof ParameterizedType) {
       ParameterizedType parameterizedType = (ParameterizedType) type;
-      return new JavaParameterizedType(declaringElement, parameterizedType);
+      return new BaseParameterizedType(declaringElement, parameterizedType);
     } else if (type instanceof TypeVariable) {
       TypeVariable<?> typeVar = (TypeVariable<?>) type;
-      if (declaringElement instanceof JavaType) {
-        JavaType declaringType = (JavaType) declaringElement;
+      if (declaringElement instanceof BaseType) {
+        BaseType declaringType = (BaseType) declaringElement;
         assert (typeVar.getGenericDeclaration() == declaringType.getReflectiveObject());
-        return new JavaTypeVariable(declaringType.getTypeParameters(), typeVar);
-      } else if (declaringElement instanceof JavaOperation) {
-        JavaOperation operation = (JavaOperation) declaringElement;
+        return new BaseTypeVariable(declaringType.getTypeParameters(), typeVar);
+      } else if (declaringElement instanceof BaseOperation) {
+        BaseOperation operation = (BaseOperation) declaringElement;
         if (typeVar.getGenericDeclaration() == operation.getReflectiveObject()) {
-          return new JavaTypeVariable(operation.getTypeParameters(), typeVar);
+          return new BaseTypeVariable(operation.getTypeParameters(), typeVar);
         }
       }
-      JavaTypeVariable typeVariable = findTypeVariable(declaringElement, typeVar.getName());
+      BaseTypeVariable typeVariable = findTypeVariable(declaringElement, typeVar.getName());
       if (typeVariable != null) {
         return typeVariable;
       }
       LOG.warn("Could not find type variable {} in {}", typeVar, declaringElement);
-      return new JavaTypeVariable(declaringElement.getDeclaringType().getTypeParameters(), typeVar);
+      return new BaseTypeVariable(declaringElement.getDeclaringType().getTypeParameters(), typeVar);
     } else if (type instanceof WildcardType) {
       WildcardType wildcard = (WildcardType) type;
-      JavaNodeItem parent;
-      if (declaringElement instanceof JavaParameterizedType) {
-        parent = ((JavaParameterizedType) declaringElement).getTypeParameters();
+      BaseNodeItem parent;
+      if (declaringElement instanceof BaseParameterizedType) {
+        parent = ((BaseParameterizedType) declaringElement).getTypeParameters();
       } else {
-        parent = (JavaElementImpl) declaringElement;
+        parent = declaringElement;
       }
-      return new JavaTypeWildcard(parent, wildcard);
+      return new BaseTypeWildcard(parent, wildcard);
     } else if (type instanceof GenericArrayType) {
       // GenericArrayType arrayType = (GenericArrayType) type;
-      return new JavaArrayType(declaringElement, type);
+      return new BaseArrayType(declaringElement, type);
     } else {
       throw new IllegalCaseException(type.getClass().getSimpleName());
     }
   }
 
-  private JavaElementWithTypeVariables findElementWithTypeVariables(JavaNode node) {
+  private BaseElementWithTypeVariables findElementWithTypeVariables(BaseNode node) {
 
-    if (node instanceof JavaElementWithTypeVariables) {
-      return (JavaElementWithTypeVariables) node;
-    } else if (node instanceof JavaOperationArg) {
-      JavaOperationArg arg = (JavaOperationArg) node;
-      JavaOperation operation = arg.getDeclaringOperation();
+    if (node instanceof BaseElementWithTypeVariables) {
+      return (BaseElementWithTypeVariables) node;
+    } else if (node instanceof BaseOperationArg) {
+      BaseOperationArg arg = (BaseOperationArg) node;
+      BaseOperation operation = arg.getDeclaringOperation();
       if (operation != null) {
         return operation;
       } else {
         return arg.getDeclaringType();
       }
-    } else if (node instanceof JavaGenericType) {
+    } else if (node instanceof BaseGenericType) {
       return findElementWithTypeVariables(node.getParent());
-    } else if (node instanceof JavaTypeVariables) {
+    } else if (node instanceof BaseTypeVariables) {
       return findElementWithTypeVariables(node.getParent());
     } else {
       throw new IllegalCaseException(node.getClass().getSimpleName());
     }
   }
 
-  private JavaTypeVariable findTypeVariable(JavaNode node, String name) {
+  private BaseTypeVariable findTypeVariable(BaseNode node, String name) {
 
-    JavaElementWithTypeVariables elementWithTypeVariables = findElementWithTypeVariables(node);
+    BaseElementWithTypeVariables elementWithTypeVariables = findElementWithTypeVariables(node);
     if (elementWithTypeVariables != null) {
       return elementWithTypeVariables.getTypeParameters().get(name, true);
     }

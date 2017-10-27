@@ -14,19 +14,20 @@ import org.junit.Test;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeTypeCategory;
-import net.sf.mmm.code.impl.java.member.JavaConstructor;
-import net.sf.mmm.code.impl.java.member.JavaConstructors;
-import net.sf.mmm.code.impl.java.member.JavaField;
-import net.sf.mmm.code.impl.java.member.JavaFields;
-import net.sf.mmm.code.impl.java.member.JavaMethod;
-import net.sf.mmm.code.impl.java.member.JavaMethods;
-import net.sf.mmm.code.impl.java.type.JavaGenericType;
-import net.sf.mmm.code.impl.java.type.JavaGenericTypeParameters;
-import net.sf.mmm.code.impl.java.type.JavaParameterizedType;
-import net.sf.mmm.code.impl.java.type.JavaSuperTypes;
-import net.sf.mmm.code.impl.java.type.JavaType;
-import net.sf.mmm.code.impl.java.type.JavaTypeVariable;
-import net.sf.mmm.code.impl.java.type.JavaTypeVariables;
+import net.sf.mmm.code.base.BasePackage;
+import net.sf.mmm.code.base.member.BaseConstructor;
+import net.sf.mmm.code.base.member.BaseConstructors;
+import net.sf.mmm.code.base.member.BaseField;
+import net.sf.mmm.code.base.member.BaseFields;
+import net.sf.mmm.code.base.member.BaseMethod;
+import net.sf.mmm.code.base.member.BaseMethods;
+import net.sf.mmm.code.base.type.BaseGenericType;
+import net.sf.mmm.code.base.type.BaseGenericTypeParameters;
+import net.sf.mmm.code.base.type.BaseParameterizedType;
+import net.sf.mmm.code.base.type.BaseSuperTypes;
+import net.sf.mmm.code.base.type.BaseType;
+import net.sf.mmm.code.base.type.BaseTypeVariable;
+import net.sf.mmm.code.base.type.BaseTypeVariables;
 
 /**
  * Test of {@link JavaRootContext}.
@@ -50,7 +51,7 @@ public class JavaRootContextTest extends Assertions {
     // then
     assertThat(context.getPackageSeparator()).isEqualTo('.');
     assertThat(context.getRootContext()).isSameAs(context);
-    JavaPackage rootPackage = context.getRootPackage();
+    BasePackage rootPackage = context.getRootPackage();
     assertThat(rootPackage).isNotNull();
     assertThat(rootPackage.getSimpleName()).isEmpty();
     assertThat(rootPackage.getQualifiedName()).isEmpty();
@@ -72,7 +73,7 @@ public class JavaRootContextTest extends Assertions {
     JavaContext context = getContext();
 
     // when
-    JavaType object = context.getRootType();
+    BaseType object = context.getRootType();
 
     // then
     verifyClass(object, Object.class, context);
@@ -88,7 +89,7 @@ public class JavaRootContextTest extends Assertions {
     JavaContext context = getContext();
 
     // when
-    JavaType throwable = context.getRootExceptionType();
+    BaseType throwable = context.getRootExceptionType();
 
     // then
     verifyClass(throwable, Throwable.class, context);
@@ -104,44 +105,44 @@ public class JavaRootContextTest extends Assertions {
     JavaContext context = getContext();
 
     // when
-    JavaType enumeration = context.getRootEnumerationType();
+    BaseType enumeration = context.getRootEnumerationType();
 
     // then
     verifyClass(enumeration, Enum.class, context);
-    JavaSuperTypes superTypes = enumeration.getSuperTypes();
+    BaseSuperTypes superTypes = enumeration.getSuperTypes();
     assertThat(superTypes.getSuperClass()).isSameAs(context.getRootType());
     // test "Enum implements Comparable<E>, Serializable"
     @SuppressWarnings("unchecked")
-    List<JavaGenericType> superInterfaces = (List<JavaGenericType>) superTypes.getSuperInterfaces();
-    JavaGenericType serializable = context.getType(Serializable.class);
+    List<BaseGenericType> superInterfaces = (List<BaseGenericType>) superTypes.getSuperInterfaces();
+    BaseGenericType serializable = context.getType(Serializable.class);
     assertThat(superInterfaces).hasSize(2).contains(serializable);
-    JavaGenericType comparable = superInterfaces.get(0);
+    BaseGenericType comparable = superInterfaces.get(0);
     if (comparable == serializable) {
       comparable = superInterfaces.get(1);
     }
-    assertThat(comparable).isNotNull().isInstanceOf(JavaParameterizedType.class);
+    assertThat(comparable).isNotNull().isInstanceOf(BaseParameterizedType.class);
 
     // test "Enum<E extends Enum<E>>" - great test with its recursive declaration
-    JavaTypeVariables typeVariables = enumeration.getTypeParameters();
-    List<? extends JavaTypeVariable> typeVariableList = typeVariables.getDeclared();
+    BaseTypeVariables typeVariables = enumeration.getTypeParameters();
+    List<? extends BaseTypeVariable> typeVariableList = typeVariables.getDeclared();
     assertThat(typeVariableList).hasSize(1);
-    JavaTypeVariable typeVariable = typeVariableList.get(0);
+    BaseTypeVariable typeVariable = typeVariableList.get(0);
     assertThat(typeVariable.getName()).isEqualTo("E");
     assertThat(typeVariable.asType()).isSameAs(enumeration);
     assertThat(typeVariables.get("E")).isSameAs(typeVariable);
     assertThat(typeVariable.isSuper()).isFalse();
     assertThat(typeVariable.isExtends()).isTrue();
     assertThat(typeVariable.isWildcard()).isFalse();
-    JavaGenericType bound = typeVariable.getBound();
-    assertThat(bound).isNotNull().isInstanceOf(JavaParameterizedType.class);
-    JavaGenericTypeParameters<?> typeParameters = bound.getTypeParameters();
-    List<? extends JavaGenericType> typeParameterList = typeParameters.getDeclared();
+    BaseGenericType bound = typeVariable.getBound();
+    assertThat(bound).isNotNull().isInstanceOf(BaseParameterizedType.class);
+    BaseGenericTypeParameters<?> typeParameters = bound.getTypeParameters();
+    List<? extends BaseGenericType> typeParameterList = typeParameters.getDeclared();
     assertThat(typeParameterList).hasSize(1);
-    JavaGenericType boundTypeVariable = typeParameterList.get(0);
+    BaseGenericType boundTypeVariable = typeParameterList.get(0);
     assertThat(boundTypeVariable).isSameAs(typeVariable);
   }
 
-  private void verifyClass(JavaType type, Class<?> clazz, JavaContext context) {
+  private void verifyClass(BaseType type, Class<?> clazz, JavaContext context) {
 
     assertThat(type).isNotNull();
     assertThat(context.getType(clazz)).isSameAs(type);
@@ -166,7 +167,7 @@ public class JavaRootContextTest extends Assertions {
     verifyMethods(type.getMethods(), clazz.getDeclaredMethods(), context);
   }
 
-  private void verifyFields(JavaFields fields, Field[] declaredFields, JavaContext context) {
+  private void verifyFields(BaseFields fields, Field[] declaredFields, JavaContext context) {
 
     assertThat(fields.getDeclared()).hasSameSizeAs(declaredFields);
     for (Field field : declaredFields) {
@@ -174,9 +175,9 @@ public class JavaRootContextTest extends Assertions {
     }
   }
 
-  private void verifyField(JavaFields fields, Field field, JavaContext context) {
+  private void verifyField(BaseFields fields, Field field, JavaContext context) {
 
-    JavaField javaField = fields.get(field.getName());
+    BaseField javaField = fields.get(field.getName());
     assertThat(javaField).as(field.toGenericString()).isNotNull();
     assertThat(javaField.getName()).isEqualTo(field.getName());
     CodeGenericType type = javaField.getType();
@@ -186,7 +187,7 @@ public class JavaRootContextTest extends Assertions {
     assertThat(type).as("Type of " + javaField).isEqualTo(context.getType(field.getType()));
   }
 
-  private void verifyConstructors(JavaConstructors constructors, Constructor<?>[] declaredConstructors, JavaContext context) {
+  private void verifyConstructors(BaseConstructors constructors, Constructor<?>[] declaredConstructors, JavaContext context) {
 
     assertThat(constructors.getDeclared()).hasSameSizeAs(declaredConstructors);
     for (Constructor<?> constructor : declaredConstructors) {
@@ -194,19 +195,19 @@ public class JavaRootContextTest extends Assertions {
     }
   }
 
-  private void verifyConstructor(JavaConstructors constructors, Constructor<?> constructor, JavaContext context) {
+  private void verifyConstructor(BaseConstructors constructors, Constructor<?> constructor, JavaContext context) {
 
     Class<?>[] parameters = constructor.getParameterTypes();
     CodeGenericType[] parameterTypes = new CodeGenericType[parameters.length];
     for (int i = 0; i < parameters.length; i++) {
       parameterTypes[i] = context.getType(parameters[i]);
     }
-    JavaConstructor javaConstructor = constructors.get(parameterTypes);
+    BaseConstructor javaConstructor = constructors.get(parameterTypes);
     assertThat(javaConstructor).as(constructor.toGenericString()).isNotNull();
     assertThat(constructor.getName()).isEqualTo(constructor.getName());
   }
 
-  private void verifyMethods(JavaMethods methods, Method[] declaredMethods, JavaContext context) {
+  private void verifyMethods(BaseMethods methods, Method[] declaredMethods, JavaContext context) {
 
     assertThat(methods.getDeclared()).hasSameSizeAs(declaredMethods);
     for (Method method : declaredMethods) {
@@ -214,14 +215,14 @@ public class JavaRootContextTest extends Assertions {
     }
   }
 
-  private void verifyMethod(JavaMethods methods, Method method, JavaContext context) {
+  private void verifyMethod(BaseMethods methods, Method method, JavaContext context) {
 
     Class<?>[] parameters = method.getParameterTypes();
     CodeGenericType[] parameterTypes = new CodeGenericType[parameters.length];
     for (int i = 0; i < parameters.length; i++) {
       parameterTypes[i] = context.getType(parameters[i]);
     }
-    JavaMethod javaMethod = methods.getDeclared(method.getName(), parameterTypes);
+    BaseMethod javaMethod = methods.getDeclared(method.getName(), parameterTypes);
     assertThat(javaMethod).as(method.toGenericString()).isNotNull();
     assertThat(javaMethod.getName()).isEqualTo(method.getName());
   }

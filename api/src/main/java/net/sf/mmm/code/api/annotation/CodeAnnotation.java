@@ -2,6 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.annotation;
 
+import java.lang.annotation.Annotation;
 import java.util.Map;
 
 import net.sf.mmm.code.api.expression.CodeExpression;
@@ -29,6 +30,9 @@ public interface CodeAnnotation extends CodeChildItem, CodeMutableItemWithType, 
    *         {@link net.sf.mmm.code.api.expression.CodeConstant}.
    */
   Map<String, CodeExpression> getParameters();
+
+  @Override
+  Annotation getReflectiveObject();
 
   @Override
   CodeAnnotation copy();

@@ -7,9 +7,10 @@ import java.io.IOException;
 import net.sf.mmm.code.api.expression.CodeVariable;
 import net.sf.mmm.code.api.expression.CodeVariableThis;
 import net.sf.mmm.code.api.statement.CodeLocalVariable;
+import net.sf.mmm.code.api.type.CodeTypeCategory;
 
 /**
- * The default implementation of {@link CodeSyntax} (suitable for Java or C#).
+ * The default implementation of {@link CodeSyntax} (for Java).
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
@@ -26,7 +27,7 @@ public class DefaultCodeSyntax implements CodeSyntax {
   }
 
   @Override
-  public String getKeyword(CodeLocalVariable variable) {
+  public String getKeywordForVariable(CodeLocalVariable variable) {
 
     if (variable.isFinal()) {
       return "final ";
@@ -40,6 +41,18 @@ public class DefaultCodeSyntax implements CodeSyntax {
     variable.getType().writeReference(sink, false);
     sink.append(' ');
     sink.append(variable.getName());
+  }
+
+  @Override
+  public String getKeywordForCategory(CodeTypeCategory category) {
+
+    if (category.isAnnotation()) {
+      return "@interface";
+    } else if (category.isEnumeration()) {
+      return "enum";
+    } else {
+      return category.toString();
+    }
   }
 
   @Override

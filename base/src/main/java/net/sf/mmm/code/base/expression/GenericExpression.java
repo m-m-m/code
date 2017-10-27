@@ -3,7 +3,7 @@
 package net.sf.mmm.code.base.expression;
 
 import net.sf.mmm.code.api.expression.CodeExpression;
-import net.sf.mmm.code.base.item.AbstractCodeItem;
+import net.sf.mmm.code.base.item.BaseItem;
 
 /**
  * Generic implementation of {@link CodeExpression}.
@@ -11,6 +11,6 @@ import net.sf.mmm.code.base.item.AbstractCodeItem;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class GenericExpression extends AbstractCodeItem implements CodeExpression {
+public abstract class GenericExpression extends BaseItem implements CodeExpression {
 
 }

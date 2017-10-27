@@ -4,12 +4,10 @@ package net.sf.mmm.code.impl.java.loader;
 
 import java.lang.reflect.Type;
 
-import net.sf.mmm.code.impl.java.JavaPackage;
-import net.sf.mmm.code.impl.java.element.JavaElement;
+import net.sf.mmm.code.base.BasePackage;
+import net.sf.mmm.code.base.element.BaseElement;
+import net.sf.mmm.code.base.type.BaseGenericType;
 import net.sf.mmm.code.impl.java.source.JavaSource;
-import net.sf.mmm.code.impl.java.type.JavaArrayType;
-import net.sf.mmm.code.impl.java.type.JavaGenericType;
-import net.sf.mmm.code.impl.java.type.JavaType;
 
 /**
  * {@link JavaLoader} that encapsulates the physical loading of code.
@@ -34,28 +32,30 @@ public interface JavaCodeLoader extends JavaLoader {
   /**
    * @param source the declaring {@link JavaSource} supposed to be the owner of the requested package.
    * @param pkg the Java {@link Package}.
-   * @return the existing or otherwise created {@link JavaPackage}.
+   * @return the existing or otherwise created {@link BasePackage}.
    */
-  JavaPackage getPackage(JavaSource source, Package pkg);
+  BasePackage getPackage(JavaSource source, Package pkg);
 
   /**
-   * @param clazz the {@link Class} to get as {@link JavaType}.
-   * @return the existing or otherwise newly created {@link JavaGenericType}. Typically a {@link JavaType} but
-   *         may also be a {@link JavaArrayType} in case an {@link Class#isArray() array} was given.
+   * @param clazz the {@link Class} to get as {@link BaseGenericType}.
+   * @return the existing or otherwise newly created {@link BaseGenericType}. Typically a
+   *         {@link net.sf.mmm.code.base.type.BaseType} but may also be a
+   *         {@link net.sf.mmm.code.base.type.BaseArrayType} in case an {@link Class#isArray() array} was
+   *         given.
    */
-  JavaGenericType getType(Class<?> clazz);
+  BaseGenericType getType(Class<?> clazz);
 
   /**
-   * @param type the {@link Type} to get as {@link JavaGenericType}.
-   * @param declaringElement the owning {@link JavaElement} declaring the {@link Type}.
-   * @return the existing or otherwise newly created {@link JavaGenericType}.
+   * @param type the {@link Type} to get as {@link BaseGenericType}.
+   * @param declaringElement the owning {@link BaseElement} declaring the {@link Type}.
+   * @return the existing or otherwise newly created {@link BaseGenericType}.
    */
-  JavaGenericType getType(Type type, JavaElement declaringElement);
+  BaseGenericType getType(Type type, BaseElement declaringElement);
 
   /**
-   * @param pkg the {@link JavaPackage} to scan. Will load all {@link JavaPackage#getChildren() children} of
+   * @param pkg the {@link BasePackage} to scan. Will load all {@link BasePackage#getChildren() children} of
    *        the package.
    */
-  void scan(JavaPackage pkg);
+  void scan(BasePackage pkg);
 
 }

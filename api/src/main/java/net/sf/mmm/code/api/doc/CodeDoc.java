@@ -95,4 +95,7 @@ public interface CodeDoc extends CodeNodeItem {
    */
   boolean isEmpty();
 
+  @Override
+  CodeDoc copy();
+
 }

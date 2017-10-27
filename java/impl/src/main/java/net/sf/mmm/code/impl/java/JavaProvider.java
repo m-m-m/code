@@ -6,8 +6,12 @@ import net.sf.mmm.code.api.CodeContext;
 import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.api.CodeProvider;
 import net.sf.mmm.code.api.type.CodeType;
+import net.sf.mmm.code.base.BaseFile;
+import net.sf.mmm.code.base.BasePackage;
+import net.sf.mmm.code.base.BasePathElements;
+import net.sf.mmm.code.base.node.BaseNodeItemContainerAccess;
+import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.impl.java.loader.JavaLoader;
-import net.sf.mmm.code.impl.java.type.JavaType;
 import net.sf.mmm.util.exception.api.ObjectNotFoundException;
 
 /**
@@ -16,7 +20,7 @@ import net.sf.mmm.util.exception.api.ObjectNotFoundException;
  * @author Joerg Hohwiller (hohwille aJavaType users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class JavaProvider implements CodeProvider, JavaLoader {
+public abstract class JavaProvider extends BaseNodeItemContainerAccess implements CodeProvider, JavaLoader {
 
   /**
    * The constructor.
@@ -27,13 +31,13 @@ public abstract class JavaProvider implements CodeProvider, JavaLoader {
   }
 
   @Override
-  public abstract JavaPackage getRootPackage();
+  public abstract BasePackage getRootPackage();
 
   @Override
   public abstract JavaContext getContext();
 
   @Override
-  public JavaPackage getPackage(String qualifiedName) {
+  public BasePackage getPackage(String qualifiedName) {
 
     if (qualifiedName.isEmpty()) {
       return getRootPackage();
@@ -42,14 +46,14 @@ public abstract class JavaProvider implements CodeProvider, JavaLoader {
   }
 
   @Override
-  public JavaPackage getPackage(CodeName qualifiedName) {
+  public BasePackage getPackage(CodeName qualifiedName) {
 
     if (qualifiedName == null) {
       return getRootPackage();
     }
     JavaContext context = getContext();
     boolean withoutSuperLayer = (context != this); // determine if called in context or in source
-    JavaPackage pkg = getRootPackage().getChildren().getPackage(qualifiedName, withoutSuperLayer, false);
+    BasePackage pkg = getRootPackage().getChildren().getPackage(qualifiedName, withoutSuperLayer, false);
     if (pkg == null) {
       JavaLoader loader = context.getLoader();
       if (loader != null) {
@@ -60,23 +64,23 @@ public abstract class JavaProvider implements CodeProvider, JavaLoader {
   }
 
   @Override
-  public JavaType getType(String qualifiedName) {
+  public BaseType getType(String qualifiedName) {
 
     return getType(parseName(qualifiedName));
   }
 
   @Override
-  public JavaType getType(CodeName qualifiedName) {
+  public BaseType getType(CodeName qualifiedName) {
 
-    JavaPackage pkg = getPackage(qualifiedName.getParent());
+    BasePackage pkg = getPackage(qualifiedName.getParent());
     if (pkg == null) {
       return null;
     }
-    JavaPathElements children = pkg.getChildren();
+    BasePathElements children = pkg.getChildren();
     String simpleName = qualifiedName.getSimpleName();
     JavaContext context = getContext();
     boolean withoutSuperLayer = (context != this);
-    JavaFile file = children.getFile(simpleName, withoutSuperLayer, false);
+    BaseFile file = children.getFile(simpleName, withoutSuperLayer, false);
     if (file != null) {
       return file.getType();
     }
@@ -84,9 +88,9 @@ public abstract class JavaProvider implements CodeProvider, JavaLoader {
   }
 
   @Override
-  public JavaType getRequiredType(String qualifiedName) {
+  public BaseType getRequiredType(String qualifiedName) {
 
-    JavaType type = getType(qualifiedName);
+    BaseType type = getType(qualifiedName);
     if (type == null) {
       throw new ObjectNotFoundException(CodeType.class, qualifiedName);
     }

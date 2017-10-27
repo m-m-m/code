@@ -2,6 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.member;
 
+import java.lang.reflect.Executable;
 import java.util.List;
 
 import net.sf.mmm.code.api.arg.CodeException;
@@ -34,6 +35,9 @@ public abstract interface CodeOperation extends CodeMember, CodeElementWithTypeV
    *         {@link List#isEmpty() empty} but never <code>null</code>.
    */
   CodeExceptions<?> getExceptions();
+
+  @Override
+  Executable getReflectiveObject();
 
   @Override
   CodeOperation copy();
