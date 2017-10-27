@@ -140,15 +140,15 @@ public class JavaGenericTypeFromSource extends BaseGenericTypeProxy {
     if (!qualified) {
       qualifiedName = context.getQualifiedName(typeName, this.file, false);
     }
-    BaseType javaType = context.getRequiredType(qualifiedName);
+    BaseType baseType = context.getRequiredType(qualifiedName);
     if (qualified) {
-      BaseTypeProxy qualifiedType = new BaseTypeProxy(this.parent, javaType);
+      BaseTypeProxy qualifiedType = new BaseTypeProxy(this.parent, baseType);
       qualifiedType.setQualified(true);
       applyCommentAndAnnotations(qualifiedType);
       qualifiedType.setImmutable();
       return qualifiedType;
     }
-    return javaType;
+    return baseType;
   }
 
   private BaseGenericType applyCommentAndAnnotations(BaseGenericType genericType) {

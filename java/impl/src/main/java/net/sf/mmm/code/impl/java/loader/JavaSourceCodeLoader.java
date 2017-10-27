@@ -5,6 +5,7 @@ package net.sf.mmm.code.impl.java.loader;
 import net.sf.mmm.code.api.java.parser.JavaSourceCodeParser;
 import net.sf.mmm.code.base.BaseFile;
 import net.sf.mmm.code.base.BasePackage;
+import net.sf.mmm.code.base.loader.BaseCodeLoader;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.impl.java.AbstractJavaCodeLoader;
 import net.sf.mmm.code.impl.java.parser.JavaSourceCodeParserImpl;
@@ -19,7 +20,7 @@ public abstract class JavaSourceCodeLoader extends AbstractJavaCodeLoader {
 
   private JavaSourceCodeParser parser;
 
-  private JavaCodeLoader byteCodeLoader;
+  private BaseCodeLoader byteCodeLoader;
 
   /**
    * The constructor.

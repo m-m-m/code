@@ -227,19 +227,38 @@ public abstract class BaseMutableItem extends BaseItem implements CodeMutableIte
    * @param list the {@link List} to make immutable.
    * @return an immutable copy of the {@link List}.
    */
-  @SuppressWarnings("unchecked")
   protected <T extends CodeItem> List<T> makeImmutable(List<T> list) {
 
+    return makeImmutable(list, true);
+  }
+
+  /**
+   * @param <T> the type of the {@link List} elements.
+   * @param list the {@link List} to make immutable.
+   * @param disconnect - {@code true} to disconnect the returned, immutable {@link List} from the given
+   *        {@link List}, {@code false} otherwise (to make it an immutable view on it).
+   * @return an immutable copy of the {@link List}.
+   */
+  @SuppressWarnings("unchecked")
+  protected <T extends CodeItem> List<T> makeImmutable(List<T> list, boolean disconnect) {
+
     if (list.isEmpty()) {
-      return Collections.emptyList();
-    }
-    T item = list.get(0);
-    if (item instanceof CodeNodeItem) {
-      for (CodeNodeItem element : (List<? extends CodeNodeItem>) list) {
-        element.setImmutable();
+      if (disconnect) {
+        return Collections.emptyList();
+      }
+    } else {
+      T item = list.get(0);
+      if (item instanceof CodeNodeItem) {
+        for (CodeNodeItem element : (List<? extends CodeNodeItem>) list) {
+          element.setImmutable();
+        }
       }
     }
-    return Collections.unmodifiableList(new ArrayList<>(list));
+    List<T> delegate = list;
+    if (disconnect) {
+      delegate = new ArrayList<>(list);
+    }
+    return Collections.unmodifiableList(delegate);
   }
 
 }

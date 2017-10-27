@@ -35,6 +35,7 @@ import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.api.type.CodeTypeVariable;
 import net.sf.mmm.code.base.element.BaseElementImpl;
@@ -260,17 +261,17 @@ public class BaseDoc extends BaseNodeItemImpl implements CodeDoc, CodeNodeItemWi
         linkedField = null;
       }
     } else {
-      CodeType linkedType = getContext().getType(qualifiedName);
-      if (linkedType == null) {
-        LOG.warn("Failed to resolve type {}.", qualifiedName);
-        return null;
-      }
       if (anchor == null) {
         linkedField = null;
       } else {
+        CodeGenericType linkedType = getContext().getType(qualifiedName);
+        if (!(linkedType instanceof CodeType)) {
+          LOG.warn("Failed to resolve type {}.", qualifiedName);
+          return null;
+        }
         CodeDocMethodLink methodLink = link.getMethodLink();
         if (methodLink == null) {
-          linkedField = linkedType.getFields().get(anchor);
+          linkedField = linkedType.asType().getFields().get(anchor);
         } else {
           linkedField = null;
         }
@@ -298,7 +299,7 @@ public class BaseDoc extends BaseNodeItemImpl implements CodeDoc, CodeNodeItemWi
   protected String resolveLinkUrl(CodeDocLink link) {
 
     String qualifiedName = resolveLinkQualifiedName(link);
-    CodeType type = getContext().getType(qualifiedName);
+    CodeGenericType type = getContext().getType(qualifiedName);
     if (type != null) {
       String docUrl = type.getSource().getDescriptor().getDocUrl();
       if (docUrl != null) {

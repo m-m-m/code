@@ -121,9 +121,9 @@ public class BaseAnnotation extends BaseChildItem implements CodeAnnotation {
 
     if (this.type == null) {
       if (this.qualifiedTypeName != null) {
-        CodeType rawType = getContext().getType(this.qualifiedTypeName);
+        CodeGenericType rawType = getContext().getRequiredType(this.qualifiedTypeName);
         if ((this.typeName == this.qualifiedTypeName) && (this.typeName.indexOf('.') > 0)) {
-          this.type = rawType.getQualifiedType();
+          this.type = ((CodeType) rawType).getQualifiedType();
         }
         this.type = rawType;
         this.qualifiedTypeName = null;

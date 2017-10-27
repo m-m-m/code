@@ -76,7 +76,17 @@ public abstract class BaseNodeItemContainer<I extends CodeItem> extends BaseNode
   protected void doSetImmutable() {
 
     super.doSetImmutable();
-    this.list = makeImmutable(this.mutableList);
+    this.list = makeImmutable(this.mutableList, !isKeepListView());
+  }
+
+  /**
+   * @return {@code true} if the {@link List} should turn into an immutable view on the original mutable
+   *         {@link List}, {@code false} otherwise.
+   * @see #makeImmutable(List, boolean)
+   */
+  protected boolean isKeepListView() {
+
+    return false;
   }
 
   /**

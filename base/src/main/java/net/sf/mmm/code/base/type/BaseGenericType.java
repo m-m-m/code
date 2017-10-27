@@ -84,6 +84,7 @@ public abstract class BaseGenericType extends BaseElementImpl implements CodeGen
 
     if (this.arrayType == null) {
       this.arrayType = new BaseArrayType(this);
+      this.arrayType.setImmutable();
     }
     return this.arrayType;
   }

@@ -5,23 +5,22 @@ package net.sf.mmm.code.base;
 import java.lang.reflect.Type;
 
 import net.sf.mmm.code.api.CodeContext;
-import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.element.BaseElement;
+import net.sf.mmm.code.base.loader.BaseCodeLoader;
 import net.sf.mmm.code.base.type.BaseGenericType;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.base.type.BaseTypeWildcard;
-import net.sf.mmm.util.exception.api.ObjectNotFoundException;
 
 /**
- * Base implementation of {@link CodeContext}.
+ * Base interface for {@link CodeContext}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface BaseContext extends CodeContext {
+public interface BaseContext extends CodeContext, BaseProvider {
 
   @Override
   BaseType getRootType();
@@ -46,16 +45,6 @@ public interface BaseContext extends CodeContext {
    */
   BaseGenericType getType(Class<?> clazz);
 
-  @Override
-  default BaseType getRequiredType(String qualifiedName) {
-
-    BaseType type = getType(qualifiedName);
-    if (type == null) {
-      throw new ObjectNotFoundException(CodeType.class, qualifiedName);
-    }
-    return type;
-  }
-
   /**
    * @param type the {@link Type} to get as {@link CodeGenericType}.
    * @param declaringElement the owning {@link CodeElement} declaring the {@link Type}.
@@ -63,16 +52,12 @@ public interface BaseContext extends CodeContext {
    */
   BaseGenericType getType(Type type, BaseElement declaringElement);
 
-  @Override
-  BaseType getType(String qualifiedName);
-
-  @Override
-  BaseType getType(CodeName qualifiedName);
-
   /**
    * @param javaType the {@link BaseType} that might be {@link BaseType#isPrimitive() primitive}.
    * @return the corresponding {@link BaseType#getNonPrimitiveType() non-primitive type}.
    */
   BaseType getNonPrimitiveType(BaseType javaType);
+
+  BaseCodeLoader getLoader();
 
 }

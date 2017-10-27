@@ -9,9 +9,9 @@ import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.BaseFile;
 import net.sf.mmm.code.base.BasePackage;
 import net.sf.mmm.code.base.BasePathElements;
+import net.sf.mmm.code.base.loader.BaseLoader;
 import net.sf.mmm.code.base.node.BaseNodeItemContainerAccess;
 import net.sf.mmm.code.base.type.BaseType;
-import net.sf.mmm.code.impl.java.loader.JavaLoader;
 import net.sf.mmm.util.exception.api.ObjectNotFoundException;
 
 /**
@@ -20,7 +20,7 @@ import net.sf.mmm.util.exception.api.ObjectNotFoundException;
  * @author Joerg Hohwiller (hohwille aJavaType users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class JavaProvider extends BaseNodeItemContainerAccess implements CodeProvider, JavaLoader {
+public abstract class JavaProvider extends BaseNodeItemContainerAccess implements CodeProvider, BaseLoader {
 
   /**
    * The constructor.
@@ -55,7 +55,7 @@ public abstract class JavaProvider extends BaseNodeItemContainerAccess implement
     boolean withoutSuperLayer = (context != this); // determine if called in context or in source
     BasePackage pkg = getRootPackage().getChildren().getPackage(qualifiedName, withoutSuperLayer, false);
     if (pkg == null) {
-      JavaLoader loader = context.getLoader();
+      BaseLoader loader = context.getLoader();
       if (loader != null) {
         pkg = loader.getPackage(qualifiedName.getFullName());
       }

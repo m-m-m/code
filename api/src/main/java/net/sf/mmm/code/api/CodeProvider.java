@@ -2,19 +2,20 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api;
 
-import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.item.CodeMutableItemWithQualifiedName;
 import net.sf.mmm.code.api.node.CodeNode;
+import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.util.exception.api.ObjectNotFoundException;
 
 /**
- * The top-level context used to retrieve existing {@link CodeElement}s or create new ones.
+ * Abstract interface used to retrieve {@link CodePackage}s and {@link CodeType}s. Common parent of
+ * {@link net.sf.mmm.code.api.source.CodeSource} and {@link CodeContext}.
  *
  * @author hohwille
  * @since 1.0.0
  */
-public interface CodeProvider extends CodeNode, CodeLoader {
+public abstract interface CodeProvider extends CodeNode, CodeLoader {
 
   /**
    * @return the root {@link CodePackage package} of this source. Will typically be lazy initialized and
@@ -48,16 +49,9 @@ public interface CodeProvider extends CodeNode, CodeLoader {
   /**
    * @param qualifiedName the {@link CodeType#getQualifiedName() qualified name} of the requested
    *        {@link CodeType}.
-   * @return the requested {@link CodeType}.
+   * @return the requested {@link CodeGenericType}. Typically {@link CodeType}.
    * @throws ObjectNotFoundException if the type was not found.
    */
-  default CodeType getRequiredType(String qualifiedName) {
-
-    CodeType type = getType(qualifiedName);
-    if (type == null) {
-      throw new ObjectNotFoundException(CodeType.class, qualifiedName);
-    }
-    return type;
-  }
+  CodeType getRequiredType(String qualifiedName);
 
 }

@@ -2,22 +2,41 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.impl.java;
 
+import java.lang.reflect.GenericArrayType;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
 import java.security.CodeSource;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.base.BaseContext;
+import net.sf.mmm.code.base.BaseFile;
 import net.sf.mmm.code.base.BasePackage;
 import net.sf.mmm.code.base.BasePathElement;
+import net.sf.mmm.code.base.arg.BaseOperationArg;
 import net.sf.mmm.code.base.element.BaseElement;
+import net.sf.mmm.code.base.element.BaseElementWithTypeVariables;
+import net.sf.mmm.code.base.loader.BaseCodeLoader;
+import net.sf.mmm.code.base.member.BaseOperation;
+import net.sf.mmm.code.base.node.BaseNode;
+import net.sf.mmm.code.base.node.BaseNodeItem;
+import net.sf.mmm.code.base.source.BaseSource;
+import net.sf.mmm.code.base.type.BaseArrayType;
 import net.sf.mmm.code.base.type.BaseGenericType;
+import net.sf.mmm.code.base.type.BaseParameterizedType;
 import net.sf.mmm.code.base.type.BaseType;
+import net.sf.mmm.code.base.type.BaseTypeVariable;
+import net.sf.mmm.code.base.type.BaseTypeVariables;
 import net.sf.mmm.code.base.type.BaseTypeWildcard;
 import net.sf.mmm.code.impl.java.expression.constant.JavaConstant;
-import net.sf.mmm.code.impl.java.loader.JavaCodeLoader;
 import net.sf.mmm.code.impl.java.source.JavaSource;
+import net.sf.mmm.util.exception.api.IllegalCaseException;
 
 /**
  * Implementation of {@link net.sf.mmm.code.api.CodeContext} for Java.
@@ -25,7 +44,9 @@ import net.sf.mmm.code.impl.java.source.JavaSource;
  * @author hohwille
  * @since 1.0.0
  */
-public abstract class JavaContext extends JavaProvider implements BaseContext, JavaCodeLoader {
+public abstract class JavaContext extends JavaProvider implements BaseContext, BaseCodeLoader {
+
+  private static final Logger LOG = LoggerFactory.getLogger(JavaContext.class);
 
   private final AbstractJavaCodeLoader loader;
 
@@ -34,7 +55,7 @@ public abstract class JavaContext extends JavaProvider implements BaseContext, J
   /**
    * The constructor.
    *
-   * @param loader the {@link JavaCodeLoader}.
+   * @param loader the {@link BaseCodeLoader}.
    * @param source the {@link #getSource() source}.
    */
   public JavaContext(AbstractJavaCodeLoader loader, JavaSource source) {
@@ -99,10 +120,8 @@ public abstract class JavaContext extends JavaProvider implements BaseContext, J
     return pkg;
   }
 
-  /**
-   * @return the {@link AbstractJavaCodeLoader}.
-   */
-  protected AbstractJavaCodeLoader getLoader() {
+  @Override
+  public AbstractJavaCodeLoader getLoader() {
 
     return this.loader;
   }
@@ -110,7 +129,113 @@ public abstract class JavaContext extends JavaProvider implements BaseContext, J
   @Override
   public BaseGenericType getType(Class<?> clazz) {
 
-    return this.loader.getType(clazz);
+    // this.loader.requireByteCodeSupport();
+    if (clazz.isArray()) {
+      BaseGenericType componentType = getType(clazz.getComponentType());
+      return componentType.createArray();
+    }
+    CodeSource codeSource = clazz.getProtectionDomain().getCodeSource();
+    JavaSource javaSource = /* this.context. */getOrCreateSource(codeSource);
+    Package pkg = clazz.getPackage();
+    BasePackage basePackage = getPackage(javaSource, pkg);
+    return getTypeInternal(clazz, basePackage);
+  }
+
+  private BaseType getTypeInternal(Class<?> clazz, BasePackage pkg) {
+
+    boolean withoutSuperLayer = true; // TODO revisit
+    String simpleName = clazz.getSimpleName();
+    Class<?> declaringClass = clazz.getDeclaringClass();
+    BaseType type = pkg.getChildren().getType(simpleName, withoutSuperLayer, false);
+    if (type != null) {
+      return type;
+    }
+    BaseType declaringType = null;
+    if (declaringClass != null) {
+      declaringType = getTypeInternal(declaringClass, pkg);
+      BaseFile file = declaringType.getFile();
+      type = new BaseType(file, simpleName, declaringType, clazz);
+      addContainerItem(declaringType.getNestedTypes(), type);
+    } else {
+      BaseFile file = new BaseFile(pkg, clazz);
+      addPathElementInternal(pkg.getChildren(), file);
+      type = file.getType();
+    }
+    return type;
+  }
+
+  @Override
+  public BaseGenericType getType(Type type, BaseElement declaringElement) {
+
+    // this.loader.requireByteCodeSupport();
+    if (type instanceof Class) {
+      return getType((Class<?>) type);
+    } else if (type instanceof ParameterizedType) {
+      ParameterizedType parameterizedType = (ParameterizedType) type;
+      return new BaseParameterizedType(declaringElement, parameterizedType);
+    } else if (type instanceof TypeVariable) {
+      TypeVariable<?> typeVar = (TypeVariable<?>) type;
+      if (declaringElement instanceof BaseType) {
+        BaseType declaringType = (BaseType) declaringElement;
+        assert (typeVar.getGenericDeclaration() == declaringType.getReflectiveObject());
+        return new BaseTypeVariable(declaringType.getTypeParameters(), typeVar);
+      } else if (declaringElement instanceof BaseOperation) {
+        BaseOperation operation = (BaseOperation) declaringElement;
+        if (typeVar.getGenericDeclaration() == operation.getReflectiveObject()) {
+          return new BaseTypeVariable(operation.getTypeParameters(), typeVar);
+        }
+      }
+      BaseTypeVariable typeVariable = findTypeVariable(declaringElement, typeVar.getName());
+      if (typeVariable != null) {
+        return typeVariable;
+      }
+      LOG.warn("Could not find type variable {} in {}", typeVar, declaringElement);
+      return new BaseTypeVariable(declaringElement.getDeclaringType().getTypeParameters(), typeVar);
+    } else if (type instanceof WildcardType) {
+      WildcardType wildcard = (WildcardType) type;
+      BaseNodeItem parent;
+      if (declaringElement instanceof BaseParameterizedType) {
+        parent = ((BaseParameterizedType) declaringElement).getTypeParameters();
+      } else {
+        parent = declaringElement;
+      }
+      return new BaseTypeWildcard(parent, wildcard);
+    } else if (type instanceof GenericArrayType) {
+      // GenericArrayType arrayType = (GenericArrayType) type;
+      return new BaseArrayType(declaringElement, type);
+    } else {
+      throw new IllegalCaseException(type.getClass().getSimpleName());
+    }
+  }
+
+  private BaseElementWithTypeVariables findElementWithTypeVariables(BaseNode node) {
+
+    if (node instanceof BaseElementWithTypeVariables) {
+      return (BaseElementWithTypeVariables) node;
+    } else if (node instanceof BaseOperationArg) {
+      BaseOperationArg arg = (BaseOperationArg) node;
+      BaseOperation operation = arg.getDeclaringOperation();
+      if (operation != null) {
+        return operation;
+      } else {
+        return arg.getDeclaringType();
+      }
+    } else if (node instanceof BaseGenericType) {
+      return findElementWithTypeVariables(node.getParent());
+    } else if (node instanceof BaseTypeVariables) {
+      return findElementWithTypeVariables(node.getParent());
+    } else {
+      throw new IllegalCaseException(node.getClass().getSimpleName());
+    }
+  }
+
+  private BaseTypeVariable findTypeVariable(BaseNode node, String name) {
+
+    BaseElementWithTypeVariables elementWithTypeVariables = findElementWithTypeVariables(node);
+    if (elementWithTypeVariables != null) {
+      return elementWithTypeVariables.getTypeParameters().get(name, true);
+    }
+    return null;
   }
 
   @Override
@@ -125,16 +250,17 @@ public abstract class JavaContext extends JavaProvider implements BaseContext, J
     return this.loader.isSupportSourceCode();
   }
 
-  @Override
-  public BaseGenericType getType(Type type, BaseElement declaringElement) {
+  // @Override
+  // public BaseGenericType getType(Type type, BaseElement declaringElement) {
+  //
+  // // TODO this is nuts. We need to reuse the package caching to retrieve existing objects instead of
+  // // creating new ones...
+  // return ((JavaContext) declaringElement.getSource().getContext()).getLoader().getType(type,
+  // declaringElement);
+  // }
 
-    // TODO this is nuts. We need to reuse the package caching to retrieve existing objects instead of
-    // creating new ones...
-    return ((JavaContext) declaringElement.getSource().getContext()).getLoader().getType(type, declaringElement);
-  }
-
   @Override
-  public BasePackage getPackage(JavaSource javaSource, Package pkg) {
+  public BasePackage getPackage(BaseSource javaSource, Package pkg) {
 
     return javaSource.getContext().getLoader().getPackage(javaSource, pkg);
   }

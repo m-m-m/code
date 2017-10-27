@@ -77,7 +77,10 @@ public class JavaByteCodeLoader extends AbstractJavaCodeLoader {
 
     try {
       Class<?> clazz = this.classloader.loadClass(qualifiedName);
-      return (BaseType) getType(clazz);
+      if (clazz.isArray()) {
+        throw new IllegalArgumentException(qualifiedName);
+      }
+      return (BaseType) getContext().getType(clazz);
     } catch (ClassNotFoundException e) {
       LOG.debug("Class {} not found.", qualifiedName, e);
       return null;

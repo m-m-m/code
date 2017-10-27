@@ -50,6 +50,12 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
   }
 
   @Override
+  protected boolean isKeepListView() {
+
+    return true;
+  }
+
+  @Override
   protected boolean isNamed() {
 
     return true;

@@ -3,6 +3,7 @@
 package net.sf.mmm.code.base.source;
 
 import net.sf.mmm.code.api.source.CodeSource;
+import net.sf.mmm.code.base.BaseProvider;
 import net.sf.mmm.code.base.node.BaseContainer;
 
 /**
@@ -11,7 +12,7 @@ import net.sf.mmm.code.base.node.BaseContainer;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface BaseSource extends CodeSource, BaseContainer {
+public interface BaseSource extends CodeSource, BaseProvider, BaseContainer {
 
   @Override
   BaseSource getParent();
