@@ -2,6 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.base.member;
 
+import java.io.IOException;
 import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Method;
 import java.util.regex.Pattern;
@@ -9,11 +10,12 @@ import java.util.regex.Pattern;
 import net.sf.mmm.code.api.arg.CodeReturn;
 import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
+import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.base.arg.BaseReturn;
 import net.sf.mmm.code.base.type.BaseGenericType;
 import net.sf.mmm.code.base.type.BaseSuperTypes;
-import net.sf.mmm.code.base.type.BaseTypeVariables;
 import net.sf.mmm.code.base.type.BaseType;
+import net.sf.mmm.code.base.type.BaseTypeVariables;
 
 /**
  * Base implementation of {@link CodeMethod}.
@@ -205,6 +207,29 @@ public class BaseMethod extends BaseOperation implements CodeMethod, CodeNodeIte
   public BaseMethod copy(BaseMethods newParent) {
 
     return new BaseMethod(this, newParent);
+  }
+
+  @Override
+  protected void doWriteSignature(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+
+    sink.append(syntax.getMethodKeyword());
+    String start = syntax.getMethodReturnStart();
+    if (start != null) {
+      sink.append(start);
+      getReturns().write(sink, newline, defaultIndent, currentIndent, syntax);
+    }
+    super.doWriteSignature(sink, newline, defaultIndent, currentIndent, syntax);
+  }
+
+  @Override
+  protected void doWriteParameters(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+
+    super.doWriteParameters(sink, newline, defaultIndent, currentIndent, syntax);
+    String end = syntax.getMethodReturnEnd();
+    if (end != null) {
+      sink.append(end);
+      getReturns().write(sink, newline, defaultIndent, currentIndent, syntax);
+    }
   }
 
 }

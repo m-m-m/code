@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import net.sf.mmm.code.base.BasePackage;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.impl.java.AbstractJavaCodeLoader;
+import net.sf.mmm.code.impl.java.JavaContext;
 import net.sf.mmm.code.impl.java.source.JavaSource;
 
 /**
@@ -68,8 +69,9 @@ public class JavaByteCodeLoader extends AbstractJavaCodeLoader {
     if (pkg == null) {
       return null;
     }
-    JavaSource source = getContext().getSource(); // TODO actually dead wrong!
-    return getPackage(source, pkg);
+    JavaContext context = getContext();
+    JavaSource source = context.getSource(); // TODO actually dead wrong!
+    return context.getPackage(source, pkg);
   }
 
   @Override

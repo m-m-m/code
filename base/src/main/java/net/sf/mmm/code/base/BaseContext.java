@@ -9,7 +9,7 @@ import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.element.BaseElement;
-import net.sf.mmm.code.base.loader.BaseCodeLoader;
+import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.type.BaseGenericType;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.base.type.BaseTypeWildcard;
@@ -53,11 +53,16 @@ public interface BaseContext extends CodeContext, BaseProvider {
   BaseGenericType getType(Type type, BaseElement declaringElement);
 
   /**
+   * @param source the declaring {@link BaseSource} supposed to be the owner of the requested package.
+   * @param pkg the Java {@link Package}.
+   * @return the existing or otherwise created {@link BasePackage}.
+   */
+  BasePackage getPackage(BaseSource source, Package pkg);
+
+  /**
    * @param javaType the {@link BaseType} that might be {@link BaseType#isPrimitive() primitive}.
    * @return the corresponding {@link BaseType#getNonPrimitiveType() non-primitive type}.
    */
   BaseType getNonPrimitiveType(BaseType javaType);
-
-  BaseCodeLoader getLoader();
 
 }

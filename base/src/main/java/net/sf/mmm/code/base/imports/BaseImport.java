@@ -24,6 +24,8 @@ public class BaseImport extends BaseItem implements CodeImport, Comparable<BaseI
 
   private final boolean staticFlag;
 
+  private final List<CodeImportItem> items;
+
   /**
    * The constructor.
    *
@@ -32,9 +34,27 @@ public class BaseImport extends BaseItem implements CodeImport, Comparable<BaseI
    */
   public BaseImport(String reference, boolean staticFlag) {
 
+    this(reference, staticFlag, null);
+  }
+
+  /**
+   * The constructor.
+   *
+   * @param reference the {@link #getReference() reference} to import.
+   * @param staticFlag the {@link #isStatic() static} flag.
+   * @param items the {@link #getItems() items}.
+   */
+  public BaseImport(String reference, boolean staticFlag, List<CodeImportItem> items) {
+
     super();
+    Objects.requireNonNull(reference, "reference");
     this.reference = reference;
     this.staticFlag = staticFlag;
+    if (items == null) {
+      this.items = Collections.emptyList();
+    } else {
+      this.items = Collections.unmodifiableList(items);
+    }
   }
 
   @Override
@@ -57,6 +77,9 @@ public class BaseImport extends BaseItem implements CodeImport, Comparable<BaseI
       return false;
     }
     if (this.staticFlag != other.staticFlag) {
+      return false;
+    }
+    if (!Objects.equals(this.items, other.items)) {
       return false;
     }
     return true;
@@ -93,18 +116,31 @@ public class BaseImport extends BaseItem implements CodeImport, Comparable<BaseI
   @Override
   public List<CodeImportItem> getItems() {
 
-    return Collections.emptyList();
+    return this.items;
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String indent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
 
     sink.append(currentIndent); // indendation pointless...
     sink.append("import ");
     if (this.staticFlag) {
       sink.append("static ");
     }
+    boolean hasItems = !this.items.isEmpty(); // TypeScript?
+    if (hasItems) {
+      String prefix = "{ ";
+      for (CodeImportItem item : this.items) {
+        sink.append(prefix);
+        item.write(sink, newline, defaultIndent, currentIndent, syntax);
+        prefix = ", ";
+      }
+      sink.append("} from '");
+    }
     sink.append(this.reference);
+    if (hasItems) {
+      sink.append('\'');
+    }
     sink.append(';');
     sink.append(newline);
   }

@@ -13,12 +13,14 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.BaseFile;
 import net.sf.mmm.code.base.BasePackage;
 import net.sf.mmm.code.base.BasePathElement;
+import net.sf.mmm.code.base.BasePathElements;
 import net.sf.mmm.code.base.arg.BaseOperationArg;
 import net.sf.mmm.code.base.element.BaseElement;
 import net.sf.mmm.code.base.element.BaseElementWithTypeVariables;
@@ -120,8 +122,7 @@ public abstract class JavaContext extends JavaProvider implements BaseContext, B
     return pkg;
   }
 
-  @Override
-  public AbstractJavaCodeLoader getLoader() {
+  protected AbstractJavaCodeLoader getLoader() {
 
     return this.loader;
   }
@@ -250,19 +251,37 @@ public abstract class JavaContext extends JavaProvider implements BaseContext, B
     return this.loader.isSupportSourceCode();
   }
 
-  // @Override
-  // public BaseGenericType getType(Type type, BaseElement declaringElement) {
-  //
-  // // TODO this is nuts. We need to reuse the package caching to retrieve existing objects instead of
-  // // creating new ones...
-  // return ((JavaContext) declaringElement.getSource().getContext()).getLoader().getType(type,
-  // declaringElement);
-  // }
-
   @Override
-  public BasePackage getPackage(BaseSource javaSource, Package pkg) {
+  public BasePackage getPackage(BaseSource codeSource, Package pkg) {
 
-    return javaSource.getContext().getLoader().getPackage(javaSource, pkg);
+    BasePackage rootPackage = codeSource.getRootPackage();
+    if (pkg == null) {
+      return rootPackage;
+    }
+    return getPackage(rootPackage, pkg, parseName(pkg.getName()));
+  }
+
+  private BasePackage getPackage(BasePackage root, Package pkg, CodeName qname) {
+
+    if (qname == null) {
+      return root;
+    }
+    CodeName parentName = qname.getParent();
+    Package parentPkg = null; // Package.getPackage(parentName.getFullName());
+    BasePackage parentPackage = getPackage(root, parentPkg, parentName);
+    String simpleName = qname.getSimpleName();
+    BasePathElements children = parentPackage.getChildren();
+    BasePackage childPackage = children.getPackage(simpleName, false, false);
+    if (childPackage == null) {
+      Package reflectiveObject = pkg;
+      if (reflectiveObject == null) {
+        reflectiveObject = Package.getPackage(qname.getFullName());
+      }
+      BasePackage superLayerPackage = null; // TODO
+      childPackage = new BasePackage(parentPackage, simpleName, reflectiveObject, superLayerPackage);
+      addPathElementInternal(children, childPackage);
+    }
+    return childPackage;
   }
 
   @Override

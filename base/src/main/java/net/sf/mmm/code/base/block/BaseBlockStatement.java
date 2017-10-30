@@ -16,7 +16,7 @@ import net.sf.mmm.code.api.statement.CodeStatement;
  */
 public abstract class BaseBlockStatement extends BaseBlock implements CodeBlockStatement {
 
-  private final BaseBlock parent;
+  private BaseBlock parent;
 
   /**
    * The constructor.
@@ -58,6 +58,15 @@ public abstract class BaseBlockStatement extends BaseBlock implements CodeBlockS
   public BaseBlock getParent() {
 
     return this.parent;
+  }
+
+  /**
+   * @param parent the new value of {@link #getParent()}.
+   */
+  public void setParent(BaseBlock parent) {
+
+    verifyMutalbe();
+    this.parent = parent;
   }
 
   @Override

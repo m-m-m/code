@@ -9,7 +9,7 @@ import java.util.List;
 import net.sf.mmm.code.api.CodeFile;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.syntax.CodeSyntax;
-import net.sf.mmm.code.base.imports.BasicImports;
+import net.sf.mmm.code.base.imports.BaseImports;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.util.exception.api.ObjectMismatchException;
 
@@ -21,7 +21,7 @@ import net.sf.mmm.util.exception.api.ObjectMismatchException;
  */
 public final class BaseFile extends BasePathElement implements CodeFile, CodeNodeItemWithGenericParent<BasePackage, BaseFile> {
 
-  private final BasicImports imports;
+  private final BaseImports imports;
 
   private final Class<?> reflectioveObject;
 
@@ -70,7 +70,7 @@ public final class BaseFile extends BasePathElement implements CodeFile, CodeNod
   private BaseFile(BasePackage parentPackage, String simpleName, Class<?> reflectiveObject) {
 
     super(parentPackage, simpleName);
-    this.imports = new BasicImports(this);
+    this.imports = new BaseImports(this);
     this.types = new ArrayList<>();
     this.types.add(new BaseType(this, reflectiveObject));
     this.reflectioveObject = reflectiveObject;
@@ -189,7 +189,7 @@ public final class BaseFile extends BasePathElement implements CodeFile, CodeNod
   }
 
   @Override
-  public BasicImports getImports() {
+  public BaseImports getImports() {
 
     return this.imports;
   }

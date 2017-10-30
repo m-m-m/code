@@ -5,12 +5,8 @@ package net.sf.mmm.code.impl.java;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sf.mmm.code.api.CodeName;
-import net.sf.mmm.code.base.BasePackage;
-import net.sf.mmm.code.base.BasePathElements;
 import net.sf.mmm.code.base.loader.BaseCodeLoader;
 import net.sf.mmm.code.base.node.BaseNodeItemContainerAccess;
-import net.sf.mmm.code.base.source.BaseSource;
 
 /**
  * Abstract base implementation of {@link BaseCodeLoader}.
@@ -29,40 +25,6 @@ public abstract class AbstractJavaCodeLoader extends BaseNodeItemContainerAccess
     if (!isSupportByteCode()) {
       throw new IllegalStateException("This code loader does not support loading byte-code via reflection!");
     }
-  }
-
-  @Override
-  public BasePackage getPackage(BaseSource source, Package pkg) {
-
-    BasePackage rootPackage = source.getRootPackage();
-    if (pkg == null) {
-      return rootPackage;
-    }
-    return getPackage(rootPackage, pkg, this.context.parseName(pkg.getName()));
-  }
-
-  private BasePackage getPackage(BasePackage root, Package pkg, CodeName qname) {
-
-    requireByteCodeSupport();
-    if (qname == null) {
-      return root;
-    }
-    CodeName parentName = qname.getParent();
-    Package parentPkg = null; // Package.getPackage(parentName.getFullName());
-    BasePackage parentPackage = getPackage(root, parentPkg, parentName);
-    String simpleName = qname.getSimpleName();
-    BasePathElements children = parentPackage.getChildren();
-    BasePackage childPackage = children.getPackage(simpleName, false, false);
-    if (childPackage == null) {
-      Package reflectiveObject = pkg;
-      if (reflectiveObject == null) {
-        reflectiveObject = Package.getPackage(qname.getFullName());
-      }
-      BasePackage superLayerPackage = null; // TODO
-      childPackage = new BasePackage(parentPackage, simpleName, reflectiveObject, superLayerPackage);
-      addPathElementInternal(children, childPackage);
-    }
-    return childPackage;
   }
 
   /**

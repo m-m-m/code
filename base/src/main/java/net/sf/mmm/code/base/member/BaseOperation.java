@@ -147,10 +147,10 @@ public abstract class BaseOperation extends BaseMember implements CodeOperation,
   protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
 
     super.doWrite(sink, newline, defaultIndent, currentIndent, syntax);
-    this.typeVariables.write(sink, newline, null, null);
-    doWriteSignature(sink, newline);
+    this.typeVariables.write(sink, newline, defaultIndent, currentIndent, syntax);
+    doWriteSignature(sink, newline, defaultIndent, currentIndent, syntax);
     if ((this.body == null) || (defaultIndent == null)) {
-      sink.append(';');
+      sink.append(syntax.getStatementTerminator());
     } else {
       sink.append(" {");
       sink.append(newline);
@@ -167,15 +167,37 @@ public abstract class BaseOperation extends BaseMember implements CodeOperation,
    *
    * @param sink the {@link Appendable}.
    * @param newline the newline {@link String}.
+   * @param defaultIndent the {@link String} used for indentation (e.g. a number of spaces to insert per
+   *        indent level).
+   * @param currentIndent the current indent (number of spaces). Initially the empty string ({@code ""}).
+   *        Before a recursion the {@code indent} will be appended.
+   * @param syntax the {@link CodeSyntax} to use.
    * @throws IOException if thrown by {@link Appendable}.
    */
-  protected void doWriteSignature(Appendable sink, String newline) throws IOException {
+  protected void doWriteSignature(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
 
     sink.append(getName());
+    doWriteParameters(sink, newline, defaultIndent, currentIndent, syntax);
+    this.exceptions.write(sink, newline, null, null);
+  }
+
+  /**
+   * Writes the {@link #getParameters() args}.
+   *
+   * @param sink the {@link Appendable}.
+   * @param newline the newline {@link String}.
+   * @param defaultIndent the {@link String} used for indentation (e.g. a number of spaces to insert per
+   *        indent level).
+   * @param currentIndent the current indent (number of spaces). Initially the empty string ({@code ""}).
+   *        Before a recursion the {@code indent} will be appended.
+   * @param syntax the {@link CodeSyntax} to use.
+   * @throws IOException if thrown by {@link Appendable}.
+   */
+  protected void doWriteParameters(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+
     sink.append('(');
     this.parameters.write(sink, newline, null, null);
     sink.append(')');
-    this.exceptions.write(sink, newline, null, null);
   }
 
 }

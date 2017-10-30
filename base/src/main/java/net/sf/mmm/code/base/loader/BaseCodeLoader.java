@@ -3,7 +3,6 @@
 package net.sf.mmm.code.base.loader;
 
 import net.sf.mmm.code.base.BasePackage;
-import net.sf.mmm.code.base.source.BaseSource;
 
 /**
  * {@link BaseLoader} that encapsulates the physical loading of code.
@@ -30,12 +29,5 @@ public interface BaseCodeLoader extends BaseLoader {
    *        the package.
    */
   void scan(BasePackage pkg);
-
-  /**
-   * @param source the declaring {@link BaseSource} supposed to be the owner of the requested package.
-   * @param pkg the Java {@link Package}.
-   * @return the existing or otherwise created {@link BasePackage}.
-   */
-  BasePackage getPackage(BaseSource source, Package pkg);
 
 }

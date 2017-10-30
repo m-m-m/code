@@ -40,10 +40,55 @@ public interface CodeSyntax {
   void writeDeclaration(CodeVariable variable, Appendable sink) throws IOException;
 
   /**
+   * @return the {@link String} to add prefixed by the {@link net.sf.mmm.code.api.arg.CodeReturn} before the
+   *         {@link net.sf.mmm.code.api.member.CodeMethod#getName() method name} or {@code null} if the
+   *         {@link net.sf.mmm.code.api.arg.CodeReturn} shall be written with {@link #getMethodReturnEnd()}.
+   */
+  default String getMethodReturnStart() {
+
+    return "";
+  }
+
+  /**
+   * @return the {@link String} to add followed by the {@link net.sf.mmm.code.api.arg.CodeReturn} after the
+   *         {@link net.sf.mmm.code.api.member.CodeMethod#getParameters() method parameters} or {@code null}
+   *         if the {@link net.sf.mmm.code.api.arg.CodeReturn} shall be written with
+   *         {@link #getMethodReturnStart()}. E.g. ": " for TypeScript or Kotlin.
+   */
+  default String getMethodReturnEnd() {
+
+    return null;
+  }
+
+  /**
+   * @return the " extends " keyword (May also be " : " for Kotlin).
+   */
+  default String getKeywordForExtends() {
+
+    return " extends ";
+  }
+
+  /**
+   * @return the " implements " keyword (May also be " : " for Kotlin).
+   */
+  default String getKeywordForImplements() {
+
+    return " implements ";
+  }
+
+  /**
    * @param category the {@link CodeTypeCategory}.
    * @return the keyword for the given {@code category} to use in the source-code.
    */
   String getKeywordForCategory(CodeTypeCategory category);
+
+  /**
+   * @return the keyword/prefix to initiate a method (e.g. "fun " for Kotlin).
+   */
+  default String getMethodKeyword() {
+
+    return "";
+  }
 
   /**
    * @return the {@link String} used as suffix to terminate a

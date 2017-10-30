@@ -2,6 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.base.block;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,9 @@ import net.sf.mmm.code.base.type.BaseType;
  */
 public class BaseBlockInitializer extends BaseBlock implements CodeBlockInitializer, CodeNodeItemWithGenericParent<BaseType, BaseBlockInitializer> {
 
-  private final BaseType parent;
+  private BaseType parent;
+
+  private boolean isStatic;
 
   /**
    * The constructor.
@@ -74,6 +77,28 @@ public class BaseBlockInitializer extends BaseBlock implements CodeBlockInitiali
     return this.parent;
   }
 
+  /**
+   * @param parent the new value of {@link #getParent()}.
+   */
+  public void setParent(BaseType parent) {
+
+    verifyMutalbe();
+    this.parent = parent;
+  }
+
+  @Override
+  public boolean isStatic() {
+
+    return this.isStatic;
+  }
+
+  @Override
+  public void setStatic(boolean isStatic) {
+
+    verifyMutalbe();
+    this.isStatic = isStatic;
+  }
+
   @Override
   public BaseBlockInitializer copy() {
 
@@ -90,6 +115,15 @@ public class BaseBlockInitializer extends BaseBlock implements CodeBlockInitiali
   public BaseBlockInitializer copy(BaseType newParent) {
 
     return new BaseBlockInitializer(this, newParent);
+  }
+
+  @Override
+  protected void writePrefix(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
+
+    if (this.isStatic) {
+      sink.append("static ");
+    }
+    super.writePrefix(sink, newline, defaultIndent, currentIndent);
   }
 
 }

@@ -19,7 +19,7 @@ import net.sf.mmm.code.base.node.BaseFunction;
  */
 public class BaseBlockBody extends BaseBlock implements CodeBlockBody, CodeNodeItemWithGenericParent<BaseFunction, BaseBlockBody> {
 
-  private final BaseFunction parent;
+  private BaseFunction parent;
 
   /**
    * The constructor.
@@ -71,6 +71,15 @@ public class BaseBlockBody extends BaseBlock implements CodeBlockBody, CodeNodeI
   public BaseFunction getParent() {
 
     return this.parent;
+  }
+
+  /**
+   * @param parent the new value of {@link #getParent()}.
+   */
+  public void setParent(BaseFunction parent) {
+
+    verifyMutalbe();
+    this.parent = parent;
   }
 
   @Override

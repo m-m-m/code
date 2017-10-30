@@ -158,7 +158,7 @@ public class BaseSuperTypes extends BaseNodeItemContainerHierarchical<BaseGeneri
     String keywordInherit;
     CodeType declaringType = getDeclaringType();
     if (declaringType.isInterface()) {
-      keywordInherit = " extends ";
+      keywordInherit = syntax.getKeywordForExtends();
     } else {
       CodeGenericType superClass = getSuperClassAsDeclared();
       if (superClass != null) {
@@ -170,7 +170,7 @@ public class BaseSuperTypes extends BaseNodeItemContainerHierarchical<BaseGeneri
               superClass.asType().getSimpleName());
         }
       }
-      keywordInherit = " implements ";
+      keywordInherit = syntax.getKeywordForImplements();
     }
     String separator = keywordInherit;
     for (CodeGenericType superType : getDeclared()) {

@@ -17,13 +17,13 @@ import net.sf.mmm.code.base.node.BaseNodeItemContainerFlat;
 import net.sf.mmm.code.base.type.BaseType;
 
 /**
- * Implementation of {@link CodeImports} for Java.
+ * Base implementation of {@link CodeImports}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BasicImports extends BaseNodeItemContainerFlat<BaseImport>
-    implements CodeImports<BaseImport>, CodeNodeItemWithGenericParent<BaseFile, BasicImports> {
+public class BaseImports extends BaseNodeItemContainerFlat<BaseImport>
+    implements CodeImports<BaseImport>, CodeNodeItemWithGenericParent<BaseFile, BaseImports> {
 
   private static final String DUMMY_PACKAGE_PREFIX = ".";
 
@@ -34,7 +34,7 @@ public class BasicImports extends BaseNodeItemContainerFlat<BaseImport>
    *
    * @param parent the {@link #getParent() parent}.
    */
-  public BasicImports(BaseFile parent) {
+  public BaseImports(BaseFile parent) {
 
     super();
     this.parent = parent;
@@ -43,10 +43,10 @@ public class BasicImports extends BaseNodeItemContainerFlat<BaseImport>
   /**
    * The copy-constructor.
    *
-   * @param template the {@link BasicImports} to copy.
+   * @param template the {@link BaseImports} to copy.
    * @param parent the {@link #getParent() parent}.
    */
-  public BasicImports(BasicImports template, BaseFile parent) {
+  public BaseImports(BaseImports template, BaseFile parent) {
 
     super(template);
     this.parent = parent;
@@ -101,15 +101,15 @@ public class BasicImports extends BaseNodeItemContainerFlat<BaseImport>
   }
 
   @Override
-  public BasicImports copy() {
+  public BaseImports copy() {
 
     return copy(this.parent);
   }
 
   @Override
-  public BasicImports copy(BaseFile newParent) {
+  public BaseImports copy(BaseFile newParent) {
 
-    return new BasicImports(this, newParent);
+    return new BaseImports(this, newParent);
   }
 
   @Override

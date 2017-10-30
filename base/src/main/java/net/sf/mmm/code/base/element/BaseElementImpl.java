@@ -124,8 +124,8 @@ public abstract class BaseElementImpl extends BaseNodeItemImpl implements BaseEl
   @Override
   protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
 
-    doWriteComment(sink, newline, defaultIndent, currentIndent, syntax);
     doWriteDoc(sink, newline, defaultIndent, currentIndent, syntax);
+    doWriteComment(sink, newline, defaultIndent, currentIndent, syntax);
     doWriteAnnotations(sink, newline, defaultIndent, currentIndent, syntax);
   }
 

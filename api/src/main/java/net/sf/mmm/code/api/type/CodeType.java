@@ -105,7 +105,8 @@ public interface CodeType extends CodeGenericType, CodeElementWithModifiers, Cod
   CodeBlockInitializer getStaticInitializer();
 
   /**
-   * @param initializer the new value of {@link #getStaticInitializer()}.
+   * @param initializer the new value of {@link #getStaticInitializer()}. Has to be
+   *        {@link CodeBlockInitializer#isStatic() static}.
    * @throws ReadOnlyException if {@link #isImmutable() immutable}.
    */
   void setStaticInitializer(CodeBlockInitializer initializer);
@@ -119,7 +120,8 @@ public interface CodeType extends CodeGenericType, CodeElementWithModifiers, Cod
   CodeBlockInitializer getNonStaticInitializer();
 
   /**
-   * @param initializer the new value of {@link #getNonStaticInitializer()}.
+   * @param initializer the new value of {@link #getNonStaticInitializer()}. Shall not be
+   *        {@link CodeBlockInitializer#isStatic() static}.
    * @throws ReadOnlyException if {@link #isImmutable() immutable}.
    */
   void setNonStaticInitializer(CodeBlockInitializer initializer);

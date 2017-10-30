@@ -4,6 +4,7 @@ package net.sf.mmm.code.base.type;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.block.CodeBlockInitializer;
@@ -24,6 +25,7 @@ import net.sf.mmm.code.base.member.BaseConstructors;
 import net.sf.mmm.code.base.member.BaseFields;
 import net.sf.mmm.code.base.member.BaseMethods;
 import net.sf.mmm.code.base.member.BaseProperties;
+import net.sf.mmm.code.base.sourcecode.SourceCodeFile;
 
 /**
  * Base implementation of {@link CodeType}.
@@ -64,6 +66,8 @@ public class BaseType extends BaseGenericType implements CodeType, CodeNodeItemW
   private CodeBlockInitializer staticInitializer;
 
   private CodeBlockInitializer nonStaticInitializer;
+
+  private Supplier<SourceCodeFile> sourceSupplier;
 
   /**
    * The constructor.
@@ -289,6 +293,7 @@ public class BaseType extends BaseGenericType implements CodeType, CodeNodeItemW
   public void setStaticInitializer(CodeBlockInitializer initializer) {
 
     verifyMutalbe();
+    assert (initializer.isStatic());
     this.staticInitializer = initializer;
   }
 
@@ -305,6 +310,7 @@ public class BaseType extends BaseGenericType implements CodeType, CodeNodeItemW
   public void setNonStaticInitializer(CodeBlockInitializer initializer) {
 
     verifyMutalbe();
+    assert (!initializer.isStatic());
     this.nonStaticInitializer = initializer;
   }
 
@@ -339,6 +345,14 @@ public class BaseType extends BaseGenericType implements CodeType, CodeNodeItemW
   public Class<?> getReflectiveObject() {
 
     return this.reflectiveObject;
+  }
+
+  SourceCodeFile getSourceCodeFile() {
+
+    if (this.sourceSupplier != null) {
+      return this.sourceSupplier.get();
+    }
+    return null;
   }
 
   @Override
