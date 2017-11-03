@@ -141,6 +141,9 @@ public abstract class BaseOperation extends BaseMember implements CodeOperation,
   public abstract Executable getReflectiveObject();
 
   @Override
+  public abstract BaseOperation getSourceCodeObject();
+
+  @Override
   public abstract BaseOperation copy();
 
   @Override

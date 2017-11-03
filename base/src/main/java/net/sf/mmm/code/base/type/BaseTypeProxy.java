@@ -5,12 +5,13 @@ package net.sf.mmm.code.base.type;
 import java.io.IOException;
 import java.util.Objects;
 
-import net.sf.mmm.code.api.annotation.CodeAnnotations;
 import net.sf.mmm.code.api.comment.CodeComment;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeGenericType;
-import net.sf.mmm.code.base.element.BaseElement;
+import net.sf.mmm.code.base.annoation.BaseAnnotations;
+import net.sf.mmm.code.base.element.BaseElementImpl;
+import net.sf.mmm.code.base.element.BaseElementWithTypeVariables;
 
 /**
  * {@link BaseGenericTypeProxy} {@link #getDelegate() delegating} to a {@link BaseType} in order to change
@@ -20,9 +21,9 @@ import net.sf.mmm.code.base.element.BaseElement;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseTypeProxy extends BaseGenericTypeProxy implements CodeNodeItemWithGenericParent<BaseElement, BaseTypeProxy> {
+public class BaseTypeProxy extends BaseGenericTypeProxy implements CodeNodeItemWithGenericParent<BaseElementImpl, BaseTypeProxy> {
 
-  private final BaseElement parent;
+  private final BaseElementImpl parent;
 
   private BaseType type;
 
@@ -35,7 +36,7 @@ public class BaseTypeProxy extends BaseGenericTypeProxy implements CodeNodeItemW
    */
   public BaseTypeProxy(BaseType type) {
 
-    this(type, type);
+    this((BaseElementImpl) type, type);
   }
 
   /**
@@ -44,7 +45,7 @@ public class BaseTypeProxy extends BaseGenericTypeProxy implements CodeNodeItemW
    * @param parent the {@link #getParent() parent}.
    * @param type the {@link #asType() raw type}.
    */
-  public BaseTypeProxy(BaseElement parent, BaseType type) {
+  public BaseTypeProxy(BaseElementImpl parent, BaseType type) {
 
     super();
     Objects.requireNonNull(type, "type");
@@ -53,12 +54,23 @@ public class BaseTypeProxy extends BaseGenericTypeProxy implements CodeNodeItemW
   }
 
   /**
+   * The constructor.
+   *
+   * @param parent the {@link #getParent() parent}.
+   * @param type the {@link #asType() raw type}.
+   */
+  public BaseTypeProxy(BaseElementWithTypeVariables parent, BaseType type) {
+
+    this((BaseElementImpl) parent, type);
+  }
+
+  /**
    * The copy-constructor.
    *
    * @param template the {@link BaseTypeProxy} to copy.
    * @param parent the {@link #getParent() parent}.
    */
-  public BaseTypeProxy(BaseTypeProxy template, BaseElement parent) {
+  public BaseTypeProxy(BaseTypeProxy template, BaseElementImpl parent) {
 
     super(template);
     this.parent = parent;
@@ -66,7 +78,7 @@ public class BaseTypeProxy extends BaseGenericTypeProxy implements CodeNodeItemW
   }
 
   @Override
-  public BaseElement getParent() {
+  public BaseElementImpl getParent() {
 
     return this.parent;
   }
@@ -88,9 +100,9 @@ public class BaseTypeProxy extends BaseGenericTypeProxy implements CodeNodeItemW
   }
 
   @Override
-  public CodeAnnotations getAnnotations() {
+  public BaseAnnotations getAnnotations() {
 
-    CodeAnnotations annotations = getAnnotations(false);
+    BaseAnnotations annotations = getAnnotations(false);
     if (!annotations.getDeclared().isEmpty()) {
       return annotations;
     }
@@ -158,7 +170,7 @@ public class BaseTypeProxy extends BaseGenericTypeProxy implements CodeNodeItemW
   }
 
   @Override
-  public BaseTypeProxy copy(BaseElement newParent) {
+  public BaseTypeProxy copy(BaseElementImpl newParent) {
 
     return new BaseTypeProxy(this, newParent);
   }

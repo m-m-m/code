@@ -12,7 +12,7 @@ import net.sf.mmm.code.api.type.CodeTypePlaceholder;
 import net.sf.mmm.code.api.type.CodeTypeVariable;
 import net.sf.mmm.code.api.type.CodeTypeVariables;
 import net.sf.mmm.code.base.BaseContext;
-import net.sf.mmm.code.base.node.BaseNodeItem;
+import net.sf.mmm.code.base.node.BaseNodeItemImpl;
 import net.sf.mmm.util.exception.api.IllegalCaseException;
 
 /**
@@ -56,7 +56,7 @@ public abstract class BaseTypePlaceholder extends BaseGenericType implements Cod
   }
 
   @Override
-  public abstract BaseNodeItem getParent();
+  public abstract BaseNodeItemImpl getParent();
 
   @Override
   public BaseTypePlaceholder asTypePlaceholder() {

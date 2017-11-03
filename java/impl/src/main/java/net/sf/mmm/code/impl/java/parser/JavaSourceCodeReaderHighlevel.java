@@ -152,25 +152,12 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
       return null;
     }
     BaseType type = this.file.getType(simpleName, false);
-    boolean merge;
     if (type == null) {
       type = new BaseType(this.file, simpleName, declaringType, null);
       this.file.getTypes().add(type);
-      merge = false;
-    } else {
-      merge = (type.getReflectiveObject() != null);
     }
-    if (merge) {
-      if (type.getCategory() != category) {
-        LOG.warn("Cateogry from source '{}' does not match '{}' in {} for type {}", category, type.getCategory(), this.file.getQualifiedName(), simpleName);
-      }
-      if (!type.getModifiers().equals(modifiers)) {
-        LOG.warn("Modifiers from source '{}' do not match '{}' in {} for type {}", category, type.getCategory(), this.file.getQualifiedName(), simpleName);
-      }
-    } else {
-      type.setCategory(category);
-      type.setModifiers(modifiers);
-    }
+    type.setCategory(category);
+    type.setModifiers(modifiers);
     if (type.isMutable()) {
       type.setComment(getElementComment());
     } else {

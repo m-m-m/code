@@ -5,13 +5,13 @@ package net.sf.mmm.code.base.type;
 import java.io.IOException;
 import java.lang.reflect.Type;
 
-import net.sf.mmm.code.api.annotation.CodeAnnotations;
 import net.sf.mmm.code.api.comment.CodeComment;
 import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeGenericType;
+import net.sf.mmm.code.base.annoation.BaseAnnotations;
 import net.sf.mmm.code.base.doc.BaseDoc;
-import net.sf.mmm.code.base.node.BaseNode;
+import net.sf.mmm.code.base.node.BaseNodeItemImpl;
 
 /**
  * Base implementation of {@link BaseGenericType} for a proxy-type to a {@link #getDelegate() delegate}.
@@ -45,7 +45,7 @@ public abstract class BaseGenericTypeProxy extends BaseGenericType {
   public abstract BaseGenericType getDelegate();
 
   @Override
-  public BaseNode getParent() {
+  public BaseNodeItemImpl getParent() {
 
     return getDelegate().getParent();
   }
@@ -95,7 +95,7 @@ public abstract class BaseGenericTypeProxy extends BaseGenericType {
   }
 
   @Override
-  public CodeAnnotations getAnnotations() {
+  public BaseAnnotations getAnnotations() {
 
     return getAnnotations(true);
   }
@@ -105,7 +105,7 @@ public abstract class BaseGenericTypeProxy extends BaseGenericType {
    *        from {@code super} class).
    * @return the {@link #getAnnotations() annotations}.
    */
-  public CodeAnnotations getAnnotations(boolean fromDelegate) {
+  public BaseAnnotations getAnnotations(boolean fromDelegate) {
 
     if (fromDelegate) {
       return getDelegate().getAnnotations();

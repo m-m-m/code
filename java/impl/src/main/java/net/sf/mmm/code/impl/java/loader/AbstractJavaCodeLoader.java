@@ -1,12 +1,17 @@
 /* Copyright (c) The m-m-m Team, Licensed under the Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0 */
-package net.sf.mmm.code.impl.java;
+package net.sf.mmm.code.impl.java.loader;
+
+import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.mmm.code.base.BaseFile;
+import net.sf.mmm.code.base.BasePackage;
 import net.sf.mmm.code.base.loader.BaseCodeLoader;
 import net.sf.mmm.code.base.node.BaseNodeItemContainerAccess;
+import net.sf.mmm.code.impl.java.JavaContext;
 
 /**
  * Abstract base implementation of {@link BaseCodeLoader}.
@@ -47,5 +52,7 @@ public abstract class AbstractJavaCodeLoader extends BaseNodeItemContainerAccess
       throw new IllegalStateException("Already initialized!");
     }
   }
+
+  public abstract Supplier<BaseFile> getSourceFileSupplier(BasePackage pkg, String simpleName);
 
 }

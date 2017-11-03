@@ -48,10 +48,27 @@ public class BaseParameters extends BaseOperationArgs<BaseParameter>
 
     super.doInitialize();
     Executable reflectiveObject = getParent().getReflectiveObject();
+    List<? extends BaseParameter> sourceParams = null;
+    int sourceParamsCount = 0;
+    BaseParameters sourceParameters = getSourceCodeObject();
+    if (sourceParameters != null) {
+      sourceParams = sourceParameters.getDeclared();
+      sourceParamsCount = sourceParams.size();
+    }
     if (reflectiveObject != null) {
       List<BaseParameter> list = getList();
+      int i = 0;
       for (Parameter param : reflectiveObject.getParameters()) {
-        BaseParameter parameter = new BaseParameter(this, param);
+        String name = null;
+        BaseParameter baseParameter = null;
+        if (i < sourceParamsCount) {
+          baseParameter = sourceParams.get(i++);
+          name = baseParameter.getName();
+        }
+        if (name == null) {
+          name = param.getName();
+        }
+        BaseParameter parameter = new BaseParameter(this, name, param, baseParameter);
         list.add(parameter);
       }
     }
@@ -70,6 +87,16 @@ public class BaseParameters extends BaseOperationArgs<BaseParameter>
     BaseParameter parameter = new BaseParameter(this, name);
     add(parameter);
     return parameter;
+  }
+
+  @Override
+  public BaseParameters getSourceCodeObject() {
+
+    BaseOperation sourceOperation = getParent().getSourceCodeObject();
+    if (sourceOperation != null) {
+      return sourceOperation.getParameters();
+    }
+    return null;
   }
 
   @Override

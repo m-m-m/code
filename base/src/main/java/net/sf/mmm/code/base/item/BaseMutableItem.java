@@ -5,11 +5,9 @@ package net.sf.mmm.code.base.item;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.item.CodeMutableItem;
-import net.sf.mmm.code.api.node.CodeNode;
 import net.sf.mmm.code.api.node.CodeNodeItem;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
@@ -24,8 +22,6 @@ public abstract class BaseMutableItem extends BaseItem implements CodeMutableIte
   private boolean immutable;
 
   private int initialized;
-
-  private Runnable lazyInit;
 
   /**
    * The constructor.
@@ -56,55 +52,30 @@ public abstract class BaseMutableItem extends BaseItem implements CodeMutableIte
       this.initialized++;
       doInitialize();
       boolean systemImmutable = isSystemImmutable();
-      if (this.lazyInit != null) {
-        this.lazyInit.run();
-        this.lazyInit = null;
-      }
       if (systemImmutable) {
         setImmutable();
       }
       this.initialized++;
+      doneInitialize();
     }
   }
 
   /**
-   * @param lazyInit the {@link Runnable} that shall be invoked during {@link #initialize() initialization} by
-   *        {@link #doInitialize()}. If you use this method after the {@link #initialize() initialization} and
-   *        {@link Runnable#run() execution} of the {@code lazyInit} this node item will automatically be set
-   *        to {@link #isImmutable() immutable}.
+   * @return {@code true} if the {@link #initialize() initialization} of this item has started but is not yet
+   *         {@link #isInitialized() complete}, {@code false} otherwise.
    */
-  protected void setLazyInit(Runnable lazyInit) {
+  protected final boolean isInitializing() {
 
-    Objects.requireNonNull(lazyInit, "lazyInit");
-    if (this.initialized > 0) {
-      throw new IllegalStateException("Already initialized!");
-    }
-    if (this.lazyInit == null) {
-      this.lazyInit = lazyInit;
-    }
-    if (this.lazyInit != lazyInit) {
-      throw new IllegalStateException("LazyInit is already set!");
-    }
+    return (this.initialized == 1);
   }
 
   /**
-   * @param item the {@link BaseMutableItem} to set the
-   * @param lazyInit the {@link Runnable} for lazy initialization. See {@link #setLazyInit(Runnable)}.
-   * @see #setLazyInit(Runnable)
+   * @return {@code true} if the {@link #initialize() initialization} of this item has been completed,
+   *         {@code false} otherwise.
    */
-  protected static void doSetLazyInit(BaseMutableItem item, Runnable lazyInit) {
+  protected final boolean isInitialized() {
 
-    item.setLazyInit(lazyInit);
-  }
-
-  /**
-   * @param init {@code true} to call {@link #initialize()}, {@code false} to do nothing.
-   */
-  protected final void initialize(boolean init) {
-
-    if (init) {
-      initialize();
-    }
+    return (this.initialized >= 2);
   }
 
   /**
@@ -115,6 +86,27 @@ public abstract class BaseMutableItem extends BaseItem implements CodeMutableIte
 
     if (this.initialized != 1) {
       throw new IllegalStateException("Already initialized!");
+    }
+  }
+
+  /**
+   * Called from {@link #initialize()} on first invocation after {@link #doInitialize()} is complete. May be
+   * overridden but never be called from anywhere else.
+   */
+  protected void doneInitialize() {
+
+    if (this.initialized != 2) {
+      throw new IllegalStateException("Not initialized!");
+    }
+  }
+
+  /**
+   * @param init {@code true} to call {@link #initialize()}, {@code false} to do nothing.
+   */
+  protected final void initialize(boolean init) {
+
+    if (init) {
+      initialize();
     }
   }
 
@@ -134,6 +126,15 @@ public abstract class BaseMutableItem extends BaseItem implements CodeMutableIte
   }
 
   /**
+   * @return the optional internal {@link CodeItem} representing the source-code (to merge). Otherwise
+   *         {@code null}. This is an internal API. Do not use or rely on it from outside.
+   */
+  public CodeItem getSourceCodeObject() {
+
+    return null;
+  }
+
+  /**
    * @return {@code true} if this is a system internal node item that is considered to be
    *         {@link #isImmutable() immutable} but is technically {@link #setImmutable() set to immutable}
    *         during (lazy) {@link #initialize() initialization}. Otherwise {@code false}.
@@ -142,21 +143,6 @@ public abstract class BaseMutableItem extends BaseItem implements CodeMutableIte
 
     if (getReflectiveObject() != null) {
       return true;
-    }
-    return (this.lazyInit != null);
-  }
-
-  /**
-   * @param node the {@link CodeNode}.
-   * @return {@code true} if the given {@link CodeNode} is an instance of {@link BaseMutableItem} and is
-   *         {@link #isSystemImmutable() system immutable}.
-   *
-   * @see #isSystemImmutable(BaseMutableItem)
-   */
-  protected static boolean isSystemImmutable(CodeNode node) {
-
-    if (node instanceof BaseMutableItem) {
-      return isSystemImmutable((BaseMutableItem) node);
     }
     return false;
   }

@@ -22,6 +22,8 @@ public class BaseException extends BaseOperationArg implements CodeException, Co
 
   private final AnnotatedType reflectiveObject;
 
+  private BaseException sourceCodeObject;
+
   /**
    * The constructor.
    *
@@ -79,6 +81,28 @@ public class BaseException extends BaseOperationArg implements CodeException, Co
       return this.reflectiveObject.getType();
     }
     return null;
+  }
+
+  @Override
+  public BaseException getSourceCodeObject() {
+
+    if (this.sourceCodeObject != null) {
+      return this.sourceCodeObject;
+    }
+    if (isInitialized()) {
+      return null;
+    }
+    BaseExceptions sourceExceptions = this.parent.getSourceCodeObject();
+    if (sourceExceptions != null) {
+      String exceptionTypeName = getType().getQualifiedName();
+      for (BaseException sourceException : sourceExceptions.getDeclared()) {
+        if (exceptionTypeName.equals(sourceException.getType().getQualifiedName())) {
+          this.sourceCodeObject = sourceException;
+          break;
+        }
+      }
+    }
+    return this.sourceCodeObject;
   }
 
   @Override

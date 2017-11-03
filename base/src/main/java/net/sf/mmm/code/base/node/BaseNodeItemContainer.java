@@ -79,6 +79,19 @@ public abstract class BaseNodeItemContainer<I extends CodeItem> extends BaseNode
     this.list = makeImmutable(this.mutableList, !isKeepListView());
   }
 
+  @Override
+  public abstract BaseNodeItem getParent();
+
+  @Override
+  protected boolean isSystemImmutable() {
+
+    boolean systemImmutable = super.isSystemImmutable();
+    if (!systemImmutable) {
+      systemImmutable = isSystemImmutable((BaseNodeItemImpl) getParent());
+    }
+    return systemImmutable;
+  }
+
   /**
    * @return {@code true} if the {@link List} should turn into an immutable view on the original mutable
    *         {@link List}, {@code false} otherwise.

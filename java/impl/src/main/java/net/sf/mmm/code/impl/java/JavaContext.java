@@ -23,11 +23,12 @@ import net.sf.mmm.code.base.BasePathElement;
 import net.sf.mmm.code.base.BasePathElements;
 import net.sf.mmm.code.base.arg.BaseOperationArg;
 import net.sf.mmm.code.base.element.BaseElement;
+import net.sf.mmm.code.base.element.BaseElementImpl;
 import net.sf.mmm.code.base.element.BaseElementWithTypeVariables;
 import net.sf.mmm.code.base.loader.BaseCodeLoader;
 import net.sf.mmm.code.base.member.BaseOperation;
 import net.sf.mmm.code.base.node.BaseNode;
-import net.sf.mmm.code.base.node.BaseNodeItem;
+import net.sf.mmm.code.base.node.BaseNodeItemImpl;
 import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.type.BaseArrayType;
 import net.sf.mmm.code.base.type.BaseGenericType;
@@ -37,6 +38,7 @@ import net.sf.mmm.code.base.type.BaseTypeVariable;
 import net.sf.mmm.code.base.type.BaseTypeVariables;
 import net.sf.mmm.code.base.type.BaseTypeWildcard;
 import net.sf.mmm.code.impl.java.expression.constant.JavaConstant;
+import net.sf.mmm.code.impl.java.loader.AbstractJavaCodeLoader;
 import net.sf.mmm.code.impl.java.source.JavaSource;
 import net.sf.mmm.util.exception.api.IllegalCaseException;
 
@@ -158,6 +160,7 @@ public abstract class JavaContext extends JavaProvider implements BaseContext, B
       type = new BaseType(file, simpleName, declaringType, clazz);
       addContainerItem(declaringType.getNestedTypes(), type);
     } else {
+      getLoader().getSourceFileSupplier(pkg, clazz.getSimpleName());
       BaseFile file = new BaseFile(pkg, clazz);
       addPathElementInternal(pkg.getChildren(), file);
       type = file.getType();
@@ -173,7 +176,7 @@ public abstract class JavaContext extends JavaProvider implements BaseContext, B
       return getType((Class<?>) type);
     } else if (type instanceof ParameterizedType) {
       ParameterizedType parameterizedType = (ParameterizedType) type;
-      return new BaseParameterizedType(declaringElement, parameterizedType);
+      return new BaseParameterizedType((BaseElementImpl) declaringElement, parameterizedType);
     } else if (type instanceof TypeVariable) {
       TypeVariable<?> typeVar = (TypeVariable<?>) type;
       if (declaringElement instanceof BaseType) {
@@ -194,16 +197,16 @@ public abstract class JavaContext extends JavaProvider implements BaseContext, B
       return new BaseTypeVariable(declaringElement.getDeclaringType().getTypeParameters(), typeVar);
     } else if (type instanceof WildcardType) {
       WildcardType wildcard = (WildcardType) type;
-      BaseNodeItem parent;
+      BaseNodeItemImpl parent;
       if (declaringElement instanceof BaseParameterizedType) {
         parent = ((BaseParameterizedType) declaringElement).getTypeParameters();
       } else {
-        parent = declaringElement;
+        parent = (BaseNodeItemImpl) declaringElement;
       }
       return new BaseTypeWildcard(parent, wildcard);
     } else if (type instanceof GenericArrayType) {
       // GenericArrayType arrayType = (GenericArrayType) type;
-      return new BaseArrayType(declaringElement, type);
+      return new BaseArrayType((BaseElementImpl) declaringElement, type);
     } else {
       throw new IllegalCaseException(type.getClass().getSimpleName());
     }
@@ -278,7 +281,7 @@ public abstract class JavaContext extends JavaProvider implements BaseContext, B
         reflectiveObject = Package.getPackage(qname.getFullName());
       }
       BasePackage superLayerPackage = null; // TODO
-      childPackage = new BasePackage(parentPackage, simpleName, reflectiveObject, superLayerPackage);
+      childPackage = new BasePackage(parentPackage, simpleName, reflectiveObject, superLayerPackage, null);
       addPathElementInternal(children, childPackage);
     }
     return childPackage;

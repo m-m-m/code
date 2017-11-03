@@ -31,20 +31,8 @@ public abstract interface CodeProvider extends CodeNode, CodeLoader {
    */
   default CodeName parseName(String hierarchicalName) {
 
-    return new CodeName(hierarchicalName, getContext().getPackageSeparator());
+    return new CodeName(hierarchicalName, getContext().getSyntax().getPackageSeparator());
   }
-
-  /**
-   * @param qualifiedName the {@link CodeName} of the requested {@link CodePackage}.
-   * @return the requested {@link CodePackage} or {@code null} if not found.
-   */
-  CodePackage getPackage(CodeName qualifiedName);
-
-  /**
-   * @param qualifiedName the {@link CodeName} of the requested {@link CodeType}.
-   * @return the requested {@link CodeType} or {@code null} if not found.
-   */
-  CodeType getType(CodeName qualifiedName);
 
   /**
    * @param qualifiedName the {@link CodeType#getQualifiedName() qualified name} of the requested

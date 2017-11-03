@@ -17,6 +17,11 @@ import net.sf.mmm.code.api.type.CodeTypeCategory;
 public interface CodeSyntax {
 
   /**
+   * @return the name of the programming language. E.g. "Java".
+   */
+  String getLanguageName();
+
+  /**
    * @return the {@link net.sf.mmm.code.api.expression.CodeVariableThis#getName() name} for
    *         {@link net.sf.mmm.code.api.expression.CodeVariableThis}. E.g. "this" or "self".
    */
@@ -117,4 +122,11 @@ public interface CodeSyntax {
     return "";
   }
 
+  /**
+   * @return the package separator character.
+   */
+  default char getPackageSeparator() {
+
+    return '.';
+  }
 }

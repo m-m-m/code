@@ -29,6 +29,8 @@ public class BaseMethod extends BaseOperation implements CodeMethod, CodeNodeIte
 
   private final Method reflectiveObject;
 
+  private BaseMethod sourceCodeObject;
+
   private BaseReturn returns;
 
   /**
@@ -144,6 +146,22 @@ public class BaseMethod extends BaseOperation implements CodeMethod, CodeNodeIte
   public Method getReflectiveObject() {
 
     return this.reflectiveObject;
+  }
+
+  @Override
+  public BaseMethod getSourceCodeObject() {
+
+    if (this.sourceCodeObject != null) {
+      return this.sourceCodeObject;
+    }
+    if (isInitialized()) {
+      return null;
+    }
+    BaseMethods sourceMethods = this.parent.getSourceCodeObject();
+    if (sourceMethods != null) {
+      this.sourceCodeObject = sourceMethods.get(this); // TODO getDeclared instead of get
+    }
+    return this.sourceCodeObject;
   }
 
   @Override

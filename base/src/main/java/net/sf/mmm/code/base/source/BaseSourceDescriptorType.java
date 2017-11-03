@@ -18,6 +18,8 @@ public class BaseSourceDescriptorType extends BaseSourceDescriptor {
 
   private final String version;
 
+  private final String scope;
+
   private final String id;
 
   private final String docUrl;
@@ -33,6 +35,7 @@ public class BaseSourceDescriptorType extends BaseSourceDescriptor {
     this.id = id;
     this.groupId = null;
     this.artifactId = null;
+    this.scope = null;
     this.version = null;
     this.docUrl = null;
   }
@@ -43,14 +46,16 @@ public class BaseSourceDescriptorType extends BaseSourceDescriptor {
    * @param groupId the {@link #getGroupId() groupId}.
    * @param artifactId the {@link #getArtifactId() artifactId}.
    * @param version the {@link #getVersion() version}.
+   * @param scope the {@link #getScope() scope}.
    * @param docUrl the {@link #getDocUrl() doc URL}.
    */
-  public BaseSourceDescriptorType(String groupId, String artifactId, String version, String docUrl) {
+  public BaseSourceDescriptorType(String groupId, String artifactId, String version, String scope, String docUrl) {
 
     super();
     this.groupId = groupId;
     this.artifactId = artifactId;
     this.version = version;
+    this.scope = scope;
     this.docUrl = docUrl;
     this.id = createId();
   }
@@ -66,6 +71,7 @@ public class BaseSourceDescriptorType extends BaseSourceDescriptor {
     this.groupId = template.getGroupId();
     this.artifactId = template.getArtifactId();
     this.version = template.getVersion();
+    this.scope = template.getScope();
     this.docUrl = template.getDocUrl();
     this.id = template.getId();
   }
@@ -92,6 +98,12 @@ public class BaseSourceDescriptorType extends BaseSourceDescriptor {
   public String getVersion() {
 
     return this.version;
+  }
+
+  @Override
+  public String getScope() {
+
+    return this.scope;
   }
 
   @Override

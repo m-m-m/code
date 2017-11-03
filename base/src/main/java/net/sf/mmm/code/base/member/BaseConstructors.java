@@ -84,6 +84,16 @@ public class BaseConstructors extends BaseOperations<BaseConstructor>
   }
 
   @Override
+  public BaseConstructors getSourceCodeObject() {
+
+    BaseType sourceType = getParent().getSourceCodeObject();
+    if (sourceType == null) {
+      return null;
+    }
+    return sourceType.getConstructors();
+  }
+
+  @Override
   public BaseConstructors copy() {
 
     return copy(getParent());

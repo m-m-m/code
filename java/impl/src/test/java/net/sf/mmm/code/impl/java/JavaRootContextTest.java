@@ -12,6 +12,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import net.sf.mmm.code.api.modifier.CodeModifiers;
+import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeTypeCategory;
 import net.sf.mmm.code.base.BasePackage;
@@ -21,6 +22,7 @@ import net.sf.mmm.code.base.member.BaseField;
 import net.sf.mmm.code.base.member.BaseFields;
 import net.sf.mmm.code.base.member.BaseMethod;
 import net.sf.mmm.code.base.member.BaseMethods;
+import net.sf.mmm.code.base.statement.BaseLocalVariable;
 import net.sf.mmm.code.base.type.BaseGenericType;
 import net.sf.mmm.code.base.type.BaseGenericTypeParameters;
 import net.sf.mmm.code.base.type.BaseParameterizedType;
@@ -49,7 +51,6 @@ public class JavaRootContextTest extends Assertions {
     JavaContext context = getContext();
 
     // then
-    assertThat(context.getPackageSeparator()).isEqualTo('.');
     assertThat(context.getRootContext()).isSameAs(context);
     BasePackage rootPackage = context.getRootPackage();
     assertThat(rootPackage).isNotNull();
@@ -61,6 +62,36 @@ public class JavaRootContextTest extends Assertions {
     assertThat(context.getQualifiedNameForStandardType("String", true)).isEqualTo("String");
     assertThat(context.getQualifiedNameForStandardType("String", false)).isEqualTo("java.lang.String");
     assertThat(context.getQualifiedNameForStandardType("UndefinedBanana", false)).isNull();
+  }
+
+  /**
+   * Test of {@link JavaContext#getSyntax()}.
+   */
+  @Test
+  public void testSyntax() {
+
+    // given
+    JavaContext context = getContext();
+    CodeSyntax syntax = context.getSyntax();
+
+    // then
+    assertThat(syntax.getPackageSeparator()).isEqualTo('.');
+    assertThat(syntax.getLanguageName()).isEqualTo("Java");
+    assertThat(syntax.getKeywordForExtends()).isEqualTo(" extends ");
+    assertThat(syntax.getKeywordForImplements()).isEqualTo(" implements ");
+    assertThat(syntax.getStatementTerminator()).isEqualTo(";");
+    assertThat(syntax.getAnnotationStart()).isEqualTo("@");
+    assertThat(syntax.getAnnotationEndIfEmpty()).isEmpty();
+    assertThat(syntax.getVariableNameThis()).isEqualTo("this");
+    assertThat(syntax.getMethodKeyword()).isEmpty();
+    assertThat(syntax.getMethodReturnStart()).isEmpty();
+    assertThat(syntax.getMethodReturnEnd()).isNull();
+    assertThat(syntax.getKeywordForCategory(CodeTypeCategory.CLASS)).isEqualTo("class");
+    assertThat(syntax.getKeywordForCategory(CodeTypeCategory.INTERFACE)).isEqualTo("interface");
+    assertThat(syntax.getKeywordForCategory(CodeTypeCategory.ENUMERAION)).isEqualTo("enum");
+    assertThat(syntax.getKeywordForCategory(CodeTypeCategory.ANNOTATION)).isEqualTo("@interface");
+    assertThat(syntax.getKeywordForVariable(new BaseLocalVariable("foo", context.getRootType(), null, false))).isEmpty();
+    assertThat(syntax.getKeywordForVariable(new BaseLocalVariable("foo", context.getRootType(), null, true))).isEqualTo("final ");
   }
 
   /**

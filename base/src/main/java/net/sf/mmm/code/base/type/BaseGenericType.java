@@ -4,12 +4,14 @@ package net.sf.mmm.code.base.type;
 
 import java.lang.reflect.Type;
 
+import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.type.CodeComposedType;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeTypePlaceholder;
 import net.sf.mmm.code.api.type.CodeTypeVariable;
 import net.sf.mmm.code.api.type.CodeTypeWildcard;
 import net.sf.mmm.code.base.element.BaseElementImpl;
+import net.sf.mmm.code.base.node.BaseNodeItemImpl;
 
 /**
  * Base implementation of {@link CodeGenericType}.
@@ -38,6 +40,9 @@ public abstract class BaseGenericType extends BaseElementImpl implements CodeGen
 
     super(template);
   }
+
+  @Override
+  public abstract BaseNodeItemImpl getParent();
 
   @Override
   public boolean isAssignableFrom(CodeGenericType type) {
@@ -121,5 +126,15 @@ public abstract class BaseGenericType extends BaseElementImpl implements CodeGen
 
   @Override
   public abstract Type getReflectiveObject();
+
+  @Override
+  public BaseGenericType getSourceCodeObject() {
+
+    CodeItem sourceItem = getParent().getSourceCodeObject();
+    if (sourceItem instanceof BaseSuperTypes) {
+      ((BaseSuperTypes) sourceItem).getDeclared();
+    }
+    return null;
+  }
 
 }

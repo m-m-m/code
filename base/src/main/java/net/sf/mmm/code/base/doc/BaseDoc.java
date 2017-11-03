@@ -104,6 +104,16 @@ public class BaseDoc extends BaseNodeItemImpl implements CodeDoc, CodeNodeItemWi
   }
 
   @Override
+  protected boolean isSystemImmutable() {
+
+    boolean systemImmutable = super.isSystemImmutable();
+    if (!systemImmutable) {
+      systemImmutable = isSystemImmutable(getParent());
+    }
+    return systemImmutable;
+  }
+
+  @Override
   public List<String> getLines() {
 
     return this.lines;
@@ -240,7 +250,7 @@ public class BaseDoc extends BaseNodeItemImpl implements CodeDoc, CodeNodeItemWi
   private CodeDocLink resolveLink(String text) {
 
     CodeType owningType = getOwningType(getParent());
-    return new BaseDocLink(text, getContext().getPackageSeparator(), owningType.getQualifiedName(), this::resolveLinkUrl, this::resolveLinkValue);
+    return new BaseDocLink(text, getSyntax().getPackageSeparator(), owningType.getQualifiedName(), this::resolveLinkUrl, this::resolveLinkValue);
   }
 
   /**
@@ -339,7 +349,7 @@ public class BaseDoc extends BaseNodeItemImpl implements CodeDoc, CodeNodeItemWi
 
     StringBuilder buffer = new StringBuilder(url);
     CodeContext context = getContext();
-    char separator = context.getPackageSeparator();
+    char separator = getSyntax().getPackageSeparator();
     if (absolute) {
       if (!url.endsWith("/")) {
         buffer.append('/');
@@ -402,7 +412,7 @@ public class BaseDoc extends BaseNodeItemImpl implements CodeDoc, CodeNodeItemWi
   private Path createPath(String qualifiedName) {
 
     String separatorString;
-    char separator = getContext().getPackageSeparator();
+    char separator = getSyntax().getPackageSeparator();
     if (separator == '.') {
       separatorString = "\\.";
     } else {

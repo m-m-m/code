@@ -10,6 +10,7 @@ import java.util.Map;
 
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.base.type.BaseTypeWildcard;
+import net.sf.mmm.code.impl.java.loader.AbstractJavaCodeLoader;
 import net.sf.mmm.code.impl.java.source.JavaSource;
 import net.sf.mmm.code.impl.java.source.JavaSourceProvider;
 import net.sf.mmm.util.exception.api.DuplicateObjectException;

@@ -18,14 +18,6 @@ import net.sf.mmm.code.api.type.CodeTypeWildcard;
 public interface CodeContext extends CodeProvider {
 
   /**
-   * @return the package separator character.
-   */
-  default char getPackageSeparator() {
-
-    return '.';
-  }
-
-  /**
    * @return the {@link CodeSyntax} for the current programming language.
    */
   CodeSyntax getSyntax();
@@ -94,7 +86,7 @@ public interface CodeContext extends CodeProvider {
    */
   default String getQualifiedName(String simpleName, CodeFile file, boolean omitStandardPackages) {
 
-    char separator = getPackageSeparator();
+    char separator = getSyntax().getPackageSeparator();
     String suffix = separator + simpleName;
     for (CodeImport imp : file.getImports()) {
       if (!imp.isStatic()) {

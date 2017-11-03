@@ -118,6 +118,16 @@ public class BaseMethods extends BaseOperations<BaseMethod> implements CodeMetho
   }
 
   @Override
+  public BaseMethods getSourceCodeObject() {
+
+    BaseType sourceType = getParent().getSourceCodeObject();
+    if (sourceType == null) {
+      return null;
+    }
+    return sourceType.getMethods();
+  }
+
+  @Override
   public BaseMethods copy() {
 
     return copy(getParent());

@@ -104,6 +104,16 @@ public class BaseFields extends BaseMembers<BaseField> implements CodeFields<Bas
   }
 
   @Override
+  public BaseFields getSourceCodeObject() {
+
+    BaseType sourceType = getParent().getSourceCodeObject();
+    if (sourceType == null) {
+      return null;
+    }
+    return sourceType.getFields();
+  }
+
+  @Override
   public BaseFields copy() {
 
     return copy(getParent());

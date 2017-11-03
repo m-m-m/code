@@ -21,6 +21,8 @@ public class BaseTypeVariable extends BaseTypePlaceholder implements CodeTypeVar
 
   private final TypeVariable<?> reflectiveObject;
 
+  private BaseTypeVariable sourceCodeObject;
+
   private String name;
 
   /**
@@ -95,6 +97,22 @@ public class BaseTypeVariable extends BaseTypePlaceholder implements CodeTypeVar
   public TypeVariable<?> getReflectiveObject() {
 
     return this.reflectiveObject;
+  }
+
+  @Override
+  public BaseTypeVariable getSourceCodeObject() {
+
+    if (this.sourceCodeObject != null) {
+      return this.sourceCodeObject;
+    }
+    if (isInitialized()) {
+      return null;
+    }
+    BaseTypeVariables sourceTypeVariables = this.parent.getSourceCodeObject();
+    if (sourceTypeVariables != null) {
+      this.sourceCodeObject = sourceTypeVariables.get(this.name);
+    }
+    return this.sourceCodeObject;
   }
 
   @Override

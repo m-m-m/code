@@ -29,6 +29,8 @@ public class BaseParameter extends BaseOperationArg implements CodeParameter, Co
 
   private boolean varArgs;
 
+  private BaseParameter sourceCodeObject;
+
   /**
    * The constructor.
    *
@@ -37,7 +39,7 @@ public class BaseParameter extends BaseOperationArg implements CodeParameter, Co
    */
   public BaseParameter(BaseParameters parent, String name) {
 
-    this(parent, name, null);
+    this(parent, name, null, null);
   }
 
   /**
@@ -48,7 +50,7 @@ public class BaseParameter extends BaseOperationArg implements CodeParameter, Co
    */
   public BaseParameter(BaseParameters parent, Parameter reflectiveObject) {
 
-    this(parent, reflectiveObject.getName(), reflectiveObject);
+    this(parent, reflectiveObject.getName(), reflectiveObject, null);
   }
 
   /**
@@ -58,7 +60,7 @@ public class BaseParameter extends BaseOperationArg implements CodeParameter, Co
    * @param name the {@link #getName() name}.
    * @param reflectiveObject the {@link #getReflectiveObject() reflective object}. May be {@code null}.
    */
-  private BaseParameter(BaseParameters parent, String name, Parameter reflectiveObject) {
+  BaseParameter(BaseParameters parent, String name, Parameter reflectiveObject, BaseParameter sourceCodeObject) {
 
     super();
     this.parent = parent;
@@ -138,6 +140,12 @@ public class BaseParameter extends BaseOperationArg implements CodeParameter, Co
       return this.reflectiveObject.getParameterizedType();
     }
     return null;
+  }
+
+  @Override
+  public BaseParameter getSourceCodeObject() {
+
+    return this.sourceCodeObject;
   }
 
   @Override

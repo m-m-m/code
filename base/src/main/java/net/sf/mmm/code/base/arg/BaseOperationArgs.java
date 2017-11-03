@@ -54,6 +54,9 @@ public abstract class BaseOperationArgs<A extends BaseOperationArg> extends Base
   }
 
   @Override
+  public abstract BaseOperationArgs<A> getSourceCodeObject();
+
+  @Override
   public abstract BaseOperationArgs<A> copy();
 
 }

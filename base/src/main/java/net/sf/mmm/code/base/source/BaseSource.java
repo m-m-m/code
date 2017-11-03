@@ -3,6 +3,7 @@
 package net.sf.mmm.code.base.source;
 
 import net.sf.mmm.code.api.source.CodeSource;
+import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.BaseProvider;
 import net.sf.mmm.code.base.node.BaseContainer;
 
@@ -16,5 +17,11 @@ public interface BaseSource extends CodeSource, BaseProvider, BaseContainer {
 
   @Override
   BaseSource getParent();
+
+  @Override
+  default BaseContext getContext() {
+
+    return getParent().getContext();
+  }
 
 }

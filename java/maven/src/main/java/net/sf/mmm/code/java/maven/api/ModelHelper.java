@@ -29,7 +29,7 @@ public class ModelHelper implements MavenConstants {
         sourceDirectory = srcDir;
       }
     }
-    return new File(model.getPomFile().getParentFile(), sourceDirectory);
+    return getDirectory(model, sourceDirectory);
   }
 
   /**
@@ -46,7 +46,7 @@ public class ModelHelper implements MavenConstants {
         testSourceDirectory = testSrcDir;
       }
     }
-    return new File(model.getPomFile().getParentFile(), testSourceDirectory);
+    return getDirectory(model, testSourceDirectory);
   }
 
   /**
@@ -63,7 +63,7 @@ public class ModelHelper implements MavenConstants {
         buildDirectory = buildDir;
       }
     }
-    return new File(model.getPomFile().getParentFile(), buildDirectory);
+    return getDirectory(model, buildDirectory);
   }
 
   /**
@@ -80,7 +80,16 @@ public class ModelHelper implements MavenConstants {
         outputDirectory = outDir;
       }
     }
-    return new File(model.getPomFile().getParentFile(), outputDirectory);
+    return getDirectory(model, outputDirectory);
+  }
+
+  private static File getDirectory(Model model, String path) {
+
+    File file = new File(path);
+    if (file.isAbsolute()) {
+      return file;
+    }
+    return new File(model.getPomFile().getParentFile(), path);
   }
 
   /**
@@ -97,7 +106,7 @@ public class ModelHelper implements MavenConstants {
         testOutputDirectory = testOutDir;
       }
     }
-    return new File(model.getPomFile().getParentFile(), testOutputDirectory);
+    return getDirectory(model, testOutputDirectory);
   }
 
 }

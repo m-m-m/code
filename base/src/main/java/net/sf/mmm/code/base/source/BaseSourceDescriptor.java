@@ -29,6 +29,11 @@ public abstract class BaseSourceDescriptor implements CodeSourceDescriptor {
     buffer.append(getArtifactId());
     buffer.append(':');
     buffer.append(getVersion());
+    String scope = getScope();
+    if (scope != null) {
+      buffer.append(':');
+      buffer.append(scope);
+    }
     return buffer.toString();
   }
 

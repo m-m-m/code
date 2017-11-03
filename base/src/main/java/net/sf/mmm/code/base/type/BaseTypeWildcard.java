@@ -8,8 +8,9 @@ import java.lang.reflect.WildcardType;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeTypeWildcard;
 import net.sf.mmm.code.base.element.BaseElementImpl;
-import net.sf.mmm.code.base.node.BaseNodeItem;
+import net.sf.mmm.code.base.element.BaseElementWithTypeVariables;
 import net.sf.mmm.code.base.node.BaseNodeItemContainer;
+import net.sf.mmm.code.base.node.BaseNodeItemImpl;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
@@ -18,9 +19,9 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseTypeWildcard extends BaseTypePlaceholder implements CodeTypeWildcard, CodeNodeItemWithGenericParent<BaseNodeItem, BaseTypeWildcard> {
+public class BaseTypeWildcard extends BaseTypePlaceholder implements CodeTypeWildcard, CodeNodeItemWithGenericParent<BaseNodeItemImpl, BaseTypeWildcard> {
 
-  private final BaseNodeItem parent;
+  private final BaseNodeItemImpl parent;
 
   private final WildcardType reflectiveObject;
 
@@ -33,7 +34,7 @@ public class BaseTypeWildcard extends BaseTypePlaceholder implements CodeTypeWil
    *
    * @param parent the {@link #getParent() parent}.
    */
-  public BaseTypeWildcard(BaseNodeItem parent) {
+  public BaseTypeWildcard(BaseNodeItemImpl parent) {
 
     this(parent, null, null);
   }
@@ -45,7 +46,7 @@ public class BaseTypeWildcard extends BaseTypePlaceholder implements CodeTypeWil
    * @param bound the {@link #getBound() bound}.
    * @param superWildcard the {@link #isSuper() super wildcard flag}.
    */
-  public BaseTypeWildcard(BaseNodeItem parent, BaseGenericType bound, boolean superWildcard) {
+  public BaseTypeWildcard(BaseNodeItemImpl parent, BaseGenericType bound, boolean superWildcard) {
 
     this(parent, null, bound);
     this.superWildcard = superWildcard;
@@ -55,14 +56,26 @@ public class BaseTypeWildcard extends BaseTypePlaceholder implements CodeTypeWil
    * The constructor.
    *
    * @param parent the {@link #getParent() parent}.
+   * @param bound the {@link #getBound() bound}.
+   * @param superWildcard the {@link #isSuper() super wildcard flag}.
+   */
+  public BaseTypeWildcard(BaseElementWithTypeVariables parent, BaseGenericType bound, boolean superWildcard) {
+
+    this((BaseNodeItemImpl) parent, bound, superWildcard);
+  }
+
+  /**
+   * The constructor.
+   *
+   * @param parent the {@link #getParent() parent}.
    * @param reflectiveObject the {@link #getReflectiveObject() reflective object}.
    */
-  public BaseTypeWildcard(BaseNodeItem parent, WildcardType reflectiveObject) {
+  public BaseTypeWildcard(BaseNodeItemImpl parent, WildcardType reflectiveObject) {
 
     this(parent, reflectiveObject, null);
   }
 
-  private BaseTypeWildcard(BaseNodeItem parent, WildcardType reflectiveObject, BaseGenericType bound) {
+  private BaseTypeWildcard(BaseNodeItemImpl parent, WildcardType reflectiveObject, BaseGenericType bound) {
 
     super(bound);
     this.parent = parent;
@@ -83,7 +96,7 @@ public class BaseTypeWildcard extends BaseTypePlaceholder implements CodeTypeWil
    * @param template the {@link BaseTypeWildcard} to copy.
    * @param parent the {@link #getParent() parent}.
    */
-  public BaseTypeWildcard(BaseTypeWildcard template, BaseNodeItem parent) {
+  public BaseTypeWildcard(BaseTypeWildcard template, BaseNodeItemImpl parent) {
 
     super(template);
     this.parent = parent;
@@ -92,7 +105,7 @@ public class BaseTypeWildcard extends BaseTypePlaceholder implements CodeTypeWil
   }
 
   @Override
-  public BaseNodeItem getParent() {
+  public BaseNodeItemImpl getParent() {
 
     return this.parent;
   }
@@ -176,7 +189,7 @@ public class BaseTypeWildcard extends BaseTypePlaceholder implements CodeTypeWil
   }
 
   @Override
-  public BaseTypeWildcard copy(BaseNodeItem newParent) {
+  public BaseTypeWildcard copy(BaseNodeItemImpl newParent) {
 
     return new BaseTypeWildcard(this, newParent);
   }

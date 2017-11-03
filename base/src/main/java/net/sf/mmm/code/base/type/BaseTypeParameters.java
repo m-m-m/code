@@ -68,6 +68,7 @@ public class BaseTypeParameters extends BaseGenericTypeParameters<BaseGenericTyp
         addInternal(genericType);
       }
     }
+    BaseParameterizedType sourceCodeObject = this.parent.getSourceCodeObject();
   }
 
   @Override

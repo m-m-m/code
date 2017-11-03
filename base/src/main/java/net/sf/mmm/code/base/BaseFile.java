@@ -5,6 +5,7 @@ package net.sf.mmm.code.base;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import net.sf.mmm.code.api.CodeFile;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
@@ -24,6 +25,10 @@ public final class BaseFile extends BasePathElement implements CodeFile, CodeNod
   private final BaseImports imports;
 
   private final Class<?> reflectioveObject;
+
+  private BaseFile sourceCodeObject;
+
+  private Supplier<BaseFile> sourceSupplier;
 
   private List<BaseType> types;
 
@@ -204,6 +209,17 @@ public final class BaseFile extends BasePathElement implements CodeFile, CodeNod
   public Class<?> getReflectiveObject() {
 
     return this.reflectioveObject;
+  }
+
+  @Override
+  public BaseFile getSourceCodeObject() {
+
+    if (this.sourceCodeObject == null) {
+      if (this.sourceSupplier != null) {
+        this.sourceCodeObject = this.sourceSupplier.get();
+      }
+    }
+    return this.sourceCodeObject;
   }
 
   @Override

@@ -22,6 +22,8 @@ public class BaseConstructor extends BaseOperation implements CodeConstructor, C
 
   private final Constructor<?> reflectiveObject;
 
+  private BaseConstructor sourceCodeObject;
+
   /**
    * The constructor.
    *
@@ -87,6 +89,22 @@ public class BaseConstructor extends BaseOperation implements CodeConstructor, C
   public Constructor<?> getReflectiveObject() {
 
     return this.reflectiveObject;
+  }
+
+  @Override
+  public BaseConstructor getSourceCodeObject() {
+
+    if (this.sourceCodeObject != null) {
+      return this.sourceCodeObject;
+    }
+    if (isInitialized()) {
+      return null;
+    }
+    BaseConstructors sourceConstructors = this.parent.getSourceCodeObject();
+    if (sourceConstructors != null) {
+      this.sourceCodeObject = sourceConstructors.get(this);
+    }
+    return this.sourceCodeObject;
   }
 
   @Override

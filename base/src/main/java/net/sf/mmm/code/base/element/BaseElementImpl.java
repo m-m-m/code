@@ -36,7 +36,6 @@ public abstract class BaseElementImpl extends BaseNodeItemImpl implements BaseEl
   public BaseElementImpl() {
 
     super();
-    this.doc = new BaseDoc(this);
     this.annotations = new BaseAnnotations(this);
   }
 
@@ -51,6 +50,13 @@ public abstract class BaseElementImpl extends BaseNodeItemImpl implements BaseEl
     this.doc = template.getDoc().copy(this);
     this.comment = template.getComment();
     this.annotations = doCopy(template.getAnnotations(), this);
+  }
+
+  @Override
+  protected void doInitialize() {
+
+    super.doInitialize();
+    getDoc();
   }
 
   @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -69,11 +75,18 @@ public abstract class BaseElementImpl extends BaseNodeItemImpl implements BaseEl
   @Override
   public BaseDoc getDoc() {
 
+    if (this.doc == null) {
+      this.doc = new BaseDoc(this);
+      BaseElementImpl sourceElement = getSourceCodeObject();
+      if (sourceElement != null) {
+        this.doc.getLines().addAll(sourceElement.getDoc().getLines());
+      }
+    }
     return this.doc;
   }
 
   @Override
-  public CodeAnnotations getAnnotations() {
+  public BaseAnnotations getAnnotations() {
 
     return this.annotations;
   }
@@ -81,6 +94,12 @@ public abstract class BaseElementImpl extends BaseNodeItemImpl implements BaseEl
   @Override
   public CodeComment getComment() {
 
+    if (this.comment == null) {
+      BaseElementImpl sourceElement = getSourceCodeObject();
+      if (sourceElement != null) {
+        this.comment = sourceElement.getComment();
+      }
+    }
     return this.comment;
   }
 
@@ -100,20 +119,13 @@ public abstract class BaseElementImpl extends BaseNodeItemImpl implements BaseEl
   }
 
   @Override
-  protected boolean isSystemImmutable() {
-
-    if (super.isSystemImmutable()) {
-      return true;
-    }
-    Object reflectiveObject = getReflectiveObject();
-    if (reflectiveObject != null) {
-      return true;
-    }
-    return false;
-  }
+  public abstract BaseType getDeclaringType();
 
   @Override
-  public abstract BaseType getDeclaringType();
+  public BaseElementImpl getSourceCodeObject() {
+
+    return null;
+  }
 
   @Override
   public BaseContext getContext() {
@@ -176,7 +188,7 @@ public abstract class BaseElementImpl extends BaseNodeItemImpl implements BaseEl
    */
   protected void doWriteDoc(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) {
 
-    if ((this.doc != null) && (currentIndent != null)) {
+    if ((getDoc() != null) && (currentIndent != null)) {
       this.doc.write(sink, newline, defaultIndent, currentIndent);
     }
   }

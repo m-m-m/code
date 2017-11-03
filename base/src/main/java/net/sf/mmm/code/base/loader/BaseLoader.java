@@ -3,6 +3,8 @@
 package net.sf.mmm.code.base.loader;
 
 import net.sf.mmm.code.api.CodeLoader;
+import net.sf.mmm.code.api.CodeName;
+import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.BasePackage;
 import net.sf.mmm.code.base.type.BaseType;
 
@@ -15,9 +17,21 @@ import net.sf.mmm.code.base.type.BaseType;
 public interface BaseLoader extends CodeLoader {
 
   @Override
-  BasePackage getPackage(String qualifiedName);
+  BaseContext getContext();
+
+  @Override
+  default BasePackage getPackage(String qualifiedName) {
+
+    return getPackage(getContext().parseName(qualifiedName));
+  }
+
+  @Override
+  BasePackage getPackage(CodeName qualifiedName);
 
   @Override
   BaseType getType(String qualifiedName);
+
+  @Override
+  BaseType getType(CodeName qualifiedName);
 
 }

@@ -74,6 +74,9 @@ public abstract class BaseMembers<M extends CodeMember> extends BaseNodeItemCont
   }
 
   @Override
+  public abstract BaseMembers<M> getSourceCodeObject();
+
+  @Override
   public abstract BaseMembers<M> copy();
 
   @Override

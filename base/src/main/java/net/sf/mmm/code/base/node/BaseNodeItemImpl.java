@@ -99,16 +99,6 @@ public abstract class BaseNodeItemImpl extends BaseMutableItem implements BaseNo
   }
 
   @Override
-  protected boolean isSystemImmutable() {
-
-    boolean systemImmutable = super.isSystemImmutable();
-    if (!systemImmutable) {
-      systemImmutable = isSystemImmutable(getParent());
-    }
-    return systemImmutable;
-  }
-
-  @Override
   public BaseContext getContext() {
 
     return getParent().getContext();

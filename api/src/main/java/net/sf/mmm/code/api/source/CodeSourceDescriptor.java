@@ -33,9 +33,15 @@ public interface CodeSourceDescriptor {
   String getArtifactId();
 
   /**
-   * @return the version of this source if available or {@link #VERSION_UNDEFINED}.
+   * @return the version of the {@link CodeSource} if available or {@link #VERSION_UNDEFINED}.
    */
   String getVersion();
+
+  /**
+   * @return the optional scope of the {@link CodeSource} (e.g. "compile" for sub-source "src/main/java" or
+   *         "test" for sub-source "src/test/java"). May be {@code null} (default for entire project).
+   */
+  String getScope();
 
   /**
    * @return the base URL of the JavaDoc for this source. May be {@code null} if unavailable.

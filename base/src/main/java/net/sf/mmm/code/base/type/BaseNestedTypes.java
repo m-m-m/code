@@ -10,6 +10,7 @@ import java.util.function.Consumer;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeNestedTypes;
+import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.node.BaseNodeItemContainerHierarchicalWithName;
 
 /**
@@ -44,6 +45,19 @@ public class BaseNestedTypes extends BaseNodeItemContainerHierarchicalWithName<B
 
     super(template);
     this.parent = parent;
+  }
+
+  @Override
+  protected void doInitialize() {
+
+    super.doInitialize();
+    BaseNestedTypes sourceNestedTypes = getSourceCodeObject();
+    if (sourceNestedTypes != null) {
+      BaseContext context = getContext();
+      for (BaseType sourceNestedType : sourceNestedTypes.getDeclared()) {
+        context.getType(sourceNestedType.getQualifiedName()); // TODO use getType(pkg, simpleName) instead
+      }
+    }
   }
 
   @Override
@@ -109,6 +123,16 @@ public class BaseNestedTypes extends BaseNodeItemContainerHierarchicalWithName<B
   protected void rename(BaseType child, String oldName, String newName, Consumer<String> renamer) {
 
     super.rename(child, oldName, newName, renamer);
+  }
+
+  @Override
+  public BaseNestedTypes getSourceCodeObject() {
+
+    BaseType sourceType = this.parent.getSourceCodeObject();
+    if (sourceType != null) {
+      return sourceType.getNestedTypes();
+    }
+    return null;
   }
 
   @Override

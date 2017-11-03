@@ -145,12 +145,22 @@ public class BaseProperty extends BaseMember implements CodeProperty, CodeNodeIt
 
   /**
    * @deprecated a {@link BaseProperty} is a virtual object that can never have a reflective object. Use that
-   *             method on {@link #getField()}, {@link #getGetter()}, or {@link #getSetter()} if present
-   *             instead.
+   *             method on {@link #getField()}, {@link #getGetter()}, or {@link #getSetter()} instead.
    */
   @Deprecated
   @Override
   public AccessibleObject getReflectiveObject() {
+
+    return null;
+  }
+
+  /**
+   * @deprecated a {@link BaseProperty} is a virtual object that can never have a source-code object. Use that
+   *             method on {@link #getField()}, {@link #getGetter()}, or {@link #getSetter()} instead.
+   */
+  @Deprecated
+  @Override
+  public BaseProperty getSourceCodeObject() {
 
     return null;
   }

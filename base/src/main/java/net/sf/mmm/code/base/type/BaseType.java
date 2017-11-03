@@ -57,6 +57,8 @@ public class BaseType extends BaseGenericType implements CodeType, CodeNodeItemW
 
   private String simpleName;
 
+  private String qualifiedName;
+
   private CodeModifiers modifiers;
 
   private CodeTypeCategory category;
@@ -64,6 +66,8 @@ public class BaseType extends BaseGenericType implements CodeType, CodeNodeItemW
   private CodeBlockInitializer staticInitializer;
 
   private CodeBlockInitializer nonStaticInitializer;
+
+  private BaseType sourceCodeObject;
 
   /**
    * The constructor.
@@ -195,6 +199,25 @@ public class BaseType extends BaseGenericType implements CodeType, CodeNodeItemW
       }
       this.simpleName = simpleName;
     }
+  }
+
+  @Override
+  public String getQualifiedName() {
+
+    if (this.qualifiedName != null) {
+      return this.qualifiedName;
+    }
+    BasePackage pkg = getParentPackage();
+    String result;
+    if (pkg.isRoot()) {
+      result = getSimpleName();
+    } else {
+      result = pkg.getQualifiedName() + getSyntax().getPackageSeparator() + getSimpleName();
+    }
+    if (isImmutable()) {
+      this.qualifiedName = result;
+    }
+    return result;
   }
 
   @Override
@@ -505,6 +528,22 @@ public class BaseType extends BaseGenericType implements CodeType, CodeNodeItemW
       return true;
     }
     return false;
+  }
+
+  @Override
+  public BaseType getSourceCodeObject() {
+
+    if (this.sourceCodeObject != null) {
+      return this.sourceCodeObject;
+    }
+    if (isInitialized()) {
+      return null;
+    }
+    BaseFile sourceFile = this.file.getSourceCodeObject();
+    if (sourceFile != null) {
+      this.sourceCodeObject = sourceFile.getType(getSimpleName(), false);
+    }
+    return this.sourceCodeObject;
   }
 
   @Override

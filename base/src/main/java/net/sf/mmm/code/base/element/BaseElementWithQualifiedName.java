@@ -16,6 +16,8 @@ public abstract class BaseElementWithQualifiedName extends BaseElementImpl imple
 
   private String simpleName;
 
+  private String qualifiedName;
+
   private BasePackage parentPackage;
 
   /**
@@ -93,6 +95,19 @@ public abstract class BaseElementWithQualifiedName extends BaseElementImpl imple
   protected void doSetParentPackage(BasePackage parentPkg) {
 
     this.parentPackage = parentPkg;
+  }
+
+  @Override
+  public String getQualifiedName() {
+
+    if (this.qualifiedName != null) {
+      return this.qualifiedName;
+    }
+    String result = CodeMutableItemWithQualifiedName.super.getQualifiedName();
+    if (isImmutable()) {
+      this.qualifiedName = result;
+    }
+    return result;
   }
 
   @Override

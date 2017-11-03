@@ -9,7 +9,7 @@ import java.util.Objects;
 
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeGenericType;
-import net.sf.mmm.code.base.element.BaseElement;
+import net.sf.mmm.code.base.element.BaseElementImpl;
 import net.sf.mmm.util.exception.api.IllegalCaseException;
 
 /**
@@ -18,9 +18,9 @@ import net.sf.mmm.util.exception.api.IllegalCaseException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseArrayType extends BaseGenericType implements CodeNodeItemWithGenericParent<BaseElement, BaseArrayType> {
+public class BaseArrayType extends BaseGenericType implements CodeNodeItemWithGenericParent<BaseElementImpl, BaseArrayType> {
 
-  private final BaseElement parent;
+  private final BaseElementImpl parent;
 
   private final Type reflectiveObject;
 
@@ -44,7 +44,7 @@ public class BaseArrayType extends BaseGenericType implements CodeNodeItemWithGe
    * @param parent the {@link #getParent() parent}.
    * @param reflectiveObject the {@link #getReflectiveObject() reflective object}. May be {@code null}.
    */
-  public BaseArrayType(BaseElement parent, Type reflectiveObject) {
+  public BaseArrayType(BaseElementImpl parent, Type reflectiveObject) {
 
     this(parent, reflectiveObject, null);
     Objects.requireNonNull(reflectiveObject, "reflectiveObject");
@@ -56,7 +56,7 @@ public class BaseArrayType extends BaseGenericType implements CodeNodeItemWithGe
    * @param parent the {@link #getParent() parent}.
    * @param componentType the {@link #getComponentType() component type}.
    */
-  public BaseArrayType(BaseElement parent, BaseGenericType componentType) {
+  public BaseArrayType(BaseElementImpl parent, BaseGenericType componentType) {
 
     this(parent, null, componentType);
     Objects.requireNonNull(componentType, "componentType");
@@ -69,7 +69,7 @@ public class BaseArrayType extends BaseGenericType implements CodeNodeItemWithGe
    * @param reflectiveObject the {@link #getReflectiveObject() reflective object}. May be {@code null}.
    * @param componentType the {@link #getComponentType() component type}.
    */
-  private BaseArrayType(BaseElement parent, Type reflectiveObject, BaseGenericType componentType) {
+  private BaseArrayType(BaseElementImpl parent, Type reflectiveObject, BaseGenericType componentType) {
 
     super();
     this.parent = parent;
@@ -83,7 +83,7 @@ public class BaseArrayType extends BaseGenericType implements CodeNodeItemWithGe
    * @param template the {@link BaseArrayType} to copy.
    * @param parent the {@link #getParent() parent}.
    */
-  public BaseArrayType(BaseArrayType template, BaseElement parent) {
+  public BaseArrayType(BaseArrayType template, BaseElementImpl parent) {
 
     super(template);
     this.parent = parent;
@@ -92,7 +92,7 @@ public class BaseArrayType extends BaseGenericType implements CodeNodeItemWithGe
   }
 
   @Override
-  public BaseElement getParent() {
+  public BaseElementImpl getParent() {
 
     return this.parent;
   }
@@ -180,7 +180,7 @@ public class BaseArrayType extends BaseGenericType implements CodeNodeItemWithGe
   }
 
   @Override
-  public BaseArrayType copy(BaseElement newParent) {
+  public BaseArrayType copy(BaseElementImpl newParent) {
 
     return new BaseArrayType(this, newParent);
   }

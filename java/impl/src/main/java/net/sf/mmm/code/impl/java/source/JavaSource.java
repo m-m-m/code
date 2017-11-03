@@ -91,7 +91,10 @@ public class JavaSource extends JavaProvider implements BaseSource {
       Objects.requireNonNull(byteCodeLocation, "location||uri||codeSource");
     }
     this.byteCodeLocation = byteCodeLocation;
-    this.id = id;
+    this.sourceCodeLocation = sourceCodeLocation;
+    if (id != null) {
+      this.id = id.replace('\\', '/');
+    }
     this.reflectiveObject = reflectiveObject;
     this.rootPackage = new BasePackage(this, superLayerPackage);
     if (dependencies != null) {
@@ -230,7 +233,7 @@ public class JavaSource extends JavaProvider implements BaseSource {
       if (location == null) {
         location = getSourceCodeLocation();
       }
-      this.id = location.toString();
+      this.id = location.toString().replace('\\', '/');
     }
     return this.id;
   }

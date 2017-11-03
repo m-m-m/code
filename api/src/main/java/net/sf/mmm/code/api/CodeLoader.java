@@ -11,7 +11,7 @@ import net.sf.mmm.code.api.type.CodeType;
  * @author hohwille
  * @since 1.0.0
  */
-public abstract interface CodeLoader {
+public abstract interface CodeLoader extends CodeWithContext {
 
   /**
    * @param qualifiedName the {@link CodePackage#getQualifiedName() qualified name} of the requested
@@ -21,11 +21,23 @@ public abstract interface CodeLoader {
   CodePackage getPackage(String qualifiedName);
 
   /**
+   * @param qualifiedName the {@link CodeName} of the requested {@link CodePackage}.
+   * @return the requested {@link CodePackage} or {@code null} if not found.
+   */
+  CodePackage getPackage(CodeName qualifiedName);
+
+  /**
    * @param qualifiedName the {@link CodeGenericType#getQualifiedName() qualified name} of the requested
    *        {@link CodeGenericType}.
    * @return the requested {@link CodeGenericType}, typically a {@link net.sf.mmm.code.api.type.CodeType} or
    *         {@code null} if not found.
    */
   CodeType getType(String qualifiedName);
+
+  /**
+   * @param qualifiedName the {@link CodeName} of the requested {@link CodeType}.
+   * @return the requested {@link CodeType} or {@code null} if not found.
+   */
+  CodeType getType(CodeName qualifiedName);
 
 }

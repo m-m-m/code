@@ -33,6 +33,8 @@ public class BaseTypeVariables extends BaseGenericTypeParameters<BaseTypeVariabl
 
   private BaseType declaringType;
 
+  private BaseTypeVariables sourceCodeObject;
+
   /**
    * The constructor for {@link #EMPTY}.
    */
@@ -148,6 +150,29 @@ public class BaseTypeVariables extends BaseGenericTypeParameters<BaseTypeVariabl
   public CodeOperation getDeclaringOperation() {
 
     return this.declaringOperation;
+  }
+
+  @Override
+  public BaseTypeVariables getSourceCodeObject() {
+
+    if (this.sourceCodeObject != null) {
+      return this.sourceCodeObject;
+    }
+    if (isInitialized()) {
+      return null;
+    }
+    if (this.declaringOperation != null) {
+      BaseOperation sourceOperation = this.declaringOperation.getSourceCodeObject();
+      if (sourceOperation != null) {
+        this.sourceCodeObject = sourceOperation.getTypeParameters();
+      }
+    } else {
+      BaseType sourceType = this.declaringType.getSourceCodeObject();
+      if (sourceType != null) {
+        this.sourceCodeObject = sourceType.getTypeParameters();
+      }
+    }
+    return this.sourceCodeObject;
   }
 
   @Override

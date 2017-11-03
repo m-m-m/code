@@ -3,7 +3,7 @@
 package net.sf.mmm.code.api.item;
 
 import net.sf.mmm.code.api.syntax.CodeSyntax;
-import net.sf.mmm.code.api.syntax.DefaultCodeSyntax;
+import net.sf.mmm.code.api.syntax.CodeSyntaxJava;
 
 /**
  * Abstract top-level interface for any item of code as defined by this API. It reflects code structure.
@@ -69,7 +69,7 @@ public abstract interface CodeItem {
    */
   default CodeSyntax getSyntax() {
 
-    return DefaultCodeSyntax.INSTANCE;
+    return CodeSyntaxJava.INSTANCE;
   }
 
   /**

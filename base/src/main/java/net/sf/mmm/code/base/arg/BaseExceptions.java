@@ -79,6 +79,16 @@ public class BaseExceptions extends BaseOperationArgs<BaseException>
   }
 
   @Override
+  public BaseExceptions getSourceCodeObject() {
+
+    BaseOperation sourceOperation = getParent().getSourceCodeObject();
+    if (sourceOperation != null) {
+      return sourceOperation.getExceptions();
+    }
+    return null;
+  }
+
+  @Override
   public BaseExceptions copy() {
 
     return copy(getParent());

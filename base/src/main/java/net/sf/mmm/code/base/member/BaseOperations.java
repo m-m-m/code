@@ -38,6 +38,9 @@ public abstract class BaseOperations<O extends BaseOperation> extends BaseMember
   }
 
   @Override
+  public abstract BaseOperations<O> getSourceCodeObject();
+
+  @Override
   public abstract BaseOperations<O> copy();
 
 }

@@ -18,8 +18,7 @@ import net.sf.mmm.code.base.type.BaseType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseProperties extends BaseMembers<BaseProperty>
-    implements CodeProperties<BaseProperty>, CodeNodeItemWithGenericParent<BaseType, BaseProperties> {
+public class BaseProperties extends BaseMembers<BaseProperty> implements CodeProperties<BaseProperty>, CodeNodeItemWithGenericParent<BaseType, BaseProperties> {
 
   /**
    * The constructor.
@@ -152,6 +151,16 @@ public class BaseProperties extends BaseMembers<BaseProperty>
       BaseProperty property = getDeclaredOrCreate(propertyName);
       property.join(method);
     }
+  }
+
+  /**
+   * @deprecated a {@link BaseProperties} is a virtual object that can never have a source-code object.
+   */
+  @Deprecated
+  @Override
+  public BaseProperties getSourceCodeObject() {
+
+    return null;
   }
 
   @Override

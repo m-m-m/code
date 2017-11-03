@@ -65,7 +65,7 @@ import java.util.regex.Pattern;
 import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.api.source.CodeSourceDescriptor;
 import net.sf.mmm.code.api.syntax.CodeSyntax;
-import net.sf.mmm.code.api.syntax.DefaultCodeSyntax;
+import net.sf.mmm.code.api.syntax.CodeSyntaxJava;
 import net.sf.mmm.code.base.BaseFile;
 import net.sf.mmm.code.base.BasePackage;
 import net.sf.mmm.code.base.BasePathElements;
@@ -73,7 +73,7 @@ import net.sf.mmm.code.base.source.BaseSourceDescriptorType;
 import net.sf.mmm.code.base.type.BaseGenericType;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.base.type.BaseTypeWildcard;
-import net.sf.mmm.code.impl.java.loader.JavaByteCodeLoader;
+import net.sf.mmm.code.impl.java.loader.JavaLoader;
 import net.sf.mmm.code.impl.java.source.JavaSource;
 
 /**
@@ -138,7 +138,7 @@ public class JavaRootContext extends JavaContext {
    */
   private JavaRootContext() {
 
-    super(new JavaByteCodeLoader(ClassLoader.getSystemClassLoader()), createSource()); // TODO
+    super(new JavaLoader(ClassLoader.getSystemClassLoader(), null), createSource()); // TODO
     this.javaSystemTypeCache = new HashMap<>();
     add2SystemTypeCache(Object.class, String.class, Enum.class, Class.class, Package.class, Number.class, //
         Void.class, Boolean.class, Short.class, Byte.class, Double.class, Float.class, Long.class, Integer.class, Character.class, //
@@ -178,7 +178,7 @@ public class JavaRootContext extends JavaContext {
       artifactId = "jdk";
       sourceCodeLocation = srcZip;
     }
-    CodeSourceDescriptor descriptor = new BaseSourceDescriptorType(groupId, artifactId, version, docUrl);
+    CodeSourceDescriptor descriptor = new BaseSourceDescriptorType(groupId, artifactId, version, null, docUrl);
     return new JavaSource(byteCodeLocation, sourceCodeLocation, id, descriptor);
   }
 
@@ -260,7 +260,7 @@ public class JavaRootContext extends JavaContext {
   @Override
   public CodeSyntax getSyntax() {
 
-    return DefaultCodeSyntax.INSTANCE;
+    return CodeSyntaxJava.INSTANCE;
   }
 
   @Override

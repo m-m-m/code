@@ -3,6 +3,7 @@
 package net.sf.mmm.code.base;
 
 import java.io.IOException;
+import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.node.CodeNode;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.syntax.CodeSyntaxJava;
 import net.sf.mmm.code.base.node.BaseContainer;
 import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.type.BaseType;
@@ -45,6 +47,10 @@ public final class BasePackage extends BasePathElement implements CodePackage, C
 
   private final Package reflectiveObject;
 
+  private BasePackage sourceCodeObject;
+
+  private Supplier<BasePackage> sourceSupplier;
+
   /**
    * The constructor for a {@link net.sf.mmm.code.api.CodeContext#getRootPackage() root-package}.
    *
@@ -70,14 +76,28 @@ public final class BasePackage extends BasePathElement implements CodePackage, C
    * @param reflectiveObject the {@link #getReflectiveObject() reflective object}.
    * @param superLayerPackage the {@link #getSuperLayerPackage() super layer package} to inherit from. May be
    *        {@code null}.
+   * @param sourceSupplier the optional {@link Supplier} for lazy-loading of source-code.
    */
-  public BasePackage(BasePackage parentPackage, String simpleName, Package reflectiveObject, BasePackage superLayerPackage) {
+  public BasePackage(BasePackage parentPackage, String simpleName, Package reflectiveObject, BasePackage superLayerPackage,
+      Supplier<BasePackage> sourceSupplier) {
 
     super(parentPackage, simpleName);
     this.source = parentPackage.getSource();
-    this.superLayerPackage = null;
+    this.superLayerPackage = superLayerPackage;
     this.children = new BasePathElements(this);
-    this.reflectiveObject = reflectiveObject;
+    Package pkg = reflectiveObject;
+    if (pkg == null) {
+      if (superLayerPackage != null) {
+        pkg = superLayerPackage.reflectiveObject;
+      }
+      if (pkg == null) {
+        if (CodeSyntaxJava.LANGUAGE_NAME_JAVA.equals(getContext().getSyntax().getLanguageName())) {
+          pkg = Package.getPackage(getQualifiedName());
+        }
+      }
+    }
+    this.reflectiveObject = pkg;
+    this.sourceSupplier = sourceSupplier;
   }
 
   /**
@@ -158,6 +178,17 @@ public final class BasePackage extends BasePathElement implements CodePackage, C
   public Package getReflectiveObject() {
 
     return this.reflectiveObject;
+  }
+
+  @Override
+  public BasePackage getSourceCodeObject() {
+
+    if (this.sourceCodeObject == null) {
+      if (this.sourceSupplier != null) {
+        this.sourceCodeObject = this.sourceSupplier.get();
+      }
+    }
+    return this.sourceCodeObject;
   }
 
   @Override

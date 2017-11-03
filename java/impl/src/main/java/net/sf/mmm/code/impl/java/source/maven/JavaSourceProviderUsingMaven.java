@@ -18,6 +18,7 @@ import net.sf.mmm.code.impl.java.source.JavaSource;
 import net.sf.mmm.code.impl.java.source.JavaSourceProvider;
 import net.sf.mmm.code.java.maven.api.DependencyHelper;
 import net.sf.mmm.code.java.maven.api.MavenBridge;
+import net.sf.mmm.code.java.maven.api.MavenConstants;
 import net.sf.mmm.code.java.maven.api.ModelHelper;
 import net.sf.mmm.code.java.maven.impl.MavenBridgeImpl;
 
@@ -27,7 +28,7 @@ import net.sf.mmm.code.java.maven.impl.MavenBridgeImpl;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaSourceProviderUsingMaven extends AbstractJavaSourceProvider {
+public class JavaSourceProviderUsingMaven extends AbstractJavaSourceProvider implements MavenConstants {
 
   private final MavenBridge mavenBridge;
 
@@ -57,7 +58,7 @@ public class JavaSourceProviderUsingMaven extends AbstractJavaSourceProvider {
       location = sourceCodeLocation;
     }
     BasePackage superLayerPackage = null; // TODO
-    return new JavaSourceUsingMaven(this, byteCodeLocation, sourceCodeLocation, superLayerPackage, () -> parseModel(location));
+    return new JavaSourceUsingMaven(this, byteCodeLocation, sourceCodeLocation, superLayerPackage, () -> parseModel(location), null);
   }
 
   private Model parseModel(File location) {
@@ -83,7 +84,7 @@ public class JavaSourceProviderUsingMaven extends AbstractJavaSourceProvider {
 
   public JavaSource createFromLocalMavenProject(JavaContext parentContext) {
 
-    return createFromLocalMavenProject(parentContext, new File("."));
+    return createFromLocalMavenProject(parentContext, new File(".").getAbsoluteFile().getParentFile());
   }
 
   public JavaSource createFromLocalMavenProject(JavaContext parentContext, File location) {
@@ -96,9 +97,11 @@ public class JavaSourceProviderUsingMaven extends AbstractJavaSourceProvider {
     File byteCodeLocation = ModelHelper.getOutputDirectory(model);
     File sourceCodeLocation = ModelHelper.getSourceDirectory(model);
     BasePackage superLayerPackage = parentContext.getSource().getRootPackage();
-    JavaSourceUsingMaven compileDependency = new JavaSourceUsingMaven(this, byteCodeLocation, sourceCodeLocation, superLayerPackage, modelSupplier);
-    File testSourceCodeLocation = ModelHelper.getSourceDirectory(model);
-    JavaSourceUsingMaven testDependency = new JavaSourceUsingMaven(this, compileDependency, byteCodeLocation, testSourceCodeLocation, modelSupplier);
+    JavaSourceUsingMaven compileDependency = new JavaSourceUsingMaven(this, byteCodeLocation, sourceCodeLocation, superLayerPackage, modelSupplier,
+        SCOPE_COMPILE);
+    File testByteCodeLocation = ModelHelper.getTestOutputDirectory(model);
+    File testSourceCodeLocation = ModelHelper.getTestSourceDirectory(model);
+    JavaSourceUsingMaven testDependency = new JavaSourceUsingMaven(this, compileDependency, testByteCodeLocation, testSourceCodeLocation, modelSupplier);
     return new JavaSourceUsingMaven(this, model.getPomFile().getParentFile().toString(), compileDependency, testDependency, modelSupplier);
   }
 

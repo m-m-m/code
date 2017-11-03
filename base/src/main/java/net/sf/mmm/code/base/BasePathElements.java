@@ -4,6 +4,8 @@ package net.sf.mmm.code.base;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 import net.sf.mmm.code.api.CodeFile;
 import net.sf.mmm.code.api.CodeName;
@@ -264,19 +266,72 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
     return null;
   }
 
+  /**
+   * @param path the {@link CodeName} to traverse.
+   * @param withoutSuperLayer {@code false} to recursively traverse {@link CodePackage#getSuperLayerPackage()
+   *        super layer packages} during the search what is the default if this flag is omitted, {@code true}
+   *        to only consider the direct children of the package.
+   * @return the traversed {@link CodePackage}. Has been created if it did not already exist.
+   */
+  public BasePackage getOrCreatePackage(CodeName path, boolean withoutSuperLayer) {
+
+    return getOrCreatePackage(path, withoutSuperLayer, null);
+  }
+
+  /**
+   * <b>Attention:</b> This is an internal API that should not be used from outside. Use
+   * {@link #getOrCreatePackage(CodeName, boolean)} instead.
+   *
+   * @param path the {@link CodeName} to traverse.
+   * @param withoutSuperLayer {@code false} to recursively traverse {@link CodePackage#getSuperLayerPackage()
+   *        super layer packages} during the search what is the default if this flag is omitted, {@code true}
+   *        to only consider the direct children of the package.
+   * @param sourceSupplierFunction the {@link BiFunction} for lazy loading of source-code.
+   * @return the traversed {@link CodePackage}. Has been created if it did not already exist.
+   */
+  public BasePackage getOrCreatePackage(CodeName path, boolean withoutSuperLayer,
+      BiFunction<BasePackage, String, Supplier<BasePackage>> sourceSupplierFunction) {
+
+    CodeName parentPath = path.getParent();
+    String simpleName = path.getSimpleName();
+    BasePathElements parentPathElements;
+    if (parentPath == null) {
+      if (simpleName.isEmpty()) {
+        return this.parent;
+      }
+      parentPathElements = this;
+    } else {
+      parentPathElements = getOrCreatePackage(parentPath, withoutSuperLayer).getChildren();
+    }
+    BasePackage pkg = parentPathElements.getPackage(simpleName, withoutSuperLayer, false);
+    if (pkg == null) {
+      boolean addRegular = true;
+      Supplier<BasePackage> sourceSupplier = null;
+      if (sourceSupplierFunction != null) {
+        addRegular = false;
+        sourceSupplier = sourceSupplierFunction.apply(parentPathElements.parent, simpleName);
+      }
+      pkg = parentPathElements.createPackage(simpleName, addRegular, sourceSupplier);
+      if (!addRegular) {
+        parentPathElements.addInternal(pkg);
+      }
+    }
+    return pkg;
+  }
+
   @Override
   public BasePackage addPackage(String simpleName) {
 
-    return createPackage(simpleName, true);
+    return createPackage(simpleName, true, null);
   }
 
   @Override
   public BasePackage createPackage(String simpleName) {
 
-    return createPackage(simpleName, false);
+    return createPackage(simpleName, false, null);
   }
 
-  private BasePackage createPackage(String simpleName, boolean add) {
+  private BasePackage createPackage(String simpleName, boolean add, Supplier<BasePackage> sourceSupplier) {
 
     BasePackage superLayerPackage = this.parent.getSuperLayerPackage();
     if (superLayerPackage != null) {
@@ -287,7 +342,7 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
         superLayerPackage = null;
       }
     }
-    BasePackage file = new BasePackage(this.parent, simpleName, null, superLayerPackage);
+    BasePackage file = new BasePackage(this.parent, simpleName, null, superLayerPackage, sourceSupplier);
     if (add && isMutable()) {
       add(file);
     }

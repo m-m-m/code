@@ -141,6 +141,16 @@ public class BaseSuperTypes extends BaseNodeItemContainerHierarchical<BaseGeneri
   }
 
   @Override
+  public BaseSuperTypes getSourceCodeObject() {
+
+    BaseType sourceType = this.parent.getSourceCodeObject();
+    if (sourceType != null) {
+      return sourceType.getSuperTypes();
+    }
+    return null;
+  }
+
+  @Override
   public BaseSuperTypes copy() {
 
     return copy(this.parent);

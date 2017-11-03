@@ -30,6 +30,8 @@ public class BaseField extends BaseMember implements CodeField, CodeNodeItemWith
 
   private CodeExpression initializer;
 
+  private BaseField sourceCodeObject;
+
   /**
    * The constructor.
    *
@@ -140,6 +142,22 @@ public class BaseField extends BaseMember implements CodeField, CodeNodeItemWith
   public Field getReflectiveObject() {
 
     return this.reflectiveObject;
+  }
+
+  @Override
+  public BaseField getSourceCodeObject() {
+
+    if (this.sourceCodeObject != null) {
+      return this.sourceCodeObject;
+    }
+    if (isInitialized()) {
+      return null;
+    }
+    BaseFields sourceFields = this.parent.getSourceCodeObject();
+    if (sourceFields != null) {
+      this.sourceCodeObject = sourceFields.getDeclared(getName());
+    }
+    return this.sourceCodeObject;
   }
 
   @Override

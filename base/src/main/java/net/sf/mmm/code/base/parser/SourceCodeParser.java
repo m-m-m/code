@@ -1,10 +1,11 @@
 /* Copyright (c) The m-m-m Team, Licensed under the Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0 */
-package net.sf.mmm.code.api.java.parser;
+package net.sf.mmm.code.base.parser;
 
 import java.io.Reader;
 
 import net.sf.mmm.code.base.BaseFile;
+import net.sf.mmm.code.base.BasePackage;
 import net.sf.mmm.code.base.type.BaseType;
 
 /**
@@ -13,7 +14,7 @@ import net.sf.mmm.code.base.type.BaseType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface JavaSourceCodeParser {
+public interface SourceCodeParser {
 
   /**
    * @param reader the {@link Reader} with the source-code (e.g. from {@code *.java} file).
@@ -28,6 +29,14 @@ public interface JavaSourceCodeParser {
    *         returned. If the source-code is entirely odd and no (valid) type is present at all, then
    *         {@code null} may be returned.
    */
-  BaseType parse(Reader reader, BaseFile file);
+  BaseType parseType(Reader reader, BaseFile file);
+
+  /**
+   * @param reader the {@link Reader} with the source-code (e.g. from {@code package-info.java} file).
+   * @param pkg the {@link BasePackage} where to add {@link BasePackage#getDoc() doc},
+   *        {@link BasePackage#getAnnotations() annotations}, and {@link BasePackage#getComment() comments}
+   *        from the source-code.
+   */
+  void parsePackage(Reader reader, BasePackage pkg);
 
 }

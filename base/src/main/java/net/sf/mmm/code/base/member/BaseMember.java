@@ -91,6 +91,9 @@ public abstract class BaseMember extends BasicElementWithModifiers implements Co
   public abstract AccessibleObject getReflectiveObject();
 
   @Override
+  public abstract BaseMember getSourceCodeObject();
+
+  @Override
   public abstract BaseMember copy();
 
 }

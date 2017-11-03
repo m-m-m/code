@@ -4,17 +4,18 @@ package net.sf.mmm.code.impl.java.parser;
 
 import java.io.Reader;
 
-import net.sf.mmm.code.api.java.parser.JavaSourceCodeParser;
 import net.sf.mmm.code.base.BaseFile;
+import net.sf.mmm.code.base.BasePackage;
+import net.sf.mmm.code.base.parser.SourceCodeParser;
 import net.sf.mmm.code.base.type.BaseType;
 
 /**
- * Implementation of {@link JavaSourceCodeParser}.
+ * Implementation of {@link SourceCodeParser}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaSourceCodeParserImpl implements JavaSourceCodeParser {
+public class JavaSourceCodeParserImpl implements SourceCodeParser {
 
   private static JavaSourceCodeParserImpl instance;
 
@@ -30,9 +31,14 @@ public class JavaSourceCodeParserImpl implements JavaSourceCodeParser {
   }
 
   @Override
-  public BaseType parse(Reader reader, BaseFile file) {
+  public BaseType parseType(Reader reader, BaseFile file) {
 
     return this.codeReader.parse(reader, file);
+  }
+
+  @Override
+  public void parsePackage(Reader reader, BasePackage pkg) {
+
   }
 
   /**

@@ -7,6 +7,7 @@ import java.lang.reflect.Type;
 
 import net.sf.mmm.code.api.arg.CodeReturn;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
+import net.sf.mmm.code.base.member.BaseMethod;
 import net.sf.mmm.code.base.member.BaseOperation;
 import net.sf.mmm.code.base.type.BaseType;
 
@@ -16,9 +17,9 @@ import net.sf.mmm.code.base.type.BaseType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseReturn extends BaseOperationArg implements CodeReturn, CodeNodeItemWithGenericParent<BaseOperation, BaseReturn> {
+public class BaseReturn extends BaseOperationArg implements CodeReturn, CodeNodeItemWithGenericParent<BaseMethod, BaseReturn> {
 
-  private final BaseOperation parent;
+  private final BaseMethod parent;
 
   private final AnnotatedType reflectiveObject;
 
@@ -28,7 +29,7 @@ public class BaseReturn extends BaseOperationArg implements CodeReturn, CodeNode
    * @param parent the {@link #getParent() parent}.
    * @param reflectiveObject the {@link #getReflectiveObject() reflective object}. May be {@code null}.
    */
-  public BaseReturn(BaseOperation parent, AnnotatedType reflectiveObject) {
+  public BaseReturn(BaseMethod parent, AnnotatedType reflectiveObject) {
 
     super();
     this.parent = parent;
@@ -41,7 +42,7 @@ public class BaseReturn extends BaseOperationArg implements CodeReturn, CodeNode
    * @param template the {@link BaseReturn} to copy.
    * @param parent the {@link #getParent() parent}.
    */
-  public BaseReturn(BaseReturn template, BaseOperation parent) {
+  public BaseReturn(BaseReturn template, BaseMethod parent) {
 
     super(template);
     this.parent = parent;
@@ -49,7 +50,7 @@ public class BaseReturn extends BaseOperationArg implements CodeReturn, CodeNode
   }
 
   @Override
-  public BaseOperation getParent() {
+  public BaseMethod getParent() {
 
     return this.parent;
   }
@@ -82,13 +83,23 @@ public class BaseReturn extends BaseOperationArg implements CodeReturn, CodeNode
   }
 
   @Override
+  public BaseReturn getSourceCodeObject() {
+
+    BaseMethod sourceMethod = this.parent.getSourceCodeObject();
+    if (sourceMethod != null) {
+      return sourceMethod.getReturns();
+    }
+    return null;
+  }
+
+  @Override
   public BaseReturn copy() {
 
     return copy(this.parent);
   }
 
   @Override
-  public BaseReturn copy(BaseOperation newParent) {
+  public BaseReturn copy(BaseMethod newParent) {
 
     return new BaseReturn(this, newParent);
   }

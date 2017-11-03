@@ -13,12 +13,12 @@ import org.junit.Test;
 import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.api.annotation.CodeAnnotation;
 import net.sf.mmm.code.api.block.CodeBlockBody;
-import net.sf.mmm.code.api.java.parser.JavaSourceCodeParser;
 import net.sf.mmm.code.api.modifier.CodeVisibility;
 import net.sf.mmm.code.api.type.CodeTypeCategory;
 import net.sf.mmm.code.base.BaseFile;
 import net.sf.mmm.code.base.BasePackage;
 import net.sf.mmm.code.base.member.BaseMethod;
+import net.sf.mmm.code.base.parser.SourceCodeParser;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.impl.java.JavaContext;
 import net.sf.mmm.code.impl.java.JavaRootContext;
@@ -33,7 +33,7 @@ import net.sf.mmm.util.io.api.RuntimeIoException;
  */
 public class JavaSourceCodeParserImplTest extends Assertions {
 
-  JavaSourceCodeParser getParser() {
+  SourceCodeParser getParser() {
 
     return JavaSourceCodeParserImpl.get();
   }
@@ -59,7 +59,7 @@ public class JavaSourceCodeParserImplTest extends Assertions {
     } else {
       parentPkg = createPackage(context, parentName);
     }
-    return new BasePackage(parentPkg, simpleName, null, null);
+    return new BasePackage(parentPkg, simpleName, null, null, null);
   }
 
   BaseFile createFile(String qualifiedName) {
@@ -74,7 +74,7 @@ public class JavaSourceCodeParserImplTest extends Assertions {
 
     String qualifiedName = clazz.getName();
     BaseFile file = createFile(qualifiedName);
-    JavaSourceCodeParser parser = getParser();
+    SourceCodeParser parser = getParser();
     StringBuilder sb = new StringBuilder();
     if (qualifiedName.endsWith("Test")) {
       sb.append(MavenConstants.DEFAULT_TEST_SOURCE_DIRECTORY);
@@ -85,7 +85,7 @@ public class JavaSourceCodeParserImplTest extends Assertions {
     sb.append(qualifiedName.replace('.', '/'));
     sb.append(".java");
     try (Reader reader = new FileReader(sb.toString())) {
-      return parser.parse(reader, file);
+      return parser.parseType(reader, file);
     } catch (IOException e) {
       throw new RuntimeIoException(e, IoMode.READ);
     }

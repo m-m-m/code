@@ -14,7 +14,7 @@ import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeParameterizedType;
 import net.sf.mmm.code.base.arg.BaseOperationArg;
-import net.sf.mmm.code.base.element.BaseElement;
+import net.sf.mmm.code.base.element.BaseElementImpl;
 import net.sf.mmm.code.base.member.BaseOperation;
 
 /**
@@ -23,15 +23,18 @@ import net.sf.mmm.code.base.member.BaseOperation;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseParameterizedType extends BaseGenericType implements CodeParameterizedType, CodeNodeItemWithGenericParent<BaseElement, BaseParameterizedType> {
+public class BaseParameterizedType extends BaseGenericType
+    implements CodeParameterizedType, CodeNodeItemWithGenericParent<BaseElementImpl, BaseParameterizedType> {
 
   private static final Logger LOG = LoggerFactory.getLogger(BaseParameterizedType.class);
 
-  private final BaseElement parent;
+  private final BaseElementImpl parent;
 
   private final BaseTypeParameters typeVariables;
 
   private final ParameterizedType reflectiveObject;
+
+  private BaseParameterizedType sourceCodeObject;
 
   private BaseType type;
 
@@ -43,7 +46,7 @@ public class BaseParameterizedType extends BaseGenericType implements CodeParame
    *        {@link BaseType#getTypeParameters() type variables} as the {@link #getTypeParameters() type
    *        parameters of this type} when initialized.
    */
-  public BaseParameterizedType(BaseElement parent, BaseType type) {
+  public BaseParameterizedType(BaseElementImpl parent, BaseType type) {
 
     this(parent, null, type);
   }
@@ -54,7 +57,7 @@ public class BaseParameterizedType extends BaseGenericType implements CodeParame
    * @param parent the {@link #getParent() parent}.
    * @param reflectiveObject the {@link #getReflectiveObject() reflective object}. May be {@code null}.
    */
-  public BaseParameterizedType(BaseElement parent, ParameterizedType reflectiveObject) {
+  public BaseParameterizedType(BaseElementImpl parent, ParameterizedType reflectiveObject) {
 
     this(parent, reflectiveObject, null);
   }
@@ -68,7 +71,7 @@ public class BaseParameterizedType extends BaseGenericType implements CodeParame
    *        {@link BaseType#getTypeParameters() type variables} as the {@link #getTypeParameters() type
    *        parameters of this type} when initialized.
    */
-  public BaseParameterizedType(BaseElement parent, ParameterizedType reflectiveObject, BaseType type) {
+  public BaseParameterizedType(BaseElementImpl parent, ParameterizedType reflectiveObject, BaseType type) {
 
     super();
     this.parent = parent;
@@ -83,7 +86,7 @@ public class BaseParameterizedType extends BaseGenericType implements CodeParame
    * @param template the {@link BaseParameterizedType} to copy.
    * @param parent the {@link #getParent() parent}.
    */
-  public BaseParameterizedType(BaseParameterizedType template, BaseElement parent) {
+  public BaseParameterizedType(BaseParameterizedType template, BaseElementImpl parent) {
 
     super(template);
     this.parent = parent;
@@ -101,7 +104,7 @@ public class BaseParameterizedType extends BaseGenericType implements CodeParame
   }
 
   @Override
-  public BaseElement getParent() {
+  public BaseElementImpl getParent() {
 
     return this.parent;
   }
@@ -116,6 +119,22 @@ public class BaseParameterizedType extends BaseGenericType implements CodeParame
   public ParameterizedType getReflectiveObject() {
 
     return this.reflectiveObject;
+  }
+
+  @Override
+  public BaseParameterizedType getSourceCodeObject() {
+
+    if (this.sourceCodeObject != null) {
+      return this.sourceCodeObject;
+    }
+    if (isInitialized()) {
+      return null;
+    }
+    BaseElementImpl sourceElement = this.parent.getSourceCodeObject();
+    if (sourceElement != null) {
+      this.sourceCodeObject = null; // TODO
+    }
+    return this.sourceCodeObject;
   }
 
   @Override
@@ -204,7 +223,7 @@ public class BaseParameterizedType extends BaseGenericType implements CodeParame
   }
 
   @Override
-  public BaseParameterizedType copy(BaseElement newParent) {
+  public BaseParameterizedType copy(BaseElementImpl newParent) {
 
     return new BaseParameterizedType(this, newParent);
   }

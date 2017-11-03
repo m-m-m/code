@@ -15,10 +15,19 @@ import net.sf.mmm.code.api.type.CodeTypeCategory;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class DefaultCodeSyntax implements CodeSyntax {
+public class CodeSyntaxJava implements CodeSyntax {
+
+  /** The {@link #getLanguageName() language name}. */
+  public static final String LANGUAGE_NAME_JAVA = "Java";
 
   /** The singleton instance. */
-  public static final DefaultCodeSyntax INSTANCE = new DefaultCodeSyntax();
+  public static final CodeSyntaxJava INSTANCE = new CodeSyntaxJava();
+
+  @Override
+  public String getLanguageName() {
+
+    return LANGUAGE_NAME_JAVA;
+  }
 
   @Override
   public String getVariableNameThis() {

@@ -16,6 +16,8 @@ public class BaseSourceDescriptorBean extends BaseSourceDescriptor {
 
   private String version;
 
+  private String scope;
+
   private String id;
 
   private String docUrl;
@@ -45,14 +47,16 @@ public class BaseSourceDescriptorBean extends BaseSourceDescriptor {
    * @param groupId the {@link #getGroupId() groupId}.
    * @param artifactId the {@link #getArtifactId() artifactId}.
    * @param version the {@link #getVersion() version}.
+   * @param scope the {@link #getScope() scope}.
    * @param docUrl the {@link #getDocUrl() doc URL}.
    */
-  public BaseSourceDescriptorBean(String groupId, String artifactId, String version, String docUrl) {
+  public BaseSourceDescriptorBean(String groupId, String artifactId, String version, String scope, String docUrl) {
 
     super();
     this.groupId = groupId;
     this.artifactId = artifactId;
     this.version = version;
+    this.scope = scope;
     this.docUrl = docUrl;
     this.id = createId();
   }
@@ -114,6 +118,20 @@ public class BaseSourceDescriptorBean extends BaseSourceDescriptor {
   public void setVersion(String version) {
 
     this.version = version;
+  }
+
+  @Override
+  public String getScope() {
+
+    return this.scope;
+  }
+
+  /**
+   * @param scope the new value of {@link #getScope()}.
+   */
+  public void setScope(String scope) {
+
+    this.scope = scope;
   }
 
   @Override
