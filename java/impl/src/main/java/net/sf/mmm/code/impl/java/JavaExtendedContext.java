@@ -3,16 +3,16 @@
 package net.sf.mmm.code.impl.java;
 
 import java.io.File;
-import java.net.URL;
 import java.security.CodeSource;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sf.mmm.code.base.source.BaseSource;
+import net.sf.mmm.code.base.source.BaseSourceImpl;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.base.type.BaseTypeWildcard;
 import net.sf.mmm.code.impl.java.loader.AbstractJavaCodeLoader;
-import net.sf.mmm.code.impl.java.source.JavaSource;
-import net.sf.mmm.code.impl.java.source.JavaSourceProvider;
+import net.sf.mmm.code.impl.java.source.BaseSourceProvider;
 import net.sf.mmm.util.exception.api.DuplicateObjectException;
 
 /**
@@ -25,18 +25,18 @@ public class JavaExtendedContext extends JavaContext {
 
   private final JavaContext parent;
 
-  private final JavaSourceProvider sourceProvider;
+  private final BaseSourceProvider sourceProvider;
 
-  private final Map<String, JavaSource> sourceMap;
+  private final Map<String, BaseSource> sourceMap;
 
   /**
    * The constructor.
    *
-   * @param sourceProvider the {@link JavaSourceProvider}.
+   * @param sourceProvider the {@link BaseSourceProvider}.
    * @param loader the {@link #getLoader() loader}.
    * @param source the {@link #getSource() source}.
    */
-  public JavaExtendedContext(JavaSourceProvider sourceProvider, AbstractJavaCodeLoader loader, JavaSource source) {
+  public JavaExtendedContext(BaseSourceProvider sourceProvider, AbstractJavaCodeLoader loader, BaseSourceImpl source) {
 
     this(JavaRootContext.get(), sourceProvider, loader, source);
   }
@@ -45,11 +45,11 @@ public class JavaExtendedContext extends JavaContext {
    * The constructor.
    *
    * @param parent the {@link #getParent() parent context}.
-   * @param sourceProvider the {@link JavaSourceProvider}.
+   * @param sourceProvider the {@link BaseSourceProvider}.
    * @param loader the {@link #getLoader() loader}.
    * @param source the {@link #getSource() source}.
    */
-  public JavaExtendedContext(JavaContext parent, JavaSourceProvider sourceProvider, AbstractJavaCodeLoader loader, JavaSource source) {
+  public JavaExtendedContext(JavaContext parent, BaseSourceProvider sourceProvider, AbstractJavaCodeLoader loader, BaseSourceImpl source) {
 
     super(loader, source);
     this.parent = parent;
@@ -59,9 +59,9 @@ public class JavaExtendedContext extends JavaContext {
     registerSource(source);
   }
 
-  private void registerSource(JavaSource source) {
+  private void registerSource(BaseSource source) {
 
-    JavaSource duplicate = this.sourceMap.put(source.getId(), source);
+    BaseSource duplicate = this.sourceMap.put(source.getId(), source);
     if (duplicate != null) {
       throw new DuplicateObjectException(source, source.getId(), duplicate);
     }
@@ -80,14 +80,13 @@ public class JavaExtendedContext extends JavaContext {
   }
 
   @Override
-  protected JavaSource getOrCreateSource(CodeSource codeSource) {
+  protected BaseSource getOrCreateSource(CodeSource codeSource) {
 
     if (codeSource == null) {
       return getRootContext().getSource();
     }
-    URL location = codeSource.getLocation();
-    String uri = location.toString();
-    JavaSource source = getSource(uri);
+    String id = BaseSourceImpl.getNormalizedId(codeSource);
+    BaseSource source = getSource(id);
     if (source == null) {
       source = this.sourceProvider.create(codeSource);
       registerSource(source);
@@ -96,13 +95,13 @@ public class JavaExtendedContext extends JavaContext {
   }
 
   /**
-   * This is an internal method that should only be used from implementations of {@link JavaSourceProvider}.
+   * This is an internal method that should only be used from implementations of {@link BaseSourceProvider}.
    *
-   * @param byteCodeLocation the {@link JavaSource#getByteCodeLocation() byte code location}.
-   * @param sourceCodeLocation the {@link JavaSource#getSourceCodeLocation() source code location}.
-   * @return the existing or otherwise created {@link JavaSource}.
+   * @param byteCodeLocation the {@link BaseSource#getByteCodeLocation() byte code location}.
+   * @param sourceCodeLocation the {@link BaseSource#getSourceCodeLocation() source code location}.
+   * @return the existing or otherwise created {@link BaseSource}.
    */
-  public JavaSource getOrCreateSource(File byteCodeLocation, File sourceCodeLocation) {
+  public BaseSource getOrCreateSource(File byteCodeLocation, File sourceCodeLocation) {
 
     String id;
     if (byteCodeLocation != null) {
@@ -110,7 +109,7 @@ public class JavaExtendedContext extends JavaContext {
     } else {
       id = sourceCodeLocation.toString();
     }
-    JavaSource source = getSource(id);
+    BaseSource source = getSource(id);
     if (source == null) {
       source = this.sourceProvider.create(byteCodeLocation, sourceCodeLocation);
       registerSource(source);
@@ -118,9 +117,9 @@ public class JavaExtendedContext extends JavaContext {
     return source;
   }
 
-  JavaSource getSource(String id) {
+  BaseSource getSource(String id) {
 
-    JavaSource javaSource = this.sourceMap.get(id);
+    BaseSource javaSource = this.sourceMap.get(id);
     if (javaSource != null) {
       return javaSource;
     }

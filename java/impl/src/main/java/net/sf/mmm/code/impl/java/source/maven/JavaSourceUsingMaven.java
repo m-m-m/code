@@ -13,27 +13,30 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 
 import net.sf.mmm.code.api.source.CodeSourceDescriptor;
+import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.BasePackage;
+import net.sf.mmm.code.base.loader.BaseLoader;
+import net.sf.mmm.code.base.source.BaseSource;
+import net.sf.mmm.code.base.source.BaseSourceDependencies;
 import net.sf.mmm.code.base.source.BaseSourceDescriptorType;
+import net.sf.mmm.code.base.source.BaseSourceImpl;
 import net.sf.mmm.code.impl.java.JavaContext;
-import net.sf.mmm.code.impl.java.source.JavaSource;
-import net.sf.mmm.code.impl.java.source.JavaSourceDependencies;
 import net.sf.mmm.code.java.maven.api.MavenConstants;
 import net.sf.mmm.code.java.maven.api.ModelHelper;
 import net.sf.mmm.util.component.api.ResourceMissingException;
 
 /**
- * {@link JavaSource} that provides {@link #getDependencies() dependencies} and {@link #getDescriptor()
- * descriptor} from maven POMs.
+ * Extends {@link BaseSourceImpl} to provide {@link #getDependencies() dependencies} and
+ * {@link #getDescriptor() descriptor} from maven POMs.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaSourceUsingMaven extends JavaSource implements MavenConstants {
+public class JavaSourceUsingMaven extends BaseSourceImpl implements MavenConstants {
 
   private final JavaSourceProviderUsingMaven sourceProvider;
 
-  private JavaSource compileDependency;
+  private BaseSource compileDependency;
 
   private Supplier<Model> modelSupplier;
 
@@ -49,9 +52,9 @@ public class JavaSourceUsingMaven extends JavaSource implements MavenConstants {
    * @param reflectiveObject the {@link #getReflectiveObject() reflective object}. May not be {@code null}.
    * @param modelSupplier the {@link Supplier} for the maven {@link Model}.
    */
-  public JavaSourceUsingMaven(JavaSourceProviderUsingMaven sourceProvider, CodeSource reflectiveObject, Supplier<Model> modelSupplier) {
+  public JavaSourceUsingMaven(JavaSourceProviderUsingMaven sourceProvider, CodeSource reflectiveObject, Supplier<Model> modelSupplier, BaseLoader loader) {
 
-    this(sourceProvider, reflectiveObject, null, null, null, null, modelSupplier, null, null, null);
+    this(sourceProvider, reflectiveObject, null, null, null, null, modelSupplier, null, null, null, loader);
   }
 
   /**
@@ -59,17 +62,17 @@ public class JavaSourceUsingMaven extends JavaSource implements MavenConstants {
    *
    * @param sourceProvider the {@link JavaSourceProviderUsingMaven maven source provider} required for lazy
    *        fabrication of {@link #getDependencies() dependencies}.
-   * @param compileDependency the {@link JavaSource} for the compile dependencies (representing
+   * @param compileDependency the {@link BaseSource} for the compile dependencies (representing
    *        {@code src/main/java} with compile dependencies as {@link #getDependencies() dependencies}.
    * @param byteCodeLocation the {@link #getByteCodeLocation() byte code location}.
    * @param sourceCodeLocation the {@link #getSourceCodeLocation() source code location}.
    * @param modelSupplier the {@link Supplier} for the maven {@link Model}.
    */
-  public JavaSourceUsingMaven(JavaSourceProviderUsingMaven sourceProvider, JavaSource compileDependency, File byteCodeLocation, File sourceCodeLocation,
-      Supplier<Model> modelSupplier) {
+  public JavaSourceUsingMaven(JavaSourceProviderUsingMaven sourceProvider, BaseSource compileDependency, File byteCodeLocation, File sourceCodeLocation,
+      Supplier<Model> modelSupplier, BaseLoader loader) {
 
     this(sourceProvider, null, byteCodeLocation, sourceCodeLocation, null, compileDependency.getRootPackage(), modelSupplier, compileDependency, null,
-        SCOPE_TEST);
+        SCOPE_TEST, loader);
   }
 
   /**
@@ -85,9 +88,9 @@ public class JavaSourceUsingMaven extends JavaSource implements MavenConstants {
    * @param scope the {@link #getScope() scope}.
    */
   public JavaSourceUsingMaven(JavaSourceProviderUsingMaven sourceProvider, File byteCodeLocation, File sourceCodeLocation, BasePackage superLayerPackage,
-      Supplier<Model> modelSupplier, String scope) {
+      Supplier<Model> modelSupplier, String scope, BaseLoader loader) {
 
-    this(sourceProvider, null, byteCodeLocation, sourceCodeLocation, null, superLayerPackage, modelSupplier, null, null, scope);
+    this(sourceProvider, null, byteCodeLocation, sourceCodeLocation, null, superLayerPackage, modelSupplier, null, null, scope, loader);
   }
 
   /**
@@ -103,19 +106,32 @@ public class JavaSourceUsingMaven extends JavaSource implements MavenConstants {
    * @param modelSupplier the {@link Supplier} for the maven {@link Model}.
    */
   public JavaSourceUsingMaven(JavaSourceProviderUsingMaven sourceProvider, String id, JavaSourceUsingMaven compileDependency,
-      JavaSourceUsingMaven testDependency, Supplier<Model> modelSupplier) {
+      JavaSourceUsingMaven testDependency, Supplier<Model> modelSupplier, BaseLoader loader) {
 
-    this(sourceProvider, null, null, null, id, testDependency.getRootPackage(), modelSupplier, null, Arrays.asList(compileDependency, testDependency), null);
+    this(sourceProvider, null, null, null, id, testDependency.getRootPackage(), modelSupplier, null, Arrays.asList(compileDependency, testDependency), null,
+        loader);
   }
 
   private JavaSourceUsingMaven(JavaSourceProviderUsingMaven sourceProvider, CodeSource reflectiveObject, File byteCodeLocation, File sourceCodeLocation,
-      String id, BasePackage superLayerPackage, Supplier<Model> modelSupplier, JavaSource compileDependency, List<JavaSource> dependencies, String scope) {
+      String id, BasePackage superLayerPackage, Supplier<Model> modelSupplier, BaseSource compileDependency, List<BaseSource> dependencies, String scope,
+      BaseLoader loader) {
 
-    super(reflectiveObject, byteCodeLocation, sourceCodeLocation, id, null, dependencies, superLayerPackage);
+    super(reflectiveObject, byteCodeLocation, sourceCodeLocation, id, null, dependencies, superLayerPackage, loader);
     this.sourceProvider = sourceProvider;
     this.modelSupplier = modelSupplier;
     this.compileDependency = compileDependency;
     this.scope = scope;
+  }
+
+  @Override
+  public BaseContext getContext() {
+
+    BaseContext context = super.getContext();
+    if (context == null) {
+      context = this.sourceProvider.getContext();
+      setContext(context);
+    }
+    return context;
   }
 
   /**
@@ -150,9 +166,9 @@ public class JavaSourceUsingMaven extends JavaSource implements MavenConstants {
   }
 
   @Override
-  protected JavaSourceDependencies createDependencies() {
+  protected BaseSourceDependencies createDependencies() {
 
-    return new JavaSourceDependencies(this, this::getDependencyList);
+    return new BaseSourceDependencies(this, this::getDependencyList);
   }
 
   @Override
@@ -178,10 +194,10 @@ public class JavaSourceUsingMaven extends JavaSource implements MavenConstants {
     return null;
   }
 
-  private List<JavaSource> getDependencyList() {
+  private List<BaseSource> getDependencyList() {
 
     List<Dependency> dependencies = getModel().getDependencies();
-    List<JavaSource> sourceDependencies = new ArrayList<>(dependencies.size());
+    List<BaseSource> sourceDependencies = new ArrayList<>(dependencies.size());
     if (this.compileDependency != null) {
       sourceDependencies.add(this.compileDependency);
     }
@@ -189,7 +205,7 @@ public class JavaSourceUsingMaven extends JavaSource implements MavenConstants {
     for (Dependency dependency : dependencies) {
       boolean isTestDependency = SCOPE_TEST.equals(dependency.getScope());
       if (isTestDependency == isTestScope) {
-        JavaSource source = this.sourceProvider.create(dependency);
+        BaseSource source = this.sourceProvider.create(dependency);
         sourceDependencies.add(source);
       }
     }

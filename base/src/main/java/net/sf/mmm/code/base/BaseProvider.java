@@ -35,4 +35,9 @@ public interface BaseProvider extends CodeProvider, BaseLoader {
     }
     return type;
   }
+
+  /**
+   * @return the {@link BaseLoader} to load {@link BasePackage}s and {@link BaseType}s.
+   */
+  BaseLoader getLoader();
 }

@@ -6,15 +6,16 @@ import java.io.File;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import net.sf.mmm.code.api.source.CodeSourceDescriptor;
 import net.sf.mmm.code.base.loader.BaseSourceCodeProviderDirectory;
 import net.sf.mmm.code.base.loader.SourceCodeProvider;
+import net.sf.mmm.code.base.source.BaseSource;
+import net.sf.mmm.code.base.source.BaseSourceImpl;
+import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.impl.java.loader.AbstractJavaCodeLoader;
 import net.sf.mmm.code.impl.java.loader.JavaLoader;
-import net.sf.mmm.code.impl.java.source.JavaSource;
 import net.sf.mmm.code.impl.java.source.maven.JavaSourceProviderUsingMaven;
 import net.sf.mmm.code.java.maven.api.MavenConstants;
 
@@ -24,7 +25,7 @@ import net.sf.mmm.code.java.maven.api.MavenConstants;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaExtendedContextWithMavenAndSourceCodeTest extends Assertions {
+public class JavaExtendedContextWithMavenAndSourceCodeTest extends JavaTypeTest {
 
   private static final Pattern VERSION_PATTERN = Pattern.compile("[0-9]+\\.[0-9]+\\.[0-9]+(-SNAPSHOT)?");
 
@@ -33,7 +34,7 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends Assertions {
     // TODO move code to new advanced contex class
     JavaSourceProviderUsingMaven provider = new JavaSourceProviderUsingMaven();
     JavaContext parentContext = JavaRootContext.get();
-    JavaSource source = provider.createFromLocalMavenProject(parentContext);
+    BaseSourceImpl source = provider.createFromLocalMavenProject(parentContext);
     SourceCodeProvider sourceCodeProvider = new BaseSourceCodeProviderDirectory(new File(MavenConstants.DEFAULT_SOURCE_DIRECTORY));
     AbstractJavaCodeLoader loader = new JavaLoader(sourceCodeProvider);
     return new JavaExtendedContext(provider, loader, source);
@@ -48,7 +49,7 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends Assertions {
     // given
     JavaContext context = getContext();
     // when
-    JavaSource source = context.getSource();
+    BaseSource source = context.getSource();
     // then
     assertThat(source.getByteCodeLocation()).isNull();
     assertThat(source.getSourceCodeLocation()).isNull();
@@ -57,11 +58,11 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends Assertions {
     assertThat(source.getId()).contains("/code/java/impl");
     assertThat(source.getSource()).isSameAs(source);
 
-    List<? extends JavaSource> dependencies = source.getDependencies().getDeclared();
+    List<? extends BaseSource> dependencies = source.getDependencies().getDeclared();
     assertThat(dependencies).hasSize(2);
-    JavaSource compileDependency = dependencies.get(0);
+    BaseSource compileDependency = dependencies.get(0);
     verifyDependency(compileDependency, "target/classes", "src/main/java", "compile");
-    JavaSource testDependency = dependencies.get(1);
+    BaseSource testDependency = dependencies.get(1);
     verifyDependency(testDependency, "target/test-classes", "src/test/java", "test");
     assertThat(testDependency.getParent()).isSameAs(compileDependency);
   }
@@ -79,7 +80,7 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends Assertions {
     assertThat(descriptor.getId()).isEqualTo(expectedId);
   }
 
-  private void verifyDependency(JavaSource source, String bytePath, String sourcePath, String scope) {
+  private void verifyDependency(BaseSource source, String bytePath, String sourcePath, String scope) {
 
     assertThat(source.getByteCodeLocation().getAbsolutePath()).isEqualTo(new File(bytePath).getAbsolutePath());
     assertThat(source.getSourceCodeLocation().getAbsolutePath()).isEqualTo(new File(sourcePath).getAbsolutePath());
@@ -92,6 +93,15 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends Assertions {
   @Test
   public void testFullType() {
 
+    // given
+    JavaContext context = getContext();
+    Class<JavaContext> clazz = JavaContext.class;
+
+    // when
+    BaseType type = context.getType(clazz.getName());
+
+    // then
+    verifyClass(type, clazz, context);
   }
 
 }

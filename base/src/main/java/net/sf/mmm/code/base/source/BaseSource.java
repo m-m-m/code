@@ -24,4 +24,7 @@ public interface BaseSource extends CodeSource, BaseProvider, BaseContainer {
     return getParent().getContext();
   }
 
+  @Override
+  BaseSourceDependencies getDependencies();
+
 }

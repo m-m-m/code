@@ -69,12 +69,13 @@ import net.sf.mmm.code.api.syntax.CodeSyntaxJava;
 import net.sf.mmm.code.base.BaseFile;
 import net.sf.mmm.code.base.BasePackage;
 import net.sf.mmm.code.base.BasePathElements;
+import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.source.BaseSourceDescriptorType;
+import net.sf.mmm.code.base.source.BaseSourceImpl;
 import net.sf.mmm.code.base.type.BaseGenericType;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.base.type.BaseTypeWildcard;
 import net.sf.mmm.code.impl.java.loader.JavaLoader;
-import net.sf.mmm.code.impl.java.source.JavaSource;
 
 /**
  * Implementation of {@link JavaContext} for the {@link #getParent() root} context.
@@ -136,9 +137,9 @@ public class JavaRootContext extends JavaContext {
   /**
    * The constructor.
    */
-  private JavaRootContext() {
+  private JavaRootContext(JavaLoader loader, BaseSourceImpl source) {
 
-    super(new JavaLoader(ClassLoader.getSystemClassLoader(), null), createSource()); // TODO
+    super(loader, source); // TODO
     this.javaSystemTypeCache = new HashMap<>();
     add2SystemTypeCache(Object.class, String.class, Enum.class, Class.class, Package.class, Number.class, //
         Void.class, Boolean.class, Short.class, Byte.class, Double.class, Float.class, Long.class, Integer.class, Character.class, //
@@ -162,7 +163,7 @@ public class JavaRootContext extends JavaContext {
         Array.class, Modifier.class, Type.class, Field.class, Method.class, Constructor.class, Parameter.class, AnnotatedElement.class, AnnotatedType.class);
   }
 
-  private static JavaSource createSource() {
+  private static BaseSourceImpl createSource(JavaLoader loader) {
 
     String id = System.getProperty("java.home");
     File byteCodeLocation = new File(id);
@@ -179,7 +180,7 @@ public class JavaRootContext extends JavaContext {
       sourceCodeLocation = srcZip;
     }
     CodeSourceDescriptor descriptor = new BaseSourceDescriptorType(groupId, artifactId, version, null, docUrl);
-    return new JavaSource(byteCodeLocation, sourceCodeLocation, id, descriptor);
+    return new BaseSourceImpl(byteCodeLocation, sourceCodeLocation, id, descriptor, loader);
   }
 
   private static String getJavaMajorVersion(String version) {
@@ -336,7 +337,7 @@ public class JavaRootContext extends JavaContext {
   }
 
   @Override
-  protected JavaSource getOrCreateSource(CodeSource codeSource) {
+  protected BaseSource getOrCreateSource(CodeSource codeSource) {
 
     if (codeSource == null) {
       return getSource();
@@ -419,7 +420,9 @@ public class JavaRootContext extends JavaContext {
   public static JavaRootContext get() {
 
     if (instance == null) {
-      instance = new JavaRootContext();
+      JavaLoader loader = new JavaLoader(ClassLoader.getSystemClassLoader(), null);
+      BaseSourceImpl source = createSource(loader);
+      instance = new JavaRootContext(loader, source);
     }
     return instance;
   }

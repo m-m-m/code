@@ -1,6 +1,6 @@
 /* Copyright (c) The m-m-m Team, Licensed under the Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0 */
-package net.sf.mmm.code.impl.java.source;
+package net.sf.mmm.code.base.source;
 
 import java.io.File;
 import java.security.CodeSource;
@@ -10,11 +10,10 @@ import java.util.List;
 import java.util.Objects;
 
 import net.sf.mmm.code.api.source.CodeSourceDescriptor;
+import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.BasePackage;
-import net.sf.mmm.code.base.source.BaseSource;
-import net.sf.mmm.code.base.source.BaseSourceHelper;
-import net.sf.mmm.code.impl.java.JavaContext;
-import net.sf.mmm.code.impl.java.JavaProvider;
+import net.sf.mmm.code.base.BaseProviderImpl;
+import net.sf.mmm.code.base.loader.BaseLoader;
 import net.sf.mmm.util.component.api.ResourceMissingException;
 
 /**
@@ -23,21 +22,23 @@ import net.sf.mmm.util.component.api.ResourceMissingException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaSource extends JavaProvider implements BaseSource {
+public class BaseSourceImpl extends BaseProviderImpl implements BaseSource {
 
   private final CodeSource reflectiveObject;
 
   private final BasePackage rootPackage;
 
-  private JavaContext context;
+  private BaseContext context;
 
-  private JavaSourceDependencies dependencies;
+  private BaseSourceDependencies dependencies;
 
   private CodeSourceDescriptor descriptor;
 
   private File byteCodeLocation;
 
   private File sourceCodeLocation;
+
+  private final BaseLoader loader;
 
   private String id;
 
@@ -48,10 +49,11 @@ public class JavaSource extends JavaProvider implements BaseSource {
    * @param sourceCodeLocation the {@link #getSourceCodeLocation() source code location}.
    * @param id the {@link #getId() ID}.
    * @param descriptor the {@link #getDescriptor() descriptor}.
+   * @param loader the {@link #getLoader() loader}.
    */
-  public JavaSource(File byteCodeLocation, File sourceCodeLocation, String id, CodeSourceDescriptor descriptor) {
+  public BaseSourceImpl(File byteCodeLocation, File sourceCodeLocation, String id, CodeSourceDescriptor descriptor, BaseLoader loader) {
 
-    this(null, byteCodeLocation, sourceCodeLocation, id, descriptor, null, null);
+    this(null, byteCodeLocation, sourceCodeLocation, id, descriptor, null, null, loader);
   }
 
   /**
@@ -60,10 +62,11 @@ public class JavaSource extends JavaProvider implements BaseSource {
    * @param reflectiveObject the {@link #getReflectiveObject() reflective object}. May not be {@code null}
    *        otherwise use different constructor.
    * @param descriptor the {@link #getDescriptor() descriptor}.
+   * @param loader the {@link #getLoader() loader}.
    */
-  public JavaSource(CodeSource reflectiveObject, CodeSourceDescriptor descriptor) {
+  public BaseSourceImpl(CodeSource reflectiveObject, CodeSourceDescriptor descriptor, BaseLoader loader) {
 
-    this(reflectiveObject, null, null, null, descriptor, null, null);
+    this(reflectiveObject, null, null, null, descriptor, null, null, loader);
     Objects.requireNonNull(reflectiveObject, "reflectiveObject");
   }
 
@@ -79,9 +82,10 @@ public class JavaSource extends JavaProvider implements BaseSource {
    * @param dependencies the {@link #getDependencies()} dependencies.
    * @param superLayerPackage the {@link BasePackage#getSuperLayerPackage() super layer package} to inherit
    *        from.
+   * @param loader the {@link #getLoader() loader}.
    */
-  public JavaSource(CodeSource reflectiveObject, File byteCodeLocation, File sourceCodeLocation, String id, CodeSourceDescriptor descriptor,
-      List<JavaSource> dependencies, BasePackage superLayerPackage) {
+  public BaseSourceImpl(CodeSource reflectiveObject, File byteCodeLocation, File sourceCodeLocation, String id, CodeSourceDescriptor descriptor,
+      List<BaseSource> dependencies, BasePackage superLayerPackage, BaseLoader loader) {
 
     super();
     if ((byteCodeLocation != null) && (id != null)) {
@@ -93,20 +97,56 @@ public class JavaSource extends JavaProvider implements BaseSource {
     this.byteCodeLocation = byteCodeLocation;
     this.sourceCodeLocation = sourceCodeLocation;
     if (id != null) {
-      this.id = id.replace('\\', '/');
+      this.id = normalizeId(id);
     }
     this.reflectiveObject = reflectiveObject;
     this.rootPackage = new BasePackage(this, superLayerPackage);
     if (dependencies != null) {
-      this.dependencies = new JavaSourceDependencies(this, dependencies);
+      this.dependencies = new BaseSourceDependencies(this, dependencies);
     }
     this.descriptor = descriptor;
+    this.loader = loader;
+  }
+
+  /**
+   * @param id the raw {@link #getId() ID}.
+   * @return the normalized {@link #getId() ID}.
+   */
+  public static String normalizeId(String id) {
+
+    return id.replace('\\', '/');
+  }
+
+  /**
+   * @param location the {@link File} pointing to the location of the code that shall be used as
+   *        {@link #getId() ID}.
+   * @return the normalized {@link #getId() ID}.
+   */
+  public static String getNormalizedId(File location) {
+
+    return normalizeId(location.toString());
+  }
+
+  /**
+   * @param source the {@link CodeSource} with to the location of the code that shall be used as
+   *        {@link #getId() ID}.
+   * @return the normalized {@link #getId() ID}.
+   */
+  public static String getNormalizedId(CodeSource source) {
+
+    return normalizeId(BaseSourceHelper.asFile(source.getLocation()).toString());
   }
 
   @Override
   public BasePackage getRootPackage() {
 
     return this.rootPackage;
+  }
+
+  @Override
+  public BaseLoader getLoader() {
+
+    return this.loader;
   }
 
   @Override
@@ -122,9 +162,9 @@ public class JavaSource extends JavaProvider implements BaseSource {
   }
 
   @Override
-  public JavaSource getParent() {
+  public BaseSource getParent() {
 
-    Iterator<? extends JavaSource> iterator = getDependencies().iterator();
+    Iterator<? extends BaseSource> iterator = getDependencies().iterator();
     if (iterator.hasNext()) {
       return iterator.next();
     }
@@ -132,13 +172,13 @@ public class JavaSource extends JavaProvider implements BaseSource {
   }
 
   @Override
-  public JavaSource getSource() {
+  public BaseSourceImpl getSource() {
 
     return this;
   }
 
   @Override
-  public JavaContext getContext() {
+  public BaseContext getContext() {
 
     return this.context;
   }
@@ -146,7 +186,7 @@ public class JavaSource extends JavaProvider implements BaseSource {
   /**
    * @param context the initial {@link #getContext() context}.
    */
-  public void setContext(JavaContext context) {
+  public void setContext(BaseContext context) {
 
     if (this.context == null) {
       this.context = context;
@@ -177,7 +217,7 @@ public class JavaSource extends JavaProvider implements BaseSource {
   }
 
   @Override
-  public JavaSourceDependencies getDependencies() {
+  public BaseSourceDependencies getDependencies() {
 
     if (this.dependencies == null) {
       this.dependencies = createDependencies();
@@ -189,11 +229,11 @@ public class JavaSource extends JavaProvider implements BaseSource {
   }
 
   /**
-   * @return the lazily created {@link JavaSourceDependencies}. Method will be called only once.
+   * @return the lazily created {@link BaseSourceDependencies}. Method will be called only once.
    */
-  protected JavaSourceDependencies createDependencies() {
+  protected BaseSourceDependencies createDependencies() {
 
-    return new JavaSourceDependencies(this, new ArrayList<>());
+    return new BaseSourceDependencies(this, new ArrayList<>());
   }
 
   @Override
@@ -233,7 +273,7 @@ public class JavaSource extends JavaProvider implements BaseSource {
       if (location == null) {
         location = getSourceCodeLocation();
       }
-      this.id = location.toString().replace('\\', '/');
+      this.id = getNormalizedId(location);
     }
     return this.id;
   }

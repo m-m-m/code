@@ -65,4 +65,9 @@ public interface BaseContext extends CodeContext, BaseProvider {
    */
   BaseType getNonPrimitiveType(BaseType javaType);
 
+  /**
+   * @return the {@link BaseSource#getToplevelPackage() top-level package}.
+   */
+  BasePackage getToplevelPackage();
+
 }

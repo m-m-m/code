@@ -301,7 +301,7 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
       }
       parentPathElements = this;
     } else {
-      parentPathElements = getOrCreatePackage(parentPath, withoutSuperLayer).getChildren();
+      parentPathElements = getOrCreatePackage(parentPath, withoutSuperLayer, sourceSupplierFunction).getChildren();
     }
     BasePackage pkg = parentPathElements.getPackage(simpleName, withoutSuperLayer, false);
     if (pkg == null) {
@@ -336,17 +336,17 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
     BasePackage superLayerPackage = this.parent.getSuperLayerPackage();
     if (superLayerPackage != null) {
       BasePathElement child = superLayerPackage.getChildren().getByName(simpleName);
-      if (!child.isFile()) {
+      if ((child != null) && !child.isFile()) {
         superLayerPackage = (BasePackage) child;
       } else {
         superLayerPackage = null;
       }
     }
-    BasePackage file = new BasePackage(this.parent, simpleName, null, superLayerPackage, sourceSupplier);
+    BasePackage pkg = new BasePackage(this.parent, simpleName, null, superLayerPackage, sourceSupplier);
     if (add && isMutable()) {
-      add(file);
+      add(pkg);
     }
-    return file;
+    return pkg;
   }
 
   @Override

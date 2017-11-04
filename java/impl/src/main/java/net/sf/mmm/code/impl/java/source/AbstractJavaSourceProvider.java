@@ -5,12 +5,12 @@ package net.sf.mmm.code.impl.java.source;
 import net.sf.mmm.code.impl.java.JavaExtendedContext;
 
 /**
- * Abstract base implemenation of {@link JavaSourceProvider}.
+ * Abstract base implemenation of {@link BaseSourceProvider}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class AbstractJavaSourceProvider implements JavaSourceProvider {
+public abstract class AbstractJavaSourceProvider implements BaseSourceProvider {
 
   private JavaExtendedContext context;
 

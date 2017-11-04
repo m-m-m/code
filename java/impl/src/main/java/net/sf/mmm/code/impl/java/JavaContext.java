@@ -30,6 +30,7 @@ import net.sf.mmm.code.base.member.BaseOperation;
 import net.sf.mmm.code.base.node.BaseNode;
 import net.sf.mmm.code.base.node.BaseNodeItemImpl;
 import net.sf.mmm.code.base.source.BaseSource;
+import net.sf.mmm.code.base.source.BaseSourceImpl;
 import net.sf.mmm.code.base.type.BaseArrayType;
 import net.sf.mmm.code.base.type.BaseGenericType;
 import net.sf.mmm.code.base.type.BaseParameterizedType;
@@ -39,7 +40,6 @@ import net.sf.mmm.code.base.type.BaseTypeVariables;
 import net.sf.mmm.code.base.type.BaseTypeWildcard;
 import net.sf.mmm.code.impl.java.expression.constant.JavaConstant;
 import net.sf.mmm.code.impl.java.loader.AbstractJavaCodeLoader;
-import net.sf.mmm.code.impl.java.source.JavaSource;
 import net.sf.mmm.util.exception.api.IllegalCaseException;
 
 /**
@@ -54,7 +54,7 @@ public abstract class JavaContext extends JavaProvider implements BaseContext, B
 
   private final AbstractJavaCodeLoader loader;
 
-  private final JavaSource source;
+  private final BaseSourceImpl source;
 
   /**
    * The constructor.
@@ -62,7 +62,7 @@ public abstract class JavaContext extends JavaProvider implements BaseContext, B
    * @param loader the {@link BaseCodeLoader}.
    * @param source the {@link #getSource() source}.
    */
-  public JavaContext(AbstractJavaCodeLoader loader, JavaSource source) {
+  public JavaContext(AbstractJavaCodeLoader loader, BaseSourceImpl source) {
 
     super();
     this.loader = loader;
@@ -81,7 +81,7 @@ public abstract class JavaContext extends JavaProvider implements BaseContext, B
   }
 
   @Override
-  public JavaSource getSource() {
+  public BaseSource getSource() {
 
     return this.source;
   }
@@ -103,9 +103,7 @@ public abstract class JavaContext extends JavaProvider implements BaseContext, B
     return this.source.getRootPackage();
   }
 
-  /**
-   * @return the {@link JavaSource#getToplevelPackage() top-level package}.
-   */
+  @Override
   public BasePackage getToplevelPackage() {
 
     BasePackage pkg = getRootPackage();
@@ -124,7 +122,8 @@ public abstract class JavaContext extends JavaProvider implements BaseContext, B
     return pkg;
   }
 
-  protected AbstractJavaCodeLoader getLoader() {
+  @Override
+  public AbstractJavaCodeLoader getLoader() {
 
     return this.loader;
   }
@@ -138,7 +137,7 @@ public abstract class JavaContext extends JavaProvider implements BaseContext, B
       return componentType.createArray();
     }
     CodeSource codeSource = clazz.getProtectionDomain().getCodeSource();
-    JavaSource javaSource = /* this.context. */getOrCreateSource(codeSource);
+    BaseSource javaSource = /* this.context. */getOrCreateSource(codeSource);
     Package pkg = clazz.getPackage();
     BasePackage basePackage = getPackage(javaSource, pkg);
     return getTypeInternal(clazz, basePackage);
@@ -295,9 +294,9 @@ public abstract class JavaContext extends JavaProvider implements BaseContext, B
 
   /**
    * @param codeSource the {@link CodeSource}.
-   * @return the existing or otherwise created {@link JavaSource}.
+   * @return the existing or otherwise created {@link BaseSource}.
    */
-  protected abstract JavaSource getOrCreateSource(CodeSource codeSource);
+  protected abstract BaseSource getOrCreateSource(CodeSource codeSource);
 
   @Override
   public abstract BaseType getRootType();

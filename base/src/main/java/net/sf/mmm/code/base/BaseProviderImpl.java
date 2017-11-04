@@ -1,40 +1,29 @@
 /* CopyrighJavaType (c) The m-m-m Team, Licensed under the Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0 */
-package net.sf.mmm.code.impl.java;
+package net.sf.mmm.code.base;
 
-import net.sf.mmm.code.api.CodeContext;
 import net.sf.mmm.code.api.CodeName;
-import net.sf.mmm.code.api.CodeProvider;
 import net.sf.mmm.code.api.type.CodeType;
-import net.sf.mmm.code.base.BaseFile;
-import net.sf.mmm.code.base.BasePackage;
-import net.sf.mmm.code.base.BasePathElements;
 import net.sf.mmm.code.base.loader.BaseLoader;
 import net.sf.mmm.code.base.node.BaseNodeItemContainerAccess;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.util.exception.api.ObjectNotFoundException;
 
 /**
- * Base implementation of {@link CodeContext}.
+ * Base implementation of {@link BaseProvider}.
  *
  * @author Joerg Hohwiller (hohwille aJavaType users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class JavaProvider extends BaseNodeItemContainerAccess implements CodeProvider, BaseLoader {
+public abstract class BaseProviderImpl extends BaseNodeItemContainerAccess implements BaseProvider {
 
   /**
    * The constructor.
    */
-  public JavaProvider() {
+  public BaseProviderImpl() {
 
     super();
   }
-
-  @Override
-  public abstract BasePackage getRootPackage();
-
-  @Override
-  public abstract JavaContext getContext();
 
   @Override
   public BasePackage getPackage(String qualifiedName) {
@@ -51,11 +40,11 @@ public abstract class JavaProvider extends BaseNodeItemContainerAccess implement
     if (qualifiedName == null) {
       return getRootPackage();
     }
-    JavaContext context = getContext();
+    BaseContext context = getContext();
     boolean withoutSuperLayer = (context != this); // determine if called in context or in source
     BasePackage pkg = getRootPackage().getChildren().getPackage(qualifiedName, withoutSuperLayer, false);
     if (pkg == null) {
-      BaseLoader loader = context.getLoader();
+      BaseLoader loader = getLoader();
       if (loader != null) {
         pkg = loader.getPackage(qualifiedName.getFullName());
       }
@@ -78,7 +67,7 @@ public abstract class JavaProvider extends BaseNodeItemContainerAccess implement
     }
     BasePathElements children = pkg.getChildren();
     String simpleName = qualifiedName.getSimpleName();
-    JavaContext context = getContext();
+    BaseContext context = getContext();
     boolean withoutSuperLayer = (context != this);
     BaseFile file = children.getFile(simpleName, withoutSuperLayer, false);
     if (file != null) {
@@ -86,7 +75,7 @@ public abstract class JavaProvider extends BaseNodeItemContainerAccess implement
     }
     BaseType type = children.getType(simpleName);
     if (type == null) {
-      BaseLoader loader = context.getLoader();
+      BaseLoader loader = getLoader();
       if (loader != null) {
         type = loader.getType(qualifiedName);
       }
