@@ -6,6 +6,8 @@ import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.api.CodeProvider;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.loader.BaseLoader;
+import net.sf.mmm.code.base.node.BaseNode;
+import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.util.exception.api.ObjectNotFoundException;
 
@@ -15,13 +17,16 @@ import net.sf.mmm.util.exception.api.ObjectNotFoundException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface BaseProvider extends CodeProvider, BaseLoader {
+public interface BaseProvider extends CodeProvider, BaseLoader, BaseNode {
 
   @Override
-  BasePackage getRootPackage();
+  default BaseContext getContext() {
+
+    return getParent().getContext();
+  }
 
   @Override
-  BasePackage getPackage(CodeName qualifiedName);
+  BaseSource getSource();
 
   @Override
   BaseType getType(CodeName qualifiedName);
@@ -36,8 +41,4 @@ public interface BaseProvider extends CodeProvider, BaseLoader {
     return type;
   }
 
-  /**
-   * @return the {@link BaseLoader} to load {@link BasePackage}s and {@link BaseType}s.
-   */
-  BaseLoader getLoader();
 }

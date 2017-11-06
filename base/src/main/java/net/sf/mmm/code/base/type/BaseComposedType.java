@@ -64,7 +64,6 @@ public class BaseComposedType extends BaseGenericType implements CodeComposedTyp
     super(template);
     this.parent = parent;
     this.bounds = null;
-    // template.getTypes();
     this.types = new ArrayList<>(template.types);
   }
 

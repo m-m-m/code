@@ -8,24 +8,19 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.security.CodeSource;
-import java.util.List;
+import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.CodeName;
-import net.sf.mmm.code.api.expression.CodeExpression;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.base.BaseContext;
-import net.sf.mmm.code.base.BaseFile;
-import net.sf.mmm.code.base.BasePackage;
-import net.sf.mmm.code.base.BasePathElement;
-import net.sf.mmm.code.base.BasePathElements;
+import net.sf.mmm.code.base.BaseContextImplWithCache;
 import net.sf.mmm.code.base.arg.BaseOperationArg;
 import net.sf.mmm.code.base.element.BaseElement;
 import net.sf.mmm.code.base.element.BaseElementImpl;
 import net.sf.mmm.code.base.element.BaseElementWithTypeVariables;
-import net.sf.mmm.code.base.loader.BaseCodeLoader;
+import net.sf.mmm.code.base.loader.BaseLoader;
 import net.sf.mmm.code.base.member.BaseOperation;
 import net.sf.mmm.code.base.node.BaseNode;
 import net.sf.mmm.code.base.node.BaseNodeItemImpl;
@@ -38,58 +33,26 @@ import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.base.type.BaseTypeVariable;
 import net.sf.mmm.code.base.type.BaseTypeVariables;
 import net.sf.mmm.code.base.type.BaseTypeWildcard;
-import net.sf.mmm.code.impl.java.expression.constant.JavaConstant;
-import net.sf.mmm.code.impl.java.loader.AbstractJavaCodeLoader;
 import net.sf.mmm.util.exception.api.IllegalCaseException;
 
 /**
- * Implementation of {@link net.sf.mmm.code.api.CodeContext} for Java.
+ * Implementation of {@link JavaContext} for the {@link #getParent() root} context.
  *
- * @author hohwille
+ * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class JavaContext extends JavaProvider implements BaseContext, BaseCodeLoader {
+public abstract class JavaContext extends BaseContextImplWithCache {
 
   private static final Logger LOG = LoggerFactory.getLogger(JavaContext.class);
-
-  private final AbstractJavaCodeLoader loader;
-
-  private final BaseSourceImpl source;
 
   /**
    * The constructor.
    *
-   * @param loader the {@link BaseCodeLoader}.
-   * @param source the {@link #getSource() source}.
+   * @param source the toplevel {@link #getSource() source}.
    */
-  public JavaContext(AbstractJavaCodeLoader loader, BaseSourceImpl source) {
+  protected JavaContext(BaseSourceImpl source) {
 
-    super();
-    this.loader = loader;
-    this.loader.setContext(this);
-    this.source = source;
-    this.source.setContext(this);
-  }
-
-  @Override
-  public abstract JavaContext getParent();
-
-  @Override
-  public JavaContext getContext() {
-
-    return this;
-  }
-
-  @Override
-  public BaseSource getSource() {
-
-    return this.source;
-  }
-
-  @Override
-  public CodeSyntax getSyntax() {
-
-    return getRootContext().getSyntax();
+    super(source);
   }
 
   /**
@@ -98,79 +61,38 @@ public abstract class JavaContext extends JavaProvider implements BaseContext, B
   public abstract JavaRootContext getRootContext();
 
   @Override
-  public BasePackage getRootPackage() {
+  protected BaseType getTypeFromCache(String qualifiedName) { // make visible
 
-    return this.source.getRootPackage();
+    return super.getTypeFromCache(qualifiedName);
   }
 
-  @Override
-  public BasePackage getToplevelPackage() {
+  /**
+   * @param id the {@link BaseSource#getId() ID} of the requested source.
+   * @return the existing {@link BaseSource} for the given {@link BaseSource#getId() ID} or {@code null} if
+   *         not found.
+   */
+  public abstract BaseSource getSource(String id);
 
-    BasePackage pkg = getRootPackage();
-    boolean todo = true;
-    while (todo) {
-      todo = false;
-      List<BasePathElement> children = pkg.getChildren().getInternalList();
-      if (children.size() == 1) {
-        BasePathElement child = children.get(0);
-        if (child.isFile()) {
-          pkg = (BasePackage) child;
-          todo = true;
-        }
-      }
-    }
-    return pkg;
-  }
+  /**
+   * <b>Attention:</b> This is an internal method that shall not be used from outside. Use
+   * {@link #getSource(String)} instead.
+   *
+   * @param id the {@link BaseSource#getId() ID} of the requested source.
+   * @param sourceSupplier the {@link Supplier} used as factory to {@link Supplier#get() create} the source if
+   *        it does not already exist.
+   * @return the existing {@link BaseSource} for the given {@link BaseSource#getId() ID}.
+   */
+  public abstract BaseSource getOrCreateSource(String id, Supplier<BaseSource> sourceSupplier);
 
-  @Override
-  public AbstractJavaCodeLoader getLoader() {
-
-    return this.loader;
-  }
-
-  @Override
-  public BaseGenericType getType(Class<?> clazz) {
-
-    // this.loader.requireByteCodeSupport();
-    if (clazz.isArray()) {
-      BaseGenericType componentType = getType(clazz.getComponentType());
-      return componentType.createArray();
-    }
-    CodeSource codeSource = clazz.getProtectionDomain().getCodeSource();
-    BaseSource javaSource = /* this.context. */getOrCreateSource(codeSource);
-    Package pkg = clazz.getPackage();
-    BasePackage basePackage = getPackage(javaSource, pkg);
-    return getTypeInternal(clazz, basePackage);
-  }
-
-  private BaseType getTypeInternal(Class<?> clazz, BasePackage pkg) {
-
-    boolean withoutSuperLayer = true; // TODO revisit
-    String simpleName = clazz.getSimpleName();
-    Class<?> declaringClass = clazz.getDeclaringClass();
-    BaseType type = pkg.getChildren().getType(simpleName, withoutSuperLayer, false);
-    if (type != null) {
-      return type;
-    }
-    BaseType declaringType = null;
-    if (declaringClass != null) {
-      declaringType = getTypeInternal(declaringClass, pkg);
-      BaseFile file = declaringType.getFile();
-      type = new BaseType(file, simpleName, declaringType, clazz);
-      addContainerItem(declaringType.getNestedTypes(), type);
-    } else {
-      getLoader().getSourceFileSupplier(pkg, clazz.getSimpleName());
-      BaseFile file = new BaseFile(pkg, clazz);
-      addPathElementInternal(pkg.getChildren(), file);
-      type = file.getType();
-    }
-    return type;
-  }
+  /**
+   * @param codeSource the {@link CodeSource}.
+   * @return the existing or otherwise created {@link BaseSource}.
+   */
+  protected abstract BaseSource getOrCreateSource(CodeSource codeSource);
 
   @Override
   public BaseGenericType getType(Type type, BaseElement declaringElement) {
 
-    // this.loader.requireByteCodeSupport();
     if (type instanceof Class) {
       return getType((Class<?>) type);
     } else if (type instanceof ParameterizedType) {
@@ -204,14 +126,22 @@ public abstract class JavaContext extends JavaProvider implements BaseContext, B
       }
       return new BaseTypeWildcard(parent, wildcard);
     } else if (type instanceof GenericArrayType) {
-      // GenericArrayType arrayType = (GenericArrayType) type;
       return new BaseArrayType((BaseElementImpl) declaringElement, type);
     } else {
       throw new IllegalCaseException(type.getClass().getSimpleName());
     }
   }
 
-  private BaseElementWithTypeVariables findElementWithTypeVariables(BaseNode node) {
+  private static BaseTypeVariable findTypeVariable(BaseNode node, String name) {
+
+    BaseElementWithTypeVariables elementWithTypeVariables = findElementWithTypeVariables(node);
+    if (elementWithTypeVariables != null) {
+      return elementWithTypeVariables.getTypeParameters().get(name, true);
+    }
+    return null;
+  }
+
+  private static BaseElementWithTypeVariables findElementWithTypeVariables(BaseNode node) {
 
     if (node instanceof BaseElementWithTypeVariables) {
       return (BaseElementWithTypeVariables) node;
@@ -232,91 +162,79 @@ public abstract class JavaContext extends JavaProvider implements BaseContext, B
     }
   }
 
-  private BaseTypeVariable findTypeVariable(BaseNode node, String name) {
-
-    BaseElementWithTypeVariables elementWithTypeVariables = findElementWithTypeVariables(node);
-    if (elementWithTypeVariables != null) {
-      return elementWithTypeVariables.getTypeParameters().get(name, true);
-    }
-    return null;
-  }
-
-  @Override
-  public boolean isSupportByteCode() {
-
-    return this.loader.isSupportByteCode();
-  }
-
-  @Override
-  public boolean isSupportSourceCode() {
-
-    return this.loader.isSupportSourceCode();
-  }
-
-  @Override
-  public BasePackage getPackage(BaseSource codeSource, Package pkg) {
-
-    BasePackage rootPackage = codeSource.getRootPackage();
-    if (pkg == null) {
-      return rootPackage;
-    }
-    return getPackage(rootPackage, pkg, parseName(pkg.getName()));
-  }
-
-  private BasePackage getPackage(BasePackage root, Package pkg, CodeName qname) {
-
-    if (qname == null) {
-      return root;
-    }
-    CodeName parentName = qname.getParent();
-    Package parentPkg = null; // Package.getPackage(parentName.getFullName());
-    BasePackage parentPackage = getPackage(root, parentPkg, parentName);
-    String simpleName = qname.getSimpleName();
-    BasePathElements children = parentPackage.getChildren();
-    BasePackage childPackage = children.getPackage(simpleName, false, false);
-    if (childPackage == null) {
-      Package reflectiveObject = pkg;
-      if (reflectiveObject == null) {
-        reflectiveObject = Package.getPackage(qname.getFullName());
-      }
-      BasePackage superLayerPackage = null; // TODO
-      childPackage = new BasePackage(parentPackage, simpleName, reflectiveObject, superLayerPackage, null);
-      addPathElementInternal(children, childPackage);
-    }
-    return childPackage;
-  }
-
-  @Override
-  public void scan(BasePackage pkg) {
-
-    ((JavaContext) pkg.getContext()).getLoader().scan(pkg);
-  }
-
   /**
-   * @param codeSource the {@link CodeSource}.
-   * @return the existing or otherwise created {@link BaseSource}.
+   * Implementation of {@link BaseLoader} to load classes from byte-code.
+   *
+   * @see JavaContext#getLoader()
    */
-  protected abstract BaseSource getOrCreateSource(CodeSource codeSource);
+  protected class JavaClassLoader implements BaseLoader {
 
-  @Override
-  public abstract BaseType getRootType();
+    private final ClassLoader classloader;
 
-  @Override
-  public abstract BaseType getRootEnumerationType();
+    /**
+     * The constructor.
+     */
+    public JavaClassLoader() {
 
-  @Override
-  public abstract BaseType getVoidType();
+      this(Thread.currentThread().getContextClassLoader());
+    }
 
-  @Override
-  public abstract BaseType getRootExceptionType();
+    /**
+     * The constructor.
+     *
+     * @param classloader the explicit {@link ClassLoader} to use.
+     */
+    public JavaClassLoader(ClassLoader classloader) {
 
-  @Override
-  public abstract BaseTypeWildcard getUnboundedWildcard();
+      super();
+      this.classloader = classloader;
+    }
 
-  @Override
-  public CodeExpression createExpression(Object value, boolean primitive) {
+    @Override
+    public BaseSource getSource() {
 
-    return JavaConstant.of(value, primitive);
+      return JavaContext.this.getSource();
+    }
+
+    @Override
+    public BaseContext getContext() {
+
+      return JavaContext.this;
+    }
+
+    @Override
+    public BaseType getType(String qualifiedName) {
+
+      try {
+        Class<?> clazz = this.classloader.loadClass(qualifiedName);
+        if (clazz.isArray()) {
+          throw new IllegalArgumentException(qualifiedName);
+        }
+        return (BaseType) getContext().getType(clazz);
+      } catch (ClassNotFoundException e) {
+        LOG.debug("Class {} not found.", qualifiedName, e);
+        return null;
+      }
+    }
+
+    @Override
+    public BaseType getType(CodeName qualifiedName) {
+
+      return getType(qualifiedName.getFullName());
+    }
+
+    @Override
+    public BaseGenericType getType(Class<?> clazz) {
+
+      if (clazz.isArray()) {
+        BaseGenericType componentType = getType(clazz.getComponentType());
+        return componentType.createArray();
+      }
+      CodeSource codeSource = clazz.getProtectionDomain().getCodeSource();
+      BaseSource source = getOrCreateSource(codeSource);
+      return source.getLoader().getType(clazz);
+    }
+
   }
 
 }

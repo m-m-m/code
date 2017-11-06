@@ -35,7 +35,7 @@ public class BaseTypeTest extends Assertions {
 
     // given
     JavaContext context = createContext();
-    BasePackage rootPackage = context.getRootPackage();
+    BasePackage rootPackage = context.getSource().getRootPackage();
     String pkgName = "mydomain";
     BasePackage pkg = rootPackage.getChildren().createPackage(pkgName);
     String simpleName = "MyClass";
@@ -72,7 +72,7 @@ public class BaseTypeTest extends Assertions {
 
     // given
     JavaContext context = createContext();
-    BasePackage rootPackage = context.getRootPackage();
+    BasePackage rootPackage = context.getSource().getRootPackage();
     String pkgName = "mydomain";
     BasePackage pkg = rootPackage.getChildren().createPackage(pkgName);
     String simpleNameTop = "ClassToplevel";
@@ -161,7 +161,7 @@ public class BaseTypeTest extends Assertions {
 
     // given
     JavaContext context = createContext();
-    BasePackage rootPackage = context.getRootPackage();
+    BasePackage rootPackage = context.getSource().getRootPackage();
     String pkgName1 = "pkg1";
     BasePackage pkg1 = rootPackage.getChildren().createPackage(pkgName1);
     String pkgName2 = "pkg2";

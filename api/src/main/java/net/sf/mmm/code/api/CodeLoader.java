@@ -2,11 +2,10 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api;
 
-import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
 
 /**
- * Abstract interface to load {@link #getPackage(String) packages} or {@link #getType(String) types}.
+ * Abstract interface to get (or load) {@link #getType(String) types}.
  *
  * @author hohwille
  * @since 1.0.0
@@ -14,23 +13,9 @@ import net.sf.mmm.code.api.type.CodeType;
 public abstract interface CodeLoader extends CodeWithContext {
 
   /**
-   * @param qualifiedName the {@link CodePackage#getQualifiedName() qualified name} of the requested
-   *        {@link CodePackage}.
-   * @return the requested {@link CodePackage} or {@code null} if not found.
-   */
-  CodePackage getPackage(String qualifiedName);
-
-  /**
-   * @param qualifiedName the {@link CodeName} of the requested {@link CodePackage}.
-   * @return the requested {@link CodePackage} or {@code null} if not found.
-   */
-  CodePackage getPackage(CodeName qualifiedName);
-
-  /**
-   * @param qualifiedName the {@link CodeGenericType#getQualifiedName() qualified name} of the requested
-   *        {@link CodeGenericType}.
-   * @return the requested {@link CodeGenericType}, typically a {@link net.sf.mmm.code.api.type.CodeType} or
-   *         {@code null} if not found.
+   * @param qualifiedName the {@link CodeType#getQualifiedName() qualified name} of the requested
+   *        {@link CodeType}.
+   * @return the requested {@link CodeType} or {@code null} if not found.
    */
   CodeType getType(String qualifiedName);
 

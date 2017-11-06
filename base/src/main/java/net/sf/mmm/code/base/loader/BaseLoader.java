@@ -4,8 +4,11 @@ package net.sf.mmm.code.base.loader;
 
 import net.sf.mmm.code.api.CodeLoader;
 import net.sf.mmm.code.api.CodeName;
+import net.sf.mmm.code.api.type.CodeGenericType;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.BaseContext;
-import net.sf.mmm.code.base.BasePackage;
+import net.sf.mmm.code.base.source.BaseSource;
+import net.sf.mmm.code.base.type.BaseGenericType;
 import net.sf.mmm.code.base.type.BaseType;
 
 /**
@@ -20,18 +23,20 @@ public interface BaseLoader extends CodeLoader {
   BaseContext getContext();
 
   @Override
-  default BasePackage getPackage(String qualifiedName) {
-
-    return getPackage(getContext().parseName(qualifiedName));
-  }
-
-  @Override
-  BasePackage getPackage(CodeName qualifiedName);
+  BaseSource getSource();
 
   @Override
   BaseType getType(String qualifiedName);
 
   @Override
   BaseType getType(CodeName qualifiedName);
+
+  /**
+   * @param clazz the {@link Class} to get as {@link CodeGenericType}.
+   * @return the existing or otherwise newly created {@link CodeGenericType}. Typically a {@link CodeType} but
+   *         may also be a {@link CodeType#createArray() array type} in case an {@link Class#isArray() array}
+   *         was given.
+   */
+  BaseGenericType getType(Class<?> clazz);
 
 }

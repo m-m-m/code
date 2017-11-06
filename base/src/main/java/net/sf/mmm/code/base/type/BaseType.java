@@ -169,7 +169,7 @@ public class BaseType extends BaseGenericType implements CodeType, CodeNodeItemW
     if (this.nonStaticInitializer != null) {
       this.nonStaticInitializer.setImmutable();
     }
-    this.constructors.setImmutableIfNotSystemImmutable();;
+    this.constructors.setImmutableIfNotSystemImmutable();
     this.fields.setImmutableIfNotSystemImmutable();
     this.methods.setImmutableIfNotSystemImmutable();
     this.nestedTypes.setImmutableIfNotSystemImmutable();

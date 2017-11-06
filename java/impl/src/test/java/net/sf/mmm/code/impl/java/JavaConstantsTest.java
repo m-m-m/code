@@ -8,18 +8,18 @@ import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 /**
- * Test of {@link JavaWildcardType}.
+ * Test of {@link JavaConstants}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  */
 @SuppressWarnings("javadoc")
-public class JavaWildcardTypeTest extends Assertions {
+public class JavaConstantsTest extends Assertions {
 
   @Test
   public void testUnboundedWildcard() {
 
     // given / when
-    WildcardType unboundedWildcard = JavaWildcardType.UNBOUNDED_WILDCARD;
+    WildcardType unboundedWildcard = JavaConstants.UNBOUNDED_WILDCARD;
     // then
     assertThat(unboundedWildcard).isNotNull();
     assertThat(unboundedWildcard.getUpperBounds()).hasSize(1).containsExactly(Object.class);

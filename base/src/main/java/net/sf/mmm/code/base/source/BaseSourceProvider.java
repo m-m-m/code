@@ -1,12 +1,11 @@
 /* Copyright (c) The m-m-m Team, Licensed under the Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0 */
-package net.sf.mmm.code.impl.java.source;
+package net.sf.mmm.code.base.source;
 
 import java.io.File;
 import java.security.CodeSource;
 
-import net.sf.mmm.code.base.source.BaseSource;
-import net.sf.mmm.code.impl.java.JavaExtendedContext;
+import net.sf.mmm.code.base.BaseContextImpl;
 
 /**
  * Factory for {@link BaseSource} to decouple from specific implementations such as maven or eclipse
@@ -31,7 +30,7 @@ public interface BaseSourceProvider {
   BaseSource create(File byteCodeLocation, File sourceCodeLocation);
 
   /**
-   * @param context the {@link JavaExtendedContext}.
+   * @param context the {@link BaseContextImpl}.
    */
-  void setContext(JavaExtendedContext context);
+  void setContext(BaseContextImpl context);
 }

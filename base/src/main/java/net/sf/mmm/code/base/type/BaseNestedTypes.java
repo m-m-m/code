@@ -55,7 +55,7 @@ public class BaseNestedTypes extends BaseNodeItemContainerHierarchicalWithName<B
     if (sourceNestedTypes != null) {
       BaseContext context = getContext();
       for (BaseType sourceNestedType : sourceNestedTypes.getDeclared()) {
-        context.getType(sourceNestedType.getQualifiedName()); // TODO use getType(pkg, simpleName) instead
+        context.getType(sourceNestedType.getQualifiedName());
       }
     }
   }

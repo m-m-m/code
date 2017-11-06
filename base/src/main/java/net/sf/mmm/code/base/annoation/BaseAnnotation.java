@@ -19,8 +19,8 @@ import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
-import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.item.BaseChildItem;
+import net.sf.mmm.code.base.source.BaseSource;
 
 /**
  * Base implementation of {@link CodeAnnotation}.
@@ -47,24 +47,24 @@ public class BaseAnnotation extends BaseChildItem implements CodeAnnotation {
   /**
    * The constructor.
    *
-   * @param context the {@link #getContext() context}.
+   * @param source the {@link #getSource() source}.
    * @param reflectiveObject the {@link #getReflectiveObject() reflective object}.
    */
-  public BaseAnnotation(BaseContext context, Annotation reflectiveObject) {
+  public BaseAnnotation(BaseSource source, Annotation reflectiveObject) {
 
-    super(context);
+    super(source);
     this.reflectiveObject = reflectiveObject;
   }
 
   /**
    * The constructor.
    *
-   * @param context the {@link #getContext() context}.
+   * @param source the {@link #getSource() source}.
    * @param type the {@link #getType() type}.
    */
-  public BaseAnnotation(BaseContext context, CodeType type) {
+  public BaseAnnotation(BaseSource source, CodeType type) {
 
-    super(context);
+    super(source);
     this.type = type;
     this.reflectiveObject = null;
   }
@@ -72,13 +72,13 @@ public class BaseAnnotation extends BaseChildItem implements CodeAnnotation {
   /**
    * The constructor.
    *
-   * @param context the {@link #getContext() context}.
+   * @param source the {@link #getSource() source}.
    * @param typeName the name of the {@link #getType() type} from the source-code.
    * @param qualifiedTypeName the qualified {@link #getType() type}.
    */
-  public BaseAnnotation(BaseContext context, String typeName, String qualifiedTypeName) {
+  public BaseAnnotation(BaseSource source, String typeName, String qualifiedTypeName) {
 
-    super(context);
+    super(source);
     if ((typeName != qualifiedTypeName) && !qualifiedTypeName.endsWith("." + typeName)) {
       throw new IllegalArgumentException(typeName + "::" + qualifiedTypeName);
     }

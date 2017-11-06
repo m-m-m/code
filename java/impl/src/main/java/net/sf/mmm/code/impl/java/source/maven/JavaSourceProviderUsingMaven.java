@@ -10,17 +10,16 @@ import java.util.function.Supplier;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 
-import net.sf.mmm.code.base.BasePackage;
-import net.sf.mmm.code.base.loader.BaseLoader;
 import net.sf.mmm.code.base.loader.BaseSourceCodeProviderDirectory;
+import net.sf.mmm.code.base.loader.BaseSourceLoader;
 import net.sf.mmm.code.base.loader.SourceCodeProvider;
 import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.source.BaseSourceHelper;
 import net.sf.mmm.code.base.source.BaseSourceImpl;
+import net.sf.mmm.code.base.source.BaseSourceProvider;
+import net.sf.mmm.code.base.source.BaseSourceProviderImpl;
 import net.sf.mmm.code.impl.java.JavaContext;
-import net.sf.mmm.code.impl.java.loader.JavaLoader;
-import net.sf.mmm.code.impl.java.source.AbstractJavaSourceProvider;
-import net.sf.mmm.code.impl.java.source.BaseSourceProvider;
+import net.sf.mmm.code.impl.java.loader.JavaSourceLoader;
 import net.sf.mmm.code.java.maven.api.DependencyHelper;
 import net.sf.mmm.code.java.maven.api.MavenBridge;
 import net.sf.mmm.code.java.maven.api.MavenConstants;
@@ -33,7 +32,7 @@ import net.sf.mmm.code.java.maven.impl.MavenBridgeImpl;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaSourceProviderUsingMaven extends AbstractJavaSourceProvider implements MavenConstants {
+public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl implements MavenConstants {
 
   private final MavenBridge mavenBridge;
 
@@ -53,7 +52,7 @@ public class JavaSourceProviderUsingMaven extends AbstractJavaSourceProvider imp
     Supplier<Model> supplier = () -> parseModel(BaseSourceHelper.asFile(source.getLocation()));
     // TODO find sources archive from maven repo corresponding to CodeSource
     SourceCodeProvider sourceCodeProvider = null;
-    BaseLoader loader = new JavaLoader(sourceCodeProvider);
+    BaseSourceLoader loader = new JavaSourceLoader(sourceCodeProvider);
     return new JavaSourceUsingMaven(this, source, supplier, loader);
   }
 
@@ -66,15 +65,15 @@ public class JavaSourceProviderUsingMaven extends AbstractJavaSourceProvider imp
     } else {
       location = sourceCodeLocation;
     }
-    BasePackage superLayerPackage = null; // TODO
-    return new JavaSourceUsingMaven(this, byteCodeLocation, sourceCodeLocation, superLayerPackage, () -> parseModel(location), null,
-        createLoader(sourceCodeLocation));
+    return new JavaSourceUsingMaven(this, byteCodeLocation, sourceCodeLocation, () -> parseModel(location), null, createLoader(sourceCodeLocation));
   }
 
-  private BaseLoader createLoader(File sourceCodeLocation) {
+  private BaseSourceLoader createLoader(File sourceCodeLocation) {
 
     SourceCodeProvider sourceCodeProvider;
-    if (sourceCodeLocation.isDirectory()) {
+    if (sourceCodeLocation == null) {
+      sourceCodeProvider = null;
+    } else if (sourceCodeLocation.isDirectory()) {
       sourceCodeProvider = new BaseSourceCodeProviderDirectory(sourceCodeLocation);
     } else {
       // TODO
@@ -82,8 +81,7 @@ public class JavaSourceProviderUsingMaven extends AbstractJavaSourceProvider imp
       sourceCodeProvider = null;
       // sourceCodeProvider = new BaseSourceCodeProviderArchive(sourceCodeLocation);
     }
-    BaseLoader loader = new JavaLoader(sourceCodeProvider);
-    return loader;
+    return new JavaSourceLoader(sourceCodeProvider);
   }
 
   private Model parseModel(File location) {
@@ -95,16 +93,24 @@ public class JavaSourceProviderUsingMaven extends AbstractJavaSourceProvider imp
     return this.mavenBridge.readEffectiveModel(pomFile);
   }
 
-  BaseSource create(Dependency dependency) {
+  BaseSource createSource(Dependency dependency) {
 
     File byteCodeArtifact = this.mavenBridge.findArtifact(dependency);
+    JavaContext context = (JavaContext) getContext();
+    String id = BaseSourceImpl.getNormalizedId(byteCodeArtifact);
+    return context.getOrCreateSource(id, () -> createSource(dependency, byteCodeArtifact));
+  }
+
+  private BaseSource createSource(Dependency dependency, File byteCodeArtifact) {
+
     File sourceCodeArtifact = null;
     Dependency sourceDependency = DependencyHelper.createSource(dependency);
     if (sourceDependency != null) {
       sourceCodeArtifact = this.mavenBridge.findArtifact(sourceDependency);
       sourceCodeArtifact = BaseSourceHelper.getFileOrNull(sourceCodeArtifact);
     }
-    return getContext().getOrCreateSource(byteCodeArtifact, sourceCodeArtifact);
+    BaseSourceLoader loader = createLoader(sourceCodeArtifact);
+    return new JavaSourceUsingMaven(this, byteCodeArtifact, sourceCodeArtifact, () -> parseModel(byteCodeArtifact), dependency.getScope(), loader);
   }
 
   public BaseSourceImpl createFromLocalMavenProject(JavaContext parentContext) {
@@ -121,15 +127,14 @@ public class JavaSourceProviderUsingMaven extends AbstractJavaSourceProvider imp
     Supplier<Model> modelSupplier = () -> model;
     File byteCodeLocation = ModelHelper.getOutputDirectory(model);
     File sourceCodeLocation = ModelHelper.getSourceDirectory(model);
-    BasePackage superLayerPackage = parentContext.getSource().getRootPackage();
-    JavaSourceUsingMaven compileDependency = new JavaSourceUsingMaven(this, byteCodeLocation, sourceCodeLocation, superLayerPackage, modelSupplier,
-        SCOPE_COMPILE, createLoader(sourceCodeLocation));
+    JavaSourceUsingMaven compileDependency = new JavaSourceUsingMaven(this, byteCodeLocation, sourceCodeLocation, modelSupplier, SCOPE_COMPILE,
+        createLoader(sourceCodeLocation));
     File testByteCodeLocation = ModelHelper.getTestOutputDirectory(model);
     File testSourceCodeLocation = ModelHelper.getTestSourceDirectory(model);
-    BaseLoader testLoader = createLoader(testSourceCodeLocation);
+    BaseSourceLoader testLoader = createLoader(testSourceCodeLocation);
     JavaSourceUsingMaven testDependency = new JavaSourceUsingMaven(this, compileDependency, testByteCodeLocation, testSourceCodeLocation, modelSupplier,
         testLoader);
-    return new JavaSourceUsingMaven(this, model.getPomFile().getParentFile().toString(), compileDependency, testDependency, modelSupplier, testLoader);
+    return testDependency;
   }
 
 }

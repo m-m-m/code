@@ -28,7 +28,6 @@ public interface SourceCodeProvider {
    * @return a new {@link Reader} to read the source-code from or {@code null} if the requested package was
    *         not found.
    * @throws IOException on I/O error.
-   * @see BaseLoader#getPackage(String)
    */
   Reader openPackage(String qualifiedName) throws IOException;
 

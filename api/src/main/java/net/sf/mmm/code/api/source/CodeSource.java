@@ -6,6 +6,7 @@ import java.io.File;
 
 import net.sf.mmm.code.api.CodeFile;
 import net.sf.mmm.code.api.CodePackage;
+import net.sf.mmm.code.api.CodePathElements;
 import net.sf.mmm.code.api.CodeProvider;
 import net.sf.mmm.code.api.node.CodeContainer;
 
@@ -17,6 +18,13 @@ import net.sf.mmm.code.api.node.CodeContainer;
  * @since 1.0.0
  */
 public interface CodeSource extends CodeProvider, CodeContainer {
+
+  /**
+   * @return the root {@link CodePackage package} of this source. Will typically be lazy initialized and
+   *         {@link CodePackage#getChildren() traversal} (especially {@link CodePathElements#getDeclared()})
+   *         can be expensive. Results will however be cached to speed up subsequent calls.
+   */
+  CodePackage getRootPackage();
 
   /**
    * @return the {@link CodeSourceDependencies} containing {@link CodeSource}s that are the parents of this
@@ -32,13 +40,6 @@ public interface CodeSource extends CodeProvider, CodeContainer {
    */
   @Override
   CodeSource getParent();
-
-  /**
-   * @return the top-level package containing actual content in this source. When traversing the
-   *         {@link #getRootPackage() root package} this is the first {@link CodePackage} that is empty or
-   *         contains more than just one single {@link CodePackage#getChildren() child}.
-   */
-  CodePackage getToplevelPackage();
 
   /**
    * @return the unique ID of this source. May be the {@link File#toString() string representation} of the

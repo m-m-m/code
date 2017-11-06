@@ -127,7 +127,7 @@ public class BaseImport extends BaseItem implements CodeImport, Comparable<BaseI
     if (this.staticFlag) {
       sink.append("static ");
     }
-    boolean hasItems = !this.items.isEmpty(); // TypeScript?
+    boolean hasItems = !this.items.isEmpty();
     if (hasItems) {
       String prefix = "{ ";
       for (CodeImportItem item : this.items) {

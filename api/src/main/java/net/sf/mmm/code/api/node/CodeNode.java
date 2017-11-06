@@ -4,7 +4,6 @@ package net.sf.mmm.code.api.node;
 
 import net.sf.mmm.code.api.CodeContext;
 import net.sf.mmm.code.api.CodeWithContext;
-import net.sf.mmm.code.api.source.CodeSource;
 
 /**
  * A node of the abstract syntax tree (AST) that is connected with its {@link #getParent() parent}. It can be
@@ -20,17 +19,5 @@ public abstract interface CodeNode extends CodeWithContext {
    *         {@link CodeContext}.
    */
   CodeNode getParent();
-
-  /**
-   * @return the owning {@link CodeContext}. In case of a {@link CodeContext} this method will return the
-   *         object itself ({@code this}).
-   */
-  @Override
-  CodeContext getContext();
-
-  /**
-   * @return the owning {@link CodeSource}. Shall never be {@code null}.
-   */
-  CodeSource getSource();
 
 }

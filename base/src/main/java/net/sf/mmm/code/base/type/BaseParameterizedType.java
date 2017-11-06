@@ -100,7 +100,6 @@ public class BaseParameterizedType extends BaseGenericType
 
     super.doInitialize();
     getType();
-    // Type ownerType = this.reflectiveObject.getOwnerType(); // TODO not used...
   }
 
   @Override

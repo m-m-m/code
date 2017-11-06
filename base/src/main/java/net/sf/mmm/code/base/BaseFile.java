@@ -48,8 +48,10 @@ public final class BaseFile extends BasePathElement implements CodeFile, CodeNod
    *
    * @param parentPackage the {@link #getParentPackage() parent package}.
    * @param reflectiveObject the {@link #getReflectiveObject() reflective object}. May be {@code null}.
+   * @param sourceSupplier the {@link Supplier} of the lazy-loaded {@link #getSourceCodeObject() source code
+   *        object}.
    */
-  public BaseFile(BasePackage parentPackage, Class<?> reflectiveObject) {
+  public BaseFile(BasePackage parentPackage, Class<?> reflectiveObject, Supplier<BaseFile> sourceSupplier) {
 
     this(parentPackage, reflectiveObject.getSimpleName(), reflectiveObject);
     Package pkg = reflectiveObject.getPackage();
@@ -63,6 +65,7 @@ public final class BaseFile extends BasePathElement implements CodeFile, CodeNod
         throw new ObjectMismatchException(Package.class, pkg, pkgName);
       }
     }
+    this.sourceSupplier = sourceSupplier;
   }
 
   /**

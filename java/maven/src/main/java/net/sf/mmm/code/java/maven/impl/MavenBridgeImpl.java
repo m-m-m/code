@@ -65,14 +65,19 @@ public class MavenBridgeImpl implements MavenBridge, MavenConstants {
 
     String filename = source.getName();
     if (source.isFile()) {
-      String basename = filename.substring(0, filename.length() - 4);
-      File pomFile = new File(source.getParent(), basename + POM_EXTENSION);
-      if (pomFile.exists()) {
-        return pomFile;
+      String basename;
+      File pomFile;
+      int lastDot = filename.lastIndexOf('.');
+      if (lastDot > 0) {
+        basename = filename.substring(0, lastDot);
+        pomFile = new File(source.getParent(), basename + POM_EXTENSION);
+        if (pomFile.exists()) {
+          return pomFile;
+        }
       }
-      int lastSlash = basename.indexOf('-');
+      int lastSlash = filename.indexOf('-');
       if (lastSlash > 0) {
-        basename = basename.substring(0, lastSlash);
+        basename = filename.substring(0, lastSlash);
         pomFile = new File(source.getParent(), basename + POM_EXTENSION);
         if (pomFile.exists()) {
           return pomFile;

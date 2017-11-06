@@ -40,12 +40,12 @@ public class JavaRootContextTest extends JavaTypeTest {
 
     // then
     assertThat(context.getRootContext()).isSameAs(context);
-    BasePackage rootPackage = context.getRootPackage();
+    BasePackage rootPackage = context.getSource().getRootPackage();
     assertThat(rootPackage).isNotNull();
+    assertThat(rootPackage.isRoot()).isTrue();
     assertThat(rootPackage.getSimpleName()).isEmpty();
     assertThat(rootPackage.getQualifiedName()).isEmpty();
     assertThat(rootPackage.getParentPackage()).isNull();
-    assertThat(context.getPackage("")).isSameAs(rootPackage);
     assertThat(context.getQualifiedNameForStandardType("byte", true)).isEqualTo("byte");
     assertThat(context.getQualifiedNameForStandardType("String", true)).isEqualTo("String");
     assertThat(context.getQualifiedNameForStandardType("String", false)).isEqualTo("java.lang.String");

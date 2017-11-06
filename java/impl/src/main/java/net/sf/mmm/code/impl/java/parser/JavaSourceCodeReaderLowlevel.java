@@ -235,7 +235,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
 
     String annotationTypeName = parseQName();
     String annotationQName = getQualifiedName(annotationTypeName);
-    CodeAnnotation annotation = new BaseAnnotation(this.file.getContext(), annotationTypeName, annotationQName);
+    CodeAnnotation annotation = new BaseAnnotation(this.file.getSource(), annotationTypeName, annotationQName);
     if (expect('(')) {
       parseAnnotationParameters(annotation, annotationTypeName);
     }
@@ -305,7 +305,6 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
         break;
       }
     }
-    // TODO Auto-generated method stub
     return expression;
   }
 

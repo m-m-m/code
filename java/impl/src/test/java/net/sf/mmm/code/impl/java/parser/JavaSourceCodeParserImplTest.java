@@ -45,14 +45,13 @@ public class JavaSourceCodeParserImplTest extends Assertions {
 
   BasePackage createPackage(JavaContext context, CodeName qName) {
 
+    BasePackage parentPkg = context.getSource().getRootPackage();
     if (qName == null) {
-      return context.getRootPackage();
+      return parentPkg;
     }
     String simpleName = qName.getSimpleName();
     CodeName parentName = qName.getParent();
-    BasePackage parentPkg;
     if (parentName == null) {
-      parentPkg = context.getRootPackage();
       if (simpleName.isEmpty()) {
         return parentPkg;
       }

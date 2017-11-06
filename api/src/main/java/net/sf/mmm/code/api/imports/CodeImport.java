@@ -26,8 +26,6 @@ public interface CodeImport extends CodeItem {
    */
   boolean isStatic();
 
-  // TODO shall be have this in the generic API? Or should it only be available in
-  // JavaScriptImport/TypeScriptImport?
   /**
    * @return the {@link List} of {@link CodeImportItem items} to import from the {@link #getReference()
    *         reference}. Will be {@link List#isEmpty() empty} for no item and therefore is never {@code null}.

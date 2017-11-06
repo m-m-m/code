@@ -3,6 +3,8 @@
 package net.sf.mmm.code.base.annoation;
 
 import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -17,6 +19,7 @@ import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.element.BaseElementImpl;
 import net.sf.mmm.code.base.node.BaseNodeItemContainerHierarchical;
+import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.base.type.InternalSuperTypeIterator;
 import net.sf.mmm.util.collection.base.AbstractIterator;
@@ -64,6 +67,26 @@ public class BaseAnnotations extends BaseNodeItemContainerHierarchical<CodeAnnot
   }
 
   @Override
+  protected void doInitialize() {
+
+    super.doInitialize();
+    if (this.parent == null) {
+      return;
+    }
+    Object reflectiveObject = this.parent.getReflectiveObject();
+    if (reflectiveObject instanceof AnnotatedElement) {
+      Annotation[] annotations = ((AnnotatedElement) reflectiveObject).getAnnotations();
+      if (annotations.length == 0) {
+        return;
+      }
+      BaseSource source = getSource();
+      for (Annotation annotation : annotations) {
+        addInternal(new BaseAnnotation(source, annotation));
+      }
+    }
+  }
+
+  @Override
   public BaseType getDeclaringType() {
 
     if (this.parent == null) {
@@ -98,7 +121,7 @@ public class BaseAnnotations extends BaseNodeItemContainerHierarchical<CodeAnnot
    */
   protected BaseAnnotation createAnnoation(CodeType type) {
 
-    return new BaseAnnotation(getContext(), type);
+    return new BaseAnnotation(getSource(), type);
   }
 
   @Override
@@ -139,6 +162,7 @@ public class BaseAnnotations extends BaseNodeItemContainerHierarchical<CodeAnnot
       return null;
     }
     if (this.parent != null) {
+      initialize();
       BaseElementImpl sourceElement = this.parent.getSourceCodeObject();
       if (sourceElement != null) {
         this.sourceCodeObject = sourceElement.getAnnotations();

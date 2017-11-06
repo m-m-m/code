@@ -9,15 +9,10 @@ import java.util.regex.Pattern;
 import org.junit.Test;
 
 import net.sf.mmm.code.api.source.CodeSourceDescriptor;
-import net.sf.mmm.code.base.loader.BaseSourceCodeProviderDirectory;
-import net.sf.mmm.code.base.loader.SourceCodeProvider;
 import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.source.BaseSourceImpl;
 import net.sf.mmm.code.base.type.BaseType;
-import net.sf.mmm.code.impl.java.loader.AbstractJavaCodeLoader;
-import net.sf.mmm.code.impl.java.loader.JavaLoader;
 import net.sf.mmm.code.impl.java.source.maven.JavaSourceProviderUsingMaven;
-import net.sf.mmm.code.java.maven.api.MavenConstants;
 
 /**
  * Test of {@link JavaExtendedContext} using {@link JavaSourceProviderUsingMaven}.
@@ -35,9 +30,7 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends JavaTypeTest 
     JavaSourceProviderUsingMaven provider = new JavaSourceProviderUsingMaven();
     JavaContext parentContext = JavaRootContext.get();
     BaseSourceImpl source = provider.createFromLocalMavenProject(parentContext);
-    SourceCodeProvider sourceCodeProvider = new BaseSourceCodeProviderDirectory(new File(MavenConstants.DEFAULT_SOURCE_DIRECTORY));
-    AbstractJavaCodeLoader loader = new JavaLoader(sourceCodeProvider);
-    return new JavaExtendedContext(provider, loader, source);
+    return new JavaExtendedContext(source, provider);
   }
 
   /**
@@ -51,10 +44,7 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends JavaTypeTest 
     // when
     BaseSource source = context.getSource();
     // then
-    assertThat(source.getByteCodeLocation()).isNull();
-    assertThat(source.getSourceCodeLocation()).isNull();
-    CodeSourceDescriptor descriptor = source.getDescriptor();
-    verifyDescriptor(descriptor, null);
+    verifyDependency(source, "target/test-classes", "src/test/java", "test");
     assertThat(source.getId()).contains("/code/java/impl");
     assertThat(source.getSource()).isSameAs(source);
 
@@ -62,18 +52,23 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends JavaTypeTest 
     assertThat(dependencies).hasSize(2);
     BaseSource compileDependency = dependencies.get(0);
     verifyDependency(compileDependency, "target/classes", "src/main/java", "compile");
+    assertThat(source.getParent()).isSameAs(compileDependency);
     BaseSource testDependency = dependencies.get(1);
-    verifyDependency(testDependency, "target/test-classes", "src/test/java", "test");
-    assertThat(testDependency.getParent()).isSameAs(compileDependency);
+    verifyDescriptor(testDependency.getDescriptor(), "test", "mmm-util-test");
   }
 
   private void verifyDescriptor(CodeSourceDescriptor descriptor, String scope) {
 
+    verifyDescriptor(descriptor, scope, "mmm-code-java-impl");
+  }
+
+  private void verifyDescriptor(CodeSourceDescriptor descriptor, String scope, String artifactId) {
+
     assertThat(descriptor.getGroupId()).isEqualTo("net.sf.m-m-m");
-    assertThat(descriptor.getArtifactId()).isEqualTo("mmm-code-java-impl");
+    assertThat(descriptor.getArtifactId()).isEqualTo(artifactId);
     String version = descriptor.getVersion();
     assertThat(version).matches(VERSION_PATTERN);
-    String expectedId = "net.sf.m-m-m:mmm-code-java-impl:" + version;
+    String expectedId = "net.sf.m-m-m:" + artifactId + ":" + version;
     if (scope != null) {
       expectedId = expectedId + ":" + scope;
     }

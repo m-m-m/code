@@ -23,7 +23,7 @@ public class BaseDocTest extends Assertions {
 
     // given
     JavaContext context = JavaRootContext.get();
-    BasePackage rootPackage = context.getRootPackage();
+    BasePackage rootPackage = context.getSource().getRootPackage();
     String pkg1Name = "pkg1";
     BasePackage pkg1 = rootPackage.getChildren().createPackage(pkg1Name);
     String pkg2Name = "pkg2";

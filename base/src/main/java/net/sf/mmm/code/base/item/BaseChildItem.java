@@ -4,6 +4,7 @@ package net.sf.mmm.code.base.item;
 
 import net.sf.mmm.code.api.item.CodeChildItem;
 import net.sf.mmm.code.base.BaseContext;
+import net.sf.mmm.code.base.source.BaseSource;
 
 /**
  * Base implementation of {@link CodeChildItem}.
@@ -13,17 +14,17 @@ import net.sf.mmm.code.base.BaseContext;
  */
 public abstract class BaseChildItem extends BaseMutableItem implements CodeChildItem {
 
-  private final BaseContext context;
+  private final BaseSource source;
 
   /**
    * The constructor.
    *
-   * @param context the {@link #getContext() context}.
+   * @param source the {@link #getSource() source}.
    */
-  public BaseChildItem(BaseContext context) {
+  public BaseChildItem(BaseSource source) {
 
     super();
-    this.context = context;
+    this.source = source;
   }
 
   /**
@@ -34,13 +35,19 @@ public abstract class BaseChildItem extends BaseMutableItem implements CodeChild
   public BaseChildItem(BaseChildItem template) {
 
     super(template);
-    this.context = template.context;
+    this.source = template.source;
   }
 
   @Override
   public BaseContext getContext() {
 
-    return this.context;
+    return this.source.getContext();
+  }
+
+  @Override
+  public BaseSource getSource() {
+
+    return this.source;
   }
 
 }

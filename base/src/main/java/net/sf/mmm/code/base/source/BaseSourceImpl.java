@@ -9,11 +9,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
+import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.api.source.CodeSourceDescriptor;
 import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.BasePackage;
 import net.sf.mmm.code.base.BaseProviderImpl;
-import net.sf.mmm.code.base.loader.BaseLoader;
+import net.sf.mmm.code.base.loader.BaseSourceLoader;
+import net.sf.mmm.code.base.loader.BaseSourceLoaderImpl;
+import net.sf.mmm.code.base.type.BaseGenericType;
+import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.util.component.api.ResourceMissingException;
 
 /**
@@ -38,7 +42,7 @@ public class BaseSourceImpl extends BaseProviderImpl implements BaseSource {
 
   private File sourceCodeLocation;
 
-  private final BaseLoader loader;
+  private final BaseSourceLoader loader;
 
   private String id;
 
@@ -51,9 +55,9 @@ public class BaseSourceImpl extends BaseProviderImpl implements BaseSource {
    * @param descriptor the {@link #getDescriptor() descriptor}.
    * @param loader the {@link #getLoader() loader}.
    */
-  public BaseSourceImpl(File byteCodeLocation, File sourceCodeLocation, String id, CodeSourceDescriptor descriptor, BaseLoader loader) {
+  public BaseSourceImpl(File byteCodeLocation, File sourceCodeLocation, String id, CodeSourceDescriptor descriptor, BaseSourceLoader loader) {
 
-    this(null, byteCodeLocation, sourceCodeLocation, id, descriptor, null, null, loader);
+    this(null, byteCodeLocation, sourceCodeLocation, id, descriptor, null, loader);
   }
 
   /**
@@ -64,9 +68,9 @@ public class BaseSourceImpl extends BaseProviderImpl implements BaseSource {
    * @param descriptor the {@link #getDescriptor() descriptor}.
    * @param loader the {@link #getLoader() loader}.
    */
-  public BaseSourceImpl(CodeSource reflectiveObject, CodeSourceDescriptor descriptor, BaseLoader loader) {
+  public BaseSourceImpl(CodeSource reflectiveObject, CodeSourceDescriptor descriptor, BaseSourceLoader loader) {
 
-    this(reflectiveObject, null, null, null, descriptor, null, null, loader);
+    this(reflectiveObject, null, null, null, descriptor, null, loader);
     Objects.requireNonNull(reflectiveObject, "reflectiveObject");
   }
 
@@ -80,12 +84,10 @@ public class BaseSourceImpl extends BaseProviderImpl implements BaseSource {
    * @param id the {@link #getId() ID}.
    * @param descriptor the {@link #getDescriptor() descriptor}.
    * @param dependencies the {@link #getDependencies()} dependencies.
-   * @param superLayerPackage the {@link BasePackage#getSuperLayerPackage() super layer package} to inherit
-   *        from.
    * @param loader the {@link #getLoader() loader}.
    */
   public BaseSourceImpl(CodeSource reflectiveObject, File byteCodeLocation, File sourceCodeLocation, String id, CodeSourceDescriptor descriptor,
-      List<BaseSource> dependencies, BasePackage superLayerPackage, BaseLoader loader) {
+      List<BaseSource> dependencies, BaseSourceLoader loader) {
 
     super();
     if ((byteCodeLocation != null) && (id != null)) {
@@ -100,11 +102,15 @@ public class BaseSourceImpl extends BaseProviderImpl implements BaseSource {
       this.id = normalizeId(id);
     }
     this.reflectiveObject = reflectiveObject;
-    this.rootPackage = new BasePackage(this, superLayerPackage);
+    this.rootPackage = new BasePackage(this, null);
+    this.rootPackage.setImmutable();
     if (dependencies != null) {
       this.dependencies = new BaseSourceDependencies(this, dependencies);
     }
     this.descriptor = descriptor;
+    if (loader instanceof BaseSourceLoaderImpl) {
+      ((BaseSourceLoaderImpl) loader).setSource(this);
+    }
     this.loader = loader;
   }
 
@@ -138,46 +144,6 @@ public class BaseSourceImpl extends BaseProviderImpl implements BaseSource {
   }
 
   @Override
-  public BasePackage getRootPackage() {
-
-    return this.rootPackage;
-  }
-
-  @Override
-  public BaseLoader getLoader() {
-
-    return this.loader;
-  }
-
-  @Override
-  public BasePackage getToplevelPackage() {
-
-    return getContext().getToplevelPackage();
-  }
-
-  @Override
-  public CodeSource getReflectiveObject() {
-
-    return this.reflectiveObject;
-  }
-
-  @Override
-  public BaseSource getParent() {
-
-    Iterator<? extends BaseSource> iterator = getDependencies().iterator();
-    if (iterator.hasNext()) {
-      return iterator.next();
-    }
-    return null;
-  }
-
-  @Override
-  public BaseSourceImpl getSource() {
-
-    return this;
-  }
-
-  @Override
   public BaseContext getContext() {
 
     return this.context;
@@ -194,6 +160,34 @@ public class BaseSourceImpl extends BaseProviderImpl implements BaseSource {
     if (this.context != context) {
       throw new IllegalStateException("Already initialized!");
     }
+  }
+
+  @Override
+  public BasePackage getRootPackage() {
+
+    return this.rootPackage;
+  }
+
+  @Override
+  public BaseSourceLoader getLoader() {
+
+    return this.loader;
+  }
+
+  @Override
+  public CodeSource getReflectiveObject() {
+
+    return this.reflectiveObject;
+  }
+
+  @Override
+  public BaseSource getParent() {
+
+    Iterator<? extends BaseSource> iterator = getDependencies().iterator();
+    if (iterator.hasNext()) {
+      return iterator.next();
+    }
+    return null;
   }
 
   @Override
@@ -276,6 +270,32 @@ public class BaseSourceImpl extends BaseProviderImpl implements BaseSource {
       this.id = getNormalizedId(location);
     }
     return this.id;
+  }
+
+  @Override
+  public BaseType getType(String qualifiedName) {
+
+    return getType(getContext().getType(qualifiedName));
+  }
+
+  @Override
+  public BaseType getType(CodeName qualifiedName) {
+
+    return getType(getContext().getType(qualifiedName));
+  }
+
+  @Override
+  public BaseGenericType getType(Class<?> clazz) {
+
+    return getType(getContext().getType(clazz));
+  }
+
+  private <T extends BaseGenericType> T getType(T type) {
+
+    if ((type != null) && (type.getSource() == this)) {
+      return type;
+    }
+    return null;
   }
 
   @Override

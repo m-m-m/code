@@ -28,8 +28,8 @@ public class BaseInlineComment extends BaseSingleComment implements CodeInlineCo
   @Override
   protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
 
-    // sink.append(currentIndent);
-    sink.append(" /* ");
+    sink.append(currentIndent);
+    sink.append("/* ");
     sink.append(getComment());
     sink.append(" */");
   }

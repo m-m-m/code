@@ -14,8 +14,7 @@ import org.apache.maven.model.Model;
 
 import net.sf.mmm.code.api.source.CodeSourceDescriptor;
 import net.sf.mmm.code.base.BaseContext;
-import net.sf.mmm.code.base.BasePackage;
-import net.sf.mmm.code.base.loader.BaseLoader;
+import net.sf.mmm.code.base.loader.BaseSourceLoader;
 import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.source.BaseSourceDependencies;
 import net.sf.mmm.code.base.source.BaseSourceDescriptorType;
@@ -52,9 +51,10 @@ public class JavaSourceUsingMaven extends BaseSourceImpl implements MavenConstan
    * @param reflectiveObject the {@link #getReflectiveObject() reflective object}. May not be {@code null}.
    * @param modelSupplier the {@link Supplier} for the maven {@link Model}.
    */
-  public JavaSourceUsingMaven(JavaSourceProviderUsingMaven sourceProvider, CodeSource reflectiveObject, Supplier<Model> modelSupplier, BaseLoader loader) {
+  public JavaSourceUsingMaven(JavaSourceProviderUsingMaven sourceProvider, CodeSource reflectiveObject, Supplier<Model> modelSupplier,
+      BaseSourceLoader sourceLoader) {
 
-    this(sourceProvider, reflectiveObject, null, null, null, null, modelSupplier, null, null, null, loader);
+    this(sourceProvider, reflectiveObject, null, null, null, modelSupplier, null, null, null, sourceLoader);
   }
 
   /**
@@ -69,10 +69,9 @@ public class JavaSourceUsingMaven extends BaseSourceImpl implements MavenConstan
    * @param modelSupplier the {@link Supplier} for the maven {@link Model}.
    */
   public JavaSourceUsingMaven(JavaSourceProviderUsingMaven sourceProvider, BaseSource compileDependency, File byteCodeLocation, File sourceCodeLocation,
-      Supplier<Model> modelSupplier, BaseLoader loader) {
+      Supplier<Model> modelSupplier, BaseSourceLoader sourceLoader) {
 
-    this(sourceProvider, null, byteCodeLocation, sourceCodeLocation, null, compileDependency.getRootPackage(), modelSupplier, compileDependency, null,
-        SCOPE_TEST, loader);
+    this(sourceProvider, null, byteCodeLocation, sourceCodeLocation, null, modelSupplier, compileDependency, null, SCOPE_TEST, sourceLoader);
   }
 
   /**
@@ -82,15 +81,13 @@ public class JavaSourceUsingMaven extends BaseSourceImpl implements MavenConstan
    *        fabrication of {@link #getDependencies() dependencies}.
    * @param byteCodeLocation the {@link #getByteCodeLocation() byte code location}.
    * @param sourceCodeLocation the {@link #getSourceCodeLocation() source code location}.
-   * @param superLayerPackage the {@link BasePackage#getSuperLayerPackage() super layer package} to inherit
-   *        from.
    * @param modelSupplier the {@link Supplier} for the maven {@link Model}.
    * @param scope the {@link #getScope() scope}.
    */
-  public JavaSourceUsingMaven(JavaSourceProviderUsingMaven sourceProvider, File byteCodeLocation, File sourceCodeLocation, BasePackage superLayerPackage,
-      Supplier<Model> modelSupplier, String scope, BaseLoader loader) {
+  public JavaSourceUsingMaven(JavaSourceProviderUsingMaven sourceProvider, File byteCodeLocation, File sourceCodeLocation, Supplier<Model> modelSupplier,
+      String scope, BaseSourceLoader sourceLoader) {
 
-    this(sourceProvider, null, byteCodeLocation, sourceCodeLocation, null, superLayerPackage, modelSupplier, null, null, scope, loader);
+    this(sourceProvider, null, byteCodeLocation, sourceCodeLocation, null, modelSupplier, null, null, scope, sourceLoader);
   }
 
   /**
@@ -106,17 +103,15 @@ public class JavaSourceUsingMaven extends BaseSourceImpl implements MavenConstan
    * @param modelSupplier the {@link Supplier} for the maven {@link Model}.
    */
   public JavaSourceUsingMaven(JavaSourceProviderUsingMaven sourceProvider, String id, JavaSourceUsingMaven compileDependency,
-      JavaSourceUsingMaven testDependency, Supplier<Model> modelSupplier, BaseLoader loader) {
+      JavaSourceUsingMaven testDependency, Supplier<Model> modelSupplier, BaseSourceLoader sourceLoader) {
 
-    this(sourceProvider, null, null, null, id, testDependency.getRootPackage(), modelSupplier, null, Arrays.asList(compileDependency, testDependency), null,
-        loader);
+    this(sourceProvider, null, null, null, id, modelSupplier, null, Arrays.asList(compileDependency, testDependency), null, sourceLoader);
   }
 
   private JavaSourceUsingMaven(JavaSourceProviderUsingMaven sourceProvider, CodeSource reflectiveObject, File byteCodeLocation, File sourceCodeLocation,
-      String id, BasePackage superLayerPackage, Supplier<Model> modelSupplier, BaseSource compileDependency, List<BaseSource> dependencies, String scope,
-      BaseLoader loader) {
+      String id, Supplier<Model> modelSupplier, BaseSource compileDependency, List<BaseSource> dependencies, String scope, BaseSourceLoader sourceLoader) {
 
-    super(reflectiveObject, byteCodeLocation, sourceCodeLocation, id, null, dependencies, superLayerPackage, loader);
+    super(reflectiveObject, byteCodeLocation, sourceCodeLocation, id, null, dependencies, sourceLoader);
     this.sourceProvider = sourceProvider;
     this.modelSupplier = modelSupplier;
     this.compileDependency = compileDependency;
@@ -180,7 +175,7 @@ public class JavaSourceUsingMaven extends BaseSourceImpl implements MavenConstan
     }
     String filename = byteCodeLocation.getName();
     int lastDot = filename.lastIndexOf('.');
-    if (lastDot == filename.length() - 4) { // regular extension such as ".jar"
+    if (lastDot == filename.length() - 4) { // TODO regular extension such as ".jar"
       String basename = filename.substring(0, lastDot);
       String extension = filename.substring(lastDot);
       File sourceCodeLocation = new File(basename + "-" + CLASSIFIER_SOURCES + extension);
@@ -205,7 +200,7 @@ public class JavaSourceUsingMaven extends BaseSourceImpl implements MavenConstan
     for (Dependency dependency : dependencies) {
       boolean isTestDependency = SCOPE_TEST.equals(dependency.getScope());
       if (isTestDependency == isTestScope) {
-        BaseSource source = this.sourceProvider.create(dependency);
+        BaseSource source = this.sourceProvider.createSource(dependency);
         sourceDependencies.add(source);
       }
     }

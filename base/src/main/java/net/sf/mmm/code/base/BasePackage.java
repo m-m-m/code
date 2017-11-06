@@ -52,7 +52,7 @@ public final class BasePackage extends BasePathElement implements CodePackage, C
   private Supplier<BasePackage> sourceSupplier;
 
   /**
-   * The constructor for a {@link net.sf.mmm.code.api.CodeContext#getRootPackage() root-package}.
+   * The constructor for a {@link #isRoot() root} package.
    *
    * @param source the {@link #getSource() source}.
    * @param superLayerPackage the {@link #getSuperLayerPackage() super layer package} to inherit from. May be
@@ -65,7 +65,6 @@ public final class BasePackage extends BasePathElement implements CodePackage, C
     this.superLayerPackage = superLayerPackage;
     this.children = new BasePathElements(this);
     this.reflectiveObject = null;
-    setImmutable();
   }
 
   /**
@@ -98,6 +97,9 @@ public final class BasePackage extends BasePathElement implements CodePackage, C
     }
     this.reflectiveObject = pkg;
     this.sourceSupplier = sourceSupplier;
+    if (parentPackage.isImmutable()) {
+      setImmutable();
+    }
   }
 
   /**

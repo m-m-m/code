@@ -18,13 +18,6 @@ import net.sf.mmm.util.exception.api.ObjectNotFoundException;
 public abstract interface CodeProvider extends CodeNode, CodeLoader {
 
   /**
-   * @return the root {@link CodePackage package} of this source. Will typically be lazy initialized and
-   *         {@link CodePackage#getChildren() traversal} (especially {@link CodePathElements#getDeclared()})
-   *         can be expensive. Results will however be cached to speed up subsequent calls.
-   */
-  CodePackage getRootPackage();
-
-  /**
    * @param hierarchicalName the hierarchical name as plain {@link String} to parse. E.g. a
    *        {@link CodeMutableItemWithQualifiedName#getQualifiedName() qualified name} or a part of it.
    * @return the parsed {@link CodeName}.

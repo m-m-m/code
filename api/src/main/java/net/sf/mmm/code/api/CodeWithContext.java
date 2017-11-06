@@ -4,6 +4,7 @@ package net.sf.mmm.code.api;
 
 import net.sf.mmm.code.api.item.CodeChildItem;
 import net.sf.mmm.code.api.node.CodeNode;
+import net.sf.mmm.code.api.source.CodeSource;
 
 /**
  * Any code object that has an owning {@link #getContext() context}.
@@ -20,5 +21,10 @@ public abstract interface CodeWithContext {
    *         object itself ({@code this}).
    */
   CodeContext getContext();
+
+  /**
+   * @return the owning {@link CodeSource}. Shall never be {@code null}.
+   */
+  CodeSource getSource();
 
 }
