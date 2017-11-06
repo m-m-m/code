@@ -36,45 +36,16 @@ public interface CodePathElements<P extends CodePathElement> extends CodeNodeIte
   P get(String simpleName);
 
   /**
-   * @param simpleName the {@link CodePathElement#getSimpleName() simple name} of the requested
-   *        {@link CodePathElement}.
-   * @param withoutSuperLayer {@code false} to recursively traverse {@link CodePackage#getSuperLayerPackage()
-   *        super layer packages} during the search what is the default if this flag is omitted, {@code true}
-   *        to only consider the direct children of the package.
-   * @return the {@link CodePathElement} from {@link #getDeclared() all items} with the given {@code name} or
-   *         {@code null} if not found.
-   */
-  P get(String simpleName, boolean withoutSuperLayer);
-
-  /**
    * @param simpleName the {@link CodeFile#getSimpleName() simple name} of the requested {@link CodeFile}.
    * @return the {@link CodeFile} with the given {@code name} or {@code null} if not found.
    */
   CodeFile getFile(String simpleName);
 
   /**
-   * @param simpleName the {@link CodeFile#getSimpleName() simple name} of the requested {@link CodeFile}.
-   * @param withoutSuperLayer {@code false} to recursively traverse {@link CodePackage#getSuperLayerPackage()
-   *        super layer packages} during the search what is the default if this flag is omitted, {@code true}
-   *        to only consider the direct children of the package.
-   * @return the {@link CodeFile} with the given {@code name} or {@code null} if not found.
-   */
-  CodeFile getFile(String simpleName, boolean withoutSuperLayer);
-
-  /**
    * @param path the {@link CodeName} to traverse.
    * @return the traversed {@link CodeFile} or {@code null} if not found.
    */
   CodeFile getFile(CodeName path);
-
-  /**
-   * @param path the {@link CodeName} to traverse.
-   * @param withoutSuperLayer {@code false} to recursively traverse {@link CodePackage#getSuperLayerPackage()
-   *        super layer packages} during the search what is the default if this flag is omitted, {@code true}
-   *        to only consider the direct children of the package.
-   * @return the traversed {@link CodeFile} or {@code null} if not found.
-   */
-  CodeFile getFile(CodeName path, boolean withoutSuperLayer);
 
   /**
    * @param simpleName the {@link CodeFile#getSimpleName() simple name} of the new {@link CodeFile}.
@@ -106,29 +77,10 @@ public interface CodePathElements<P extends CodePathElement> extends CodeNodeIte
   CodePackage getPackage(String simpleName);
 
   /**
-   * @param simpleName the {@link CodePackage#getSimpleName() simple name} of the requested
-   *        {@link CodePackage}.
-   * @param withoutSuperLayer {@code false} to recursively traverse {@link CodePackage#getSuperLayerPackage()
-   *        super layer packages} during the search what is the default if this flag is omitted, {@code true}
-   *        to only consider the direct children of the package.
-   * @return the {@link CodePackage} with the given {@code name} or {@code null} if not found.
-   */
-  CodePackage getPackage(String simpleName, boolean withoutSuperLayer);
-
-  /**
    * @param path the {@link CodeName} to traverse.
    * @return the traversed {@link CodePackage} or {@code null} if not found.
    */
   CodePackage getPackage(CodeName path);
-
-  /**
-   * @param path the {@link CodeName} to traverse.
-   * @param withoutSuperLayer {@code false} to recursively traverse {@link CodePackage#getSuperLayerPackage()
-   *        super layer packages} during the search what is the default if this flag is omitted, {@code true}
-   *        to only consider the direct children of the package.
-   * @return the traversed {@link CodePackage} or {@code null} if not found.
-   */
-  CodePackage getPackage(CodeName path, boolean withoutSuperLayer);
 
   /**
    * @param simpleName the {@link CodePackage#getSimpleName() simple name} of the new {@link CodePackage}.
@@ -156,15 +108,6 @@ public interface CodePathElements<P extends CodePathElement> extends CodeNodeIte
    * @return the {@link CodeType} with the given {@code name} or {@code null} if not found.
    */
   CodeType getType(String simpleName);
-
-  /**
-   * @param simpleName the {@link CodeType#getSimpleName() simple name} of the requested {@link CodeType}.
-   * @param withoutSuperLayer {@code false} to recursively traverse {@link CodePackage#getSuperLayerPackage()
-   *        super layer packages} during the search what is the default if this flag is omitted, {@code true}
-   *        to only consider the direct children of the package.
-   * @return the {@link CodeType} with the given {@code name} or {@code null} if not found.
-   */
-  CodeType getType(String simpleName, boolean withoutSuperLayer);
 
   /**
    * @param simpleName the {@link CodeFile#getSimpleName() simple name} of the new {@link CodeType}.

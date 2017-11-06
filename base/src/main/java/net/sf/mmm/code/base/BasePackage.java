@@ -41,8 +41,6 @@ public final class BasePackage extends BasePathElement implements CodePackage, C
 
   private final BaseSource source;
 
-  private final BasePackage superLayerPackage;
-
   private final BasePathElements children;
 
   private final Package reflectiveObject;
@@ -55,14 +53,11 @@ public final class BasePackage extends BasePathElement implements CodePackage, C
    * The constructor for a {@link #isRoot() root} package.
    *
    * @param source the {@link #getSource() source}.
-   * @param superLayerPackage the {@link #getSuperLayerPackage() super layer package} to inherit from. May be
-   *        {@code null}.
    */
-  public BasePackage(BaseSource source, BasePackage superLayerPackage) {
+  public BasePackage(BaseSource source) {
 
     super(null, "");
     this.source = source;
-    this.superLayerPackage = superLayerPackage;
     this.children = new BasePathElements(this);
     this.reflectiveObject = null;
   }
@@ -73,26 +68,17 @@ public final class BasePackage extends BasePathElement implements CodePackage, C
    * @param parentPackage the {@link #getParentPackage() parent package}.
    * @param simpleName the {@link #getSimpleName() simple name}.
    * @param reflectiveObject the {@link #getReflectiveObject() reflective object}.
-   * @param superLayerPackage the {@link #getSuperLayerPackage() super layer package} to inherit from. May be
-   *        {@code null}.
    * @param sourceSupplier the optional {@link Supplier} for lazy-loading of source-code.
    */
-  public BasePackage(BasePackage parentPackage, String simpleName, Package reflectiveObject, BasePackage superLayerPackage,
-      Supplier<BasePackage> sourceSupplier) {
+  public BasePackage(BasePackage parentPackage, String simpleName, Package reflectiveObject, Supplier<BasePackage> sourceSupplier) {
 
     super(parentPackage, simpleName);
     this.source = parentPackage.getSource();
-    this.superLayerPackage = superLayerPackage;
     this.children = new BasePathElements(this);
     Package pkg = reflectiveObject;
     if (pkg == null) {
-      if (superLayerPackage != null) {
-        pkg = superLayerPackage.reflectiveObject;
-      }
-      if (pkg == null) {
-        if (CodeSyntaxJava.LANGUAGE_NAME_JAVA.equals(getContext().getSyntax().getLanguageName())) {
-          pkg = Package.getPackage(getQualifiedName());
-        }
+      if (CodeSyntaxJava.LANGUAGE_NAME_JAVA.equals(getContext().getSyntax().getLanguageName())) {
+        pkg = Package.getPackage(getQualifiedName());
       }
     }
     this.reflectiveObject = pkg;
@@ -111,7 +97,6 @@ public final class BasePackage extends BasePathElement implements CodePackage, C
   public BasePackage(BasePackage template, BasePackage parentPackage) {
 
     super(template, parentPackage);
-    this.superLayerPackage = template;
     this.source = parentPackage.source;
     this.reflectiveObject = template.reflectiveObject;
     this.children = new BasePathElements(this);
@@ -126,7 +111,6 @@ public final class BasePackage extends BasePathElement implements CodePackage, C
   public BasePackage(BasePackage template, BaseSource source) {
 
     super(template, parentCopy(template, source));
-    this.superLayerPackage = template;
     this.source = source;
     this.reflectiveObject = template.reflectiveObject;
     this.children = new BasePathElements(this);
@@ -138,32 +122,6 @@ public final class BasePackage extends BasePathElement implements CodePackage, C
       return null;
     }
     return new BasePackage(template.getParentPackage(), source);
-  }
-
-  @Override
-  public BasePackage getSuperLayerPackage() {
-
-    return this.superLayerPackage;
-  }
-
-  @Override
-  public String getSimpleName() {
-
-    String simpleName = super.getSimpleName();
-    if ((simpleName == null) && (this.superLayerPackage != null)) {
-      simpleName = this.superLayerPackage.getSimpleName();
-    }
-    return simpleName;
-  }
-
-  @Override
-  public BasePackage getParentPackage() {
-
-    BasePackage parentPackage = super.getParentPackage();
-    if ((parentPackage == null) && (this.superLayerPackage != null)) {
-      return this.superLayerPackage.getParentPackage();
-    }
-    return parentPackage;
   }
 
   @Override

@@ -138,7 +138,7 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
 
     String simpleName = clazz.getSimpleName();
     Class<?> declaringClass = clazz.getDeclaringClass();
-    BaseType type = pkg.getChildren().getType(simpleName, true, false);
+    BaseType type = pkg.getChildren().getType(simpleName, false);
     if (type != null) {
       return type;
     }
@@ -160,7 +160,7 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
 
     BasePackage pkg = getSource().getRootPackage();
     if (qualifiedName != null) {
-      pkg = pkg.getChildren().getOrCreatePackage(qualifiedName, false, this::getSourcePackageSupplier);
+      pkg = pkg.getChildren().getOrCreatePackage(qualifiedName, this::getSourcePackageSupplier);
     }
     return pkg;
   }
@@ -175,7 +175,7 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
     if (this.sourceCodeProvider == null) {
       return null;
     }
-    BasePackage pkg = new BasePackage(parentPackage, simpleName, null, null, null);
+    BasePackage pkg = new BasePackage(parentPackage, simpleName, null, null);
     try (Reader reader = this.sourceCodeProvider.openPackage(pkg.getQualifiedName())) {
       if (reader != null) {
         getParser().parsePackage(reader, pkg);

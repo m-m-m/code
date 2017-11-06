@@ -102,7 +102,7 @@ public class BaseSourceImpl extends BaseProviderImpl implements BaseSource {
       this.id = normalizeId(id);
     }
     this.reflectiveObject = reflectiveObject;
-    this.rootPackage = new BasePackage(this, null);
+    this.rootPackage = new BasePackage(this);
     this.rootPackage.setImmutable();
     if (dependencies != null) {
       this.dependencies = new BaseSourceDependencies(this, dependencies);

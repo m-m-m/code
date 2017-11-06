@@ -19,6 +19,7 @@ import net.sf.mmm.code.base.BaseFile;
 import net.sf.mmm.code.base.BasePackage;
 import net.sf.mmm.code.base.member.BaseMethod;
 import net.sf.mmm.code.base.parser.SourceCodeParser;
+import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.impl.java.JavaContext;
 import net.sf.mmm.code.impl.java.JavaRootContext;
@@ -43,9 +44,9 @@ public class JavaSourceCodeParserImplTest extends Assertions {
     return JavaRootContext.get();
   }
 
-  BasePackage createPackage(JavaContext context, CodeName qName) {
+  BasePackage createPackage(BaseSource source, CodeName qName) {
 
-    BasePackage parentPkg = context.getSource().getRootPackage();
+    BasePackage parentPkg = source.getRootPackage();
     if (qName == null) {
       return parentPkg;
     }
@@ -56,16 +57,16 @@ public class JavaSourceCodeParserImplTest extends Assertions {
         return parentPkg;
       }
     } else {
-      parentPkg = createPackage(context, parentName);
+      parentPkg = createPackage(source, parentName);
     }
-    return new BasePackage(parentPkg, simpleName, null, null, null);
+    return new BasePackage(parentPkg, simpleName, null, null);
   }
 
   BaseFile createFile(String qualifiedName) {
 
     JavaContext context = getContext();
     CodeName qName = context.parseName(qualifiedName);
-    BasePackage pkg = createPackage(context, qName.getParent());
+    BasePackage pkg = createPackage(context.getSource(), qName.getParent());
     return new BaseFile(pkg, qName.getSimpleName());
   }
 
@@ -123,7 +124,7 @@ public class JavaSourceCodeParserImplTest extends Assertions {
         CodeBlockBody body = method.getBody();
         assertThat(body).isNotNull();
         assertThat(body.getStatements().stream().map(x -> x.toString())).containsExactly("JavaContext context = getContext();",
-            "CodeName qName = context.parseName(qualifiedName);", "BasePackage pkg = createPackage(context, qName.getParent());",
+            "CodeName qName = context.parseName(qualifiedName);", "BasePackage pkg = createPackage(context.getSource(), qName.getParent());",
             "return new BaseFile(pkg, qName.getSimpleName());");
       } else if (method.getName().equals("testMyself")) {
         assertThat(method.getModifiers().getVisibility()).isEqualTo(CodeVisibility.PUBLIC);

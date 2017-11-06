@@ -78,53 +78,31 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
   @Override
   public BasePathElement get(String simpleName) {
 
-    return get(simpleName, false);
+    return get(simpleName, true);
   }
 
-  @Override
-  public BasePathElement get(String simpleName, boolean withoutSuperLayer) {
-
-    return get(simpleName, withoutSuperLayer, true);
-  }
-
-  BasePathElement get(String simpleName, boolean withoutSuperLayer, boolean init) {
+  BasePathElement get(String simpleName, boolean init) {
 
     if (init) {
       initialize();
     }
-    BasePathElement child = getByName(simpleName);
-    if ((child == null) && !withoutSuperLayer) {
-      BasePackage superLayerPackage = this.parent.getSuperLayerPackage();
-      if (superLayerPackage != null) {
-        child = superLayerPackage.getChildren().get(simpleName, withoutSuperLayer);
-      }
-    }
-    return child;
+    return getByName(simpleName);
   }
 
   @Override
   public BaseFile getFile(String simpleName) {
 
-    return getFile(simpleName, false);
-  }
-
-  @Override
-  public BaseFile getFile(String simpleName, boolean withoutSuperLayer) {
-
-    return getFile(simpleName, withoutSuperLayer, true);
+    return getFile(simpleName, true);
   }
 
   /**
    * @param simpleName the {@link CodeFile#getSimpleName() simple name} of the requested {@link CodeFile}.
-   * @param withoutSuperLayer {@code false} to recursively traverse {@link CodePackage#getSuperLayerPackage()
-   *        super layer packages} during the search what is the default if this flag is omitted, {@code true}
-   *        to only consider the direct children of the package.
    * @param init - {@code true} to initialize, {@code false} otherwise.
    * @return the {@link CodeFile} with the given {@code name} or {@code null} if not found.
    */
-  public BaseFile getFile(String simpleName, boolean withoutSuperLayer, boolean init) {
+  public BaseFile getFile(String simpleName, boolean init) {
 
-    BasePathElement child = get(simpleName, withoutSuperLayer, init);
+    BasePathElement child = get(simpleName, init);
     if ((child != null) && child.isFile()) {
       return (BaseFile) child;
     }
@@ -137,6 +115,16 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
     return getFile(path, false);
   }
 
+  BaseFile getFile(CodeName path, boolean init) {
+
+    CodeName parentPath = path.getParent();
+    if (parentPath == null) {
+      return getFile(path.getSimpleName(), init);
+    }
+    BasePackage pkg = getPackage(parentPath, init);
+    return pkg.getChildren().getFile(path.getSimpleName(), init);
+  }
+
   /**
    * @return the internal {@link List} without initialization.
    * @see #getDeclared()
@@ -144,22 +132,6 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
   public List<BasePathElement> getInternalList() {
 
     return getList();
-  }
-
-  @Override
-  public BaseFile getFile(CodeName path, boolean withoutSuperLayer) {
-
-    return getFile(path, withoutSuperLayer, true);
-  }
-
-  BaseFile getFile(CodeName path, boolean withoutSuperLayer, boolean init) {
-
-    CodeName parentPath = path.getParent();
-    if (parentPath == null) {
-      return getFile(path.getSimpleName(), withoutSuperLayer, init);
-    }
-    BasePackage pkg = getPackage(parentPath, withoutSuperLayer);
-    return pkg.getChildren().getFile(path.getSimpleName(), withoutSuperLayer, init);
   }
 
   @Override
@@ -202,27 +174,18 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
   @Override
   public BasePackage getPackage(String simpleName) {
 
-    return getPackage(simpleName, false);
-  }
-
-  @Override
-  public BasePackage getPackage(String simpleName, boolean withoutSuperLayer) {
-
-    return getPackage(simpleName, withoutSuperLayer, true);
+    return getPackage(simpleName, true);
   }
 
   /**
    * @param simpleName the {@link CodePackage#getSimpleName() simple name} of the requested
    *        {@link CodePackage}.
-   * @param withoutSuperLayer {@code false} to recursively traverse {@link CodePackage#getSuperLayerPackage()
-   *        super layer packages} during the search what is the default if this flag is omitted, {@code true}
-   *        to only consider the direct children of the package.
    * @param init - {@code true} to initialize, {@code false} otherwise.
    * @return the {@link CodePackage} with the given {@code name} or {@code null} if not found.
    */
-  public BasePackage getPackage(String simpleName, boolean withoutSuperLayer, boolean init) {
+  public BasePackage getPackage(String simpleName, boolean init) {
 
-    BasePathElement child = get(simpleName, withoutSuperLayer, init);
+    BasePathElement child = get(simpleName, init);
     if ((child != null) && !child.isFile()) {
       return (BasePackage) child;
     }
@@ -232,24 +195,15 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
   @Override
   public BasePackage getPackage(CodeName path) {
 
-    return getPackage(path, false);
-  }
-
-  @Override
-  public BasePackage getPackage(CodeName path, boolean withoutSuperLayer) {
-
-    return getPackage(path, withoutSuperLayer, true);
+    return getPackage(path, true);
   }
 
   /**
    * @param path the {@link CodeName} to traverse.
-   * @param withoutSuperLayer {@code false} to recursively traverse {@link CodePackage#getSuperLayerPackage()
-   *        super layer packages} during the search what is the default if this flag is omitted, {@code true}
-   *        to only consider the direct children of the package.
    * @param init - {@code true} to initialize, {@code false} otherwise.
    * @return the traversed {@link CodePackage} or {@code null} if not found.
    */
-  public BasePackage getPackage(CodeName path, boolean withoutSuperLayer, boolean init) {
+  public BasePackage getPackage(CodeName path, boolean init) {
 
     CodeName parentPath = path.getParent();
     String simpleName = path.getSimpleName();
@@ -257,40 +211,33 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
       if (simpleName.isEmpty()) {
         return this.parent;
       }
-      return getPackage(simpleName, withoutSuperLayer, init);
+      return getPackage(simpleName, init);
     }
-    BasePackage parentPkg = getPackage(parentPath, withoutSuperLayer, init);
+    BasePackage parentPkg = getPackage(parentPath, init);
     if (parentPkg != null) {
-      return parentPkg.getChildren().getPackage(simpleName, withoutSuperLayer, init);
+      return parentPkg.getChildren().getPackage(simpleName, init);
     }
     return null;
   }
 
   /**
    * @param path the {@link CodeName} to traverse.
-   * @param withoutSuperLayer {@code false} to recursively traverse {@link CodePackage#getSuperLayerPackage()
-   *        super layer packages} during the search what is the default if this flag is omitted, {@code true}
-   *        to only consider the direct children of the package.
    * @return the traversed {@link CodePackage}. Has been created if it did not already exist.
    */
-  public BasePackage getOrCreatePackage(CodeName path, boolean withoutSuperLayer) {
+  public BasePackage getOrCreatePackage(CodeName path) {
 
-    return getOrCreatePackage(path, withoutSuperLayer, null);
+    return getOrCreatePackage(path, null);
   }
 
   /**
    * <b>Attention:</b> This is an internal API that should not be used from outside. Use
-   * {@link #getOrCreatePackage(CodeName, boolean)} instead.
+   * {@link #getOrCreatePackage(CodeName)} instead.
    *
    * @param path the {@link CodeName} to traverse.
-   * @param withoutSuperLayer {@code false} to recursively traverse {@link CodePackage#getSuperLayerPackage()
-   *        super layer packages} during the search what is the default if this flag is omitted, {@code true}
-   *        to only consider the direct children of the package.
    * @param sourceSupplierFunction the {@link BiFunction} for lazy loading of source-code.
    * @return the traversed {@link CodePackage}. Has been created if it did not already exist.
    */
-  public BasePackage getOrCreatePackage(CodeName path, boolean withoutSuperLayer,
-      BiFunction<BasePackage, String, Supplier<BasePackage>> sourceSupplierFunction) {
+  public BasePackage getOrCreatePackage(CodeName path, BiFunction<BasePackage, String, Supplier<BasePackage>> sourceSupplierFunction) {
 
     CodeName parentPath = path.getParent();
     String simpleName = path.getSimpleName();
@@ -301,9 +248,9 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
       }
       parentPathElements = this;
     } else {
-      parentPathElements = getOrCreatePackage(parentPath, withoutSuperLayer, sourceSupplierFunction).getChildren();
+      parentPathElements = getOrCreatePackage(parentPath, sourceSupplierFunction).getChildren();
     }
-    BasePackage pkg = parentPathElements.getPackage(simpleName, withoutSuperLayer, false);
+    BasePackage pkg = parentPathElements.getPackage(simpleName, false);
     if (pkg == null) {
       boolean addRegular = true;
       Supplier<BasePackage> sourceSupplier = null;
@@ -333,16 +280,7 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
 
   private BasePackage createPackage(String simpleName, boolean add, Supplier<BasePackage> sourceSupplier) {
 
-    BasePackage superLayerPackage = this.parent.getSuperLayerPackage();
-    if (superLayerPackage != null) {
-      BasePathElement child = superLayerPackage.getChildren().getByName(simpleName);
-      if ((child != null) && !child.isFile()) {
-        superLayerPackage = (BasePackage) child;
-      } else {
-        superLayerPackage = null;
-      }
-    }
-    BasePackage pkg = new BasePackage(this.parent, simpleName, null, superLayerPackage, sourceSupplier);
+    BasePackage pkg = new BasePackage(this.parent, simpleName, null, sourceSupplier);
     if (add && isMutable()) {
       add(pkg);
     }
@@ -368,26 +306,17 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
   @Override
   public BaseType getType(String simpleName) {
 
-    return getType(simpleName, false);
-  }
-
-  @Override
-  public BaseType getType(String simpleName, boolean withoutSuperLayer) {
-
-    return getType(simpleName, withoutSuperLayer, true);
+    return getType(simpleName, true);
   }
 
   /**
    * @param simpleName the {@link CodeType#getSimpleName() simple name} of the requested {@link CodeType}.
-   * @param withoutSuperLayer {@code false} to recursively traverse {@link CodePackage#getSuperLayerPackage()
-   *        super layer packages} during the search what is the default if this flag is omitted, {@code true}
-   *        to only consider the direct children of the package.
    * @param init - {@code true} to initialize, {@code false} otherwise.
    * @return the {@link CodeType} with the given {@code name} or {@code null} if not found.
    */
-  public BaseType getType(String simpleName, boolean withoutSuperLayer, boolean init) {
+  public BaseType getType(String simpleName, boolean init) {
 
-    BaseFile file = getFile(simpleName, withoutSuperLayer, init);
+    BaseFile file = getFile(simpleName, init);
     if (file != null) {
       return file.getType();
     }
@@ -400,12 +329,6 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
         if (type != null) {
           return type;
         }
-      }
-    }
-    if (!withoutSuperLayer) {
-      BasePackage superLayerPackage = this.parent.getSuperLayerPackage();
-      if (superLayerPackage != null) {
-        return superLayerPackage.getChildren().getType(simpleName, withoutSuperLayer);
       }
     }
     return null;

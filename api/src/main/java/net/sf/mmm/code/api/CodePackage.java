@@ -4,7 +4,6 @@ package net.sf.mmm.code.api;
 
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.node.CodeContainer;
-import net.sf.mmm.code.api.source.CodeSource;
 import net.sf.mmm.code.api.type.CodeType;
 
 /**
@@ -22,19 +21,6 @@ public interface CodePackage extends CodePathElement, CodeContainer {
    */
   @Override
   CodeContainer getParent();
-
-  /**
-   * <b>Attention:</b><br>
-   * Do not get confused by this method. For simple usage you most probably want to use
-   * {@link #getParentPackage()} and can ignore this method. However, it is exposed for experts that want to
-   * do very advanced things. In order to support the layering of {@link CodeSource}s we have multiple
-   * representations of the same logical package for split packages. These are chained together via this super
-   * layer package property.
-   *
-   * @return the optional {@link CodePackage} this package inherits from. May be {@code null}.
-   * @see CodePathElements#get(String, boolean)
-   */
-  CodePackage getSuperLayerPackage();
 
   /**
    * @return the {@link CodePathElements} containing the child {@link CodePackage}s and {@link CodeFile}s of
