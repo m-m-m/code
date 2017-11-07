@@ -70,7 +70,7 @@ public abstract class BaseMembers<M extends CodeMember> extends BaseNodeItemCont
   @Override
   public BaseType getDeclaringType() {
 
-    return getParent().getDeclaringType();
+    return getParent();
   }
 
   @Override

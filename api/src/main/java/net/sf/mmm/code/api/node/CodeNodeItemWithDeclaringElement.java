@@ -3,6 +3,7 @@
 package net.sf.mmm.code.api.node;
 
 import net.sf.mmm.code.api.element.CodeElement;
+import net.sf.mmm.code.api.element.CodeElementWithDeclaringType;
 import net.sf.mmm.code.api.item.CodeItemWithDeclaringType;
 import net.sf.mmm.code.api.type.CodeType;
 
@@ -17,12 +18,12 @@ public abstract interface CodeNodeItemWithDeclaringElement extends CodeItemWithD
   /**
    * @return the {@link CodeElement} declaring this item.
    */
-  CodeElement getDeclaringElement();
+  CodeElementWithDeclaringType getDeclaringElement();
 
   @Override
   default CodeType getDeclaringType() {
 
-    CodeElement element = getDeclaringElement();
+    CodeElementWithDeclaringType element = getDeclaringElement();
     if (element instanceof CodeType) {
       return (CodeType) element;
     }

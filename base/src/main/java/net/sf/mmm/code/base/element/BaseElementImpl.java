@@ -14,7 +14,6 @@ import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.annoation.BaseAnnotations;
 import net.sf.mmm.code.base.doc.BaseDoc;
 import net.sf.mmm.code.base.node.BaseNodeItemImpl;
-import net.sf.mmm.code.base.type.BaseType;
 
 /**
  * Base implementation of {@link BaseElement}.
@@ -117,9 +116,6 @@ public abstract class BaseElementImpl extends BaseNodeItemImpl implements BaseEl
     this.annotations.setImmutableIfNotSystemImmutable();
     this.doc.setImmutableIfNotSystemImmutable();
   }
-
-  @Override
-  public abstract BaseType getDeclaringType();
 
   @Override
   public BaseElementImpl getSourceCodeObject() {

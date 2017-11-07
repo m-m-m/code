@@ -3,9 +3,7 @@
 package net.sf.mmm.code.base;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.function.BiFunction;
-import java.util.function.Supplier;
 
 import net.sf.mmm.code.api.CodeFile;
 import net.sf.mmm.code.api.CodeName;
@@ -70,12 +68,6 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
   }
 
   @Override
-  public BaseType getDeclaringType() {
-
-    return null;
-  }
-
-  @Override
   public BasePathElement get(String simpleName) {
 
     return get(simpleName, true);
@@ -97,7 +89,7 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
 
   /**
    * @param simpleName the {@link CodeFile#getSimpleName() simple name} of the requested {@link CodeFile}.
-   * @param init - {@code true} to initialize, {@code false} otherwise.
+   * @param init - {@code true} to {@link #initialize() initialize}, {@code false} otherwise.
    * @return the {@link CodeFile} with the given {@code name} or {@code null} if not found.
    */
   public BaseFile getFile(String simpleName, boolean init) {
@@ -125,50 +117,16 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
     return pkg.getChildren().getFile(path.getSimpleName(), init);
   }
 
-  /**
-   * @return the internal {@link List} without initialization.
-   * @see #getDeclared()
-   */
-  public List<BasePathElement> getInternalList() {
-
-    return getList();
-  }
-
   @Override
-  public BaseFile addFile(String simpleName) {
+  protected void add(BasePathElement item) {
 
-    return createFile(simpleName, true);
-  }
-
-  @Override
-  public BaseFile createFile(String simpleName) {
-
-    return createFile(simpleName, false);
-  }
-
-  private BaseFile createFile(String simpleName, boolean add) {
-
-    BaseFile file = new BaseFile(this.parent, simpleName);
-    if (add || isMutable()) {
-      add(file);
-    }
-    return file;
+    super.add(item);
   }
 
   @Override
   protected void addInternal(BasePathElement item) {
 
     super.addInternal(item);
-  }
-
-  @Override
-  public BaseFile getOrCreateFile(String simpleName) {
-
-    BaseFile file = getFile(simpleName);
-    if (file == null) {
-      file = createFile(simpleName);
-    }
-    return file;
   }
 
   @Override
@@ -180,7 +138,7 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
   /**
    * @param simpleName the {@link CodePackage#getSimpleName() simple name} of the requested
    *        {@link CodePackage}.
-   * @param init - {@code true} to initialize, {@code false} otherwise.
+   * @param init - {@code true} to {@link #initialize() initialize}, {@code false} otherwise.
    * @return the {@link BasePackage} with the given {@code name} or {@code null} if not found.
    */
   public BasePackage getPackage(String simpleName, boolean init) {
@@ -199,8 +157,9 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
   }
 
   /**
-   * @param path the {@link CodeName} to traverse.
-   * @param init - {@code true} to initialize, {@code false} otherwise.
+   * @param path the {@link CodeName} leading to the requested child. See
+   *        {@link #getPackage(CodeName, boolean)}.
+   * @param init - {@code true} to {@link #initialize() initialize}, {@code false} otherwise.
    * @return the traversed {@link BasePackage} or {@code null} if not found.
    */
   public BasePackage getPackage(CodeName path, boolean init) {
@@ -208,27 +167,10 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
     return getPackage(path, init, null, false, false);
   }
 
-  @Override
-  public CodePackage getOrCreatePackage(CodeName path, boolean add) {
-
-    return getOrCreatePackage(path, add, true);
-  }
-
   /**
-   * @param path the {@link CodeName} to traverse.
-   * @param add - {@code true} to {@link #add(BasePathElement) add} newly created packages, {@code false}
-   *        otherwise.
-   * @param init - {@code true} to initialize, {@code false} otherwise.
-   * @return the traversed {@link BasePackage}. Has been created if it did not already exist.
-   */
-  public BasePackage getOrCreatePackage(CodeName path, boolean add, boolean init) {
-
-    return getPackage(path, init, (parentPkg, simpleName) -> new BasePackage(parentPkg, simpleName, null, null), add);
-  }
-
-  /**
-   * @param path the {@link CodeName} to traverse.
-   * @param init - {@code true} to initialize, {@code false} otherwise.
+   * @param path the {@link CodeName} leading to the requested child. See
+   *        {@link #getPackage(CodeName, boolean)}.
+   * @param init - {@code true} to {@link #initialize() initialize}, {@code false} otherwise.
    * @param factory the {@link BiFunction} used as factory to create missing packages.
    * @param add - {@code true} to {@link #add(BasePathElement) add} new packages created by the given
    *        {@code factory}, {@code false} otherwise.
@@ -245,7 +187,7 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
    * {@link #getPackage(CodeName, boolean, BiFunction, boolean)} instead.
    *
    * @param path the {@link CodeName} to traverse.
-   * @param init - {@code true} to initialize, {@code false} otherwise.
+   * @param init - {@code true} to {@link #initialize() initialize}, {@code false} otherwise.
    * @param factory the {@link BiFunction} used as factory to create missing packages.
    * @param add - {@code true} to {@link #add(BasePathElement) add} new packages created by the given
    *        {@code factory}, {@code false} otherwise.
@@ -288,49 +230,108 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
   }
 
   @Override
-  public BasePackage addPackage(String simpleName) {
-
-    return createPackage(simpleName, true, null);
-  }
-
-  @Override
-  public BasePackage createPackage(String simpleName) {
-
-    return createPackage(simpleName, false, null);
-  }
-
-  private BasePackage createPackage(String simpleName, boolean add, Supplier<BasePackage> sourceSupplier) {
-
-    BasePackage pkg = new BasePackage(this.parent, simpleName, null, sourceSupplier);
-    if (add && isMutable()) {
-      add(pkg);
-    }
-    return pkg;
-  }
-
-  @Override
-  protected void add(BasePathElement item) {
-
-    super.add(item);
-  }
-
-  @Override
-  public CodePackage getOrCreatePackage(String path, boolean add) {
+  public CodePackage getOrCreatePackage(CodeName path, boolean add) {
 
     return getOrCreatePackage(path, add, true);
   }
 
   /**
-   * @param path the {@link CodePackage#getSimpleName() simple name} or relative
-   *        {@link CodePackage#getQualifiedName() package name} of the requested {@link CodePackage}.
-   * @param add - {@code true} to add newly created packages, {@code false} otherwise.
-   * @param init - {@code true} to initialize, {@code false} otherwise.
-   * @return the {@link #getPackage(String) existing} or {@link #createPackage(String) newly created}
-   *         {@link CodePackage}.
+   * @param path the {@link CodeName} leading to the requested child. See
+   *        {@link #getOrCreatePackage(CodeName, boolean)}.
+   * @param add - {@code true} to {@link #add(BasePathElement) add} newly created packages, {@code false}
+   *        otherwise.
+   * @param init - {@code true} to {@link #initialize() initialize}, {@code false} otherwise.
+   * @return the traversed {@link BasePackage}. Has been created if it did not already exist.
    */
-  public CodePackage getOrCreatePackage(String path, boolean add, boolean init) {
+  public BasePackage getOrCreatePackage(CodeName path, boolean add, boolean init) {
 
-    return getOrCreatePackage(getSource().parseName(path), add, true);
+    return getOrCreatePackage(path, add, init, false);
+  }
+
+  /**
+   * @param path the {@link CodeName} leading to the requested child. See
+   *        {@link #getOrCreatePackage(CodeName, boolean)}.
+   * @param add - {@code true} to {@link #add(BasePathElement) add} newly created packages, {@code false}
+   *        otherwise.
+   * @param init - {@code true} to {@link #initialize() initialize}, {@code false} otherwise.
+   * @param forceAdd - {@code true} to force adding (if {@code add} is {@code true} but {@link #isImmutable()
+   *        is immutable}), {@code false} otherwise.
+   * @return the traversed {@link BasePackage}. Has been created if it did not already exist.
+   */
+  protected BasePackage getOrCreatePackage(CodeName path, boolean add, boolean init, boolean forceAdd) {
+
+    return getPackage(path, init, (parentPkg, simpleName) -> new BasePackage(parentPkg, simpleName), add, forceAdd);
+  }
+
+  @Override
+  public BasePackage createPackage(String simpleName) {
+
+    return new BasePackage(this.parent, simpleName);
+  }
+
+  @Override
+  public BaseFile getOrCreateFile(CodeName path, boolean add) {
+
+    return getOrCreateFile(path, add, true);
+  }
+
+  /**
+   * @param path the {@link CodeName} leading to the requested child. See
+   *        {@link #getOrCreateFile(CodeName, boolean)}.
+   * @param add - {@code true} to add a newly created {@link CodeFile}, {@code false} otherwise.
+   * @param init - {@code true} to {@link #initialize() initialize}, {@code false} otherwise.
+   * @return the {@link #getFile(String) existing} or {@link #createFile(String) newly created}
+   *         {@link CodeFile}.
+   */
+  public BaseFile getOrCreateFile(CodeName path, boolean add, boolean init) {
+
+    return getOrCreateFile(path, add, init, false);
+  }
+
+  /**
+   * @param path the {@link CodeName} leading to the requested child. See
+   *        {@link #getOrCreateFile(CodeName, boolean)}.
+   * @param add - {@code true} to add a newly created {@link CodeFile}, {@code false} otherwise.
+   * @param init - {@code true} to {@link #initialize() initialize}, {@code false} otherwise.
+   * @param forceAdd - {@code true} to force adding (if {@code add} is {@code true} but {@link #isImmutable()
+   *        is immutable}), {@code false} otherwise.
+   * @return the {@link #getFile(String) existing} or {@link #createFile(String) newly created}
+   *         {@link CodeFile}.
+   */
+  protected BaseFile getOrCreateFile(CodeName path, boolean add, boolean init, boolean forceAdd) {
+
+    CodeName parentPath = path.getParent();
+    BasePackage pkg;
+    if (parentPath == null) {
+      pkg = this.parent;
+    } else {
+      pkg = getOrCreatePackage(parentPath, add, init, forceAdd);
+    }
+    String simpleName = path.getSimpleName();
+    BaseFile file = pkg.getChildren().getFile(simpleName);
+    if (file == null) {
+      file = createFile(simpleName, add, forceAdd);
+    }
+    return file;
+  }
+
+  @Override
+  public BaseFile createFile(String simpleName) {
+
+    return createFile(simpleName, false, false);
+  }
+
+  private BaseFile createFile(String simpleName, boolean add, boolean forceAdd) {
+
+    BaseFile file = new BaseFile(this.parent, simpleName);
+    if (add) {
+      if (forceAdd) {
+        addInternal(file);
+      } else {
+        add(file);
+      }
+    }
+    return file;
   }
 
   @Override
@@ -341,7 +342,7 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
 
   /**
    * @param simpleName the {@link CodeType#getSimpleName() simple name} of the requested {@link CodeType}.
-   * @param init - {@code true} to initialize, {@code false} otherwise.
+   * @param init - {@code true} to {@link #initialize() initialize}, {@code false} otherwise.
    * @return the {@link CodeType} with the given {@code name} or {@code null} if not found.
    */
   public BaseType getType(String simpleName, boolean init) {
@@ -362,12 +363,6 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
       }
     }
     return null;
-  }
-
-  @Override
-  public BaseType addType(String simpleName) {
-
-    return addFile(simpleName).getType();
   }
 
   @Override

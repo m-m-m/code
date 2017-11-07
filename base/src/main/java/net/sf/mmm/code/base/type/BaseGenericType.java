@@ -10,7 +10,7 @@ import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeTypePlaceholder;
 import net.sf.mmm.code.api.type.CodeTypeVariable;
 import net.sf.mmm.code.api.type.CodeTypeWildcard;
-import net.sf.mmm.code.base.element.BaseElementImpl;
+import net.sf.mmm.code.base.element.BaseElementWithDeclaringTypeImpl;
 import net.sf.mmm.code.base.node.BaseNodeItemImpl;
 
 /**
@@ -19,7 +19,7 @@ import net.sf.mmm.code.base.node.BaseNodeItemImpl;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class BaseGenericType extends BaseElementImpl implements CodeGenericType {
+public abstract class BaseGenericType extends BaseElementWithDeclaringTypeImpl implements CodeGenericType {
 
   private BaseArrayType arrayType;
 

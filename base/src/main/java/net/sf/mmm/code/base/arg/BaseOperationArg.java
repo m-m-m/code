@@ -8,7 +8,7 @@ import java.lang.reflect.Type;
 import net.sf.mmm.code.api.arg.CodeOperationArg;
 import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeGenericType;
-import net.sf.mmm.code.base.element.BaseElementImpl;
+import net.sf.mmm.code.base.element.BaseElementWithDeclaringTypeImpl;
 import net.sf.mmm.code.base.member.BaseOperation;
 import net.sf.mmm.code.base.node.BaseNode;
 import net.sf.mmm.code.base.type.BaseGenericType;
@@ -19,7 +19,7 @@ import net.sf.mmm.code.base.type.BaseGenericType;
  * @author hohwille
  * @since 1.0.0
  */
-public abstract class BaseOperationArg extends BaseElementImpl implements CodeOperationArg {
+public abstract class BaseOperationArg extends BaseElementWithDeclaringTypeImpl implements CodeOperationArg {
 
   private BaseGenericType type;
 

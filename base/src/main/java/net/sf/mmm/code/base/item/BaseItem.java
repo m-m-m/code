@@ -8,8 +8,8 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.item.CodeItem;
+import net.sf.mmm.code.api.item.CodeItemWithDeclaringType;
 import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.util.io.api.IoMode;
@@ -104,15 +104,17 @@ public abstract class BaseItem implements CodeItem {
   }
 
   /**
-   * @param element the {@link CodeElement}.
+   * @param element the {@link CodeItem}.
    * @return the owning {@link CodeType}.
    */
-  protected static CodeType getOwningType(CodeElement element) {
+  protected static CodeType getOwningType(CodeItem element) {
 
     if (element instanceof CodeType) {
       return (CodeType) element;
+    } else if (element instanceof CodeItemWithDeclaringType) {
+      return ((CodeItemWithDeclaringType) element).getDeclaringType();
     } else {
-      return element.getDeclaringType();
+      return null;
     }
   }
 

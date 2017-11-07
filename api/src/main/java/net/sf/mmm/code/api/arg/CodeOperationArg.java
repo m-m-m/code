@@ -2,7 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.arg;
 
-import net.sf.mmm.code.api.element.CodeElement;
+import net.sf.mmm.code.api.element.CodeElementWithDeclaringType;
 import net.sf.mmm.code.api.item.CodeMutableItemWithType;
 import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.node.CodeNodeItemWithDeclaringOperation;
@@ -14,6 +14,6 @@ import net.sf.mmm.code.api.node.CodeNodeItemWithDeclaringOperation;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract interface CodeOperationArg extends CodeElement, CodeMutableItemWithType, CodeNodeItemWithDeclaringOperation {
+public abstract interface CodeOperationArg extends CodeElementWithDeclaringType, CodeMutableItemWithType, CodeNodeItemWithDeclaringOperation {
 
 }

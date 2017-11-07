@@ -80,12 +80,6 @@ public class BaseSuperTypes extends BaseNodeItemContainerHierarchical<BaseGeneri
   }
 
   @Override
-  public BaseType getDeclaringType() {
-
-    return this.parent;
-  }
-
-  @Override
   public Iterable<? extends BaseGenericType> getAll() {
 
     return () -> new SuperTypeIterator(this.parent);
@@ -113,9 +107,8 @@ public class BaseSuperTypes extends BaseNodeItemContainerHierarchical<BaseGeneri
     if (superClass != null) {
       return superClass;
     }
-    BaseType declaringType = getDeclaringType();
     CodeType rootType = getContext().getRootType();
-    if (declaringType != rootType) {
+    if (this.parent != rootType) {
       return (BaseType) rootType;
     }
     return null;
@@ -165,22 +158,21 @@ public class BaseSuperTypes extends BaseNodeItemContainerHierarchical<BaseGeneri
   @Override
   protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
 
+    String keywordExtends = syntax.getKeywordForExtends();
     String keywordInherit;
-    CodeType declaringType = getDeclaringType();
-    if (declaringType.isInterface()) {
-      keywordInherit = syntax.getKeywordForExtends();
+    if (this.parent.isInterface()) {
+      keywordInherit = keywordExtends;
     } else {
+      keywordInherit = syntax.getKeywordForImplements();
       CodeGenericType superClass = getSuperClassAsDeclared();
       if (superClass != null) {
-        if (declaringType.isClass()) {
-          sink.append(" extends ");
+        if (this.parent.isClass()) {
+          sink.append(keywordExtends);
           superClass.writeReference(sink, false);
         } else {
-          LOG.warn("Illegal {} {}: can not have super-class {}.", declaringType.getCategory(), declaringType.getSimpleName(),
-              superClass.asType().getSimpleName());
+          LOG.warn("Illegal {} {}: can not have super-class {}.", this.parent.getCategory(), this.parent.getSimpleName(), superClass.asType().getSimpleName());
         }
       }
-      keywordInherit = syntax.getKeywordForImplements();
     }
     String separator = keywordInherit;
     for (CodeGenericType superType : getDeclared()) {

@@ -15,7 +15,6 @@ import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.syntax.CodeSyntaxJava;
 import net.sf.mmm.code.base.node.BaseContainer;
 import net.sf.mmm.code.base.source.BaseSource;
-import net.sf.mmm.code.base.type.BaseType;
 
 /**
  * Base implementation of {@link CodePackage}.
@@ -67,6 +66,17 @@ public final class BasePackage extends BasePathElement implements CodePackage, C
    *
    * @param parentPackage the {@link #getParentPackage() parent package}.
    * @param simpleName the {@link #getSimpleName() simple name}.
+   */
+  public BasePackage(BasePackage parentPackage, String simpleName) {
+
+    this(parentPackage, simpleName, null, null);
+  }
+
+  /**
+   * The constructor.
+   *
+   * @param parentPackage the {@link #getParentPackage() parent package}.
+   * @param simpleName the {@link #getSimpleName() simple name}.
    * @param reflectiveObject the {@link #getReflectiveObject() reflective object}.
    * @param sourceSupplier the optional {@link Supplier} for lazy-loading of source-code.
    */
@@ -77,15 +87,12 @@ public final class BasePackage extends BasePathElement implements CodePackage, C
     this.children = new BasePathElements(this);
     Package pkg = reflectiveObject;
     if (pkg == null) {
-      if (CodeSyntaxJava.LANGUAGE_NAME_JAVA.equals(getContext().getSyntax().getLanguageName())) {
+      if (CodeSyntaxJava.LANGUAGE_NAME_JAVA.equals(getSyntax().getLanguageName())) {
         pkg = Package.getPackage(getQualifiedName());
       }
     }
     this.reflectiveObject = pkg;
     this.sourceSupplier = sourceSupplier;
-    if (parentPackage.isImmutable()) {
-      setImmutable();
-    }
   }
 
   /**
@@ -125,6 +132,13 @@ public final class BasePackage extends BasePathElement implements CodePackage, C
   }
 
   @Override
+  protected void doSetImmutable() {
+
+    super.doSetImmutable();
+    this.children.setImmutableIfNotSystemImmutable();
+  }
+
+  @Override
   public BaseContainer getParent() {
 
     BasePackage parent = getParentPackage();
@@ -161,12 +175,6 @@ public final class BasePackage extends BasePathElement implements CodePackage, C
   public BaseSource getSource() {
 
     return this.source;
-  }
-
-  @Override
-  public BaseType getDeclaringType() {
-
-    return null;
   }
 
   @Override
@@ -262,7 +270,7 @@ public final class BasePackage extends BasePathElement implements CodePackage, C
     }
     sink.append("package ");
     sink.append(getQualifiedName());
-    sink.append(';');
+    sink.append(syntax.getStatementTerminator());
     sink.append(newline);
   }
 

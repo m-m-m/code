@@ -14,7 +14,6 @@ import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.BaseFile;
 import net.sf.mmm.code.base.node.BaseNodeItemContainerFlat;
-import net.sf.mmm.code.base.type.BaseType;
 
 /**
  * Base implementation of {@link CodeImports}.
@@ -56,12 +55,6 @@ public class BaseImports extends BaseNodeItemContainerFlat<BaseImport>
   public BaseFile getParent() {
 
     return this.parent;
-  }
-
-  @Override
-  public BaseType getDeclaringType() {
-
-    return null;
   }
 
   @Override

@@ -15,7 +15,7 @@ import net.sf.mmm.code.api.syntax.CodeSyntax;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class BasicElementWithModifiers extends BaseElementImpl implements CodeElementWithModifiers {
+public abstract class BaseElementWithModifiers extends BaseElementWithDeclaringTypeImpl implements CodeElementWithModifiers {
 
   private CodeModifiers modifiers;
 
@@ -24,7 +24,7 @@ public abstract class BasicElementWithModifiers extends BaseElementImpl implemen
    *
    * @param modifiers the {@link #getModifiers() modifiers}.
    */
-  public BasicElementWithModifiers(CodeModifiers modifiers) {
+  public BaseElementWithModifiers(CodeModifiers modifiers) {
 
     super();
     this.modifiers = modifiers;
@@ -33,9 +33,9 @@ public abstract class BasicElementWithModifiers extends BaseElementImpl implemen
   /**
    * The copy-constructor.
    *
-   * @param template the {@link BasicElementWithModifiers} to copy.
+   * @param template the {@link BaseElementWithModifiers} to copy.
    */
-  public BasicElementWithModifiers(BasicElementWithModifiers template) {
+  public BaseElementWithModifiers(BaseElementWithModifiers template) {
 
     super(template);
     this.modifiers = template.modifiers;
@@ -56,7 +56,7 @@ public abstract class BasicElementWithModifiers extends BaseElementImpl implemen
   }
 
   @Override
-  public abstract BasicElementWithModifiers copy();
+  public abstract BaseElementWithModifiers copy();
 
   @Override
   protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {

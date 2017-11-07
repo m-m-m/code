@@ -24,6 +24,8 @@ public class BaseTypeParameters extends BaseGenericTypeParameters<BaseGenericTyp
 
   private final BaseParameterizedType parent;
 
+  private BaseTypeParameters sourceCodeObject;
+
   /**
    * The constructor for #EMPTY
    */
@@ -68,7 +70,6 @@ public class BaseTypeParameters extends BaseGenericTypeParameters<BaseGenericTyp
         addInternal(genericType);
       }
     }
-    BaseParameterizedType sourceCodeObject = this.parent.getSourceCodeObject();
   }
 
   @Override
@@ -87,6 +88,18 @@ public class BaseTypeParameters extends BaseGenericTypeParameters<BaseGenericTyp
   public BaseOperation getDeclaringOperation() {
 
     return this.parent.getDeclaringOperation();
+  }
+
+  @Override
+  public BaseTypeParameters getSourceCodeObject() {
+
+    if ((this.sourceCodeObject == null) && !isInitialized()) {
+      BaseParameterizedType sourceParameterizedType = this.parent.getSourceCodeObject();
+      if (sourceParameterizedType != null) {
+        this.sourceCodeObject = sourceParameterizedType.getTypeParameters();
+      }
+    }
+    return this.sourceCodeObject;
   }
 
   @Override

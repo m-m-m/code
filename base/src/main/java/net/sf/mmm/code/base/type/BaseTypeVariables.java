@@ -155,21 +155,17 @@ public class BaseTypeVariables extends BaseGenericTypeParameters<BaseTypeVariabl
   @Override
   public BaseTypeVariables getSourceCodeObject() {
 
-    if (this.sourceCodeObject != null) {
-      return this.sourceCodeObject;
-    }
-    if (isInitialized()) {
-      return null;
-    }
-    if (this.declaringOperation != null) {
-      BaseOperation sourceOperation = this.declaringOperation.getSourceCodeObject();
-      if (sourceOperation != null) {
-        this.sourceCodeObject = sourceOperation.getTypeParameters();
-      }
-    } else {
-      BaseType sourceType = this.declaringType.getSourceCodeObject();
-      if (sourceType != null) {
-        this.sourceCodeObject = sourceType.getTypeParameters();
+    if ((this.sourceCodeObject == null) && !isInitialized()) {
+      if (this.declaringOperation != null) {
+        BaseOperation sourceOperation = this.declaringOperation.getSourceCodeObject();
+        if (sourceOperation != null) {
+          this.sourceCodeObject = sourceOperation.getTypeParameters();
+        }
+      } else {
+        BaseType sourceType = this.declaringType.getSourceCodeObject();
+        if (sourceType != null) {
+          this.sourceCodeObject = sourceType.getTypeParameters();
+        }
       }
     }
     return this.sourceCodeObject;

@@ -48,10 +48,7 @@ public abstract class BaseContextImplWithCache extends BaseContextImpl {
   /**
    * @return the {@link BaseLoader} to load {@link BaseType}s.
    */
-  protected BaseLoader getLoader() {
-
-    return getSource();
-  }
+  protected abstract BaseLoader getLoader();
 
   @Override
   public BaseType getType(String qualifiedName) {

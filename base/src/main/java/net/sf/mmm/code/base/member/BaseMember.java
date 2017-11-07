@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 import net.sf.mmm.code.api.member.CodeMember;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
-import net.sf.mmm.code.base.element.BasicElementWithModifiers;
+import net.sf.mmm.code.base.element.BaseElementWithModifiers;
 import net.sf.mmm.code.base.type.BaseType;
 
 /**
@@ -17,7 +17,7 @@ import net.sf.mmm.code.base.type.BaseType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class BaseMember extends BasicElementWithModifiers implements CodeMember {
+public abstract class BaseMember extends BaseElementWithModifiers implements CodeMember {
 
   private String name;
 

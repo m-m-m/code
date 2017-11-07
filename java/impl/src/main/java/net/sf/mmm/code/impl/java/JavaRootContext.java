@@ -175,8 +175,8 @@ public class JavaRootContext extends JavaContext {
 
     SourceCodeProvider sourceCodeProvider = null; // TODO
     JavaSourceLoader loader = new JavaSourceLoader(sourceCodeProvider);
-    String id = System.getProperty("java.home");
-    File byteCodeLocation = new File(id);
+    String javaHome = System.getProperty("java.home");
+    File byteCodeLocation = new File(javaHome);
     String version = System.getProperty("java.version");
     String majorVersion = getJavaMajorVersion(version);
     String docUrl = "http://docs.oracle.com/javase/" + majorVersion + "/docs/api/";
@@ -190,7 +190,7 @@ public class JavaRootContext extends JavaContext {
       sourceCodeLocation = srcZip;
     }
     CodeSourceDescriptor descriptor = new BaseSourceDescriptorType(groupId, artifactId, version, null, docUrl);
-    return new BaseSourceImpl(byteCodeLocation, sourceCodeLocation, id, descriptor, loader);
+    return new BaseSourceImpl(byteCodeLocation, sourceCodeLocation, null, descriptor, loader);
   }
 
   private static String getJavaMajorVersion(String version) {

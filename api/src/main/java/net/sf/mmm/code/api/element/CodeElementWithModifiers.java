@@ -12,7 +12,7 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract interface CodeElementWithModifiers extends CodeElement, CodeItemWithModifiers {
+public abstract interface CodeElementWithModifiers extends CodeElementWithDeclaringType, CodeItemWithModifiers {
 
   /**
    * @param modifiers the new {@link #getModifiers() modifiers}.

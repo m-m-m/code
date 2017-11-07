@@ -91,7 +91,7 @@ public class BaseSourceImpl extends BaseProviderImpl implements BaseSource {
 
     super();
     if ((byteCodeLocation != null) && (id != null)) {
-      assert (id.equals(byteCodeLocation.toString()));
+      assert (id.equals(getNormalizedId(byteCodeLocation)));
     }
     if ((byteCodeLocation == null) && (sourceCodeLocation == null) && (id == null) && (reflectiveObject == null)) {
       Objects.requireNonNull(byteCodeLocation, "location||uri||codeSource");

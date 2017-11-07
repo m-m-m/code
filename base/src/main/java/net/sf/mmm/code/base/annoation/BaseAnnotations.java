@@ -87,15 +87,6 @@ public class BaseAnnotations extends BaseNodeItemContainerHierarchical<CodeAnnot
   }
 
   @Override
-  public BaseType getDeclaringType() {
-
-    if (this.parent == null) {
-      return null;
-    }
-    return this.parent.getDeclaringType();
-  }
-
-  @Override
   public CodeAnnotation getDeclared(CodeType type) {
 
     for (CodeAnnotation annotation : getDeclared()) {

@@ -1,19 +1,19 @@
 /* Copyright (c) The m-m-m Team, Licensed under the Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0 */
-package net.sf.mmm.code.impl.java;
+package net.sf.mmm.code.base.doc;
 
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import net.sf.mmm.code.api.doc.CodeDocFormat;
+import net.sf.mmm.code.base.BaseContext;
+import net.sf.mmm.code.base.BaseContextTest;
 import net.sf.mmm.code.base.BasePackage;
-import net.sf.mmm.code.base.doc.BaseDoc;
 import net.sf.mmm.code.base.type.BaseType;
 
 /**
  * Test of {@link BaseDoc}.
  */
-public class BaseDocTest extends Assertions {
+public class BaseDocTest extends BaseContextTest {
 
   /**
    * Test of {@link BaseDoc} with links and markup including conversion to arbitary {@link CodeDocFormat}s.
@@ -22,7 +22,7 @@ public class BaseDocTest extends Assertions {
   public void testJavaDoc() {
 
     // given
-    JavaContext context = JavaRootContext.get();
+    BaseContext context = createContext();
     BasePackage rootPackage = context.getSource().getRootPackage();
     String pkg1Name = "pkg1";
     BasePackage pkg1 = rootPackage.getChildren().createPackage(pkg1Name);

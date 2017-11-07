@@ -67,12 +67,6 @@ public class BaseNestedTypes extends BaseNodeItemContainerHierarchicalWithName<B
   }
 
   @Override
-  public BaseType getDeclaringType() {
-
-    return this.parent;
-  }
-
-  @Override
   public List<? extends BaseType> getAll() {
 
     List<BaseType> list = new ArrayList<>(getList());
@@ -108,7 +102,7 @@ public class BaseNestedTypes extends BaseNodeItemContainerHierarchicalWithName<B
   @Override
   public BaseType add(String name) {
 
-    BaseType nestedType = new BaseType(getDeclaringType().getFile(), name, getDeclaringType(), null);
+    BaseType nestedType = new BaseType(this.parent.getFile(), name, this.parent, null);
     add(nestedType);
     return nestedType;
   }

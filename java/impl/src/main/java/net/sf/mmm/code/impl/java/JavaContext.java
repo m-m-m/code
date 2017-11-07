@@ -17,8 +17,9 @@ import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.BaseContextImplWithCache;
 import net.sf.mmm.code.base.arg.BaseOperationArg;
-import net.sf.mmm.code.base.element.BaseElement;
 import net.sf.mmm.code.base.element.BaseElementImpl;
+import net.sf.mmm.code.base.element.BaseElementWithDeclaringType;
+import net.sf.mmm.code.base.element.BaseElementWithDeclaringTypeImpl;
 import net.sf.mmm.code.base.element.BaseElementWithTypeVariables;
 import net.sf.mmm.code.base.loader.BaseLoader;
 import net.sf.mmm.code.base.member.BaseOperation;
@@ -91,7 +92,7 @@ public abstract class JavaContext extends BaseContextImplWithCache {
   protected abstract BaseSource getOrCreateSource(CodeSource codeSource);
 
   @Override
-  public BaseGenericType getType(Type type, BaseElement declaringElement) {
+  public BaseGenericType getType(Type type, BaseElementWithDeclaringType declaringElement) {
 
     if (type instanceof Class) {
       return getType((Class<?>) type);
@@ -126,7 +127,7 @@ public abstract class JavaContext extends BaseContextImplWithCache {
       }
       return new BaseTypeWildcard(parent, wildcard);
     } else if (type instanceof GenericArrayType) {
-      return new BaseArrayType((BaseElementImpl) declaringElement, type);
+      return new BaseArrayType((BaseElementWithDeclaringTypeImpl) declaringElement, type);
     } else {
       throw new IllegalCaseException(type.getClass().getSimpleName());
     }

@@ -11,7 +11,7 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract interface CodeElementWithName extends CodeElement, CodeItemWithName {
+public abstract interface CodeElementWithName extends CodeElementWithDeclaringType, CodeItemWithName {
 
   /**
    * @param name the new {@link #getName() name}.

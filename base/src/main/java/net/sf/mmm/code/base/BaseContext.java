@@ -5,9 +5,8 @@ package net.sf.mmm.code.base;
 import java.lang.reflect.Type;
 
 import net.sf.mmm.code.api.CodeContext;
-import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.type.CodeGenericType;
-import net.sf.mmm.code.base.element.BaseElement;
+import net.sf.mmm.code.base.element.BaseElementWithDeclaringType;
 import net.sf.mmm.code.base.type.BaseGenericType;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.base.type.BaseTypeWildcard;
@@ -40,10 +39,10 @@ public interface BaseContext extends CodeContext, BaseProvider {
 
   /**
    * @param type the {@link Type} to get as {@link CodeGenericType}.
-   * @param declaringElement the owning {@link CodeElement} declaring the {@link Type}.
+   * @param declaringElement the owning {@link BaseElementWithDeclaringType} declaring the {@link Type}.
    * @return the existing or otherwise newly created {@link CodeGenericType}.
    */
-  BaseGenericType getType(Type type, BaseElement declaringElement);
+  BaseGenericType getType(Type type, BaseElementWithDeclaringType declaringElement);
 
   /**
    * @param javaType the {@link BaseType} that might be {@link BaseType#isPrimitive() primitive}.

@@ -145,6 +145,15 @@ public class BaseParameter extends BaseOperationArg implements CodeParameter, Co
   @Override
   public BaseParameter getSourceCodeObject() {
 
+    if ((this.sourceCodeObject == null) && !isInitialized()) {
+      BaseParameters sourceParameters = this.parent.getSourceCodeObject();
+      if (sourceParameters != null) {
+        BaseParameter sourceParameter = sourceParameters.get(this.name);
+        if ((sourceParameter != null) && getType().getQualifiedName().equals(sourceParameter.getType().getQualifiedName())) {
+          this.sourceCodeObject = sourceParameter;
+        }
+      }
+    }
     return this.sourceCodeObject;
   }
 

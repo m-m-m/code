@@ -102,15 +102,11 @@ public class BaseTypeVariable extends BaseTypePlaceholder implements CodeTypeVar
   @Override
   public BaseTypeVariable getSourceCodeObject() {
 
-    if (this.sourceCodeObject != null) {
-      return this.sourceCodeObject;
-    }
-    if (isInitialized()) {
-      return null;
-    }
-    BaseTypeVariables sourceTypeVariables = this.parent.getSourceCodeObject();
-    if (sourceTypeVariables != null) {
-      this.sourceCodeObject = sourceTypeVariables.get(this.name);
+    if ((this.sourceCodeObject == null) && !isInitialized()) {
+      BaseTypeVariables sourceTypeVariables = this.parent.getSourceCodeObject();
+      if (sourceTypeVariables != null) {
+        this.sourceCodeObject = sourceTypeVariables.get(this.name);
+      }
     }
     return this.sourceCodeObject;
   }

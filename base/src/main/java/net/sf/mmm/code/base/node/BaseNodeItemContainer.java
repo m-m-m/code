@@ -16,7 +16,6 @@ import net.sf.mmm.code.api.item.CodeItemWithName;
 import net.sf.mmm.code.api.item.CodeItemWithQualifiedName;
 import net.sf.mmm.code.api.node.CodeNodeItemContainer;
 import net.sf.mmm.code.api.node.CodeNodeItemContainerWithName;
-import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.util.exception.api.DuplicateObjectException;
 
 /**
@@ -235,8 +234,5 @@ public abstract class BaseNodeItemContainer<I extends CodeItem> extends BaseNode
     }
     return getList().remove(item);
   }
-
-  @Override
-  public abstract BaseType getDeclaringType();
 
 }

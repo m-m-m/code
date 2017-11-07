@@ -1,31 +1,23 @@
 /* Copyright (c) The m-m-m Team, Licensed under the Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0 */
-package net.sf.mmm.code.impl.java;
+package net.sf.mmm.code.base.type;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.api.type.CodeTypeCategory;
+import net.sf.mmm.code.base.BaseContext;
+import net.sf.mmm.code.base.BaseContextTest;
 import net.sf.mmm.code.base.BasePackage;
-import net.sf.mmm.code.base.type.BaseGenericType;
-import net.sf.mmm.code.base.type.BaseType;
+import net.sf.mmm.code.base.BasePathElements;
 
 /**
  * Test of {@link BaseType}.
  */
-public class BaseTypeTest extends Assertions {
-
-  /**
-   * @return the {@link JavaRootContext} to test.
-   */
-  protected JavaRootContext createContext() {
-
-    return JavaRootContext.get();
-  }
+public class BaseTypeTest extends BaseContextTest {
 
   /**
    * Test of {@link BaseType} for empty class.
@@ -34,14 +26,14 @@ public class BaseTypeTest extends Assertions {
   public void testEmptyClass() {
 
     // given
-    JavaContext context = createContext();
+    BaseContext context = createContext();
     BasePackage rootPackage = context.getSource().getRootPackage();
     String pkgName = "mydomain";
     BasePackage pkg = rootPackage.getChildren().createPackage(pkgName);
     String simpleName = "MyClass";
 
     // when
-    BaseType type = pkg.getChildren().createFile(simpleName).getType();
+    BaseType type = pkg.getChildren().createType(simpleName);
 
     // then
     assertThat(type.getSimpleName()).isEqualTo(simpleName);
@@ -71,7 +63,7 @@ public class BaseTypeTest extends Assertions {
   public void testNestedTypesWithDoc() {
 
     // given
-    JavaContext context = createContext();
+    BaseContext context = createContext();
     BasePackage rootPackage = context.getSource().getRootPackage();
     String pkgName = "mydomain";
     BasePackage pkg = rootPackage.getChildren().createPackage(pkgName);
@@ -160,20 +152,22 @@ public class BaseTypeTest extends Assertions {
   public void testSuperTypes() {
 
     // given
-    JavaContext context = createContext();
+    BaseContext context = createContext();
     BasePackage rootPackage = context.getSource().getRootPackage();
     String pkgName1 = "pkg1";
     BasePackage pkg1 = rootPackage.getChildren().createPackage(pkgName1);
     String pkgName2 = "pkg2";
     BasePackage pkg2 = rootPackage.getChildren().createPackage(pkgName2);
+    BasePathElements children1 = pkg1.getChildren();
+    BasePathElements children2 = pkg2.getChildren();
 
     // when
-    BaseType interface1Other = pkg1.getChildren().createType("Other");
-    BaseType interface2Bar = pkg1.getChildren().createType("Bar");
-    BaseType interface3Some = pkg2.getChildren().createType("Some");
-    BaseType interface4Foo = pkg2.getChildren().createType("Foo");
-    BaseType class1Other = pkg1.getChildren().createType("OtherClass");
-    BaseType class2Foo = pkg2.getChildren().createType("FooClass");
+    BaseType interface1Other = children1.createType("Other");
+    BaseType interface2Bar = children1.createType("Bar");
+    BaseType interface3Some = children2.createType("Some");
+    BaseType interface4Foo = children2.createType("Foo");
+    BaseType class1Other = children1.createType("OtherClass");
+    BaseType class2Foo = children2.createType("FooClass");
     interface3Some.getSuperTypes().add(interface2Bar);
     interface4Foo.getSuperTypes().add(interface3Some);
     interface4Foo.getSuperTypes().add(interface1Other);

@@ -4,7 +4,6 @@ package net.sf.mmm.code.api;
 
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.node.CodeContainer;
-import net.sf.mmm.code.api.type.CodeType;
 
 /**
  * {@link CodeElement} representing a {@link Package} (or similar namespace concept in case of other
@@ -43,17 +42,6 @@ public interface CodePackage extends CodePathElement, CodeContainer {
 
   @Override
   Package getReflectiveObject();
-
-  /**
-   * @deprecated a {@link CodePackage} contains {@link CodeType}s and not vice versa. Therefore this method
-   *             will always return {@code null} here.
-   */
-  @Deprecated
-  @Override
-  default CodeType getDeclaringType() {
-
-    return null;
-  }
 
   @Override
   CodePackage copy();

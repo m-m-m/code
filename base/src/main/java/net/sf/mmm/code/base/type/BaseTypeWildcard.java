@@ -5,11 +5,10 @@ package net.sf.mmm.code.base.type;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 
+import net.sf.mmm.code.api.item.CodeItemWithDeclaringType;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeTypeWildcard;
-import net.sf.mmm.code.base.element.BaseElementImpl;
 import net.sf.mmm.code.base.element.BaseElementWithTypeVariables;
-import net.sf.mmm.code.base.node.BaseNodeItemContainer;
 import net.sf.mmm.code.base.node.BaseNodeItemImpl;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
@@ -145,10 +144,10 @@ public class BaseTypeWildcard extends BaseTypePlaceholder implements CodeTypeWil
   @Override
   public BaseType getDeclaringType() {
 
-    if (this.parent instanceof BaseNodeItemContainer) {
-      return ((BaseNodeItemContainer<?>) this.parent).getDeclaringType();
+    if (this.parent instanceof CodeItemWithDeclaringType) {
+      return (BaseType) ((CodeItemWithDeclaringType) this.parent).getDeclaringType();
     } else {
-      return ((BaseElementImpl) this.parent).getDeclaringType();
+      return null;
     }
   }
 

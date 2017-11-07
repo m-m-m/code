@@ -87,7 +87,7 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
     if (this.sourceCodeProvider == null) {
       return null;
     }
-    return getType(getContext().parseName(qualifiedName));
+    return getType(getSource().parseName(qualifiedName));
   }
 
   @Override

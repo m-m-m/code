@@ -203,12 +203,6 @@ public final class BaseFile extends BasePathElement implements CodeFile, CodeNod
   }
 
   @Override
-  public BaseType getDeclaringType() {
-
-    return null;
-  }
-
-  @Override
   public Class<?> getReflectiveObject() {
 
     return this.reflectioveObject;

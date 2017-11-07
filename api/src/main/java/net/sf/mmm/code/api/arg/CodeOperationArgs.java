@@ -2,6 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.arg;
 
+import net.sf.mmm.code.api.item.CodeItemWithDeclaringType;
 import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.node.CodeNodeItemContainer;
 import net.sf.mmm.code.api.node.CodeNodeItemContainerFlat;
@@ -16,7 +17,7 @@ import net.sf.mmm.code.api.node.CodeNodeItemContainerFlat;
  * @param <A> type of the contained {@link CodeOperationArg}s.
  * @since 1.0.0
  */
-public abstract interface CodeOperationArgs<A extends CodeOperationArg> extends CodeNodeItemContainerFlat<A> {
+public abstract interface CodeOperationArgs<A extends CodeOperationArg> extends CodeNodeItemContainerFlat<A>, CodeItemWithDeclaringType {
 
   @Override
   CodeOperation getParent();

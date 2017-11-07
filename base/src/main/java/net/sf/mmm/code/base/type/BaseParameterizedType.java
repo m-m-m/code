@@ -123,15 +123,11 @@ public class BaseParameterizedType extends BaseGenericType
   @Override
   public BaseParameterizedType getSourceCodeObject() {
 
-    if (this.sourceCodeObject != null) {
-      return this.sourceCodeObject;
-    }
-    if (isInitialized()) {
-      return null;
-    }
-    BaseElementImpl sourceElement = this.parent.getSourceCodeObject();
-    if (sourceElement != null) {
-      this.sourceCodeObject = null; // TODO
+    if ((this.sourceCodeObject == null) && !isInitialized()) {
+      BaseElementImpl sourceElement = this.parent.getSourceCodeObject();
+      if (sourceElement != null) {
+        this.sourceCodeObject = null; // TODO
+      }
     }
     return this.sourceCodeObject;
   }
