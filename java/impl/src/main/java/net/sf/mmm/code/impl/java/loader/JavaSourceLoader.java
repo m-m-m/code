@@ -160,14 +160,15 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
 
     BasePackage pkg = getSource().getRootPackage();
     if (qualifiedName != null) {
-      pkg = pkg.getChildren().getOrCreatePackage(qualifiedName, this::getSourcePackageSupplier);
+      pkg = getPackage(pkg.getChildren(), qualifiedName, false, this::createPackage, true, true);
     }
     return pkg;
   }
 
-  private Supplier<BasePackage> getSourcePackageSupplier(BasePackage parentPackage, String simpleName) {
+  private BasePackage createPackage(BasePackage parentPackage, String simpleName) {
 
-    return () -> getSourcePackage(parentPackage, simpleName);
+    Package pkg = null;
+    return new BasePackage(parentPackage, simpleName, pkg, () -> getSourcePackage(parentPackage, simpleName));
   }
 
   private BasePackage getSourcePackage(BasePackage parentPackage, String simpleName) {

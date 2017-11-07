@@ -96,12 +96,20 @@ public interface CodePathElements<P extends CodePathElement> extends CodeNodeIte
   CodePackage createPackage(String simpleName);
 
   /**
-   * @param simpleName the {@link CodePackage#getSimpleName() simple name} of the requested
-   *        {@link CodePackage}.
+   * @param path the {@link CodePackage#getSimpleName() simple name} or relative
+   *        {@link CodePackage#getQualifiedName() package name} of the requested {@link CodePackage}.
+   * @param add - {@code true} to add newly created packages, {@code false} otherwise.
    * @return the {@link #getPackage(String) existing} or {@link #createPackage(String) newly created}
    *         {@link CodePackage}.
    */
-  CodePackage getOrCreatePackage(String simpleName);
+  CodePackage getOrCreatePackage(String path, boolean add);
+
+  /**
+   * @param path the {@link CodeName} to traverse.
+   * @param add - {@code true} to add newly created packages, {@code false} otherwise.
+   * @return the traversed {@link CodePackage}. Has been created if it did not already exist.
+   */
+  CodePackage getOrCreatePackage(CodeName path, boolean add);
 
   /**
    * @param simpleName the {@link CodeType#getSimpleName() simple name} of the requested {@link CodeType}.

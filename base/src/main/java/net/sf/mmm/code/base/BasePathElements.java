@@ -181,7 +181,7 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
    * @param simpleName the {@link CodePackage#getSimpleName() simple name} of the requested
    *        {@link CodePackage}.
    * @param init - {@code true} to initialize, {@code false} otherwise.
-   * @return the {@link CodePackage} with the given {@code name} or {@code null} if not found.
+   * @return the {@link BasePackage} with the given {@code name} or {@code null} if not found.
    */
   public BasePackage getPackage(String simpleName, boolean init) {
 
@@ -201,43 +201,60 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
   /**
    * @param path the {@link CodeName} to traverse.
    * @param init - {@code true} to initialize, {@code false} otherwise.
-   * @return the traversed {@link CodePackage} or {@code null} if not found.
+   * @return the traversed {@link BasePackage} or {@code null} if not found.
    */
   public BasePackage getPackage(CodeName path, boolean init) {
 
-    CodeName parentPath = path.getParent();
-    String simpleName = path.getSimpleName();
-    if (parentPath == null) {
-      if (simpleName.isEmpty()) {
-        return this.parent;
-      }
-      return getPackage(simpleName, init);
-    }
-    BasePackage parentPkg = getPackage(parentPath, init);
-    if (parentPkg != null) {
-      return parentPkg.getChildren().getPackage(simpleName, init);
-    }
-    return null;
+    return getPackage(path, init, null, false, false);
+  }
+
+  @Override
+  public CodePackage getOrCreatePackage(CodeName path, boolean add) {
+
+    return getOrCreatePackage(path, add, true);
   }
 
   /**
    * @param path the {@link CodeName} to traverse.
-   * @return the traversed {@link CodePackage}. Has been created if it did not already exist.
+   * @param add - {@code true} to {@link #add(BasePathElement) add} newly created packages, {@code false}
+   *        otherwise.
+   * @param init - {@code true} to initialize, {@code false} otherwise.
+   * @return the traversed {@link BasePackage}. Has been created if it did not already exist.
    */
-  public BasePackage getOrCreatePackage(CodeName path) {
+  public BasePackage getOrCreatePackage(CodeName path, boolean add, boolean init) {
 
-    return getOrCreatePackage(path, null);
+    return getPackage(path, init, (parentPkg, simpleName) -> new BasePackage(parentPkg, simpleName, null, null), add);
+  }
+
+  /**
+   * @param path the {@link CodeName} to traverse.
+   * @param init - {@code true} to initialize, {@code false} otherwise.
+   * @param factory the {@link BiFunction} used as factory to create missing packages.
+   * @param add - {@code true} to {@link #add(BasePathElement) add} new packages created by the given
+   *        {@code factory}, {@code false} otherwise.
+   * @return the traversed {@link BasePackage}. Has been created if it did not already exist and was produced
+   *         by the given {@code factory}.
+   */
+  public BasePackage getPackage(CodeName path, boolean init, BiFunction<BasePackage, String, BasePackage> factory, boolean add) {
+
+    return getPackage(path, init, factory, add, false);
   }
 
   /**
    * <b>Attention:</b> This is an internal API that should not be used from outside. Use
-   * {@link #getOrCreatePackage(CodeName)} instead.
+   * {@link #getPackage(CodeName, boolean, BiFunction, boolean)} instead.
    *
    * @param path the {@link CodeName} to traverse.
-   * @param sourceSupplierFunction the {@link BiFunction} for lazy loading of source-code.
-   * @return the traversed {@link CodePackage}. Has been created if it did not already exist.
+   * @param init - {@code true} to initialize, {@code false} otherwise.
+   * @param factory the {@link BiFunction} used as factory to create missing packages.
+   * @param add - {@code true} to {@link #add(BasePathElement) add} new packages created by the given
+   *        {@code factory}, {@code false} otherwise.
+   * @param forceAdd - {@code true} to force adding (if {@code add} is {@code true} but {@link #isImmutable()
+   *        is immutable}), {@code false} otherwise.
+   * @return the traversed {@link BasePackage}. Has been created if it did not already exist and was produced
+   *         by the given {@code factory}.
    */
-  public BasePackage getOrCreatePackage(CodeName path, BiFunction<BasePackage, String, Supplier<BasePackage>> sourceSupplierFunction) {
+  protected BasePackage getPackage(CodeName path, boolean init, BiFunction<BasePackage, String, BasePackage> factory, boolean add, boolean forceAdd) {
 
     CodeName parentPath = path.getParent();
     String simpleName = path.getSimpleName();
@@ -248,19 +265,23 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
       }
       parentPathElements = this;
     } else {
-      parentPathElements = getOrCreatePackage(parentPath, sourceSupplierFunction).getChildren();
+      parentPathElements = getPackage(parentPath, init, factory, add, forceAdd).getChildren();
     }
-    BasePackage pkg = parentPathElements.getPackage(simpleName, false);
-    if (pkg == null) {
-      boolean addRegular = true;
-      Supplier<BasePackage> sourceSupplier = null;
-      if (sourceSupplierFunction != null) {
-        addRegular = false;
-        sourceSupplier = sourceSupplierFunction.apply(parentPathElements.parent, simpleName);
+    BasePackage pkg = parentPathElements.getPackage(simpleName, init);
+    if ((pkg == null) && (factory != null)) {
+      pkg = factory.apply(parentPathElements.parent, simpleName);
+      if (pkg == null) {
+        return null;
       }
-      pkg = parentPathElements.createPackage(simpleName, addRegular, sourceSupplier);
-      if (!addRegular) {
-        parentPathElements.addInternal(pkg);
+      if ((pkg.getParent() != parentPathElements.parent) || !simpleName.equals(pkg.getSimpleName())) {
+        throw new IllegalStateException("Invalid factory: " + factory.getClass().toGenericString());
+      }
+      if (add) {
+        if (forceAdd) {
+          parentPathElements.addInternal(pkg);
+        } else {
+          parentPathElements.add(pkg);
+        }
       }
     }
     return pkg;
@@ -294,13 +315,22 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
   }
 
   @Override
-  public BasePackage getOrCreatePackage(String simpleName) {
+  public CodePackage getOrCreatePackage(String path, boolean add) {
 
-    BasePackage pkg = getPackage(simpleName);
-    if (pkg == null) {
-      pkg = createPackage(simpleName);
-    }
-    return pkg;
+    return getOrCreatePackage(path, add, true);
+  }
+
+  /**
+   * @param path the {@link CodePackage#getSimpleName() simple name} or relative
+   *        {@link CodePackage#getQualifiedName() package name} of the requested {@link CodePackage}.
+   * @param add - {@code true} to add newly created packages, {@code false} otherwise.
+   * @param init - {@code true} to initialize, {@code false} otherwise.
+   * @return the {@link #getPackage(String) existing} or {@link #createPackage(String) newly created}
+   *         {@link CodePackage}.
+   */
+  public CodePackage getOrCreatePackage(String path, boolean add, boolean init) {
+
+    return getOrCreatePackage(getSource().parseName(path), add, true);
   }
 
   @Override
