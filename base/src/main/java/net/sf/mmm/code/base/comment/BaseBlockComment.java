@@ -10,7 +10,7 @@ import java.util.List;
 
 import net.sf.mmm.code.api.comment.CodeBlockComment;
 import net.sf.mmm.code.api.comment.CodeComment;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.language.CodeLanguage;
 
 /**
  * Base implementation of {@link CodeBlockComment}.
@@ -66,7 +66,7 @@ public class BaseBlockComment extends BaseComment implements CodeBlockComment {
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     if (this.commentLines.isEmpty()) {
       return;

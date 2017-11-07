@@ -4,7 +4,7 @@ package net.sf.mmm.code.api;
 
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.imports.CodeImport;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.api.type.CodeTypeWildcard;
 
@@ -18,9 +18,9 @@ import net.sf.mmm.code.api.type.CodeTypeWildcard;
 public interface CodeContext extends CodeProvider {
 
   /**
-   * @return the {@link CodeSyntax} for the current programming language.
+   * @return the {@link CodeLanguage} for the current programming language.
    */
-  CodeSyntax getSyntax();
+  CodeLanguage getLanguage();
 
   @Override
   CodeContext getParent();
@@ -86,7 +86,7 @@ public interface CodeContext extends CodeProvider {
    */
   default String getQualifiedName(String simpleName, CodeFile file, boolean omitStandardPackages) {
 
-    char separator = getSyntax().getPackageSeparator();
+    char separator = getLanguage().getPackageSeparator();
     String suffix = separator + simpleName;
     for (CodeImport imp : file.getImports()) {
       if (!imp.isStatic()) {

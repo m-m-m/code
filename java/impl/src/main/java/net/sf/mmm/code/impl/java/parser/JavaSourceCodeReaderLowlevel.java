@@ -396,7 +396,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
         this.comments.add(comment);
       }
     } else {
-      LOG.warn("Illegal syntax: {} in {}.", "/" + c, this.file);
+      LOG.warn("Illegal language: {} in {}.", "/" + c, this.file);
     }
   }
 

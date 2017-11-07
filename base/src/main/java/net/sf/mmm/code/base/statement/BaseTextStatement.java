@@ -5,7 +5,7 @@ package net.sf.mmm.code.base.statement;
 import java.io.IOException;
 
 import net.sf.mmm.code.api.statement.CodeStatement;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.language.CodeLanguage;
 
 /**
  * Base implementation of {@link CodeStatement} that is unstructured and only contains the source-code as a
@@ -38,7 +38,7 @@ public class BaseTextStatement extends BaseAtomicStatement {
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     sink.append(currentIndent);
     sink.append(this.code);

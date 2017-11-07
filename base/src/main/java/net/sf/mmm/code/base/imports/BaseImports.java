@@ -9,8 +9,8 @@ import java.util.TreeSet;
 import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.imports.CodeImport;
 import net.sf.mmm.code.api.imports.CodeImports;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.BaseFile;
 import net.sf.mmm.code.base.node.BaseNodeItemContainerFlat;
@@ -106,7 +106,7 @@ public class BaseImports extends BaseNodeItemContainerFlat<BaseImport>
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     List<BaseImport> imports = getList();
     if (imports.isEmpty()) {

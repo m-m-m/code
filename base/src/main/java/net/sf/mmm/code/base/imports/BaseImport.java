@@ -9,7 +9,7 @@ import java.util.Objects;
 
 import net.sf.mmm.code.api.imports.CodeImport;
 import net.sf.mmm.code.api.imports.CodeImportItem;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.base.item.BaseItem;
 
 /**
@@ -120,7 +120,7 @@ public class BaseImport extends BaseItem implements CodeImport, Comparable<BaseI
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     sink.append(currentIndent); // indendation pointless...
     sink.append("import ");
@@ -132,7 +132,7 @@ public class BaseImport extends BaseItem implements CodeImport, Comparable<BaseI
       String prefix = "{ ";
       for (CodeImportItem item : this.items) {
         sink.append(prefix);
-        item.write(sink, newline, defaultIndent, currentIndent, syntax);
+        item.write(sink, newline, defaultIndent, currentIndent, language);
         prefix = ", ";
       }
       sink.append("} from '");

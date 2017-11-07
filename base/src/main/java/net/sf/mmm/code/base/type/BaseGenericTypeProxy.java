@@ -7,7 +7,7 @@ import java.lang.reflect.Type;
 
 import net.sf.mmm.code.api.comment.CodeComment;
 import net.sf.mmm.code.api.item.CodeItem;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.base.annoation.BaseAnnotations;
 import net.sf.mmm.code.base.doc.BaseDoc;
@@ -145,9 +145,9 @@ public abstract class BaseGenericTypeProxy extends BaseGenericType {
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
-    doWrite(sink, newline, defaultIndent, currentIndent, syntax, true);
+    doWrite(sink, newline, defaultIndent, currentIndent, language, true);
   }
 
   /**
@@ -159,18 +159,18 @@ public abstract class BaseGenericTypeProxy extends BaseGenericType {
    *        indent level).
    * @param currentIndent the current indent (number of spaces). Initially the empty string ({@code ""}).
    *        Before a recursion the {@code indent} will be appended.
-   * @param syntax the {@link CodeSyntax} to use.
+   * @param language the {@link CodeLanguage} to use.
    * @param fromDelegate - {@code true} to get from {@link #getDelegate()}, {@code false} otherwise (to get
    *        from {@code super} class).
    * @throws IOException if thrown by {@link Appendable}.
    */
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax, boolean fromDelegate)
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language, boolean fromDelegate)
       throws IOException {
 
     if (fromDelegate) {
-      getDelegate().write(sink, newline, defaultIndent, currentIndent, syntax);
+      getDelegate().write(sink, newline, defaultIndent, currentIndent, language);
     } else {
-      super.doWrite(sink, newline, defaultIndent, currentIndent, syntax);
+      super.doWrite(sink, newline, defaultIndent, currentIndent, language);
     }
   }
 

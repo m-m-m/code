@@ -7,9 +7,9 @@ import java.security.CodeSource;
 import java.util.function.Supplier;
 
 import net.sf.mmm.code.api.expression.CodeExpression;
+import net.sf.mmm.code.api.language.CodeLanguage;
+import net.sf.mmm.code.api.language.CodeLanguageJava;
 import net.sf.mmm.code.api.source.CodeSourceDescriptor;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
-import net.sf.mmm.code.api.syntax.CodeSyntaxJava;
 import net.sf.mmm.code.base.loader.BaseLoader;
 import net.sf.mmm.code.base.loader.SourceCodeProvider;
 import net.sf.mmm.code.base.source.BaseSource;
@@ -98,9 +98,9 @@ public class JavaRootContext extends JavaContext {
   }
 
   @Override
-  public CodeSyntax getSyntax() {
+  public CodeLanguage getLanguage() {
 
-    return CodeSyntaxJava.INSTANCE;
+    return CodeLanguageJava.INSTANCE;
   }
 
   @Override

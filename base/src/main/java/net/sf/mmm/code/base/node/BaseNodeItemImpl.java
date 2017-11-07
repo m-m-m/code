@@ -9,11 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.item.CodeItem;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.node.CodeNode;
 import net.sf.mmm.code.api.node.CodeNodeItem;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.source.CodeSource;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.item.BaseMutableItem;
 import net.sf.mmm.code.base.source.BaseSource;
@@ -113,9 +113,9 @@ public abstract class BaseNodeItemImpl extends BaseMutableItem implements BaseNo
   }
 
   @Override
-  public CodeSyntax getSyntax() {
+  public CodeLanguage getLanguage() {
 
-    return getContext().getSyntax();
+    return getContext().getLanguage();
   }
 
   /**
@@ -144,7 +144,7 @@ public abstract class BaseNodeItemImpl extends BaseMutableItem implements BaseNo
     buffer.append(getClass().getSimpleName());
     buffer.append(':');
     try {
-      doWrite(buffer, "", null, null, getSyntax());
+      doWrite(buffer, "", null, null, getLanguage());
     } catch (Exception e) {
       LOG.debug("{}.toString() failed!", getClass().getSimpleName(), e);
     }

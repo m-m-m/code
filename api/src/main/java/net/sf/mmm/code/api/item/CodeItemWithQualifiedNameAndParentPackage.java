@@ -23,7 +23,7 @@ public abstract interface CodeItemWithQualifiedNameAndParentPackage extends Code
     if (prefix.isEmpty()) {
       return getSimpleName();
     } else {
-      return prefix + getSyntax().getPackageSeparator() + getSimpleName();
+      return prefix + getLanguage().getPackageSeparator() + getSimpleName();
     }
   }
 

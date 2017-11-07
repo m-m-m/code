@@ -15,7 +15,7 @@ import net.sf.mmm.code.api.annotation.CodeAnnotation;
 import net.sf.mmm.code.api.annotation.CodeAnnotations;
 import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.element.BaseElementImpl;
 import net.sf.mmm.code.base.node.BaseNodeItemContainerHierarchical;
@@ -193,7 +193,7 @@ public class BaseAnnotations extends BaseNodeItemContainerHierarchical<CodeAnnot
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     String prefix = "";
     for (CodeAnnotation annotation : getDeclared()) {
@@ -204,7 +204,7 @@ public class BaseAnnotations extends BaseNodeItemContainerHierarchical<CodeAnnot
         sink.append(newline);
         sink.append(currentIndent);
       }
-      annotation.write(sink, newline, defaultIndent, currentIndent, syntax);
+      annotation.write(sink, newline, defaultIndent, currentIndent, language);
     }
     sink.append(prefix);
   }

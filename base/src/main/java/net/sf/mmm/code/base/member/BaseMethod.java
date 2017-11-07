@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 import net.sf.mmm.code.api.arg.CodeReturn;
 import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.base.arg.BaseReturn;
 import net.sf.mmm.code.base.type.BaseGenericType;
 import net.sf.mmm.code.base.type.BaseSuperTypes;
@@ -228,25 +228,25 @@ public class BaseMethod extends BaseOperation implements CodeMethod, CodeNodeIte
   }
 
   @Override
-  protected void doWriteSignature(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWriteSignature(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
-    sink.append(syntax.getMethodKeyword());
-    String start = syntax.getMethodReturnStart();
+    sink.append(language.getMethodKeyword());
+    String start = language.getMethodReturnStart();
     if (start != null) {
       sink.append(start);
-      getReturns().write(sink, newline, defaultIndent, currentIndent, syntax);
+      getReturns().write(sink, newline, defaultIndent, currentIndent, language);
     }
-    super.doWriteSignature(sink, newline, defaultIndent, currentIndent, syntax);
+    super.doWriteSignature(sink, newline, defaultIndent, currentIndent, language);
   }
 
   @Override
-  protected void doWriteParameters(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWriteParameters(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
-    super.doWriteParameters(sink, newline, defaultIndent, currentIndent, syntax);
-    String end = syntax.getMethodReturnEnd();
+    super.doWriteParameters(sink, newline, defaultIndent, currentIndent, language);
+    String end = language.getMethodReturnEnd();
     if (end != null) {
       sink.append(end);
-      getReturns().write(sink, newline, defaultIndent, currentIndent, syntax);
+      getReturns().write(sink, newline, defaultIndent, currentIndent, language);
     }
   }
 

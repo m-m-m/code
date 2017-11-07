@@ -1,6 +1,6 @@
 /* Copyright (c) The m-m-m Team, Licensed under the Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0 */
-package net.sf.mmm.code.api.syntax;
+package net.sf.mmm.code.api.language;
 
 import java.io.IOException;
 
@@ -9,12 +9,12 @@ import net.sf.mmm.code.api.statement.CodeLocalVariable;
 import net.sf.mmm.code.api.type.CodeTypeCategory;
 
 /**
- * Interface to abstract from a concrete syntax.
+ * Interface to abstract from a concrete language.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeSyntax {
+public interface CodeLanguage {
 
   /**
    * @return the name of the programming language. E.g. "Java".

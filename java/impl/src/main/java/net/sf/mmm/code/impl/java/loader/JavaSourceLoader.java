@@ -235,7 +235,7 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
         String qualifiedName = pkg.getQualifiedName();
         List<String> simpleNames = this.sourceCodeProvider.scanPackage(qualifiedName);
         CodeContext context = getContext();
-        String prefix = qualifiedName + context.getSyntax().getPackageSeparator();
+        String prefix = qualifiedName + context.getLanguage().getPackageSeparator();
         for (String simpleName : simpleNames) {
           context.getType(prefix + simpleName);
         }

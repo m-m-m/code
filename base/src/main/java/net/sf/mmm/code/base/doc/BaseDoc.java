@@ -31,10 +31,10 @@ import net.sf.mmm.code.api.doc.XmlTag;
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.expression.CodeConstant;
 import net.sf.mmm.code.api.expression.CodeExpression;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.api.type.CodeTypeVariable;
@@ -250,7 +250,7 @@ public class BaseDoc extends BaseNodeItemImpl implements CodeDoc, CodeNodeItemWi
   private CodeDocLink resolveLink(String text) {
 
     CodeType owningType = getOwningType(getParent());
-    return new BaseDocLink(text, getSyntax().getPackageSeparator(), owningType.getQualifiedName(), this::resolveLinkUrl, this::resolveLinkValue);
+    return new BaseDocLink(text, getLanguage().getPackageSeparator(), owningType.getQualifiedName(), this::resolveLinkUrl, this::resolveLinkValue);
   }
 
   /**
@@ -349,7 +349,7 @@ public class BaseDoc extends BaseNodeItemImpl implements CodeDoc, CodeNodeItemWi
 
     StringBuilder buffer = new StringBuilder(url);
     CodeContext context = getContext();
-    char separator = getSyntax().getPackageSeparator();
+    char separator = getLanguage().getPackageSeparator();
     if (absolute) {
       if (!url.endsWith("/")) {
         buffer.append('/');
@@ -412,7 +412,7 @@ public class BaseDoc extends BaseNodeItemImpl implements CodeDoc, CodeNodeItemWi
   private Path createPath(String qualifiedName) {
 
     String separatorString;
-    char separator = getSyntax().getPackageSeparator();
+    char separator = getLanguage().getPackageSeparator();
     if (separator == '.') {
       separatorString = "\\.";
     } else {
@@ -435,7 +435,7 @@ public class BaseDoc extends BaseNodeItemImpl implements CodeDoc, CodeNodeItemWi
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     int size = this.lines.size();
     BaseOperation operation = null;

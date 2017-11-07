@@ -7,7 +7,7 @@ import java.util.Objects;
 
 import net.sf.mmm.code.api.expression.CodeConstant;
 import net.sf.mmm.code.api.expression.CodeVariableThis;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeGenericType;
 
 /**
@@ -47,11 +47,11 @@ public class GenericVariableThis extends GenericExpression implements CodeVariab
   @Override
   public String getName() {
 
-    return this.type.getSyntax().getVariableNameThis();
+    return this.type.getLanguage().getVariableNameThis();
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     sink.append(getName());
   }

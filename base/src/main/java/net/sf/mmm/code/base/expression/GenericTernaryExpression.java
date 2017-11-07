@@ -7,7 +7,7 @@ import java.io.IOException;
 import net.sf.mmm.code.api.expression.CodeCondition;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.expression.CodeTernaryExpression;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.language.CodeLanguage;
 
 /**
  * Generic implementation of {@link CodeTernaryExpression}.
@@ -57,7 +57,7 @@ public class GenericTernaryExpression extends GenericExpression implements CodeT
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     this.condition.write(sink, newline, defaultIndent, currentIndent);
     sink.append(" ? ");

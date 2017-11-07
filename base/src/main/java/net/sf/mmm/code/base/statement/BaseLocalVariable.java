@@ -7,7 +7,7 @@ import java.io.IOException;
 import net.sf.mmm.code.api.expression.CodeConstant;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.statement.CodeLocalVariable;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeGenericType;
 
 /**
@@ -84,16 +84,16 @@ public class BaseLocalVariable extends BaseAtomicStatement implements CodeLocalV
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     sink.append(currentIndent);
-    sink.append(syntax.getKeywordForVariable(this));
-    syntax.writeDeclaration(this, sink);
+    sink.append(language.getKeywordForVariable(this));
+    language.writeDeclaration(this, sink);
     if (this.expression != null) {
       sink.append(" = ");
-      this.expression.write(sink, newline, defaultIndent, currentIndent, syntax);
+      this.expression.write(sink, newline, defaultIndent, currentIndent, language);
     }
-    sink.append(syntax.getStatementTerminator());
+    sink.append(language.getStatementTerminator());
     sink.append(newline);
   }
 

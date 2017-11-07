@@ -9,10 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.CodePackage;
+import net.sf.mmm.code.api.language.CodeLanguage;
+import net.sf.mmm.code.api.language.CodeLanguageJava;
 import net.sf.mmm.code.api.node.CodeNode;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
-import net.sf.mmm.code.api.syntax.CodeSyntaxJava;
 import net.sf.mmm.code.base.node.BaseContainer;
 import net.sf.mmm.code.base.source.BaseSource;
 
@@ -87,7 +87,7 @@ public final class BasePackage extends BasePathElement implements CodePackage, C
     this.children = new BasePathElements(this);
     Package pkg = reflectiveObject;
     if (pkg == null) {
-      if (CodeSyntaxJava.LANGUAGE_NAME_JAVA.equals(getSyntax().getLanguageName())) {
+      if (CodeLanguageJava.LANGUAGE_NAME_JAVA.equals(getLanguage().getLanguageName())) {
         pkg = Package.getPackage(getQualifiedName());
       }
     }
@@ -259,18 +259,18 @@ public final class BasePackage extends BasePathElement implements CodePackage, C
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     if (isRoot()) {
       return;
     }
-    super.doWrite(sink, newline, defaultIndent, currentIndent, syntax);
+    super.doWrite(sink, newline, defaultIndent, currentIndent, language);
     if (currentIndent != null) {
       sink.append(currentIndent);
     }
     sink.append("package ");
     sink.append(getQualifiedName());
-    sink.append(syntax.getStatementTerminator());
+    sink.append(language.getStatementTerminator());
     sink.append(newline);
   }
 

@@ -9,7 +9,7 @@ import java.util.List;
 
 import net.sf.mmm.code.api.comment.CodeComment;
 import net.sf.mmm.code.api.comment.CodeComments;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.util.collection.base.AbstractIterator;
 
 /**
@@ -46,7 +46,7 @@ public class BaseComments extends BaseComment implements CodeComments {
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     for (CodeComment block : this.commentBlocks) {
       block.write(sink, newline, defaultIndent, currentIndent);

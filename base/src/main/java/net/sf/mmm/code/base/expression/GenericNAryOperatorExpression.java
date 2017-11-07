@@ -12,7 +12,7 @@ import net.sf.mmm.code.api.expression.CodeConstant;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.expression.CodeNAryOperatorExpression;
 import net.sf.mmm.code.api.operator.CodeNAryOperator;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.language.CodeLanguage;
 
 /**
  * Generic implementation of {@link CodeNAryOperatorExpression}.
@@ -70,7 +70,7 @@ public class GenericNAryOperatorExpression extends GenericOperatorExpression imp
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     String prefix = "";
     for (CodeExpression arg : this.arguments) {

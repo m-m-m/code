@@ -11,7 +11,7 @@ import net.sf.mmm.code.api.arg.CodeParameter;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.expression.CodeMethodInvocation;
 import net.sf.mmm.code.api.member.CodeMethod;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeGenericType;
 
 /**
@@ -157,9 +157,9 @@ public class BaseMethodInvocation extends GenericMemberReference implements Code
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
-    super.doWrite(sink, newline, defaultIndent, currentIndent, syntax);
+    super.doWrite(sink, newline, defaultIndent, currentIndent, language);
     if (this.type != null) {
       this.type.writeReference(sink, false);
       sink.append('.');
@@ -178,7 +178,7 @@ public class BaseMethodInvocation extends GenericMemberReference implements Code
     String prefix = "";
     for (CodeExpression arg : this.arguments) {
       sink.append(prefix);
-      arg.write(sink, newline, defaultIndent, currentIndent, syntax);
+      arg.write(sink, newline, defaultIndent, currentIndent, language);
       prefix = ", ";
     }
     sink.append(')');

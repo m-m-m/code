@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.item.CodeItemWithDeclaringType;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.util.io.api.IoMode;
 import net.sf.mmm.util.io.api.RuntimeIoException;
@@ -43,10 +43,10 @@ public abstract class BaseItem implements CodeItem {
   }
 
   @Override
-  public final void write(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) {
+  public final void write(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) {
 
     try {
-      doWrite(sink, newline, defaultIndent, currentIndent, syntax);
+      doWrite(sink, newline, defaultIndent, currentIndent, language);
     } catch (IOException e) {
       throw new RuntimeIoException(e, IoMode.WRITE);
     }
@@ -61,17 +61,17 @@ public abstract class BaseItem implements CodeItem {
    *        indent level).
    * @param currentIndent the current indent (number of spaces). Initially the empty string ({@code ""}).
    *        Before a recursion the {@code indent} will be appended.
-   * @param syntax the {@link CodeSyntax} to use.
+   * @param language the {@link CodeLanguage} to use.
    * @throws IOException if thrown by {@link Appendable}.
    */
-  protected abstract void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException;
+  protected abstract void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException;
 
   @Override
   public String toString() {
 
     try {
       StringBuilder buffer = new StringBuilder();
-      doWrite(buffer, "", null, "", getSyntax());
+      doWrite(buffer, "", null, "", getLanguage());
       return buffer.toString();
     } catch (Exception e) {
       LOG.debug("{}.toString() failed!", getClass().getSimpleName(), e);

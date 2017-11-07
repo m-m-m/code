@@ -8,9 +8,9 @@ import java.util.Objects;
 import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.block.CodeBlockInitializer;
 import net.sf.mmm.code.api.element.CodeElement;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.api.type.CodeTypeCategory;
@@ -212,7 +212,7 @@ public class BaseType extends BaseGenericType implements CodeType, CodeNodeItemW
     if (pkg.isRoot()) {
       result = getSimpleName();
     } else {
-      result = pkg.getQualifiedName() + getSyntax().getPackageSeparator() + getSimpleName();
+      result = pkg.getQualifiedName() + getLanguage().getPackageSeparator() + getSimpleName();
     }
     if (isImmutable()) {
       this.qualifiedName = result;
@@ -460,18 +460,18 @@ public class BaseType extends BaseGenericType implements CodeType, CodeNodeItemW
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     if (defaultIndent == null) {
       writeReference(sink, true);
       return;
     }
-    super.doWrite(sink, newline, defaultIndent, currentIndent, syntax);
-    doWriteDeclaration(sink, currentIndent, syntax);
-    doWriteBody(sink, newline, defaultIndent, currentIndent, syntax);
+    super.doWrite(sink, newline, defaultIndent, currentIndent, language);
+    doWriteDeclaration(sink, currentIndent, language);
+    doWriteBody(sink, newline, defaultIndent, currentIndent, language);
   }
 
-  void doWriteBody(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  void doWriteBody(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     sink.append(" {");
     sink.append(newline);
@@ -480,26 +480,26 @@ public class BaseType extends BaseGenericType implements CodeType, CodeNodeItemW
     if (this.staticInitializer != null) {
       sink.append(newline);
       sink.append(bodyIndent);
-      this.staticInitializer.write(sink, newline, defaultIndent, currentIndent, syntax);
+      this.staticInitializer.write(sink, newline, defaultIndent, currentIndent, language);
     }
     if (this.nonStaticInitializer != null) {
       sink.append(newline);
       sink.append(bodyIndent);
-      this.nonStaticInitializer.write(sink, newline, defaultIndent, currentIndent, syntax);
+      this.nonStaticInitializer.write(sink, newline, defaultIndent, currentIndent, language);
     }
-    getConstructors().write(sink, newline, defaultIndent, bodyIndent, syntax);
-    getMethods().write(sink, newline, defaultIndent, bodyIndent, syntax);
-    getNestedTypes().write(sink, newline, defaultIndent, currentIndent, syntax);
+    getConstructors().write(sink, newline, defaultIndent, bodyIndent, language);
+    getMethods().write(sink, newline, defaultIndent, bodyIndent, language);
+    getNestedTypes().write(sink, newline, defaultIndent, currentIndent, language);
     sink.append(currentIndent);
     sink.append("}");
     sink.append(newline);
   }
 
-  void doWriteDeclaration(Appendable sink, String currentIndent, CodeSyntax syntax) throws IOException {
+  void doWriteDeclaration(Appendable sink, String currentIndent, CodeLanguage language) throws IOException {
 
     sink.append(currentIndent);
     sink.append(this.modifiers.toString());
-    sink.append(syntax.getKeywordForCategory(this.category));
+    sink.append(language.getKeywordForCategory(this.category));
     sink.append(' ');
     writeReference(sink, true);
     getSuperTypes().write(sink, null, null);

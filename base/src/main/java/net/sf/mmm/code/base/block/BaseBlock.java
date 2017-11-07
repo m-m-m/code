@@ -12,7 +12,7 @@ import net.sf.mmm.code.api.expression.CodeVariable;
 import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.statement.CodeReturnStatement;
 import net.sf.mmm.code.api.statement.CodeStatement;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.base.node.BaseNodeItemImpl;
 
 /**
@@ -100,7 +100,7 @@ public abstract class BaseBlock extends BaseNodeItemImpl implements CodeBlock {
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     if (this.statements.size() == 1) {
       CodeStatement statement = this.statements.get(0);

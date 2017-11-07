@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 import net.sf.mmm.code.api.expression.CodeExpression;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.base.loader.BaseLoader;
 import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.source.BaseSourceImpl;
@@ -184,9 +184,9 @@ public class JavaExtendedContext extends JavaContext {
   }
 
   @Override
-  public CodeSyntax getSyntax() {
+  public CodeLanguage getLanguage() {
 
-    return this.parent.getSyntax();
+    return this.parent.getLanguage();
   }
 
   @Override

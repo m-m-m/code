@@ -9,7 +9,7 @@ import java.util.List;
 
 import net.sf.mmm.code.api.arg.CodeExceptions;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.base.member.BaseOperation;
 
@@ -101,7 +101,7 @@ public class BaseExceptions extends BaseOperationArgs<BaseException>
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     List<BaseException> list = getList();
     if (list.isEmpty()) {
@@ -110,7 +110,7 @@ public class BaseExceptions extends BaseOperationArgs<BaseException>
     String prefix = " throws ";
     for (BaseException exception : list) {
       sink.append(prefix);
-      exception.write(sink, newline, null, "", syntax);
+      exception.write(sink, newline, null, "", language);
       prefix = ", ";
     }
   }

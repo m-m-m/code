@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeSuperTypes;
 import net.sf.mmm.code.api.type.CodeType;
@@ -156,14 +156,14 @@ public class BaseSuperTypes extends BaseNodeItemContainerHierarchical<BaseGeneri
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
-    String keywordExtends = syntax.getKeywordForExtends();
+    String keywordExtends = language.getKeywordForExtends();
     String keywordInherit;
     if (this.parent.isInterface()) {
       keywordInherit = keywordExtends;
     } else {
-      keywordInherit = syntax.getKeywordForImplements();
+      keywordInherit = language.getKeywordForImplements();
       CodeGenericType superClass = getSuperClassAsDeclared();
       if (superClass != null) {
         if (this.parent.isClass()) {

@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeComposedType;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.base.BaseContext;
@@ -185,9 +185,9 @@ public class BaseComposedType extends BaseGenericType implements CodeComposedTyp
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
-    super.doWrite(sink, newline, null, "", syntax);
+    super.doWrite(sink, newline, null, "", language);
     writeReference(sink, true);
   }
 

@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 
 import net.sf.mmm.code.api.arg.CodeOperationArg;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.base.element.BaseElementWithDeclaringTypeImpl;
 import net.sf.mmm.code.base.member.BaseOperation;
@@ -84,9 +84,9 @@ public abstract class BaseOperationArg extends BaseElementWithDeclaringTypeImpl 
   protected abstract Type getReflectiveObjectType();
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
-    doWriteAnnotations(sink, newline, null, "", syntax);
+    doWriteAnnotations(sink, newline, null, "", language);
     doWriteType(sink);
   }
 

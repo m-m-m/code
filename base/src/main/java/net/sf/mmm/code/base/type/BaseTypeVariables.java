@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 import net.sf.mmm.code.api.element.CodeElementWithTypeVariables;
 import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeTypeVariable;
 import net.sf.mmm.code.api.type.CodeTypeVariables;
 import net.sf.mmm.code.base.element.BaseElementWithTypeVariables;
@@ -223,7 +223,7 @@ public class BaseTypeVariables extends BaseGenericTypeParameters<BaseTypeVariabl
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     writeReference(sink, true);
   }

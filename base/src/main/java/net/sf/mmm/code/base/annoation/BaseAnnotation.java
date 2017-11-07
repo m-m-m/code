@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import net.sf.mmm.code.api.annotation.CodeAnnotation;
 import net.sf.mmm.code.api.comment.CodeComment;
 import net.sf.mmm.code.api.expression.CodeExpression;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.item.BaseChildItem;
@@ -192,12 +192,12 @@ public class BaseAnnotation extends BaseChildItem implements CodeAnnotation {
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     if (this.comment != null) {
       this.comment.write(sink, newline, defaultIndent, currentIndent);
     }
-    sink.append(syntax.getAnnotationStart());
+    sink.append(language.getAnnotationStart());
     if (this.typeName != null) {
       sink.append(this.typeName);
     } else if (getType() == null) {
@@ -207,7 +207,7 @@ public class BaseAnnotation extends BaseChildItem implements CodeAnnotation {
       this.type.writeReference(sink, false);
     }
     if (this.parameters.isEmpty()) {
-      sink.append(syntax.getAnnotationEndIfEmpty());
+      sink.append(language.getAnnotationEndIfEmpty());
     } else {
       String prefix = "(";
       for (Entry<String, CodeExpression> entry : this.parameters.entrySet()) {

@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 
 import net.sf.mmm.code.api.member.CodeMember;
 import net.sf.mmm.code.api.member.CodeMembers;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.base.node.BaseNodeItemContainer;
 import net.sf.mmm.code.base.type.BaseType;
 
@@ -80,12 +80,12 @@ public abstract class BaseMembers<M extends CodeMember> extends BaseNodeItemCont
   public abstract BaseMembers<M> copy();
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     for (M declaredMember : getList()) {
       sink.append(newline);
       sink.append(currentIndent);
-      declaredMember.write(sink, newline, defaultIndent, currentIndent, syntax);
+      declaredMember.write(sink, newline, defaultIndent, currentIndent, language);
     }
   }
 }

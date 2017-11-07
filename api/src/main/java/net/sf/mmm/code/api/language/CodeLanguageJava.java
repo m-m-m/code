@@ -1,6 +1,6 @@
 /* Copyright (c) The m-m-m Team, Licensed under the Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0 */
-package net.sf.mmm.code.api.syntax;
+package net.sf.mmm.code.api.language;
 
 import java.io.IOException;
 
@@ -10,18 +10,18 @@ import net.sf.mmm.code.api.statement.CodeLocalVariable;
 import net.sf.mmm.code.api.type.CodeTypeCategory;
 
 /**
- * The default implementation of {@link CodeSyntax} (for Java).
+ * The default implementation of {@link CodeLanguage} (for Java).
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class CodeSyntaxJava implements CodeSyntax {
+public class CodeLanguageJava implements CodeLanguage {
 
   /** The {@link #getLanguageName() language name}. */
   public static final String LANGUAGE_NAME_JAVA = "Java";
 
   /** The singleton instance. */
-  public static final CodeSyntaxJava INSTANCE = new CodeSyntaxJava();
+  public static final CodeLanguageJava INSTANCE = new CodeLanguageJava();
 
   @Override
   public String getLanguageName() {

@@ -8,7 +8,7 @@ import net.sf.mmm.code.api.expression.CodeConstant;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.expression.CodeMemberReference;
 import net.sf.mmm.code.api.member.CodeMember;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.language.CodeLanguage;
 
 /**
  * Generic implementation of {@link CodeMemberReference}.
@@ -52,10 +52,10 @@ public abstract class GenericMemberReference extends GenericExpression implement
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     if (this.expression != null) {
-      this.expression.write(sink, newline, defaultIndent, currentIndent, syntax);
+      this.expression.write(sink, newline, defaultIndent, currentIndent, language);
       sink.append('.');
     }
   }

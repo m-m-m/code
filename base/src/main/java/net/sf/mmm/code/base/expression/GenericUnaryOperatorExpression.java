@@ -8,7 +8,7 @@ import net.sf.mmm.code.api.expression.CodeConstant;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.expression.CodeUnaryOperatorExpression;
 import net.sf.mmm.code.api.operator.CodeUnaryOperator;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.language.CodeLanguage;
 
 /**
  * Generic implementation of {@link CodeUnaryOperatorExpression}.
@@ -55,7 +55,7 @@ public class GenericUnaryOperatorExpression extends GenericOperatorExpression im
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     sink.append(this.operator.getName());
     this.argument.write(sink, newline, defaultIndent, currentIndent);

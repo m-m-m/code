@@ -5,7 +5,7 @@ package net.sf.mmm.code.impl.java.expression.constant;
 import java.io.IOException;
 
 import net.sf.mmm.code.api.expression.CodeConstant;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.base.expression.GenericExpression;
 import net.sf.mmm.code.impl.java.expression.JavaExpression;
 import net.sf.mmm.code.impl.java.expression.literal.JavaLiteral;
@@ -68,7 +68,7 @@ public abstract class JavaConstant<T> extends GenericExpression implements CodeC
   public abstract String getSourceCode();
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     sink.append(getSourceCode());
   }

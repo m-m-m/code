@@ -7,7 +7,7 @@ import java.util.Objects;
 
 import net.sf.mmm.code.api.comment.CodeComment;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.base.annoation.BaseAnnotations;
 import net.sf.mmm.code.base.element.BaseElementImpl;
@@ -143,15 +143,15 @@ public class BaseTypeProxy extends BaseGenericTypeProxy implements CodeNodeItemW
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     if (defaultIndent == null) {
       writeReference(sink, true);
       return;
     }
-    super.doWrite(sink, newline, defaultIndent, currentIndent, syntax, false);
-    this.type.doWriteDeclaration(sink, currentIndent, syntax);
-    this.type.doWriteBody(sink, newline, defaultIndent, currentIndent, syntax);
+    super.doWrite(sink, newline, defaultIndent, currentIndent, language, false);
+    this.type.doWriteDeclaration(sink, currentIndent, language);
+    this.type.doWriteBody(sink, newline, defaultIndent, currentIndent, language);
   }
 
   @Override

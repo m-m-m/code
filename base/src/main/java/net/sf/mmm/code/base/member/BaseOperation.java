@@ -10,7 +10,7 @@ import net.sf.mmm.code.api.expression.CodeVariable;
 import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.base.arg.BaseExceptions;
 import net.sf.mmm.code.base.arg.BaseParameter;
 import net.sf.mmm.code.base.arg.BaseParameters;
@@ -147,13 +147,13 @@ public abstract class BaseOperation extends BaseMember implements CodeOperation,
   public abstract BaseOperation copy();
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
-    super.doWrite(sink, newline, defaultIndent, currentIndent, syntax);
-    this.typeVariables.write(sink, newline, defaultIndent, currentIndent, syntax);
-    doWriteSignature(sink, newline, defaultIndent, currentIndent, syntax);
+    super.doWrite(sink, newline, defaultIndent, currentIndent, language);
+    this.typeVariables.write(sink, newline, defaultIndent, currentIndent, language);
+    doWriteSignature(sink, newline, defaultIndent, currentIndent, language);
     if ((this.body == null) || (defaultIndent == null)) {
-      sink.append(syntax.getStatementTerminator());
+      sink.append(language.getStatementTerminator());
     } else {
       sink.append(" {");
       sink.append(newline);
@@ -174,13 +174,13 @@ public abstract class BaseOperation extends BaseMember implements CodeOperation,
    *        indent level).
    * @param currentIndent the current indent (number of spaces). Initially the empty string ({@code ""}).
    *        Before a recursion the {@code indent} will be appended.
-   * @param syntax the {@link CodeSyntax} to use.
+   * @param language the {@link CodeLanguage} to use.
    * @throws IOException if thrown by {@link Appendable}.
    */
-  protected void doWriteSignature(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWriteSignature(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     sink.append(getName());
-    doWriteParameters(sink, newline, defaultIndent, currentIndent, syntax);
+    doWriteParameters(sink, newline, defaultIndent, currentIndent, language);
     this.exceptions.write(sink, newline, null, null);
   }
 
@@ -193,10 +193,10 @@ public abstract class BaseOperation extends BaseMember implements CodeOperation,
    *        indent level).
    * @param currentIndent the current indent (number of spaces). Initially the empty string ({@code ""}).
    *        Before a recursion the {@code indent} will be appended.
-   * @param syntax the {@link CodeSyntax} to use.
+   * @param language the {@link CodeLanguage} to use.
    * @throws IOException if thrown by {@link Appendable}.
    */
-  protected void doWriteParameters(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWriteParameters(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     sink.append('(');
     this.parameters.write(sink, newline, null, null);

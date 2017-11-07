@@ -10,7 +10,7 @@ import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.CodePathElements;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.node.BaseNodeItemContainerFlat;
 import net.sf.mmm.code.base.type.BaseType;
@@ -384,7 +384,7 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     // packages write their children to separate files - nothing to do...
   }

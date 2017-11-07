@@ -9,7 +9,7 @@ import net.sf.mmm.code.api.annotation.CodeAnnotations;
 import net.sf.mmm.code.api.comment.CodeComment;
 import net.sf.mmm.code.api.node.CodeNode;
 import net.sf.mmm.code.api.node.CodeNodeItemContainer;
-import net.sf.mmm.code.api.syntax.CodeSyntax;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.annoation.BaseAnnotations;
 import net.sf.mmm.code.base.doc.BaseDoc;
@@ -130,11 +130,11 @@ public abstract class BaseElementImpl extends BaseNodeItemImpl implements BaseEl
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
-    doWriteDoc(sink, newline, defaultIndent, currentIndent, syntax);
-    doWriteComment(sink, newline, defaultIndent, currentIndent, syntax);
-    doWriteAnnotations(sink, newline, defaultIndent, currentIndent, syntax);
+    doWriteDoc(sink, newline, defaultIndent, currentIndent, language);
+    doWriteComment(sink, newline, defaultIndent, currentIndent, language);
+    doWriteAnnotations(sink, newline, defaultIndent, currentIndent, language);
   }
 
   /**
@@ -144,10 +144,10 @@ public abstract class BaseElementImpl extends BaseNodeItemImpl implements BaseEl
    * @param newline the newline {@link String}.
    * @param defaultIndent the default indent.
    * @param currentIndent the current indent.
-   * @param syntax the {@link CodeSyntax}.
+   * @param language the {@link CodeLanguage}.
    * @throws IOException if thrown by {@link Appendable}.
    */
-  protected void doWriteComment(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) throws IOException {
+  protected void doWriteComment(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     CodeComment myComment = getComment();
     if (myComment != null) {
@@ -168,7 +168,7 @@ public abstract class BaseElementImpl extends BaseNodeItemImpl implements BaseEl
           sink.append(" */");
         }
       } else {
-        myComment.write(sink, newline, defaultIndent, currentIndent, syntax);
+        myComment.write(sink, newline, defaultIndent, currentIndent, language);
       }
     }
   }
@@ -180,9 +180,9 @@ public abstract class BaseElementImpl extends BaseNodeItemImpl implements BaseEl
    * @param newline the newline {@link String}.
    * @param defaultIndent the default indent.
    * @param currentIndent the current indent.
-   * @param syntax the {@link CodeSyntax}.
+   * @param language the {@link CodeLanguage}.
    */
-  protected void doWriteDoc(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) {
+  protected void doWriteDoc(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) {
 
     if ((getDoc() != null) && (currentIndent != null)) {
       this.doc.write(sink, newline, defaultIndent, currentIndent);
@@ -196,13 +196,13 @@ public abstract class BaseElementImpl extends BaseNodeItemImpl implements BaseEl
    * @param newline the newline {@link String}.
    * @param defaultIndent the default indent.
    * @param currentIndent the current indent.
-   * @param syntax the {@link CodeSyntax}.
+   * @param language the {@link CodeLanguage}.
    */
-  protected void doWriteAnnotations(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeSyntax syntax) {
+  protected void doWriteAnnotations(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) {
 
     CodeAnnotations myAnnotations = getAnnotations();
     if (myAnnotations != null) {
-      myAnnotations.write(sink, newline, defaultIndent, currentIndent, syntax);
+      myAnnotations.write(sink, newline, defaultIndent, currentIndent, language);
     }
   }
 
