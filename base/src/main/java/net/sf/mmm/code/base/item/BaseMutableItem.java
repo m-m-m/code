@@ -207,7 +207,12 @@ public abstract class BaseMutableItem extends BaseItem implements CodeMutableIte
 
     initialize();
     if (this.immutable) {
-      throw new ReadOnlyException(getClass().getSimpleName() + ":" + toString());
+      String detail = toString();
+      String object = getClass().getSimpleName();
+      if (!detail.isEmpty()) {
+        object = object + ":" + detail;
+      }
+      throw new ReadOnlyException(object);
     }
   }
 

@@ -393,4 +393,14 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
     // packages write their children to separate files - nothing to do...
   }
 
+  @Override
+  public String toString() {
+
+    String pkg = this.parent.getQualifiedName();
+    if (pkg.isEmpty()) {
+      pkg = "«root»";
+    }
+    return pkg + ".children";
+  }
+
 }

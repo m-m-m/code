@@ -12,6 +12,7 @@ import net.sf.mmm.code.base.annoation.BaseAnnotation;
 import net.sf.mmm.code.base.comment.BaseSingleLineComment;
 import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.type.BaseType;
+import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
  * Test of {@link BasePackage} and {@link BasePathElements}.
@@ -81,11 +82,45 @@ public class BasePackageTest extends BaseContextTest {
 
   /**
    * Test of
-   * {@link BasePathElements#getPackage(net.sf.mmm.code.api.CodeName, boolean, java.util.function.BiFunction, boolean)}.
+   * {@link BasePathElements#getPackage(net.sf.mmm.code.api.CodeName, boolean, java.util.function.BiFunction, boolean)}
+   * with factory to create packages but without adding.
    */
-  @SuppressWarnings("unchecked")
   @Test
   public void testGetPackage() {
+
+    testGetPackageParameterized(false, false);
+    testGetPackageParameterized(false, true); // sick signature but protected so only internal and no API
+  }
+
+  /**
+   * Test of
+   * {@link BasePathElements#getPackage(net.sf.mmm.code.api.CodeName, boolean, java.util.function.BiFunction, boolean)}
+   * with factory to create packages and with force adding.
+   */
+  @Test
+  public void testGetPackageForceAdd() {
+
+    testGetPackageParameterized(true, true);
+  }
+
+  /**
+   * Test of
+   * {@link BasePathElements#getPackage(net.sf.mmm.code.api.CodeName, boolean, java.util.function.BiFunction, boolean)}
+   * with factory to create packages and with adding failing because immutable.
+   */
+  @Test
+  public void testGetPackageAddFailImmutable() {
+
+    try {
+      testGetPackageParameterized(true, false);
+      failBecauseExceptionWasNotThrown(ReadOnlyException.class);
+    } catch (ReadOnlyException e) {
+      assertThat(e.getNlsMessage().getMessage()).isEqualTo("Failed to modify \"BasePathElements:«root».children\" as it is read-only!");
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  private void testGetPackageParameterized(boolean add, boolean forceAdd) {
 
     // given
     BaseContext context = createContext();
@@ -95,7 +130,7 @@ public class BasePackageTest extends BaseContextTest {
     CodeName pkgQName = context.parseName(pkgName);
 
     // when
-    BasePackage pkg = rootPackage.getChildren().getPackage(pkgQName, false, this::createPackage, false);
+    BasePackage pkg = rootPackage.getChildren().getPackage(pkgQName, false, this::createPackage, add, forceAdd);
 
     // then
     assertThat(pkg.getQualifiedName()).isEqualTo(pkgName);
@@ -104,7 +139,12 @@ public class BasePackageTest extends BaseContextTest {
     assertThat(pkg.getDoc().getLines()).containsExactly(TEST_TEXT1, TEST_TEXT2);
     assertThat((List<BaseAnnotation>) pkg.getAnnotations().getDeclared()).containsExactly(getTestAnnotation(null));
     assertThat(pkg.isImmutable()).isTrue();
-    assertThat(rootPackage.getChildren().getPackage(pkgQName)).isNull();
+    BasePackage pkgFromRoot = rootPackage.getChildren().getPackage(pkgQName);
+    if (add) {
+      assertThat(pkgFromRoot).isSameAs(pkg);
+    } else {
+      assertThat(pkgFromRoot).isNull();
+    }
   }
 
   private BasePackage createPackage(BasePackage pkg, String simpleName) {
