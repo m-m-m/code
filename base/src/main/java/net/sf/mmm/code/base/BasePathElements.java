@@ -9,8 +9,8 @@ import net.sf.mmm.code.api.CodeFile;
 import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.CodePathElements;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.language.CodeLanguage;
+import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.node.BaseNodeItemContainerFlat;
 import net.sf.mmm.code.base.type.BaseType;
@@ -207,7 +207,11 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
       }
       parentPathElements = this;
     } else {
-      parentPathElements = getPackage(parentPath, init, factory, add, forceAdd).getChildren();
+      BasePackage parentPkg = getPackage(parentPath, init, factory, add, forceAdd);
+      if (parentPkg == null) {
+        return null;
+      }
+      parentPathElements = parentPkg.getChildren();
     }
     BasePackage pkg = parentPathElements.getPackage(simpleName, init);
     if ((pkg == null) && (factory != null)) {

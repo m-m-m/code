@@ -3,9 +3,13 @@
 package net.sf.mmm.code.base;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 import org.junit.Test;
 
+import net.sf.mmm.code.api.CodeName;
+import net.sf.mmm.code.base.annoation.BaseAnnotation;
+import net.sf.mmm.code.base.comment.BaseSingleLineComment;
 import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.type.BaseType;
 
@@ -13,6 +17,14 @@ import net.sf.mmm.code.base.type.BaseType;
  * Test of {@link BasePackage} and {@link BasePathElements}.
  */
 public class BasePackageTest extends BaseContextTest {
+
+  private static final String TEST_TEXT1 = "This is a test";
+
+  private static final String TEST_TEXT2 = "API-Doc comment.";
+
+  private static final BaseSingleLineComment TEST_COMMENT = new BaseSingleLineComment(TEST_TEXT1);
+
+  private BaseAnnotation annotation;
 
   /**
    * Test of {@link BasePathElements#createPackage(String)}.
@@ -71,9 +83,58 @@ public class BasePackageTest extends BaseContextTest {
    * Test of
    * {@link BasePathElements#getPackage(net.sf.mmm.code.api.CodeName, boolean, java.util.function.BiFunction, boolean)}.
    */
+  @SuppressWarnings("unchecked")
   @Test
   public void testGetPackage() {
 
+    // given
+    BaseContext context = createContext();
+    BaseSource source = context.getSource();
+    BasePackage rootPackage = source.getRootPackage();
+    String pkgName = "com.foo.bar.some";
+    CodeName pkgQName = context.parseName(pkgName);
+
+    // when
+    BasePackage pkg = rootPackage.getChildren().getPackage(pkgQName, false, this::createPackage, false);
+
+    // then
+    assertThat(pkg.getQualifiedName()).isEqualTo(pkgName);
+    assertThat(pkg.getSimpleName()).isEqualTo("some");
+    assertThat(pkg.getComment()).isSameAs(TEST_COMMENT);
+    assertThat(pkg.getDoc().getLines()).containsExactly(TEST_TEXT1, TEST_TEXT2);
+    assertThat((List<BaseAnnotation>) pkg.getAnnotations().getDeclared()).containsExactly(getTestAnnotation(null));
+    assertThat(pkg.isImmutable()).isTrue();
+    assertThat(rootPackage.getChildren().getPackage(pkgQName)).isNull();
+  }
+
+  private BasePackage createPackage(BasePackage pkg, String simpleName) {
+
+    return createPackage(pkg, simpleName, false);
+  }
+
+  private BasePackage createPackage(BasePackage pkg, String simpleName, boolean source) {
+
+    Supplier<BasePackage> sourceSupplier = null;
+    if (!source) {
+      sourceSupplier = () -> createPackage(pkg, simpleName, true);
+    }
+    BasePackage basePackage = new BasePackage(pkg, simpleName, null, sourceSupplier);
+    if (source) {
+      basePackage.getAnnotations().add(getTestAnnotation(pkg.getContext().getSource()));
+      basePackage.setComment(TEST_COMMENT);
+      basePackage.getDoc().getLines().add(TEST_TEXT1);
+      basePackage.getDoc().getLines().add(TEST_TEXT2);
+    }
+    return basePackage;
+  }
+
+  private BaseAnnotation getTestAnnotation(BaseSource source) {
+
+    if (this.annotation == null) {
+      BaseType type = (BaseType) source.getContext().getType(Override.class);
+      this.annotation = new BaseAnnotation(source, type);
+    }
+    return this.annotation;
   }
 
   /**

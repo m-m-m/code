@@ -206,7 +206,7 @@ public class BaseAnnotation extends BaseChildItem implements CodeAnnotation {
     } else {
       this.type.writeReference(sink, false);
     }
-    if (this.parameters.isEmpty()) {
+    if (getParameters().isEmpty()) {
       sink.append(language.getAnnotationEndIfEmpty());
     } else {
       String prefix = "(";

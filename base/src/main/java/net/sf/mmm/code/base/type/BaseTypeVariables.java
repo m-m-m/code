@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import net.sf.mmm.code.api.element.CodeElementWithTypeVariables;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
-import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeTypeVariable;
 import net.sf.mmm.code.api.type.CodeTypeVariables;
 import net.sf.mmm.code.base.element.BaseElementWithTypeVariables;
@@ -161,7 +161,7 @@ public class BaseTypeVariables extends BaseGenericTypeParameters<BaseTypeVariabl
         if (sourceOperation != null) {
           this.sourceCodeObject = sourceOperation.getTypeParameters();
         }
-      } else {
+      } else if (this.declaringType != null) {
         BaseType sourceType = this.declaringType.getSourceCodeObject();
         if (sourceType != null) {
           this.sourceCodeObject = sourceType.getTypeParameters();

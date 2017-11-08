@@ -144,6 +144,9 @@ public abstract class BaseMutableItem extends BaseItem implements CodeMutableIte
     if (getReflectiveObject() != null) {
       return true;
     }
+    if (getSourceCodeObject() != null) {
+      return true;
+    }
     return false;
   }
 

@@ -13,9 +13,9 @@ import java.util.Set;
 
 import net.sf.mmm.code.api.annotation.CodeAnnotation;
 import net.sf.mmm.code.api.annotation.CodeAnnotations;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
-import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.element.BaseElementImpl;
 import net.sf.mmm.code.base.node.BaseNodeItemContainerHierarchical;
@@ -73,6 +73,12 @@ public class BaseAnnotations extends BaseNodeItemContainerHierarchical<CodeAnnot
     if (this.parent == null) {
       return;
     }
+    doInitByteCode();
+    doInitSourceCode();
+  }
+
+  private void doInitByteCode() {
+
     Object reflectiveObject = this.parent.getReflectiveObject();
     if (reflectiveObject instanceof AnnotatedElement) {
       Annotation[] annotations = ((AnnotatedElement) reflectiveObject).getAnnotations();
@@ -82,6 +88,34 @@ public class BaseAnnotations extends BaseNodeItemContainerHierarchical<CodeAnnot
       BaseSource source = getSource();
       for (Annotation annotation : annotations) {
         addInternal(new BaseAnnotation(source, annotation));
+      }
+    }
+  }
+
+  private void doInitSourceCode() {
+
+    BaseAnnotations sourceAnnotations = getSourceCodeObject();
+    if (sourceAnnotations == null) {
+      return;
+    }
+    List<? extends CodeAnnotation> sourceList = sourceAnnotations.getDeclared();
+    if (sourceList.isEmpty()) {
+      return;
+    }
+    Set<String> annotationTypes = null;
+    List<? extends CodeAnnotation> declared = getDeclared();
+    if (declared.isEmpty()) {
+      annotationTypes = Collections.emptySet();
+    } else {
+      annotationTypes = new HashSet<>();
+      for (CodeAnnotation annotation : declared) {
+        annotationTypes.add(annotation.getType().getQualifiedName());
+      }
+    }
+    for (CodeAnnotation sourceAnnotation : sourceList) {
+      String key = sourceAnnotation.getType().getQualifiedName();
+      if (!annotationTypes.contains(key)) {
+        addInternal(sourceAnnotation);
       }
     }
   }
@@ -146,35 +180,10 @@ public class BaseAnnotations extends BaseNodeItemContainerHierarchical<CodeAnnot
   @Override
   public BaseAnnotations getSourceCodeObject() {
 
-    if (this.sourceCodeObject != null) {
-      return this.sourceCodeObject;
-    }
-    if (isInitialized()) {
-      return null;
-    }
-    if (this.parent != null) {
-      initialize();
+    if ((this.sourceCodeObject == null) && !isInitialized() && (this.parent != null)) {
       BaseElementImpl sourceElement = this.parent.getSourceCodeObject();
       if (sourceElement != null) {
         this.sourceCodeObject = sourceElement.getAnnotations();
-      }
-      if (this.sourceCodeObject != null) {
-        Set<String> annotationTypes = null;
-        List<? extends CodeAnnotation> declared = getDeclared();
-        if (declared.isEmpty()) {
-          annotationTypes = Collections.emptySet();
-        } else {
-          annotationTypes = new HashSet<>();
-          for (CodeAnnotation annotation : declared) {
-            annotationTypes.add(annotation.getType().getQualifiedName());
-          }
-        }
-        for (CodeAnnotation sourceAnnotation : this.sourceCodeObject.getDeclared()) {
-          String key = sourceAnnotation.getType().getQualifiedName();
-          if (!annotationTypes.contains(key)) {
-            addInternal(sourceAnnotation);
-          }
-        }
       }
     }
     return this.sourceCodeObject;
