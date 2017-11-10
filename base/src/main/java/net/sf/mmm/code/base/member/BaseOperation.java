@@ -7,10 +7,10 @@ import java.lang.reflect.Executable;
 
 import net.sf.mmm.code.api.block.CodeBlockBody;
 import net.sf.mmm.code.api.expression.CodeVariable;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
-import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.base.arg.BaseExceptions;
 import net.sf.mmm.code.base.arg.BaseParameter;
 import net.sf.mmm.code.base.arg.BaseParameters;
@@ -38,11 +38,12 @@ public abstract class BaseOperation extends BaseMember implements CodeOperation,
   /**
    * The constructor.
    *
+   * @param parent the {@link #getParent() parent}.
    * @param name the {@link #getName() name}.
    */
-  public BaseOperation(String name) {
+  public BaseOperation(BaseOperations<?> parent, String name) {
 
-    super(CodeModifiers.MODIFIERS_PUBLIC, name);
+    super(parent, CodeModifiers.MODIFIERS_PUBLIC, name);
     this.typeVariables = new BaseTypeVariables(this);
     this.parameters = new BaseParameters(this);
     this.exceptions = new BaseExceptions(this);
@@ -51,12 +52,13 @@ public abstract class BaseOperation extends BaseMember implements CodeOperation,
   /**
    * The constructor.
    *
+   * @param parent the {@link #getParent() parent}.
    * @param name the {@link #getName() name}.
    * @param typeVariables the {@link #getTypeParameters() type variables}.
    */
-  protected BaseOperation(String name, BaseTypeVariables typeVariables) {
+  protected BaseOperation(BaseOperations<?> parent, String name, BaseTypeVariables typeVariables) {
 
-    super(CodeModifiers.MODIFIERS_PUBLIC, name);
+    super(parent, CodeModifiers.MODIFIERS_PUBLIC, name);
     typeVariables.setParent(this);
     typeVariables.setImmutable();
     this.typeVariables = typeVariables;

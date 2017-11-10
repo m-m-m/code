@@ -18,9 +18,7 @@ import net.sf.mmm.code.base.type.BaseTypeVariables;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaTypeVariablesFromSource extends BaseTypeVariables implements BaseElementWithTypeVariables
-
-{
+public class JavaTypeVariablesFromSource extends BaseTypeVariables implements BaseElementWithTypeVariables {
 
   /**
    * The constructor.

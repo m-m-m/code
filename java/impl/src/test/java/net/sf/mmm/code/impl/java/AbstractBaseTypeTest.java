@@ -23,7 +23,7 @@ import net.sf.mmm.code.base.type.BaseType;
  * Test of {@link JavaRootContext}.
  */
 @SuppressWarnings("javadoc")
-public abstract class JavaTypeTest extends Assertions {
+public abstract class AbstractBaseTypeTest extends Assertions {
 
   public static void verifyClass(BaseType type, Class<?> clazz, JavaContext context) {
 

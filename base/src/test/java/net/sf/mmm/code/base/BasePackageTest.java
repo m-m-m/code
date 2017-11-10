@@ -9,7 +9,6 @@ import org.junit.Test;
 
 import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.base.annoation.BaseAnnotation;
-import net.sf.mmm.code.base.comment.BaseSingleLineComment;
 import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
@@ -19,13 +18,39 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  */
 public class BasePackageTest extends BaseContextTest {
 
-  private static final String TEST_TEXT1 = "This is a test";
+  /**
+   * Test of {@link BasePackage#BasePackage(BasePackage, String)} with invalid and valid simple names.
+   */
+  @Test
+  public void testSimpleNames() {
 
-  private static final String TEST_TEXT2 = "API-Doc comment.";
+    // given
+    BaseContext context = createContext();
+    BaseSource source = context.getSource();
+    BasePackage rootPackage = source.getRootPackage();
 
-  private static final BaseSingleLineComment TEST_COMMENT = new BaseSingleLineComment(TEST_TEXT1);
+    // when + then
+    verifyPackageSimpleName(rootPackage, null, false);
+    verifyPackageSimpleName(rootPackage, "", false);
+    verifyPackageSimpleName(rootPackage, "package", false);
+    verifyPackageSimpleName(rootPackage, "private", false);
+    verifyPackageSimpleName(rootPackage, "package1", true);
+  }
 
-  private BaseAnnotation annotation;
+  private void verifyPackageSimpleName(BasePackage parentPackage, String simpleName, boolean valid) {
+
+    try {
+      new BasePackage(parentPackage, simpleName);
+      if (!valid) {
+        failBecauseExceptionWasNotThrown(RuntimeException.class);
+      }
+    } catch (RuntimeException e) {
+      if (valid) {
+        fail("Simple name '" + simpleName + "' was expected to be a valid for package.", e);
+      }
+      assertThat(e).hasMessageContaining("" + simpleName);
+    }
+  }
 
   /**
    * Test of {@link BasePathElements#createPackage(String)}.
@@ -76,7 +101,7 @@ public class BasePackageTest extends BaseContextTest {
     assertThat(pkg.getContext()).isSameAs(context);
     assertThat(pkg.isImmutable()).isFalse();
     verifyPackageEmpty(pkg, true);
-    assertThat(pkg.getSourceCode()).isEqualTo("package mydomain;\n");
+    assertThat(pkg.getSourceCode()).isEqualTo("package mydomain;\n\n");
     assertThat(pkg.toString()).isEqualTo("package mydomain;");
   }
 
@@ -168,15 +193,6 @@ public class BasePackageTest extends BaseContextTest {
     return basePackage;
   }
 
-  private BaseAnnotation getTestAnnotation(BaseSource source) {
-
-    if (this.annotation == null) {
-      BaseType type = (BaseType) source.getContext().getType(Override.class);
-      this.annotation = new BaseAnnotation(source, type);
-    }
-    return this.annotation;
-  }
-
   /**
    * Test of {@link BasePathElements} with standard packages from JDK such as "java.lang".
    */
@@ -211,6 +227,7 @@ public class BasePackageTest extends BaseContextTest {
     assertThat(javaPackage.isJava()).isTrue();
     assertThat(javaLangPackage.isJava()).isFalse();
     assertThat(javaLangPackage.getChildren().getType("String")).isSameAs(stringType);
+    assertThat(javaLangPackage.getChildren().getFile("String")).isSameAs(stringType.getFile());
     assertThat(rootPackageChildren.getPackage(context.parseName("java.lang"))).isSameAs(javaLangPackage);
     assertThat(rootPackageChildren.getFile(context.parseName("java.lang.String")).getType()).isSameAs(stringType);
     assertThat((List<BasePathElement>) javaPackage.getChildren().getDeclared()).contains(javaLangPackage, javaUtilPackage);

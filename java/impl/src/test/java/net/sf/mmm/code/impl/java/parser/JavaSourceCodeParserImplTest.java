@@ -136,7 +136,7 @@ public class JavaSourceCodeParserImplTest extends Assertions {
         assertThat(annotations).hasSize(1);
         CodeAnnotation annotation = annotations.get(0);
         assertThat(annotation).isNotNull();
-        assertThat(annotation.getSourceCode()).isEqualTo("@Test");
+        assertThat(annotation.toString()).isEqualTo("@Test");
         assertThat(method.getDoc().getLines()).containsExactly("Test reading {@link JavaSourceCodeParserImplTest} itself.");
       } else if (method.getName().equals("getParser")) {
         assertThat(method.getModifiers().getVisibility()).isEqualTo(CodeVisibility.DEFAULT);

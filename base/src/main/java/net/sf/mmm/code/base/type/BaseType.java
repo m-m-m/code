@@ -113,7 +113,12 @@ public class BaseType extends BaseGenericType implements CodeType, CodeNodeItemW
     super();
     this.file = file;
     this.declaringType = declaringType;
-    this.simpleName = simpleName;
+    if (simpleName == null) {
+      assert (declaringType == null);
+      this.simpleName = null;
+    } else {
+      this.simpleName = this.file.getLanguage().verifySimpleName(this, simpleName);
+    }
     this.reflectiveObject = reflectiveObject;
     this.superTypes = new BaseSuperTypes(this);
     this.nestedTypes = new BaseNestedTypes(this);
@@ -197,7 +202,7 @@ public class BaseType extends BaseGenericType implements CodeType, CodeNodeItemW
       if (this.declaringType != null) {
         this.declaringType.getNestedTypes().rename(this, this.simpleName, simpleName, null);
       }
-      this.simpleName = simpleName;
+      this.simpleName = getLanguage().verifySimpleName(this, simpleName);
     }
   }
 

@@ -7,9 +7,9 @@ import java.util.Iterator;
 
 import net.sf.mmm.code.api.annotation.CodeAnnotations;
 import net.sf.mmm.code.api.comment.CodeComment;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.node.CodeNode;
 import net.sf.mmm.code.api.node.CodeNodeItemContainer;
-import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.annoation.BaseAnnotations;
 import net.sf.mmm.code.base.doc.BaseDoc;
@@ -76,10 +76,6 @@ public abstract class BaseElementImpl extends BaseNodeItemImpl implements BaseEl
 
     if (this.doc == null) {
       this.doc = new BaseDoc(this);
-      BaseElementImpl sourceElement = getSourceCodeObject();
-      if (sourceElement != null) {
-        this.doc.getLines().addAll(sourceElement.getDoc().getLines());
-      }
     }
     return this.doc;
   }
@@ -184,7 +180,7 @@ public abstract class BaseElementImpl extends BaseNodeItemImpl implements BaseEl
    */
   protected void doWriteDoc(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) {
 
-    if ((getDoc() != null) && (currentIndent != null)) {
+    if ((getDoc() != null) && (defaultIndent != null)) {
       this.doc.write(sink, newline, defaultIndent, currentIndent);
     }
   }

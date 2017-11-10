@@ -168,6 +168,9 @@ public final class BasePackage extends BasePathElement implements CodePackage, C
   @Override
   public BaseContext getContext() {
 
+    if (this.source == null) {
+      return null; // only during initialization (e.g. debugging in constructor)
+    }
     return this.source.getContext();
   }
 
@@ -271,6 +274,7 @@ public final class BasePackage extends BasePathElement implements CodePackage, C
     sink.append("package ");
     sink.append(getQualifiedName());
     sink.append(language.getStatementTerminator());
+    sink.append(newline);
     sink.append(newline);
   }
 

@@ -6,9 +6,10 @@ import java.io.IOException;
 
 import net.sf.mmm.code.api.expression.CodeConstant;
 import net.sf.mmm.code.api.expression.CodeExpression;
-import net.sf.mmm.code.api.statement.CodeLocalVariable;
 import net.sf.mmm.code.api.language.CodeLanguage;
+import net.sf.mmm.code.api.statement.CodeLocalVariable;
 import net.sf.mmm.code.api.type.CodeGenericType;
+import net.sf.mmm.code.base.source.BaseSource;
 
 /**
  * Base implementation of {@link CodeLocalVariable}.
@@ -29,16 +30,16 @@ public class BaseLocalVariable extends BaseAtomicStatement implements CodeLocalV
   /**
    * The constructor.
    *
+   * @param source the {@link BaseSource} defining this variable.
    * @param name the {@link #getName() name}.
    * @param type the {@link #getType() type}.
    * @param expression the assignment {@link #getExpression() expression}.
    * @param finalFlag the {@link #isFinal() final} flag.
    */
-  public BaseLocalVariable(String name, CodeGenericType type, CodeExpression expression, boolean finalFlag) {
+  public BaseLocalVariable(BaseSource source, String name, CodeGenericType type, CodeExpression expression, boolean finalFlag) {
 
     super();
-    verifyName(name, NAME_PATTERN);
-    this.name = name;
+    this.name = source.getContext().getLanguage().verifyName(this, name);
     this.type = type;
     this.finalFlag = finalFlag;
     this.expression = expression;

@@ -5,9 +5,9 @@ package net.sf.mmm.code.base.member;
 import java.io.IOException;
 import java.util.function.Consumer;
 
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeMember;
 import net.sf.mmm.code.api.member.CodeMembers;
-import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.base.node.BaseNodeItemContainer;
 import net.sf.mmm.code.base.type.BaseType;
 
@@ -82,10 +82,10 @@ public abstract class BaseMembers<M extends CodeMember> extends BaseNodeItemCont
   @Override
   protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
-    for (M declaredMember : getList()) {
+    for (M declaredMember : getDeclared()) {
       sink.append(newline);
-      sink.append(currentIndent);
       declaredMember.write(sink, newline, defaultIndent, currentIndent, language);
+      sink.append(newline);
     }
   }
 }

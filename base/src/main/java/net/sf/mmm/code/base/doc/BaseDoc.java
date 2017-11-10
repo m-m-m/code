@@ -42,7 +42,7 @@ import net.sf.mmm.code.base.element.BaseElementImpl;
 import net.sf.mmm.code.base.member.BaseOperation;
 import net.sf.mmm.code.base.node.BaseNodeItemImpl;
 import net.sf.mmm.code.base.type.BaseType;
-import net.sf.mmm.code.base.type.BaseTypeVariables;
+import net.sf.mmm.code.base.type.BaseTypeVariable;
 
 /**
  * Base implementation of {@link CodeDoc}.
@@ -97,6 +97,19 @@ public class BaseDoc extends BaseNodeItemImpl implements CodeDoc, CodeNodeItemWi
   }
 
   @Override
+  protected void doInitialize() {
+
+    super.doInitialize();
+    if (this.parent == null) {
+      return;
+    }
+    BaseElementImpl sourceElement = this.parent.getSourceCodeObject();
+    if (sourceElement != null) {
+      this.lines.addAll(sourceElement.getDoc().getLines());
+    }
+  }
+
+  @Override
   protected void doSetImmutable() {
 
     super.doSetImmutable();
@@ -116,20 +129,21 @@ public class BaseDoc extends BaseNodeItemImpl implements CodeDoc, CodeNodeItemWi
   @Override
   public List<String> getLines() {
 
+    initialize();
     return this.lines;
   }
 
   @Override
   public boolean isEmpty() {
 
-    return this.lines.isEmpty();
+    return getLines().isEmpty();
   }
 
   @Override
   public String getFormatted(CodeDocFormat format, String newline) {
 
     StringBuilder buffer = new StringBuilder();
-    for (String line : this.lines) {
+    for (String line : getLines()) {
       buffer.append(line);
       buffer.append(newline);
     }
@@ -199,13 +213,6 @@ public class BaseDoc extends BaseNodeItemImpl implements CodeDoc, CodeNodeItemWi
     return buffer.toString();
   }
 
-  /**
-   * @param tag
-   * @param markup
-   * @param tagName
-   * @param attributes
-   * @return
-   */
   private Tag createTag(Tag tag, String markup, String tagName, String attributes) {
 
     String name = tagName.toLowerCase();
@@ -437,88 +444,116 @@ public class BaseDoc extends BaseNodeItemImpl implements CodeDoc, CodeNodeItemWi
   @Override
   protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
-    int size = this.lines.size();
+    int size = getLines().size();
     BaseOperation operation = null;
-    BaseType type = null;
+    List<? extends BaseTypeVariable> typeParameters = null;
     CodeElement element = getParent();
     if (element instanceof BaseOperation) {
       operation = (BaseOperation) element;
+      typeParameters = operation.getTypeParameters().getDeclared();
+      size = size + typeParameters.size();
     } else if (element instanceof BaseType) {
-      type = (BaseType) element;
+      typeParameters = ((BaseType) element).getTypeParameters().getDeclared();
+      size = size + typeParameters.size();
     }
     if ((size == 0) && (operation == null)) {
       return;
-    }
-    sink.append(currentIndent);
-    sink.append("/**");
-    if ((size == 1) && (operation == null) && (type == null)) {
-      sink.append(' ');
-      sink.append(this.lines.get(0).trim());
-    } else {
-      sink.append(newline);
-      for (String line : this.lines) {
-        doWriteLine(sink, newline, currentIndent, "", line);
-      }
+    } else if ((size == 1) && (operation == null)) {
       sink.append(currentIndent);
-      if (type != null) {
-        doWriteTypeParameters(sink, newline, currentIndent, type.getTypeParameters());
-      } else if (operation != null) {
-        doWriteTypeParameters(sink, newline, currentIndent, operation.getTypeParameters());
+      sink.append("/**");
+      sink.append(' ');
+      if (this.lines.isEmpty()) {
+        doWriteTypeParameters(sink, "", "", typeParameters);
+      } else {
+        sink.append(this.lines.get(0).trim());
+      }
+      sink.append(" */");
+      sink.append(newline);
+    } else {
+      boolean docStarted = false;
+      if (size > 0) {
+        writeDocStart(sink, newline, currentIndent);
+        docStarted = true;
+        for (String line : this.lines) {
+          doWriteLine(sink, newline, currentIndent, docStarted, "", line);
+        }
+        if (typeParameters != null) {
+          doWriteTypeParameters(sink, newline, currentIndent, typeParameters);
+        }
+      }
+      if (operation != null) {
         for (CodeParameter arg : operation.getParameters()) {
           String tag = "@param " + arg.getName();
-          doWriteElement(sink, newline, currentIndent, arg, tag, "      ");
+          docStarted = doWriteElement(sink, newline, currentIndent, docStarted, arg, tag, "      ");
         }
         for (CodeException ex : operation.getExceptions()) {
           String tag = "@throws " + ex.getType().asType().getSimpleName();
-          doWriteElement(sink, newline, currentIndent, ex, tag, "       ");
+          docStarted = doWriteElement(sink, newline, currentIndent, docStarted, ex, tag, "       ");
         }
         if (operation instanceof CodeMethod) {
           CodeReturn result = ((CodeMethod) operation).getReturns();
           if (!result.getType().asType().isVoid()) {
             String tag = "@return";
-            doWriteElement(sink, newline, currentIndent, result, tag, "       ");
+            docStarted = doWriteElement(sink, newline, currentIndent, docStarted, result, tag, "       ");
           }
         }
       }
+      if (docStarted) {
+        sink.append(currentIndent);
+        sink.append(" */");
+        sink.append(newline);
+      }
     }
-    sink.append(" */");
+  }
+
+  private void writeDocStart(Appendable sink, String newline, String currentIndent) throws IOException {
+
+    sink.append(currentIndent);
+    sink.append("/**");
     sink.append(newline);
   }
 
-  private void doWriteTypeParameters(Appendable sink, String newline, String currentIndent, BaseTypeVariables typeParameters) throws IOException {
+  private void doWriteTypeParameters(Appendable sink, String newline, String currentIndent, List<? extends BaseTypeVariable> typeParameters)
+      throws IOException {
 
     for (CodeTypeVariable variable : typeParameters) {
       if (!variable.isWildcard()) {
         String tag = "@param <" + variable.getName() + ">";
-        doWriteElement(sink, newline, currentIndent, variable, tag, "      ");
+        doWriteElement(sink, newline, currentIndent, true, variable, tag, "      ");
       }
     }
   }
 
-  private void doWriteElement(Appendable sink, String newline, String currentIndent, CodeElement element, String tag, String spaces) throws IOException {
+  private boolean doWriteElement(Appendable sink, String newline, String currentIndent, boolean docStarted, CodeElement element, String tag, String spaces)
+      throws IOException {
 
-    String prefix = tag;
     List<String> docLines = element.getDoc().getLines();
     if (docLines.isEmpty()) {
-      if (!tag.isEmpty()) {
-        doWriteLine(sink, newline, currentIndent, prefix, "");
-      }
+      return docStarted;
     }
+    String prefix = tag;
     for (String line : docLines) {
-      doWriteLine(sink, newline, currentIndent, prefix, line);
+      doWriteLine(sink, newline, currentIndent, docStarted, prefix, line);
       prefix = spaces;
     }
+    return true;
   }
 
-  private void doWriteLine(Appendable sink, String newline, String currentIndent, String prefix, String line) throws IOException {
+  private void doWriteLine(Appendable sink, String newline, String currentIndent, boolean docStarted, String prefix, String line) throws IOException {
 
+    if (!docStarted) {
+      writeDocStart(sink, newline, currentIndent);
+    }
     sink.append(currentIndent);
     sink.append(" * ");
     sink.append(prefix);
-    if (!prefix.isEmpty()) {
-      sink.append(' ');
+    String trimmed = line.trim();
+    if (!trimmed.isEmpty()) {
+      if (!prefix.isEmpty()) {
+        sink.append(' ');
+      }
+      sink.append(trimmed);
     }
-    sink.append(line.trim());
     sink.append(newline);
   }
 

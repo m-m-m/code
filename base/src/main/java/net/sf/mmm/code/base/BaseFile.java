@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import net.sf.mmm.code.api.CodeFile;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.language.CodeLanguage;
+import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.base.imports.BaseImports;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.util.exception.api.ObjectMismatchException;
@@ -190,7 +190,7 @@ public final class BaseFile extends BasePathElement implements CodeFile, CodeNod
   @Override
   public BaseType getType() {
 
-    if (this.types.isEmpty()) {
+    if ((this.types == null) || this.types.isEmpty()) {
       return null;
     }
     return this.types.get(0);
@@ -235,14 +235,18 @@ public final class BaseFile extends BasePathElement implements CodeFile, CodeNod
   protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     if (defaultIndent == null) {
-      getType().writeReference(sink, true);
+      BaseType type = getType();
+      if (type == null) {
+        sink.append(getSimpleName());
+      } else {
+        type.writeReference(sink, true);
+      }
     } else {
       doWriteComment(sink, newline, defaultIndent, currentIndent, language);
       getParentPackage().doWrite(sink, newline, defaultIndent, currentIndent, language);
       getImports().write(sink, newline, defaultIndent, currentIndent, language);
       doWriteDoc(sink, newline, defaultIndent, currentIndent, language);
       doWriteAnnotations(sink, newline, defaultIndent, currentIndent, language);
-      sink.append(newline);
       for (BaseType type : getTypes()) {
         type.write(sink, newline, defaultIndent, currentIndent);
       }

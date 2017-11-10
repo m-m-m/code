@@ -5,6 +5,7 @@ package net.sf.mmm.code.base.arg;
 import java.io.IOException;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
+import java.util.function.Consumer;
 
 import net.sf.mmm.code.api.arg.CodeParameter;
 import net.sf.mmm.code.api.expression.CodeLiteral;
@@ -65,8 +66,7 @@ public class BaseParameter extends BaseOperationArg implements CodeParameter, Co
     super();
     this.parent = parent;
     this.reflectiveObject = reflectiveObject;
-    this.name = name;
-    verifyName(name, NAME_PATTERN);
+    this.name = getLanguage().verifyName(this, name);
   }
 
   /**
@@ -111,7 +111,16 @@ public class BaseParameter extends BaseOperationArg implements CodeParameter, Co
   public void setName(String name) {
 
     verifyMutalbe();
-    this.name = name;
+    if (this.name.equals(name)) {
+      return;
+    }
+    Consumer<String> renamer = this::doSetName;
+    getParent().rename(this, this.name, name, renamer);
+  }
+
+  private void doSetName(String newName) {
+
+    this.name = getLanguage().verifyName(this, newName);
   }
 
   @Override

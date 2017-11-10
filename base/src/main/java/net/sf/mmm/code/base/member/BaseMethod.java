@@ -5,12 +5,11 @@ package net.sf.mmm.code.base.member;
 import java.io.IOException;
 import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Method;
-import java.util.regex.Pattern;
 
 import net.sf.mmm.code.api.arg.CodeReturn;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
-import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.base.arg.BaseReturn;
 import net.sf.mmm.code.base.type.BaseGenericType;
 import net.sf.mmm.code.base.type.BaseSuperTypes;
@@ -41,19 +40,19 @@ public class BaseMethod extends BaseOperation implements CodeMethod, CodeNodeIte
    */
   public BaseMethod(BaseMethods parent, String name) {
 
-    this(parent, name, null);
+    this(parent, name, (Method) null);
   }
 
   /**
    * The constructor.
    *
-   * @param typeVariables the {@link #getTypeParameters() type variables}.
    * @param parent the {@link #getParent() parent}.
    * @param name the {@link #getName() name}.
+   * @param typeVariables the {@link #getTypeParameters() type variables}.
    */
-  public BaseMethod(BaseTypeVariables typeVariables, BaseMethods parent, String name) {
+  public BaseMethod(BaseMethods parent, String name, BaseTypeVariables typeVariables) {
 
-    super(name, typeVariables);
+    super(parent, name, typeVariables);
     this.parent = parent;
     this.reflectiveObject = null;
   }
@@ -78,7 +77,7 @@ public class BaseMethod extends BaseOperation implements CodeMethod, CodeNodeIte
    */
   private BaseMethod(BaseMethods parent, String name, Method reflectiveObject) {
 
-    super(name);
+    super(parent, name);
     this.parent = parent;
     this.reflectiveObject = reflectiveObject;
   }
@@ -101,12 +100,6 @@ public class BaseMethod extends BaseOperation implements CodeMethod, CodeNodeIte
 
     super.doInitialize();
     getReturns();
-  }
-
-  @Override
-  public Pattern getNamePattern() {
-
-    return NAME_PATTERN;
   }
 
   @Override
@@ -235,6 +228,7 @@ public class BaseMethod extends BaseOperation implements CodeMethod, CodeNodeIte
     if (start != null) {
       sink.append(start);
       getReturns().write(sink, newline, defaultIndent, currentIndent, language);
+      sink.append(' ');
     }
     super.doWriteSignature(sink, newline, defaultIndent, currentIndent, language);
   }

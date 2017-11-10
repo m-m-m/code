@@ -20,7 +20,7 @@ import net.sf.mmm.code.impl.java.source.maven.JavaSourceProviderUsingMaven;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaExtendedContextWithMavenAndSourceCodeTest extends JavaTypeTest {
+public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseTypeTest {
 
   private static final Pattern VERSION_PATTERN = Pattern.compile("[0-9]+\\.[0-9]+\\.[0-9]+(-SNAPSHOT)?");
 

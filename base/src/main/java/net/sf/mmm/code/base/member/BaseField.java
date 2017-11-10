@@ -7,10 +7,10 @@ import java.lang.reflect.Field;
 
 import net.sf.mmm.code.api.expression.CodeConstant;
 import net.sf.mmm.code.api.expression.CodeExpression;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
-import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.base.type.BaseGenericType;
 
@@ -63,7 +63,7 @@ public class BaseField extends BaseMember implements CodeField, CodeNodeItemWith
    */
   private BaseField(BaseFields parent, String name, Field reflectiveObject) {
 
-    super(CodeModifiers.MODIFIERS_PRIVATE, name);
+    super(parent, CodeModifiers.MODIFIERS_PRIVATE, name);
     this.parent = parent;
     this.reflectiveObject = reflectiveObject;
   }

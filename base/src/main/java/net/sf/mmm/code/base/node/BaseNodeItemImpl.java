@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.language.CodeLanguage;
+import net.sf.mmm.code.api.language.CodeLanguageJava;
 import net.sf.mmm.code.api.node.CodeNode;
 import net.sf.mmm.code.api.node.CodeNodeItem;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
@@ -115,7 +116,11 @@ public abstract class BaseNodeItemImpl extends BaseMutableItem implements BaseNo
   @Override
   public CodeLanguage getLanguage() {
 
-    return getContext().getLanguage();
+    BaseContext context = getContext();
+    if (context == null) {
+      return CodeLanguageJava.INSTANCE; // only during initialization (e.g. debugging in constructor)
+    }
+    return context.getLanguage();
   }
 
   /**

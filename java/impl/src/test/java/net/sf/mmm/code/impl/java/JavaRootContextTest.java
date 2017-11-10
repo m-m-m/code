@@ -10,6 +10,7 @@ import org.junit.Test;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeTypeCategory;
 import net.sf.mmm.code.base.BasePackage;
+import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.statement.BaseLocalVariable;
 import net.sf.mmm.code.base.type.BaseGenericType;
 import net.sf.mmm.code.base.type.BaseGenericTypeParameters;
@@ -22,7 +23,7 @@ import net.sf.mmm.code.base.type.BaseTypeVariables;
 /**
  * Test of {@link JavaRootContext}.
  */
-public class JavaRootContextTest extends JavaTypeTest {
+public class JavaRootContextTest extends AbstractBaseTypeTest {
 
   private JavaRootContext getContext() {
 
@@ -60,6 +61,7 @@ public class JavaRootContextTest extends JavaTypeTest {
 
     // given
     JavaContext context = getContext();
+    BaseSource source = context.getSource();
     CodeLanguage language = context.getLanguage();
 
     // then
@@ -78,8 +80,8 @@ public class JavaRootContextTest extends JavaTypeTest {
     assertThat(language.getKeywordForCategory(CodeTypeCategory.INTERFACE)).isEqualTo("interface");
     assertThat(language.getKeywordForCategory(CodeTypeCategory.ENUMERAION)).isEqualTo("enum");
     assertThat(language.getKeywordForCategory(CodeTypeCategory.ANNOTATION)).isEqualTo("@interface");
-    assertThat(language.getKeywordForVariable(new BaseLocalVariable("foo", context.getRootType(), null, false))).isEmpty();
-    assertThat(language.getKeywordForVariable(new BaseLocalVariable("foo", context.getRootType(), null, true))).isEqualTo("final ");
+    assertThat(language.getKeywordForVariable(new BaseLocalVariable(source, "foo", context.getRootType(), null, false))).isEmpty();
+    assertThat(language.getKeywordForVariable(new BaseLocalVariable(source, "foo", context.getRootType(), null, true))).isEqualTo("final ");
   }
 
   /**

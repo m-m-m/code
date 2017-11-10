@@ -5,6 +5,8 @@ package net.sf.mmm.code.api.language;
 import java.io.IOException;
 
 import net.sf.mmm.code.api.expression.CodeVariable;
+import net.sf.mmm.code.api.item.CodeItemWithName;
+import net.sf.mmm.code.api.item.CodeItemWithQualifiedName;
 import net.sf.mmm.code.api.statement.CodeLocalVariable;
 import net.sf.mmm.code.api.type.CodeTypeCategory;
 
@@ -129,4 +131,20 @@ public interface CodeLanguage {
 
     return '.';
   }
+
+  /**
+   * @param item the {@link CodeItemWithName} to verify.
+   * @param name the new {@link CodeItemWithName#getName() name} to verify.
+   * @return the given {@code name} (or potentially a "normalized" name that is valid).
+   * @throws RuntimeException if the name is invalid.
+   */
+  String verifyName(CodeItemWithName item, String name);
+
+  /**
+   * @param item the {@link CodeItemWithQualifiedName} to verify.
+   * @param simpleName the new {@link CodeItemWithQualifiedName#getSimpleName() simple name} to verify.
+   * @return the given {@code simpleName} (or potentially a "normalized" name that is valid).
+   * @throws RuntimeException if the name is invalid.
+   */
+  String verifySimpleName(CodeItemWithQualifiedName item, String simpleName);
 }

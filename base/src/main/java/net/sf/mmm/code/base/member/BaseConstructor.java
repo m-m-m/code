@@ -3,7 +3,6 @@
 package net.sf.mmm.code.base.member;
 
 import java.lang.reflect.Constructor;
-import java.util.regex.Pattern;
 
 import net.sf.mmm.code.api.member.CodeConstructor;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
@@ -18,6 +17,8 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  */
 public class BaseConstructor extends BaseOperation implements CodeConstructor, CodeNodeItemWithGenericParent<BaseConstructors, BaseConstructor> {
 
+  private static final String CONSTRUCTOR_NAME = "UnnamedConstructor";
+
   private final BaseConstructors parent;
 
   private final Constructor<?> reflectiveObject;
@@ -31,7 +32,7 @@ public class BaseConstructor extends BaseOperation implements CodeConstructor, C
    */
   public BaseConstructor(BaseConstructors parent) {
 
-    this(parent, null);
+    this(parent, (Constructor<?>) null);
   }
 
   /**
@@ -42,20 +43,20 @@ public class BaseConstructor extends BaseOperation implements CodeConstructor, C
    */
   public BaseConstructor(BaseConstructors parent, Constructor<?> reflectiveObject) {
 
-    super("");
+    super(parent, CONSTRUCTOR_NAME);
     this.parent = parent;
     this.reflectiveObject = reflectiveObject;
   }
 
   /**
    * The constructor.
-   *
-   * @param typeVariables the {@link #getTypeParameters() type variables}.
+   * 
    * @param parent the {@link #getParent() parent}.
+   * @param typeVariables the {@link #getTypeParameters() type variables}.
    */
-  public BaseConstructor(BaseTypeVariables typeVariables, BaseConstructors parent) {
+  public BaseConstructor(BaseConstructors parent, BaseTypeVariables typeVariables) {
 
-    super("", typeVariables);
+    super(parent, CONSTRUCTOR_NAME, typeVariables);
     this.parent = parent;
     this.reflectiveObject = null;
   }
@@ -71,12 +72,6 @@ public class BaseConstructor extends BaseOperation implements CodeConstructor, C
     super(template);
     this.parent = parent;
     this.reflectiveObject = null;
-  }
-
-  @Override
-  protected Pattern getNamePattern() {
-
-    return null;
   }
 
   @Override

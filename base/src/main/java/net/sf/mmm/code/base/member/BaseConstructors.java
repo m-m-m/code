@@ -78,7 +78,7 @@ public class BaseConstructors extends BaseOperations<BaseConstructor>
   @Override
   public BaseConstructor add() {
 
-    BaseConstructor constructor = new BaseConstructor(this, null);
+    BaseConstructor constructor = new BaseConstructor(this);
     add(constructor);
     return constructor;
   }

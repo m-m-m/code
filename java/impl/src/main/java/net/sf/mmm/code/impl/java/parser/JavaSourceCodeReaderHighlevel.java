@@ -245,7 +245,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
       if (typeVariables == null) {
         constructor = new BaseConstructor(constructors);
       } else {
-        constructor = new BaseConstructor(typeVariables, constructors);
+        constructor = new BaseConstructor(constructors, typeVariables);
       }
       parseWhitespacesAndComments();
       if (!expect('(')) {
@@ -283,6 +283,11 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
         member = field;
       }
     }
+    return parseTypeElementForMember(modifiers, memberComment, memberAnnotations, member);
+  }
+
+  private boolean parseTypeElementForMember(CodeModifiers modifiers, CodeComment memberComment, List<CodeAnnotation> memberAnnotations, BaseMember member) {
+
     if (member != null) {
       member.setModifiers(modifiers);
       if (memberComment != null) {

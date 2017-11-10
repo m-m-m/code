@@ -8,13 +8,13 @@ import java.lang.reflect.AccessibleObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.member.CodeProperty;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.api.modifier.CodeVisibility;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
-import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
 
@@ -46,7 +46,7 @@ public class BaseProperty extends BaseMember implements CodeProperty, CodeNodeIt
    */
   public BaseProperty(BaseProperties parent, String name) {
 
-    super(null, name);
+    super(parent, null, name);
     this.parent = parent;
   }
 

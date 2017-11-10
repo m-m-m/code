@@ -151,7 +151,7 @@ public abstract class BaseGenericTypeProxy extends BaseGenericType {
   }
 
   /**
-   * @see #doWrite(Appendable, String, String, String, CodeSyntax)
+   * @see #doWrite(Appendable, String, String, String, CodeLanguage)
    * @param sink the {@link Appendable} where to {@link Appendable#append(CharSequence) append} the code from
    *        this {@link CodeItem}.
    * @param newline the newline {@link String}.

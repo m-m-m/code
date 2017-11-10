@@ -4,7 +4,6 @@ package net.sf.mmm.code.base.member;
 
 import java.lang.reflect.AccessibleObject;
 import java.util.function.Consumer;
-import java.util.regex.Pattern;
 
 import net.sf.mmm.code.api.member.CodeMember;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
@@ -24,14 +23,14 @@ public abstract class BaseMember extends BaseElementWithModifiers implements Cod
   /**
    * The constructor.
    *
+   * @param parent the {@link #getParent() parent}.
    * @param modifiers the {@link #getModifiers() modifiers}.
    * @param name the {@link #getName() name}.
    */
-  public BaseMember(CodeModifiers modifiers, String name) {
+  public BaseMember(BaseMembers<?> parent, CodeModifiers modifiers, String name) {
 
     super(modifiers);
-    this.name = name;
-    verifyName(name, getNamePattern());
+    this.name = parent.getLanguage().verifyName(this, name);
   }
 
   /**
@@ -43,16 +42,6 @@ public abstract class BaseMember extends BaseElementWithModifiers implements Cod
 
     super(template);
     this.name = template.name;
-  }
-
-  /**
-   * @return the regex {@link Pattern} the {@link #getName() name} has to {@link String#matches(String) match}
-   *         or {@code null} to accept any name.
-   * @see #verifyName(String, Pattern)
-   */
-  protected Pattern getNamePattern() {
-
-    return NAME_PATTERN;
   }
 
   @Override
@@ -75,7 +64,7 @@ public abstract class BaseMember extends BaseElementWithModifiers implements Cod
 
   private void doSetName(String newName) {
 
-    this.name = newName;
+    this.name = getLanguage().verifyName(this, newName);
   }
 
   @Override

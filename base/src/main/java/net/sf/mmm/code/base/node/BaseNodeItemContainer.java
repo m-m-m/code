@@ -142,15 +142,24 @@ public abstract class BaseNodeItemContainer<I extends CodeItem> extends BaseNode
    */
   protected void rename(I child, String oldName, String newName, Consumer<String> renamer) {
 
+    String newNameValid;
+    if (child instanceof CodeItemWithQualifiedName) {
+      newNameValid = getLanguage().verifySimpleName((CodeItemWithQualifiedName) child, newName);
+    } else {
+      newNameValid = getLanguage().verifyName((CodeItemWithName) child, newName);
+    }
+    assert (this.map != null);
     if (this.map != null) {
-      if (this.map.containsKey(newName)) {
-        throw new DuplicateObjectException(child.getClass().getSimpleName(), newName);
+      if (this.map.containsKey(newNameValid)) {
+        throw new DuplicateObjectException(child.getClass().getSimpleName(), newNameValid);
       }
       I old = this.map.remove(oldName);
       assert (old == child);
-      renamer.accept(newName);
-      old = this.map.put(newName, child);
+      renamer.accept(newNameValid);
+      old = this.map.put(newNameValid, child);
       assert (old == null);
+    } else {
+      renamer.accept(newNameValid);
     }
   }
 

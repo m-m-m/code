@@ -3,7 +3,6 @@
 package net.sf.mmm.code.base.item;
 
 import java.io.IOException;
-import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,9 +29,6 @@ public abstract class BaseItem implements CodeItem {
   private static final int SPACES_MAX_LENGTH = SPACES_MAX.length();
 
   private static final String[] SPACES = new String[] { "", " ", "  ", "   ", "    ", "     ", "      ", "       ", "        ", "         ", SPACES_MAX };
-
-  /** @see #verifyName(String, Pattern) */
-  protected static final Pattern NAME_PATTERN = Pattern.compile("[\\$_\\w]+");
 
   /**
    * The constructor.
@@ -85,22 +81,6 @@ public abstract class BaseItem implements CodeItem {
     StringBuilder buffer = new StringBuilder();
     write(buffer);
     return buffer.toString();
-  }
-
-  /**
-   * @param name the name to verify.
-   * @param pattern the {@link Pattern} the given {@code name} has to {@link String#matches(String) match} or
-   *        {@code null} to accept any name.
-   */
-  protected void verifyName(String name, Pattern pattern) {
-
-    if (pattern == null) {
-      return;
-    }
-    if (pattern.matcher(name).matches()) {
-      return;
-    }
-    throw new IllegalArgumentException("Invalid name '" + name + "' - has to match pattern " + pattern.pattern());
   }
 
   /**

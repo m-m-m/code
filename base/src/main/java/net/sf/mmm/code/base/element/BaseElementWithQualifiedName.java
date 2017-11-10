@@ -30,7 +30,14 @@ public abstract class BaseElementWithQualifiedName extends BaseElementImpl imple
 
     super();
     this.parentPackage = parentPackage;
-    this.simpleName = simpleName;
+    if (parentPackage == null) {
+      if (!"".equals(simpleName)) {
+        throw new IllegalArgumentException("Root package name has to be empty!");
+      }
+      this.simpleName = simpleName;
+    } else {
+      this.simpleName = parentPackage.getLanguage().verifySimpleName(this, simpleName);
+    }
   }
 
   /**
@@ -68,7 +75,7 @@ public abstract class BaseElementWithQualifiedName extends BaseElementImpl imple
   public void setSimpleName(String simpleName) {
 
     verifyMutalbe();
-    this.simpleName = simpleName;
+    this.simpleName = getLanguage().verifySimpleName(this, simpleName);
   }
 
   @Override

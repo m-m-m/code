@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.util.Objects;
 
 import net.sf.mmm.code.api.element.CodeElementWithModifiers;
-import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.api.language.CodeLanguage;
+import net.sf.mmm.code.api.modifier.CodeModifiers;
 
 /**
  * Implementation of {@link CodeElementWithModifiers} for Java.
@@ -62,9 +62,7 @@ public abstract class BaseElementWithModifiers extends BaseElementWithDeclaringT
   protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     super.doWrite(sink, newline, defaultIndent, currentIndent, language);
-    if (currentIndent != null) {
-      sink.append(currentIndent);
-    }
+    sink.append(currentIndent);
     doWriteModifiers(sink);
   }
 

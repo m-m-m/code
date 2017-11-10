@@ -6,11 +6,12 @@ import java.io.IOException;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Parameter;
 import java.util.List;
+import java.util.function.Consumer;
 
 import net.sf.mmm.code.api.arg.CodeParameter;
 import net.sf.mmm.code.api.arg.CodeParameters;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.language.CodeLanguage;
+import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.base.member.BaseOperation;
 
 /**
@@ -61,7 +62,7 @@ public class BaseParameters extends BaseOperationArgs<BaseParameter>
       for (Parameter param : reflectiveObject.getParameters()) {
         String name = null;
         BaseParameter baseParameter = null;
-        if (i < sourceParamsCount) {
+        if ((i < sourceParamsCount) && (sourceParams != null)) {
           baseParameter = sourceParams.get(i++);
           name = baseParameter.getName();
         }
@@ -97,6 +98,12 @@ public class BaseParameters extends BaseOperationArgs<BaseParameter>
       return sourceOperation.getParameters();
     }
     return null;
+  }
+
+  @Override
+  protected void rename(BaseParameter child, String oldName, String newName, Consumer<String> renamer) {
+
+    super.rename(child, oldName, newName, renamer);
   }
 
   @Override

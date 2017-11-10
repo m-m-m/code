@@ -7,6 +7,7 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeTypePlaceholder;
 import net.sf.mmm.code.api.type.CodeTypeVariable;
@@ -114,23 +115,6 @@ public abstract class BaseTypePlaceholder extends BaseGenericType implements Cod
   }
 
   @Override
-  public abstract BaseTypePlaceholder copy();
-
-  @Override
-  public void writeReference(Appendable sink, boolean declaration, Boolean qualified) throws IOException {
-
-    sink.append(getName());
-    if (declaration) {
-      if (isSuper()) {
-        sink.append(" super ");
-      } else {
-        sink.append(" extends ");
-      }
-      getBound().writeReference(sink, false, qualified);
-    }
-  }
-
-  @Override
   public BaseType asType() {
 
     return getBound().asType();
@@ -145,6 +129,34 @@ public abstract class BaseTypePlaceholder extends BaseGenericType implements Cod
   public final BaseTypeVariables getTypeParameters() {
 
     return BaseTypeVariables.EMPTY;
+  }
+
+  @Override
+  public abstract BaseTypePlaceholder copy();
+
+  @Override
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
+
+    doWriteComment(sink, newline, defaultIndent, currentIndent, language);
+    doWriteAnnotations(sink, newline, defaultIndent, currentIndent, language);
+    writeReference(sink, (defaultIndent != null), null);
+  }
+
+  @Override
+  public void writeReference(Appendable sink, boolean declaration, Boolean qualified) throws IOException {
+
+    sink.append(getName());
+    if (declaration && (getBound() != null)) {
+      if (isSuper()) {
+        sink.append(" super ");
+      } else if (isExtends()) {
+        if (getContext().getRootType().equals(this.bound)) {
+          return;
+        }
+        sink.append(" extends ");
+      }
+      this.bound.writeReference(sink, false, qualified);
+    }
   }
 
 }

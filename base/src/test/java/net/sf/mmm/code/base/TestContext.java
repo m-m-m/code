@@ -3,6 +3,7 @@
 package net.sf.mmm.code.base;
 
 import java.io.File;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.function.BiFunction;
 
@@ -73,6 +74,11 @@ public class TestContext extends BaseContextImplWithCache {
   @Override
   public BaseGenericType getType(Type type, BaseElementWithDeclaringType declaringElement) {
 
+    if (type instanceof Class) {
+      return getType((Class<?>) type);
+    } else if (type instanceof ParameterizedType) {
+      return getType(((ParameterizedType) type).getRawType(), declaringElement);
+    }
     throw new UnsupportedOperationException();
   }
 

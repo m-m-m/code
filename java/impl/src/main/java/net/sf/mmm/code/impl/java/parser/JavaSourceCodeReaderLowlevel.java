@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -295,6 +296,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
         } else if (operator != nextOperator) {
           if (operator.isNAry()) {
             expression = new JavaNAryOperatorExpression((CodeNAryOperator) operator, new ArrayList<>(expressions));
+            Objects.requireNonNull(expressions);
             expressions.clear();
             expressions.add(expression);
           }

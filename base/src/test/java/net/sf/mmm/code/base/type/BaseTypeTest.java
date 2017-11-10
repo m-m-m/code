@@ -13,6 +13,8 @@ import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.BaseContextTest;
 import net.sf.mmm.code.base.BasePackage;
 import net.sf.mmm.code.base.BasePathElements;
+import net.sf.mmm.code.base.arg.BaseParameter;
+import net.sf.mmm.code.base.member.BaseMethod;
 
 /**
  * Test of {@link BaseType}.
@@ -76,10 +78,20 @@ public class BaseTypeTest extends BaseContextTest {
 
     // when
     BaseType classTop = pkg.getChildren().createType(simpleNameTop);
+    classTop.getTypeParameters().add("T").getDoc().getLines().add("generic type");
     BaseType classStaticNested1 = classTop.getNestedTypes().add(simpleNameNested1);
     classStaticNested1.setModifiers(CodeModifiers.MODIFIERS_PUBLIC_STATIC);
     BaseType interfacetypeNested2 = classTop.getNestedTypes().add(simpleNameNested2);
     interfacetypeNested2.setCategory(CodeTypeCategory.INTERFACE);
+    BaseMethod method = interfacetypeNested2.getMethods().add("myMethod");
+    method.getDoc().getLines().add("This method rocks.");
+    BaseTypeVariable typeVariable = method.getTypeParameters().add("V");
+    typeVariable.getDoc().getLines().add("generic value");
+    method.getReturns().setType(typeVariable);
+    method.getReturns().getDoc().getLines().add("the converted value that rocks.");
+    BaseParameter parameter = method.getParameters().add("value");
+    parameter.setType(typeVariable);
+    parameter.getDoc().getLines().add("the value to convert.");
     BaseType classNested21 = interfacetypeNested2.getNestedTypes().add(simpleNameNested21);
     BaseType annotationNested211 = classNested21.getNestedTypes().add(simpleNameNested211);
     annotationNested211.setCategory(CodeTypeCategory.ANNOTATION);
@@ -97,39 +109,38 @@ public class BaseTypeTest extends BaseContextTest {
     assertThat((List<BaseType>) classTop.getNestedTypes().getDeclared()).containsExactly(classStaticNested1, interfacetypeNested2);
     assertThat((List<BaseType>) interfacetypeNested2.getNestedTypes().getDeclared()).containsExactly(classNested21);
     assertThat((List<BaseType>) classNested21.getNestedTypes().getDeclared()).containsExactly(annotationNested211, enumNested212);
-    assertThat(classTop.getFile().toString()).isEqualTo("ClassToplevel");
+    assertThat(classTop.getFile().toString()).isEqualTo("ClassToplevel<T>");
     assertThat(classTop.getFile().getSourceCode()).isEqualTo("package mydomain;\n" + //
         "\n" + //
         "/**\n" + //
         " * Doc for {@link ClassToplevel}.\n" + //
+        " * @param <T> generic type\n" + //
         " */\n" + //
-        "public class ClassToplevel {\n" + //
+        "public class ClassToplevel<T> {\n" + //
         "\n" + //
-        "  /**\n" + //
-        "   * Doc for {@link StaticClassNested1}.\n" + //
-        "   */\n" + //
+        "  /** Doc for {@link StaticClassNested1}. */\n" + //
         "  public static class StaticClassNested1 {\n" + //
         "  }\n" + //
         "\n" + //
-        "  /**\n" + //
-        "   * Doc for {@link InterfaceClassNested2}.\n" + //
-        "   */\n" + //
+        "  /** Doc for {@link InterfaceClassNested2}. */\n" + //
         "  public interface InterfaceClassNested2 {\n" + //
         "\n" + //
         "    /**\n" + //
-        "     * Doc for {@link ClassNested2_1}.\n" + //
+        "     * This method rocks.\n" + //
+        "     * @param <V> generic value\n" + //
+        "     * @param value the value to convert.\n" + //
+        "     * @return the converted value that rocks.\n" + //
         "     */\n" + //
+        "    public <V>V myMethod(V);\n" + //
+        "\n" + //
+        "    /** Doc for {@link ClassNested2_1}. */\n" + //
         "    public class ClassNested2_1 {\n" + //
         "\n" + //
-        "      /**\n" + //
-        "       * Doc for {@link AnnotationNested2_1_1}.\n" + //
-        "       */\n" + //
+        "      /** Doc for {@link AnnotationNested2_1_1}. */\n" + //
         "      public @interface AnnotationNested2_1_1 {\n" + //
         "      }\n" + //
         "\n" + //
-        "      /**\n" + //
-        "       * Doc for {@link EnumNested2_1_2}.\n" + //
-        "       */\n" + //
+        "      /** Doc for {@link EnumNested2_1_2}. */\n" + //
         "      public enum EnumNested2_1_2 {\n" + //
         "      }\n" + //
         "    }\n" + //

@@ -96,6 +96,9 @@ public class BaseTypeVariables extends BaseGenericTypeParameters<BaseTypeVariabl
     this.declaringOperation = declaringOperation;
   }
 
+  /**
+   * @param declaringType the new value of {@link #getParent()}.
+   */
   public void setParent(BaseType declaringType) {
 
     verifyMutalbe();
@@ -103,6 +106,9 @@ public class BaseTypeVariables extends BaseGenericTypeParameters<BaseTypeVariabl
     this.declaringOperation = null;
   }
 
+  /**
+   * @param declaringOperation the new value of {@link #getParent()}.
+   */
   public void setParent(BaseOperation declaringOperation) {
 
     verifyMutalbe();
@@ -253,7 +259,7 @@ public class BaseTypeVariables extends BaseGenericTypeParameters<BaseTypeVariabl
       String prefix = "<";
       for (CodeTypeVariable variable : typeVariables) {
         sink.append(prefix);
-        variable.write(sink, "", "");
+        variable.writeReference(sink, declaration);
         prefix = ", ";
       }
       sink.append('>');

@@ -194,6 +194,7 @@ public class BaseAnnotation extends BaseChildItem implements CodeAnnotation {
   @Override
   protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
+    sink.append(currentIndent);
     if (this.comment != null) {
       this.comment.write(sink, newline, defaultIndent, currentIndent);
     }
@@ -219,6 +220,7 @@ public class BaseAnnotation extends BaseChildItem implements CodeAnnotation {
       }
       sink.append(')');
     }
+    sink.append(newline);
   }
 
   private String formatValue(CodeExpression value) {
