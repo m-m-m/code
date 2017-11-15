@@ -150,7 +150,7 @@ public class TestContext extends BaseContextImplWithCache {
       Package pkg = clazz.getPackage();
       if (pkg != null) {
         String pkgName = pkg.getName();
-        BiFunction<BasePackage, String, BasePackage> factory = (parentPkg, simpleName) -> new BasePackage(parentPkg, simpleName, pkg, null);
+        BiFunction<BasePackage, String, BasePackage> factory = (parentPkg, simpleName) -> createPackage(pkg, parentPkg, simpleName);
         parentPackage = getPackage(parentPackage.getChildren(), source.parseName(pkgName), false, factory, true, true);
       }
       BasePathElements children = parentPackage.getChildren();
@@ -161,6 +161,13 @@ public class TestContext extends BaseContextImplWithCache {
         type = file.getType();
       }
       return type;
+    }
+
+    private BasePackage createPackage(Package pkg, BasePackage parentPkg, String simpleName) {
+
+      BasePackage basePackage = new BasePackage(parentPkg, simpleName, pkg, null);
+      basePackage.setImmutable();
+      return basePackage;
     }
 
     @Override

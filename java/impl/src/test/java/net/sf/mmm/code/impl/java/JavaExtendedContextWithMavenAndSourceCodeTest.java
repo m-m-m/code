@@ -100,6 +100,8 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
     verifyClass(type, clazz, context);
     assertThat(type.getDoc().getLines()).containsExactly("Implementation of {@link JavaContext} for the {@link #getParent() root} context.", "",
         "@author Joerg Hohwiller (hohwille at users.sourceforge.net)", "@since 1.0.0");
+    assertThat(type.getMethods().getDeclared("getRootContext").getReturns().getDoc().getLines())
+        .containsExactly("the root {@link JavaContext context} responsible for the fundamental code (from JDK).");
   }
 
 }

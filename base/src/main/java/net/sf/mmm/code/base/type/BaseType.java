@@ -538,7 +538,7 @@ public class BaseType extends BaseGenericType implements CodeType, CodeNodeItemW
   @Override
   public BaseType getSourceCodeObject() {
 
-    if ((this.sourceCodeObject == null) && !isInitialized()) {
+    if (this.sourceCodeObject == null) {
       BaseFile sourceFile = this.file.getSourceCodeObject();
       if (sourceFile != null) {
         this.sourceCodeObject = sourceFile.getType(getSimpleName(), false);

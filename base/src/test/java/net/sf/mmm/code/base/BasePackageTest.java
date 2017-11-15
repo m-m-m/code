@@ -189,6 +189,8 @@ public class BasePackageTest extends BaseContextTest {
       basePackage.setComment(TEST_COMMENT);
       basePackage.getDoc().getLines().add(TEST_TEXT1);
       basePackage.getDoc().getLines().add(TEST_TEXT2);
+    } else {
+      basePackage.setImmutable();
     }
     return basePackage;
   }
@@ -215,16 +217,19 @@ public class BasePackageTest extends BaseContextTest {
     assertThat(javaLangPackage.getQualifiedName()).isEqualTo("java.lang");
     assertThat(javaLangPackage.getReflectiveObject()).isSameAs(stringClass.getPackage());
     assertThat(javaLangPackage.isJavaLang()).isTrue();
+    assertThat(javaLangPackage.isImmutable()).isTrue();
     BasePackage javaUtilPackage = listType.getParentPackage();
     assertThat(javaUtilPackage.getQualifiedName()).isEqualTo("java.util");
     assertThat(javaUtilPackage.getReflectiveObject()).isSameAs(listClass.getPackage());
     assertThat(javaUtilPackage.isJavaLang()).isFalse();
+    assertThat(javaUtilPackage.isImmutable()).isTrue();
 
     // then
     BasePathElements rootPackageChildren = source.getRootPackage().getChildren();
     BasePackage javaPackage = rootPackageChildren.getPackage("java");
     assertThat(javaPackage.getChildren().getPackage("lang")).isSameAs(javaLangPackage);
     assertThat(javaPackage.isJava()).isTrue();
+    assertThat(javaPackage.isImmutable()).isTrue();
     assertThat(javaLangPackage.isJava()).isFalse();
     assertThat(javaLangPackage.getChildren().getType("String")).isSameAs(stringType);
     assertThat(javaLangPackage.getChildren().getFile("String")).isSameAs(stringType.getFile());

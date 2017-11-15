@@ -5,7 +5,6 @@ package net.sf.mmm.code.base.element;
 import java.io.IOException;
 import java.util.Iterator;
 
-import net.sf.mmm.code.api.annotation.CodeAnnotations;
 import net.sf.mmm.code.api.comment.CodeComment;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.node.CodeNode;
@@ -34,7 +33,6 @@ public abstract class BaseElementImpl extends BaseNodeItemImpl implements BaseEl
   public BaseElementImpl() {
 
     super();
-    this.annotations = new BaseAnnotations(this);
   }
 
   /**
@@ -54,7 +52,6 @@ public abstract class BaseElementImpl extends BaseNodeItemImpl implements BaseEl
   protected void doInitialize() {
 
     super.doInitialize();
-    getDoc();
   }
 
   @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -82,6 +79,9 @@ public abstract class BaseElementImpl extends BaseNodeItemImpl implements BaseEl
   @Override
   public BaseAnnotations getAnnotations() {
 
+    if (this.annotations == null) {
+      this.annotations = new BaseAnnotations(this);
+    }
     return this.annotations;
   }
 
@@ -108,8 +108,8 @@ public abstract class BaseElementImpl extends BaseNodeItemImpl implements BaseEl
   protected void doSetImmutable() {
 
     super.doSetImmutable();
-    this.annotations.setImmutableIfNotSystemImmutable();
-    this.doc.setImmutableIfNotSystemImmutable();
+    getAnnotations().setImmutableIfNotSystemImmutable();
+    getDoc().setImmutableIfNotSystemImmutable();
   }
 
   @Override
@@ -173,8 +173,8 @@ public abstract class BaseElementImpl extends BaseNodeItemImpl implements BaseEl
    */
   protected void doWriteDoc(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) {
 
-    if ((getDoc() != null) && (defaultIndent != null)) {
-      this.doc.write(sink, newline, defaultIndent, currentIndent);
+    if (defaultIndent != null) {
+      getDoc().write(sink, newline, defaultIndent, currentIndent);
     }
   }
 
@@ -189,10 +189,7 @@ public abstract class BaseElementImpl extends BaseNodeItemImpl implements BaseEl
    */
   protected void doWriteAnnotations(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) {
 
-    CodeAnnotations myAnnotations = getAnnotations();
-    if (myAnnotations != null) {
-      myAnnotations.write(sink, newline, defaultIndent, currentIndent, language);
-    }
+    getAnnotations().write(sink, newline, defaultIndent, currentIndent, language);
   }
 
 }

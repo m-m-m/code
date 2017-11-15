@@ -23,6 +23,8 @@ public class BaseReturn extends BaseOperationArg implements CodeReturn, CodeNode
 
   private final AnnotatedType reflectiveObject;
 
+  private BaseReturn sourceCodeObject;
+
   /**
    * The constructor.
    *
@@ -85,11 +87,13 @@ public class BaseReturn extends BaseOperationArg implements CodeReturn, CodeNode
   @Override
   public BaseReturn getSourceCodeObject() {
 
-    BaseMethod sourceMethod = this.parent.getSourceCodeObject();
-    if (sourceMethod != null) {
-      return sourceMethod.getReturns();
+    if (this.sourceCodeObject == null) {
+      BaseMethod sourceMethod = this.parent.getSourceCodeObject();
+      if (sourceMethod != null) {
+        this.sourceCodeObject = sourceMethod.getReturns();
+      }
     }
-    return null;
+    return this.sourceCodeObject;
   }
 
   @Override
