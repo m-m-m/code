@@ -157,7 +157,7 @@ public class JavaGenericTypeFromSource extends BaseGenericTypeProxy {
       return genericType;
     }
     BaseGenericType result = genericType;
-    CodeAnnotations annotations = getAnnotations();
+    CodeAnnotations annotations = getAnnotations(false);
     if (annotations != null) {
       if (result instanceof BaseType) {
         result = new BaseTypeProxy(this.parent, (BaseType) genericType);
@@ -167,7 +167,7 @@ public class JavaGenericTypeFromSource extends BaseGenericTypeProxy {
         result.getAnnotations().add(annotation);
       }
     }
-    CodeComment comment = getComment();
+    CodeComment comment = getComment(false);
     if (comment != null) {
       if (result instanceof BaseType) {
         result = new BaseTypeProxy(this.parent, (BaseType) genericType);

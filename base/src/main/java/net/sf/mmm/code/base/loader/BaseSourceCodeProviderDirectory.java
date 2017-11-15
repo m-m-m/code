@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class BaseSourceCodeProviderDirectory extends BaseSourceCodeProvider {
 
-  private final File sourceFolder;
+  private File sourceFolder;
 
   /**
    * The constructor.
@@ -52,9 +52,8 @@ public class BaseSourceCodeProviderDirectory extends BaseSourceCodeProvider {
     String path = qualifiedName2TypePath(qualifiedName);
     File sourceFile = new File(this.sourceFolder, path);
     if (sourceFile.exists()) {
-      try (InputStream in = new FileInputStream(sourceFile)) {
-        return openReader(in);
-      }
+      InputStream in = new FileInputStream(sourceFile);
+      return openReader(in);
     }
     return null;
   }
@@ -65,9 +64,8 @@ public class BaseSourceCodeProviderDirectory extends BaseSourceCodeProvider {
     String path = qualifiedName2PackagePath(qualifiedName);
     File sourceFile = new File(this.sourceFolder, path);
     if (sourceFile.exists()) {
-      try (InputStream in = new FileInputStream(sourceFile)) {
-        return openReader(in);
-      }
+      InputStream in = new FileInputStream(sourceFile);
+      return openReader(in);
     }
     return null;
   }
@@ -93,6 +91,12 @@ public class BaseSourceCodeProviderDirectory extends BaseSourceCodeProvider {
       }
     }
     return Collections.emptyList();
+  }
+
+  @Override
+  public void close() throws Exception {
+
+    this.sourceFolder = null;
   }
 
 }

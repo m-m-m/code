@@ -239,7 +239,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
       return true;
     }
     BaseMember member = null;
-    if (name.equals(type.getSimpleName())) { // constructor
+    if (name.equals(type.getSimpleName()) && expect('(')) { // constructor
       BaseConstructors constructors = type.getConstructors();
       BaseConstructor constructor;
       if (typeVariables == null) {
@@ -248,10 +248,6 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
         constructor = new BaseConstructor(constructors, typeVariables);
       }
       parseWhitespacesAndComments();
-      if (!expect('(')) {
-        LOG.warn("Constructor {} without opening brace in {}.", name, this.file.getQualifiedName());
-        readUntil('(', false);
-      }
       parseOperation(constructor);
       constructors.add(constructor);
       member = constructor;
@@ -263,9 +259,18 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
       BaseGenericType memberType = parseGenericType(name, element, true, true, false);
       consume();
       name = parseIdentifier();
+      if (name == null) {
+        throw new IllegalStateException();
+      }
       parseWhitespacesAndComments();
       if (expect('(')) { // method?
-        BaseMethod method = type.getMethods().add(name);
+        BaseMethod method;
+        if (typeVariables == null) {
+          method = new BaseMethod(type.getMethods(), name);
+        } else {
+          method = new BaseMethod(type.getMethods(), name, typeVariables);
+        }
+        type.getMethods().add(method);
         method.getReturns().setType(memberType);
         parseOperation(method);
         member = method;
@@ -273,6 +278,9 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
         BaseField field = type.getFields().add(name);
         field.setType(memberType);
         parseWhitespacesAndComments();
+        if (expect('=')) {
+          field.setInitializer(parseAssignmentValue());
+        }
         if (!expect(';')) {
           CodeExpression expression = parseAssignmentValue();
           field.setInitializer(expression);
@@ -327,8 +335,12 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
       BaseGenericType argType = parseGenericType(operation, true, true, false);
       requireWhitespace(operation, operation.getName(), operation.getParent().getParent());
       String name = parseIdentifier();
-      BaseParameter parameter = parameters.add(name);
-      parameter.setType(argType);
+      if (name == null) {
+        LOG.warn("Missing parameter name for operation {}", operation);
+      } else {
+        BaseParameter parameter = parameters.add(name);
+        parameter.setType(argType);
+      }
       todo = !(expect(')'));
       if (todo && !expect(',')) {
         LOG.warn("Expecting ',' or ')' to terminate signature of operation {} but found '{}' in {}", operation, "" + forcePeek(), this.file.getQualifiedName());
@@ -438,6 +450,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
         }
       }
     }
+    parseWhitespacesAndComments();
     return result;
   }
 
@@ -578,7 +591,9 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
 
     int count = skipWhile(CharFilter.WHITESPACE_FILTER);
     if (count == 0) {
-      LOG.warn("Missing whitespace after '{}' for {} at {} in {}", keyword, context, element, this.file.getQualifiedName());
+      // LOG.warn("Missing whitespace after '{}' for {} at {} in {}", keyword, context, element,
+      // this.file.getQualifiedName());
+      LOG.warn("Missing whitespace after '{}'.", keyword);
     }
   }
 

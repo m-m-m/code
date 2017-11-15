@@ -16,7 +16,7 @@ import net.sf.mmm.code.api.language.CodeLanguage;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class GenericComparisonOperatorExpression extends GenericOperatorExpression implements CodeComparisonOperatorExpression {
+public class BaseComparisonOperatorExpression extends BaseOperatorExpression implements CodeComparisonOperatorExpression {
 
   private final CodeExpression leftArg;
 
@@ -31,7 +31,7 @@ public class GenericComparisonOperatorExpression extends GenericOperatorExpressi
    * @param operator the {@link #getOperator() operator}.
    * @param rightArg the {@link #getRightArg() right argument}.
    */
-  public GenericComparisonOperatorExpression(CodeExpression leftArg, CodeComparisonOperator operator, CodeExpression rightArg) {
+  public BaseComparisonOperatorExpression(CodeExpression leftArg, CodeComparisonOperator operator, CodeExpression rightArg) {
 
     super();
     this.leftArg = leftArg;

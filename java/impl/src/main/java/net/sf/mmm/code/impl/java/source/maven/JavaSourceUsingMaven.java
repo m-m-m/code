@@ -50,6 +50,7 @@ public class JavaSourceUsingMaven extends BaseSourceImpl implements MavenConstan
    *        fabrication of {@link #getDependencies() dependencies}.
    * @param reflectiveObject the {@link #getReflectiveObject() reflective object}. May not be {@code null}.
    * @param modelSupplier the {@link Supplier} for the maven {@link Model}.
+   * @param sourceLoader the {@link BaseSourceLoader}.
    */
   public JavaSourceUsingMaven(JavaSourceProviderUsingMaven sourceProvider, CodeSource reflectiveObject, Supplier<Model> modelSupplier,
       BaseSourceLoader sourceLoader) {
@@ -67,6 +68,7 @@ public class JavaSourceUsingMaven extends BaseSourceImpl implements MavenConstan
    * @param byteCodeLocation the {@link #getByteCodeLocation() byte code location}.
    * @param sourceCodeLocation the {@link #getSourceCodeLocation() source code location}.
    * @param modelSupplier the {@link Supplier} for the maven {@link Model}.
+   * @param sourceLoader the {@link BaseSourceLoader}.
    */
   public JavaSourceUsingMaven(JavaSourceProviderUsingMaven sourceProvider, BaseSource compileDependency, File byteCodeLocation, File sourceCodeLocation,
       Supplier<Model> modelSupplier, BaseSourceLoader sourceLoader) {
@@ -83,6 +85,7 @@ public class JavaSourceUsingMaven extends BaseSourceImpl implements MavenConstan
    * @param sourceCodeLocation the {@link #getSourceCodeLocation() source code location}.
    * @param modelSupplier the {@link Supplier} for the maven {@link Model}.
    * @param scope the {@link #getScope() scope}.
+   * @param sourceLoader the {@link BaseSourceLoader}.
    */
   public JavaSourceUsingMaven(JavaSourceProviderUsingMaven sourceProvider, File byteCodeLocation, File sourceCodeLocation, Supplier<Model> modelSupplier,
       String scope, BaseSourceLoader sourceLoader) {
@@ -101,6 +104,7 @@ public class JavaSourceUsingMaven extends BaseSourceImpl implements MavenConstan
    * @param compileDependency the compile {@link #getDependencies() dependency}.
    * @param testDependency the test {@link #getDependencies() dependency}
    * @param modelSupplier the {@link Supplier} for the maven {@link Model}.
+   * @param sourceLoader the {@link BaseSourceLoader}.
    */
   public JavaSourceUsingMaven(JavaSourceProviderUsingMaven sourceProvider, String id, JavaSourceUsingMaven compileDependency,
       JavaSourceUsingMaven testDependency, Supplier<Model> modelSupplier, BaseSourceLoader sourceLoader) {

@@ -104,13 +104,21 @@ public abstract class BaseNodeItemImpl extends BaseMutableItem implements BaseNo
   @Override
   public BaseContext getContext() {
 
-    return getParent().getContext();
+    BaseNode parent = getParent();
+    if (parent != null) {
+      return parent.getContext();
+    }
+    return null;
   }
 
   @Override
   public BaseSource getSource() {
 
-    return getParent().getSource();
+    BaseNode parent = getParent();
+    if (parent != null) {
+      return parent.getSource();
+    }
+    return null;
   }
 
   @Override

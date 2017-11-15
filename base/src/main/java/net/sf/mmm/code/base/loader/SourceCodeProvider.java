@@ -12,7 +12,7 @@ import java.util.List;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface SourceCodeProvider {
+public interface SourceCodeProvider extends AutoCloseable {
 
   /**
    * @param qualifiedName the qualified name of the {@link net.sf.mmm.code.api.type.CodeType} to open.

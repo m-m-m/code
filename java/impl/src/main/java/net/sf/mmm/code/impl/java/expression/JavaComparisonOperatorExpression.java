@@ -5,18 +5,18 @@ package net.sf.mmm.code.impl.java.expression;
 import net.sf.mmm.code.api.expression.CodeConstant;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.operator.CodeComparisonOperator;
-import net.sf.mmm.code.base.expression.GenericComparisonOperatorExpression;
+import net.sf.mmm.code.base.expression.BaseComparisonOperatorExpression;
 import net.sf.mmm.code.impl.java.expression.literal.JavaLiteral;
 import net.sf.mmm.code.impl.java.expression.literal.JavaLiteralBoolean;
 import net.sf.mmm.util.lang.api.CompareOperator;
 
 /**
- * Implementation of {@link GenericComparisonOperatorExpression} for Java.
+ * Implementation of {@link BaseComparisonOperatorExpression} for Java.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaComparisonOperatorExpression extends GenericComparisonOperatorExpression implements JavaExpression {
+public class JavaComparisonOperatorExpression extends BaseComparisonOperatorExpression implements JavaExpression {
 
   /**
    * The constructor.

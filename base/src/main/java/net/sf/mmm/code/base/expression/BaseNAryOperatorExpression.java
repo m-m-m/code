@@ -20,7 +20,7 @@ import net.sf.mmm.code.api.language.CodeLanguage;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class GenericNAryOperatorExpression extends GenericOperatorExpression implements CodeNAryOperatorExpression {
+public class BaseNAryOperatorExpression extends BaseOperatorExpression implements CodeNAryOperatorExpression {
 
   private final CodeNAryOperator operator;
 
@@ -32,7 +32,7 @@ public class GenericNAryOperatorExpression extends GenericOperatorExpression imp
    * @param operator the {@link #getOperator() operator}.
    * @param arguments the {@link #getArguments() arguments}.
    */
-  public GenericNAryOperatorExpression(CodeNAryOperator operator, CodeExpression... arguments) {
+  public BaseNAryOperatorExpression(CodeNAryOperator operator, CodeExpression... arguments) {
 
     this(operator, Arrays.asList(arguments));
   }
@@ -43,7 +43,7 @@ public class GenericNAryOperatorExpression extends GenericOperatorExpression imp
    * @param operator the {@link #getOperator() operator}.
    * @param arguments the {@link #getArguments() arguments}.
    */
-  public GenericNAryOperatorExpression(CodeNAryOperator operator, List<CodeExpression> arguments) {
+  public BaseNAryOperatorExpression(CodeNAryOperator operator, List<CodeExpression> arguments) {
 
     super();
     this.operator = operator;

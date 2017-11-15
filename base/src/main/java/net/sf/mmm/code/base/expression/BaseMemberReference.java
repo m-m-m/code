@@ -16,7 +16,7 @@ import net.sf.mmm.code.api.language.CodeLanguage;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class GenericMemberReference extends GenericExpression implements CodeMemberReference {
+public abstract class BaseMemberReference extends BaseExpression implements CodeMemberReference {
 
   private final CodeExpression expression;
 
@@ -25,7 +25,7 @@ public abstract class GenericMemberReference extends GenericExpression implement
    *
    * @param expression the {@link #getExpression() expression}.
    */
-  public GenericMemberReference(CodeExpression expression) {
+  public BaseMemberReference(CodeExpression expression) {
 
     super();
     this.expression = expression;

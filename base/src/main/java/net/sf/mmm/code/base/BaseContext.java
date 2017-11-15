@@ -7,6 +7,7 @@ import java.lang.reflect.Type;
 import net.sf.mmm.code.api.CodeContext;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.base.element.BaseElementWithDeclaringType;
+import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.type.BaseGenericType;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.base.type.BaseTypeWildcard;
@@ -21,6 +22,22 @@ public interface BaseContext extends CodeContext, BaseProvider {
 
   @Override
   BaseContext getParent();
+
+  /**
+   * @return the root {@link BaseContext context} responsible for the fundamental code (from the SDK like JDK
+   *         for Java).
+   */
+  default BaseContext getRootContext() {
+
+    return getParent().getRootContext();
+  }
+
+  /**
+   * @param id the {@link BaseSource#getId() ID} of the requested source.
+   * @return the existing {@link BaseSource} for the given {@link BaseSource#getId() ID} or {@code null} if
+   *         not found.
+   */
+  BaseSource getSource(String id);
 
   @Override
   BaseType getRootType();

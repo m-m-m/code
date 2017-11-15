@@ -140,7 +140,7 @@ public class BasePackageTest extends BaseContextTest {
       testGetPackageParameterized(true, false);
       failBecauseExceptionWasNotThrown(ReadOnlyException.class);
     } catch (ReadOnlyException e) {
-      assertThat(e.getNlsMessage().getMessage()).isEqualTo("Failed to modify \"BasePathElements:«root».children\" as it is read-only!");
+      assertThat(e.getNlsMessage().getMessage()).isEqualTo("Failed to modify \"BasePathElements:«root».getChildren()\" as it is read-only!");
     }
   }
 

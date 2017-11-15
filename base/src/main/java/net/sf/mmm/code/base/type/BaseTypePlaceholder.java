@@ -150,7 +150,8 @@ public abstract class BaseTypePlaceholder extends BaseGenericType implements Cod
       if (isSuper()) {
         sink.append(" super ");
       } else if (isExtends()) {
-        if (getContext().getRootType().equals(this.bound)) {
+        BaseContext context = getContext();
+        if ((context != null) && context.getRootType().equals(this.bound)) {
           return;
         }
         sink.append(" extends ");

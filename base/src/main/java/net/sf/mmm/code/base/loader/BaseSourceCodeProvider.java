@@ -2,6 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.base.loader;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -59,7 +60,14 @@ public abstract class BaseSourceCodeProvider implements SourceCodeProvider {
    */
   protected Reader openReader(InputStream in) throws IOException {
 
-    return new InputStreamReader(in, "UTF-8");
+    InputStreamReader reader;
+    try {
+      reader = new InputStreamReader(in, "UTF-8");
+      return reader;
+    } catch (IOException | RuntimeException e) {
+      in.close();
+      throw e;
+    }
   }
 
   /**
@@ -111,4 +119,33 @@ public abstract class BaseSourceCodeProvider implements SourceCodeProvider {
     return qualifiedName.replace('.', '/');
   }
 
+  /**
+   * @param sourceCodeLocation the {@link File} pointing to the location of the source code. See
+   *        {@link net.sf.mmm.code.api.source.CodeSource#getSourceCodeLocation()}.
+   * @return the {@link BaseSourceCodeProvider} or {@code null} if the give {@link File} is {@code null} or
+   *         does not {@link File#exists() exist}.
+   */
+  public static BaseSourceCodeProvider of(File sourceCodeLocation) {
+
+    return of(sourceCodeLocation, TYPE_EXTENSION_JAVA);
+  }
+
+  /**
+   * @param sourceCodeLocation the {@link File} pointing to the location of the source code. See
+   *        {@link net.sf.mmm.code.api.source.CodeSource#getSourceCodeLocation()}.
+   * @param typeExtension the {@link #getTypeExtension() type extension}.
+   * @return the {@link BaseSourceCodeProvider} or {@code null} if the give {@link File} is {@code null} or
+   *         does not {@link File#exists() exist}.
+   */
+  public static BaseSourceCodeProvider of(File sourceCodeLocation, String typeExtension) {
+
+    if (sourceCodeLocation == null) {
+      return null;
+    } else if (sourceCodeLocation.isDirectory()) {
+      return new BaseSourceCodeProviderDirectory(sourceCodeLocation, typeExtension);
+    } else if (sourceCodeLocation.isFile()) {
+      return new BaseSourceCodeProviderArchive(sourceCodeLocation, typeExtension);
+    }
+    return null;
+  }
 }

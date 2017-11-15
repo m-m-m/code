@@ -8,7 +8,6 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.security.CodeSource;
-import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +26,7 @@ import net.sf.mmm.code.base.node.BaseNode;
 import net.sf.mmm.code.base.node.BaseNodeItemImpl;
 import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.source.BaseSourceImpl;
+import net.sf.mmm.code.base.source.BaseSourceProvider;
 import net.sf.mmm.code.base.type.BaseArrayType;
 import net.sf.mmm.code.base.type.BaseGenericType;
 import net.sf.mmm.code.base.type.BaseParameterizedType;
@@ -49,7 +49,7 @@ public abstract class JavaContext extends BaseContextImplWithCache {
   /**
    * The constructor.
    *
-   * @param source the toplevel {@link #getSource() source}.
+   * @param source the top-level {@link #getSource() source}.
    */
   protected JavaContext(BaseSourceImpl source) {
 
@@ -57,8 +57,20 @@ public abstract class JavaContext extends BaseContextImplWithCache {
   }
 
   /**
+   * The constructor.
+   *
+   * @param source the top-level {@link #getSource() source}.
+   * @param sourceProvider the {@link BaseSourceProvider}.
+   */
+  public JavaContext(BaseSourceImpl source, BaseSourceProvider sourceProvider) {
+
+    super(source, sourceProvider);
+  }
+
+  /**
    * @return the root {@link JavaContext context} responsible for the fundamental code (from JDK).
    */
+  @Override
   public abstract JavaRootContext getRootContext();
 
   @Override
@@ -66,30 +78,6 @@ public abstract class JavaContext extends BaseContextImplWithCache {
 
     return super.getTypeFromCache(qualifiedName);
   }
-
-  /**
-   * @param id the {@link BaseSource#getId() ID} of the requested source.
-   * @return the existing {@link BaseSource} for the given {@link BaseSource#getId() ID} or {@code null} if
-   *         not found.
-   */
-  public abstract BaseSource getSource(String id);
-
-  /**
-   * <b>Attention:</b> This is an internal method that shall not be used from outside. Use
-   * {@link #getSource(String)} instead.
-   *
-   * @param id the {@link BaseSource#getId() ID} of the requested source.
-   * @param sourceSupplier the {@link Supplier} used as factory to {@link Supplier#get() create} the source if
-   *        it does not already exist.
-   * @return the existing {@link BaseSource} for the given {@link BaseSource#getId() ID}.
-   */
-  public abstract BaseSource getOrCreateSource(String id, Supplier<BaseSource> sourceSupplier);
-
-  /**
-   * @param codeSource the {@link CodeSource}.
-   * @return the existing or otherwise created {@link BaseSource}.
-   */
-  protected abstract BaseSource getOrCreateSource(CodeSource codeSource);
 
   @Override
   public BaseGenericType getType(Type type, BaseElementWithDeclaringType declaringElement) {

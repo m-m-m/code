@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
 
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import net.sf.mmm.code.api.CodeName;
@@ -21,6 +20,7 @@ import net.sf.mmm.code.base.member.BaseMethod;
 import net.sf.mmm.code.base.parser.SourceCodeParser;
 import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.type.BaseType;
+import net.sf.mmm.code.impl.java.AbstractBaseTypeTest;
 import net.sf.mmm.code.impl.java.JavaContext;
 import net.sf.mmm.code.impl.java.JavaRootContext;
 import net.sf.mmm.code.java.maven.api.MavenConstants;
@@ -32,7 +32,7 @@ import net.sf.mmm.util.io.api.RuntimeIoException;
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  */
-public class JavaSourceCodeParserImplTest extends Assertions {
+public class JavaSourceCodeParserImplTest extends AbstractBaseTypeTest {
 
   SourceCodeParser getParser() {
 
@@ -109,8 +109,7 @@ public class JavaSourceCodeParserImplTest extends Assertions {
     assertThat(type.getModifiers().getVisibility()).isSameAs(CodeVisibility.PUBLIC);
     assertThat(type.getDoc().getLines()).containsExactly("Test of {@link JavaSourceCodeParserImpl}.", "",
         "@author Joerg Hohwiller (hohwille at users.sourceforge.net)");
-    assertThat(type.getFile().getComment().getCommentLines()).containsExactly("Copyright (c) The m-m-m Team, Licensed under the Apache License, Version 2.0",
-        "http://www.apache.org/licenses/LICENSE-2.0");
+    verifyHeader(type.getFile());
     assertThat(type.getFields().getDeclared()).isEmpty();
     assertThat(type.getConstructors().getDeclared()).isEmpty();
     List<? extends BaseMethod> methods = type.getMethods().getDeclared();

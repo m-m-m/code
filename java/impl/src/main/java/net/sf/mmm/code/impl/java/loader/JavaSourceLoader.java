@@ -33,7 +33,7 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
 
   private static final Logger LOG = LoggerFactory.getLogger(JavaSourceLoader.class);
 
-  private final SourceCodeProvider sourceCodeProvider;
+  private SourceCodeProvider sourceCodeProvider;
 
   private SourceCodeParser parser;
 
@@ -203,8 +203,8 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
         getParser().parseType(reader, file);
         return file;
       }
-    } catch (IOException e) {
-      LOG.debug("Failed to open type: {}", e.getMessage(), e);
+    } catch (IOException | RuntimeException e) {
+      LOG.warn("Failed to open type: {}", e.getMessage(), e);
     }
     return null;
   }
@@ -244,6 +244,15 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
       }
     } else {
       // reflective component scan? or scan classes directory?
+    }
+  }
+
+  @Override
+  public void close() throws Exception {
+
+    if (this.sourceCodeProvider != null) {
+      this.sourceCodeProvider.close();
+      this.sourceCodeProvider = null;
     }
   }
 

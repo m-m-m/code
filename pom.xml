@@ -22,7 +22,7 @@
 
   <properties>
     <!-- Internal project versions -->
-    <net.sf.mmm.util.version>7.5.0</net.sf.mmm.util.version>
+    <net.sf.mmm.util.version>7.5.1</net.sf.mmm.util.version>
     <net.sf.mmm.code.version>1.0.0-SNAPSHOT</net.sf.mmm.code.version>
     <java.version>1.8</java.version>
   </properties>

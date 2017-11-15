@@ -16,7 +16,7 @@ import net.sf.mmm.code.api.language.CodeLanguage;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class GenericUnaryOperatorExpression extends GenericOperatorExpression implements CodeUnaryOperatorExpression {
+public class BaseUnaryOperatorExpression extends BaseOperatorExpression implements CodeUnaryOperatorExpression {
 
   private final CodeUnaryOperator operator;
 
@@ -28,7 +28,7 @@ public class GenericUnaryOperatorExpression extends GenericOperatorExpression im
    * @param operator the {@link #getOperator() operator}.
    * @param argument the {@link #getArgument() argument}.
    */
-  public GenericUnaryOperatorExpression(CodeUnaryOperator operator, CodeExpression argument) {
+  public BaseUnaryOperatorExpression(CodeUnaryOperator operator, CodeExpression argument) {
 
     super();
     this.operator = operator;

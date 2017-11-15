@@ -10,7 +10,6 @@ import net.sf.mmm.code.api.comment.CodeComment;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.node.CodeNode;
 import net.sf.mmm.code.api.node.CodeNodeItemContainer;
-import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.annoation.BaseAnnotations;
 import net.sf.mmm.code.base.doc.BaseDoc;
 import net.sf.mmm.code.base.node.BaseNodeItemImpl;
@@ -117,12 +116,6 @@ public abstract class BaseElementImpl extends BaseNodeItemImpl implements BaseEl
   public BaseElementImpl getSourceCodeObject() {
 
     return null;
-  }
-
-  @Override
-  public BaseContext getContext() {
-
-    return getParent().getContext();
   }
 
   @Override

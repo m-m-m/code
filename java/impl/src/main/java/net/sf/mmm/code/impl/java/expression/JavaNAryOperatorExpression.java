@@ -6,17 +6,17 @@ import java.util.List;
 
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.operator.CodeNAryOperator;
-import net.sf.mmm.code.base.expression.GenericNAryOperatorExpression;
+import net.sf.mmm.code.base.expression.BaseNAryOperatorExpression;
 import net.sf.mmm.code.impl.java.expression.constant.JavaConstant;
 import net.sf.mmm.code.impl.java.operator.JavaNAryOperatorHelper;
 
 /**
- * Implementation of {@link GenericNAryOperatorExpression} for Java.
+ * Implementation of {@link BaseNAryOperatorExpression} for Java.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaNAryOperatorExpression extends GenericNAryOperatorExpression implements JavaExpression {
+public class JavaNAryOperatorExpression extends BaseNAryOperatorExpression implements JavaExpression {
 
   /**
    * The constructor.

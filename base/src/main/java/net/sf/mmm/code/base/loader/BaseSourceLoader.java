@@ -13,7 +13,7 @@ import net.sf.mmm.code.base.BasePackage;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface BaseSourceLoader extends BaseLoader {
+public interface BaseSourceLoader extends BaseLoader, AutoCloseable {
 
   /**
    * @param pkg the {@link BasePackage} to scan. Will load all {@link BasePackage#getChildren() children} of

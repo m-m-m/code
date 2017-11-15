@@ -191,10 +191,12 @@ public abstract class BaseNodeItemContainer<I extends CodeItem> extends BaseNode
     if (this.map != null) {
       duplicate = put(item);
     } else {
-      duplicate = this.list.contains(item);
+      // duplicate = this.list.contains(item);
+      duplicate = false;
     }
     if (duplicate) {
       LOG.debug("Omitting duplicate child item '{}' in {}.", item, getClass().getSimpleName());
+      return;
     }
     this.mutableList.add(item);
   }

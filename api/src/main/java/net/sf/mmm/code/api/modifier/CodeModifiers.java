@@ -44,6 +44,16 @@ public class CodeModifiers {
   /** The {@link #getModifiers() modifier} {@value}. */
   public static final String KEY_SYNCHRONIZED = "synchronized";
 
+  /** The {@link #getModifiers() modifier} {@value}. */
+  private static final String KEY_STRICTFP = "strictfp";
+
+  /**
+   * The {@link #getModifiers() modifier} {@value}.
+   *
+   * @see java.lang.reflect.Method#isDefault()
+   */
+  public static final String KEY_DEFAULT = "default";
+
   /** {@link CodeModifiers} for {@code public}. */
   public static final CodeModifiers MODIFIERS_PUBLIC = new CodeModifiers(CodeVisibility.PUBLIC);
 
@@ -91,6 +101,9 @@ public class CodeModifiers {
 
   /** {@link CodeModifiers} for {@code final}. */
   public static final CodeModifiers MODIFIERS_FINAL = new CodeModifiers(CodeVisibility.DEFAULT, KEY_FINAL);
+
+  /** {@link CodeModifiers} for {@code default}. */
+  public static final CodeModifiers MODIFIERS_DEFAULT = new CodeModifiers(CodeVisibility.PUBLIC, KEY_DEFAULT);
 
   private final CodeVisibility visibility;
 
@@ -203,7 +216,7 @@ public class CodeModifiers {
   }
 
   /**
-   * @return {@code true} if abstract.
+   * @return {@code true} if {@link #KEY_ABSTRACT abstract}.
    */
   public boolean isAbstract() {
 
@@ -211,7 +224,7 @@ public class CodeModifiers {
   }
 
   /**
-   * @return {@code true} if static.
+   * @return {@code true} if {@link #KEY_STATIC static}.
    */
   public boolean isStatic() {
 
@@ -219,11 +232,19 @@ public class CodeModifiers {
   }
 
   /**
-   * @return {@code true} if final.
+   * @return {@code true} if {@link #KEY_FINAL final}.
    */
   public boolean isFinal() {
 
     return this.modifiers.contains(KEY_FINAL);
+  }
+
+  /**
+   * @return {@code true} if {@link #KEY_DEFAULT default}.
+   */
+  public boolean isDefault() {
+
+    return this.modifiers.contains(KEY_DEFAULT);
   }
 
   @Override
@@ -256,6 +277,9 @@ public class CodeModifiers {
     if (!visibilityString.isEmpty()) {
       appendModifier(buffer, visibilityString);
     }
+    if (isDefault()) {
+      appendModifier(buffer, KEY_DEFAULT);
+    }
     if (isAbstract()) {
       appendModifier(buffer, KEY_ABSTRACT);
     }
@@ -266,7 +290,8 @@ public class CodeModifiers {
       appendModifier(buffer, KEY_FINAL);
     }
     for (String modifier : this.modifiers) {
-      if (!modifier.equals(visibilityString) && !KEY_ABSTRACT.equals(modifier) && !KEY_STATIC.equals(modifier) && !KEY_FINAL.equals(modifier)) {
+      if (!modifier.equals(visibilityString) && !KEY_DEFAULT.equals(modifier) && !KEY_ABSTRACT.equals(modifier) && !KEY_STATIC.equals(modifier)
+          && !KEY_FINAL.equals(modifier)) {
         appendModifier(buffer, modifier);
       }
     }
@@ -284,6 +309,17 @@ public class CodeModifiers {
    * @return the given {@link Modifier} mask as {@link CodeModifiers}.
    */
   public static CodeModifiers of(int javaModifiers) {
+
+    return of(javaModifiers, false);
+  }
+
+  /**
+   * @param javaModifiers the Java {@link Modifier} mask.
+   * @param defaultMethod - {@code true} for {@link java.lang.reflect.Method#isDefault() default method},
+   *        {@code false} otherwise.
+   * @return the given {@link Modifier} mask as {@link CodeModifiers}.
+   */
+  public static CodeModifiers of(int javaModifiers, boolean defaultMethod) {
 
     List<String> modifiers = new ArrayList<>();
     if (Modifier.isAbstract(javaModifiers)) {
@@ -308,7 +344,7 @@ public class CodeModifiers {
       modifiers.add(KEY_VOLATILE);
     }
     if (Modifier.isStrict(javaModifiers)) {
-      modifiers.add("strictfp");
+      modifiers.add(KEY_STRICTFP);
     }
     String[] modifierArray = modifiers.toArray(new String[modifiers.size()]);
     return new CodeModifiers(CodeVisibility.of(javaModifiers), modifierArray);

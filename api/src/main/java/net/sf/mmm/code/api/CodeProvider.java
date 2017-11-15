@@ -15,7 +15,7 @@ import net.sf.mmm.util.exception.api.ObjectNotFoundException;
  * @author hohwille
  * @since 1.0.0
  */
-public abstract interface CodeProvider extends CodeNode, CodeLoader {
+public abstract interface CodeProvider extends CodeNode, CodeLoader, AutoCloseable {
 
   /**
    * @param hierarchicalName the hierarchical name as plain {@link String} to parse. E.g. a

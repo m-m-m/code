@@ -7,7 +7,7 @@ import net.sf.mmm.code.api.member.CodeConstructor;
 
 /**
  * {@link CodeOperationInvocation} representing the invocation of a {@link CodeConstructor}.<br>
- * Syntax: <pre>
+ * Syntax example: <pre>
  * new «{@link #getMember() type}»[&lt;«{@link #getTypeParameters() typeParam-1}», ..., «{@link #getTypeParameters() typeParam-N}»&gt;](«{@link #getArguments() arg-1}»,...,«{@link #getArguments() arg-N}»)
  * </pre> Example: <pre>
  * new StringTokenizer("a,b,c", ",", false)

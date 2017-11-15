@@ -11,6 +11,7 @@ import org.assertj.core.api.Assertions;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeTypeCategory;
+import net.sf.mmm.code.base.BaseFile;
 import net.sf.mmm.code.base.member.BaseConstructor;
 import net.sf.mmm.code.base.member.BaseConstructors;
 import net.sf.mmm.code.base.member.BaseField;
@@ -109,6 +110,12 @@ public abstract class AbstractBaseTypeTest extends Assertions {
     BaseMethod javaMethod = methods.getDeclared(method.getName(), parameterTypes);
     assertThat(javaMethod).as(method.toGenericString()).isNotNull();
     assertThat(javaMethod.getName()).isEqualTo(method.getName());
+  }
+
+  public static void verifyHeader(BaseFile file) {
+
+    assertThat(file.getComment().getCommentLines()).containsExactly("Copyright (c) The m-m-m Team, Licensed under the Apache License, Version 2.0",
+        "http://www.apache.org/licenses/LICENSE-2.0");
   }
 
 }

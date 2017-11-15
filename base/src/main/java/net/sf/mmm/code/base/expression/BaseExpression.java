@@ -2,14 +2,15 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.base.expression;
 
-import net.sf.mmm.code.api.expression.CodeOperatorExpression;
+import net.sf.mmm.code.api.expression.CodeExpression;
+import net.sf.mmm.code.base.item.BaseItem;
 
 /**
- * Generic implementation of {@link CodeOperatorExpression}.
+ * Generic implementation of {@link CodeExpression}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class GenericOperatorExpression extends GenericExpression implements CodeOperatorExpression {
+public abstract class BaseExpression extends BaseItem implements CodeExpression {
 
 }

@@ -2,15 +2,23 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.base;
 
+import java.io.File;
+import java.security.CodeSource;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Supplier;
 
 import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.loader.BaseLoader;
+import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.source.BaseSourceImpl;
+import net.sf.mmm.code.base.source.BaseSourceProvider;
 import net.sf.mmm.code.base.type.BaseGenericType;
 import net.sf.mmm.code.base.type.BaseType;
+import net.sf.mmm.util.exception.api.DuplicateObjectException;
+import net.sf.mmm.util.exception.api.ObjectMismatchException;
 
 /**
  * Extends {@link BaseContextImpl} with caching to speed up lookups.
@@ -20,17 +28,38 @@ import net.sf.mmm.code.base.type.BaseType;
  */
 public abstract class BaseContextImplWithCache extends BaseContextImpl {
 
-  private final Map<String, BaseType> typeCache;
+  private Map<String, BaseType> typeCache;
+
+  private Map<String, BaseSource> sourceMap;
+
+  private BaseSourceProvider sourceProvider;
 
   /**
    * The constructor.
    *
-   * @param source the toplevel {@link #getSource() source}.
+   * @param source the top-level {@link #getSource() source}.
    */
   public BaseContextImplWithCache(BaseSourceImpl source) {
 
+    this(source, null);
+  }
+
+  /**
+   * The constructor.
+   *
+   * @param source the top-level {@link #getSource() source}.
+   * @param sourceProvider the {@link BaseSourceProvider}.
+   */
+  public BaseContextImplWithCache(BaseSourceImpl source, BaseSourceProvider sourceProvider) {
+
     super(source);
     this.typeCache = createCache();
+    this.sourceProvider = sourceProvider;
+    if (this.sourceProvider != null) {
+      this.sourceProvider.setContext(this);
+    }
+    this.sourceMap = new HashMap<>();
+    registerSource(source);
   }
 
   /**
@@ -106,6 +135,129 @@ public abstract class BaseContextImplWithCache extends BaseContextImpl {
   protected BaseType getTypeFromCache(String qualifiedName) {
 
     return this.typeCache.get(qualifiedName);
+  }
+
+  /**
+   * This is an internal method that should only be used from implementations of {@link BaseSourceProvider}.
+   *
+   * @param byteCodeLocation the {@link BaseSource#getByteCodeLocation() byte code location}.
+   * @param sourceCodeLocation the {@link BaseSource#getSourceCodeLocation() source code location}.
+   * @return the existing or otherwise created {@link BaseSource}.
+   */
+  public BaseSource getOrCreateSource(File byteCodeLocation, File sourceCodeLocation) {
+
+    File location;
+    if (byteCodeLocation != null) {
+      location = byteCodeLocation;
+    } else {
+      location = sourceCodeLocation;
+    }
+    String id = BaseSourceImpl.getNormalizedId(location);
+    BaseSource source = getSource(id);
+    if (source == null) {
+      verifyCreateSource(id);
+      source = this.sourceProvider.create(byteCodeLocation, sourceCodeLocation);
+      registerSource(source);
+    }
+    return source;
+  }
+
+  /**
+   * @param codeSource the {@link CodeSource}.
+   * @return the existing or otherwise created {@link BaseSource}.
+   */
+  protected BaseSource getOrCreateSource(CodeSource codeSource) {
+
+    if (codeSource == null) {
+      return getRootContext().getSource();
+    }
+    String id = BaseSourceImpl.getNormalizedId(codeSource);
+    BaseSource source = getSource(id);
+    if (source == null) {
+      verifyCreateSource(id);
+      source = this.sourceProvider.create(codeSource);
+      registerSource(source);
+    }
+    return source;
+  }
+
+  /**
+   * <b>Attention:</b> This is an internal method that shall not be used from outside. Use
+   * {@link #getSource(String)} instead.
+   *
+   * @param id the {@link BaseSource#getId() ID} of the requested source.
+   * @param sourceSupplier the {@link Supplier} used as factory to {@link Supplier#get() create} the source if
+   *        it does not already exist.
+   * @return the existing {@link BaseSource} for the given {@link BaseSource#getId() ID}.
+   */
+  public BaseSource getOrCreateSource(String id, Supplier<BaseSource> sourceSupplier) {
+
+    BaseSource source = getSource(id);
+    if (source == null) {
+      if (isPreventRegisterSource()) {
+        verifyCreateSource(id);
+      }
+      source = sourceSupplier.get();
+      Objects.requireNonNull(source, "source");
+      if (!source.getId().equals(id)) {
+        throw new ObjectMismatchException(source.getId(), id, BaseSource.class);
+      }
+      registerSource(source);
+    }
+    return source;
+  }
+
+  /**
+   * @return {@code true} if {@link #getOrCreateSource(String, Supplier)} may not be called to register a new
+   *         source, {@code false} otherwise.
+   */
+  protected boolean isPreventRegisterSource() {
+
+    if ((this.sourceProvider == null) && (getParent() == null)) {
+      return true;
+    }
+    return false;
+  }
+
+  private void verifyCreateSource(Object arg) {
+
+    if (this.sourceProvider == null) {
+      throw new IllegalStateException("Can not create source for external code in " + getClass().getSimpleName() + ": " + arg);
+    }
+  }
+
+  private void registerSource(BaseSource source) {
+
+    BaseSource duplicate = this.sourceMap.put(source.getId(), source);
+    if (duplicate != null) {
+      throw new DuplicateObjectException(source, source.getId(), duplicate);
+    }
+  }
+
+  @Override
+  public BaseSource getSource(String id) {
+
+    BaseSource javaSource = this.sourceMap.get(id);
+    if (javaSource != null) {
+      return javaSource;
+    }
+    BaseContext parent = getParent();
+    if (parent != null) {
+      javaSource = parent.getSource(id);
+    }
+    return javaSource;
+  }
+
+  @Override
+  public void close() throws Exception {
+
+    super.close();
+    this.typeCache = null;
+    for (BaseSource src : this.sourceMap.values()) {
+      src.close();
+    }
+    this.sourceMap = null;
+    this.sourceProvider = null;
   }
 
 }

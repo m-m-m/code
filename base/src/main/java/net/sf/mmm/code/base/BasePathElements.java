@@ -360,7 +360,7 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
     }
     for (BasePathElement child : getList()) {
       if (child.isFile()) {
-        BaseType type = ((BaseFile) child).getChildType(simpleName, init);
+        BaseType type = ((BaseFile) child).getType(simpleName, init);
         if (type != null) {
           return type;
         }
@@ -400,7 +400,7 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
     if (pkg.isEmpty()) {
       pkg = "«root»";
     }
-    return pkg + ".children";
+    return pkg + ".getChildren()";
   }
 
 }

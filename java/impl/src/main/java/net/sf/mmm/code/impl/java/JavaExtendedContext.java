@@ -2,23 +2,13 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.impl.java;
 
-import java.io.File;
-import java.security.CodeSource;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Supplier;
-
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.base.loader.BaseLoader;
-import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.source.BaseSourceImpl;
 import net.sf.mmm.code.base.source.BaseSourceProvider;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.base.type.BaseTypeWildcard;
-import net.sf.mmm.util.exception.api.DuplicateObjectException;
-import net.sf.mmm.util.exception.api.ObjectMismatchException;
 
 /**
  * Implementation of {@link JavaContext} that inherits from a {@link #getParent() parent} context.
@@ -29,10 +19,6 @@ import net.sf.mmm.util.exception.api.ObjectMismatchException;
 public class JavaExtendedContext extends JavaContext {
 
   private final JavaContext parent;
-
-  private final BaseSourceProvider sourceProvider;
-
-  private final Map<String, BaseSource> sourceMap;
 
   private final JavaClassLoader loader;
 
@@ -56,97 +42,15 @@ public class JavaExtendedContext extends JavaContext {
    */
   public JavaExtendedContext(JavaContext parent, BaseSourceImpl source, BaseSourceProvider sourceProvider) {
 
-    super(source);
+    super(source, sourceProvider);
     this.parent = parent;
     this.loader = new JavaClassLoader();
-    this.sourceProvider = sourceProvider;
-    this.sourceProvider.setContext(this);
-    this.sourceMap = new HashMap<>();
-    registerSource(source);
   }
 
   @Override
   protected BaseLoader getLoader() {
 
     return this.loader;
-  }
-
-  /**
-   * @param id the {@link BaseSource#getId() ID} of the requested source.
-   * @param sourceSupplier the {@link Supplier} used as factory to {@link Supplier#get() create} the source if
-   *        it does not already exist.
-   * @return the existing {@link BaseSource} for the given {@link BaseSource#getId() ID}.
-   */
-  @Override
-  public BaseSource getOrCreateSource(String id, Supplier<BaseSource> sourceSupplier) {
-
-    BaseSource source = getSource(id);
-    if (source == null) {
-      source = sourceSupplier.get();
-      Objects.requireNonNull(source, "source");
-      if (!source.getId().equals(id)) {
-        throw new ObjectMismatchException(source.getId(), id, BaseSource.class);
-      }
-      registerSource(source);
-    }
-    return source;
-  }
-
-  @Override
-  protected BaseSource getOrCreateSource(CodeSource codeSource) {
-
-    if (codeSource == null) {
-      return getRootContext().getSource();
-    }
-    String id = BaseSourceImpl.getNormalizedId(codeSource);
-    BaseSource source = getSource(id);
-    if (source == null) {
-      source = this.sourceProvider.create(codeSource);
-      registerSource(source);
-    }
-    return source;
-  }
-
-  private void registerSource(BaseSource source) {
-
-    BaseSource duplicate = this.sourceMap.put(source.getId(), source);
-    if (duplicate != null) {
-      throw new DuplicateObjectException(source, source.getId(), duplicate);
-    }
-  }
-
-  /**
-   * This is an internal method that should only be used from implementations of {@link BaseSourceProvider}.
-   *
-   * @param byteCodeLocation the {@link BaseSource#getByteCodeLocation() byte code location}.
-   * @param sourceCodeLocation the {@link BaseSource#getSourceCodeLocation() source code location}.
-   * @return the existing or otherwise created {@link BaseSource}.
-   */
-  public BaseSource getOrCreateSource(File byteCodeLocation, File sourceCodeLocation) {
-
-    File location;
-    if (byteCodeLocation != null) {
-      location = byteCodeLocation;
-    } else {
-      location = sourceCodeLocation;
-    }
-    String id = BaseSourceImpl.getNormalizedId(location);
-    BaseSource source = getSource(id);
-    if (source == null) {
-      source = this.sourceProvider.create(byteCodeLocation, sourceCodeLocation);
-      registerSource(source);
-    }
-    return source;
-  }
-
-  @Override
-  public BaseSource getSource(String id) {
-
-    BaseSource javaSource = this.sourceMap.get(id);
-    if (javaSource != null) {
-      return javaSource;
-    }
-    return this.parent.getSource(id);
   }
 
   @Override

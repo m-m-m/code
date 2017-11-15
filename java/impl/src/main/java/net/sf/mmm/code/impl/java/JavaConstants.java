@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -58,6 +59,9 @@ class JavaConstants {
       "UnsupportedOperationException", "VerifyError", "VirtualMachineError", "Void")));
 
   static final Map<String, String> JAVA_PRIMITIVE_TYPES_MAP = Collections.unmodifiableMap(createPrimitiveTypesMap());
+
+  static final List<Class<?>> PRIMITIVE_TYPES = Collections
+      .unmodifiableList(Arrays.asList(void.class, boolean.class, char.class, int.class, long.class, short.class, byte.class, double.class, float.class));
 
   static final WildcardType UNBOUNDED_WILDCARD;
 

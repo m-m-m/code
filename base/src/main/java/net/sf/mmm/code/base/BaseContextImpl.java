@@ -13,7 +13,7 @@ import net.sf.mmm.code.base.source.BaseSourceImpl;
  */
 public abstract class BaseContextImpl extends BaseProviderImpl implements BaseContext {
 
-  private final BaseSourceImpl source;
+  private BaseSourceImpl source;
 
   /**
    * The constructor.
@@ -28,9 +28,6 @@ public abstract class BaseContextImpl extends BaseProviderImpl implements BaseCo
   }
 
   @Override
-  public abstract BaseContext getParent();
-
-  @Override
   public BaseContext getContext() {
 
     return this;
@@ -40,6 +37,13 @@ public abstract class BaseContextImpl extends BaseProviderImpl implements BaseCo
   public BaseSource getSource() {
 
     return this.source;
+  }
+
+  @Override
+  public void close() throws Exception {
+
+    this.source.close();
+    this.source = null;
   }
 
 }

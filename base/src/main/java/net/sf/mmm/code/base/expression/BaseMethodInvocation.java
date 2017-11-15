@@ -5,13 +5,12 @@ package net.sf.mmm.code.base.expression;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import net.sf.mmm.code.api.arg.CodeParameter;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.expression.CodeMethodInvocation;
-import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.language.CodeLanguage;
+import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.type.CodeGenericType;
 
 /**
@@ -20,7 +19,7 @@ import net.sf.mmm.code.api.type.CodeGenericType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseMethodInvocation extends GenericMemberReference implements CodeMethodInvocation {
+public class BaseMethodInvocation extends BaseMemberReference implements CodeMethodInvocation {
 
   private final CodeGenericType type;
 
@@ -121,7 +120,7 @@ public class BaseMethodInvocation extends GenericMemberReference implements Code
       List<? extends CodeGenericType> typeParameters) {
 
     super(expression);
-    Objects.requireNonNull(method, "method");
+    // Objects.requireNonNull(method, "method");
     this.method = method;
     this.arguments = Collections.unmodifiableList(arguments);
     this.type = type;

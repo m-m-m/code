@@ -15,7 +15,7 @@ import net.sf.mmm.code.api.language.CodeLanguage;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class GenericTernaryExpression extends GenericExpression implements CodeTernaryExpression {
+public class BaseTernaryExpression extends BaseExpression implements CodeTernaryExpression {
 
   private final CodeCondition condition;
 
@@ -30,7 +30,7 @@ public class GenericTernaryExpression extends GenericExpression implements CodeT
    * @param ifArg the {@link #getIfArg() if-argument}.
    * @param elseArg the {@link #getElseArg() else-argument}.
    */
-  public GenericTernaryExpression(CodeCondition condition, CodeExpression ifArg, CodeExpression elseArg) {
+  public BaseTernaryExpression(CodeCondition condition, CodeExpression ifArg, CodeExpression elseArg) {
 
     super();
     this.condition = condition;

@@ -5,17 +5,17 @@ package net.sf.mmm.code.impl.java.expression;
 import net.sf.mmm.code.api.expression.CodeConstant;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.operator.CodeUnaryOperator;
-import net.sf.mmm.code.base.expression.GenericUnaryOperatorExpression;
+import net.sf.mmm.code.base.expression.BaseUnaryOperatorExpression;
 import net.sf.mmm.code.impl.java.expression.constant.JavaConstant;
 import net.sf.mmm.code.impl.java.expression.literal.JavaLiteralBoolean;
 
 /**
- * Implementation of {@link GenericUnaryOperatorExpression} for Java.
+ * Implementation of {@link BaseUnaryOperatorExpression} for Java.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaUnaryOperatorExpression extends GenericUnaryOperatorExpression implements JavaExpression {
+public class JavaUnaryOperatorExpression extends BaseUnaryOperatorExpression implements JavaExpression {
 
   /**
    * The constructor.

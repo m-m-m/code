@@ -137,8 +137,8 @@ public final class BaseFile extends BasePathElement implements CodeFile, CodeNod
   }
 
   /**
-   * @param simpleName the {@link BaseType#getSimpleName() simple name} of the requested {@link BaseType} to
-   *        resolve in the context of this {@link BaseFile}.
+   * @param simpleName the {@link BaseType#getSimpleName() simple name} of the requested {@link BaseType}
+   *        {@link BaseType#getNestedTypes() recursively} contained in this {@link BaseFile}.
    * @return the requested {@link BaseType} or {@code null} if not found.
    */
   public BaseType getType(String simpleName) {
@@ -147,33 +147,13 @@ public final class BaseFile extends BasePathElement implements CodeFile, CodeNod
   }
 
   /**
-   * @param simpleName the {@link BaseType#getSimpleName() simple name} of the requested {@link BaseType} to
-   *        resolve in the context of this {@link BaseFile}.
+   * @param simpleName the {@link BaseType#getSimpleName() simple name} of the requested {@link BaseType}
+   *        {@link BaseType#getNestedTypes() recursively} contained in this {@link BaseFile}.
    * @param init - {@code true} to ensure the child types are properly initialized and the result is adequate,
    *        {@code false} otherwise (to avoid initialization e.g. for internal calls during initialization).
    * @return the requested {@link BaseType} or {@code null} if not found.
    */
   public BaseType getType(String simpleName, boolean init) {
-
-    BaseType type = getChildType(simpleName, init);
-    if (type == null) {
-      String qualifiedName = getContext().getQualifiedName(simpleName, this, false);
-      type = getContext().getType(qualifiedName);
-    }
-    return type;
-  }
-
-  /**
-   * @param simpleName the {@link BaseType#getSimpleName() simple name} of the requested {@link BaseType}
-   *        {@link BaseType#getNestedTypes() recursively} contained in this {@link BaseFile}.
-   * @return the requested {@link BaseType} or {@code null} if not found.
-   */
-  public BaseType getChildType(String simpleName) {
-
-    return getChildType(simpleName, true);
-  }
-
-  BaseType getChildType(String simpleName, boolean init) {
 
     for (BaseType type : getTypes(init)) {
       if (type.getSimpleName().equals(simpleName)) {
@@ -185,6 +165,27 @@ public final class BaseFile extends BasePathElement implements CodeFile, CodeNod
       }
     }
     return null;
+  }
+
+  /**
+   * @param simpleName the {@link BaseType#getSimpleName() simple name} of the requested {@link BaseType} to
+   *        resolve in the context of this {@link BaseFile}.
+   * @param init - {@code true} to ensure the child types are properly initialized and the result is adequate,
+   *        {@code false} otherwise (to avoid initialization e.g. for internal calls during initialization).
+   * @param resolve - {@code true} to resolve the requested {@link BaseType} in the
+   *        {@link BaseContext#getQualifiedName(String, CodeFile, boolean) context} of this file,
+   *        {@code false} otherwise (to only search for files contained in this file like
+   *        {@link #getType(String, boolean)}).
+   * @return the requested {@link BaseType} or {@code null} if not found.
+   */
+  public BaseType getType(String simpleName, boolean init, boolean resolve) {
+
+    BaseType type = getType(simpleName, init);
+    if ((type == null) && resolve) {
+      String qualifiedName = getContext().getQualifiedName(simpleName, this, false);
+      type = getContext().getType(qualifiedName);
+    }
+    return type;
   }
 
   @Override

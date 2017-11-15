@@ -42,7 +42,7 @@ public class BaseSourceImpl extends BaseProviderImpl implements BaseSource {
 
   private File sourceCodeLocation;
 
-  private final BaseSourceLoader loader;
+  private BaseSourceLoader loader;
 
   private String id;
 
@@ -296,6 +296,15 @@ public class BaseSourceImpl extends BaseProviderImpl implements BaseSource {
       return type;
     }
     return null;
+  }
+
+  @Override
+  public void close() throws Exception {
+
+    if (this.loader != null) {
+      this.loader.close();
+      this.loader = null;
+    }
   }
 
   @Override

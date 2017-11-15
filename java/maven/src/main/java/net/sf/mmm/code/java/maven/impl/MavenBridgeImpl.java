@@ -89,6 +89,28 @@ public class MavenBridgeImpl implements MavenBridge, MavenConstants {
     return null;
   }
 
+  @Override
+  public File findArtifactSources(File artifact) {
+
+    if (artifact.isFile()) {
+      String filename = artifact.getName();
+      int lastDot = filename.lastIndexOf('.');
+      if (lastDot > 0) {
+        String extension = filename.substring(lastDot);
+        String sourcesBasename = filename.substring(0, lastDot) + "-" + CLASSIFIER_SOURCES;
+        File sourcesFile = new File(artifact.getParent(), sourcesBasename + extension);
+        if (sourcesFile.exists()) {
+          return sourcesFile;
+        }
+        sourcesFile = new File(artifact.getParent(), sourcesBasename + ".zip");
+        if (sourcesFile.exists()) {
+          return sourcesFile;
+        }
+      }
+    }
+    return null;
+  }
+
   private File findPomFromFolder(File folder, int recursion) {
 
     if (folder == null) {

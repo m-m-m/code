@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import net.sf.mmm.code.api.expression.CodeConstant;
 import net.sf.mmm.code.api.language.CodeLanguage;
-import net.sf.mmm.code.base.expression.GenericExpression;
+import net.sf.mmm.code.base.expression.BaseExpression;
 import net.sf.mmm.code.impl.java.expression.JavaExpression;
 import net.sf.mmm.code.impl.java.expression.literal.JavaLiteral;
 import net.sf.mmm.code.impl.java.expression.literal.JavaLiteralClass;
@@ -20,7 +20,7 @@ import net.sf.mmm.code.impl.java.expression.literal.JavaLiteralString;
  * @since 1.0.0
  * @param <T> type of {@link #getValue()}.
  */
-public abstract class JavaConstant<T> extends GenericExpression implements CodeConstant, JavaExpression {
+public abstract class JavaConstant<T> extends BaseExpression implements CodeConstant, JavaExpression {
 
   private final T value;
 

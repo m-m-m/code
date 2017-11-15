@@ -169,6 +169,11 @@ public class TestContext extends BaseContextImplWithCache {
       // not implemented
     }
 
+    @Override
+    public void close() throws Exception {
+
+    }
+
   }
 
 }

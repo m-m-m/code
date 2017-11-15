@@ -3,8 +3,6 @@
 package net.sf.mmm.code.impl.java;
 
 import java.io.File;
-import java.security.CodeSource;
-import java.util.function.Supplier;
 
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.language.CodeLanguage;
@@ -12,7 +10,6 @@ import net.sf.mmm.code.api.language.CodeLanguageJava;
 import net.sf.mmm.code.api.source.CodeSourceDescriptor;
 import net.sf.mmm.code.base.loader.BaseLoader;
 import net.sf.mmm.code.base.loader.SourceCodeProvider;
-import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.source.BaseSourceDescriptorType;
 import net.sf.mmm.code.base.source.BaseSourceImpl;
 import net.sf.mmm.code.base.type.BaseType;
@@ -43,6 +40,9 @@ public class JavaRootContext extends JavaContext {
 
     super(source);
     this.loader = new JavaClassLoader(ClassLoader.getSystemClassLoader());
+    for (Class<?> primitive : JavaConstants.PRIMITIVE_TYPES) {
+      getType(primitive);
+    }
   }
 
   @Override
@@ -61,40 +61,6 @@ public class JavaRootContext extends JavaContext {
   protected BaseLoader getLoader() {
 
     return this.loader;
-  }
-
-  @Override
-  public BaseSource getSource(String id) {
-
-    BaseSource source = getSource();
-    if (source.getId().equals(id)) {
-      return source;
-    }
-    return null;
-  }
-
-  @Override
-  protected BaseSource getOrCreateSource(CodeSource codeSource) {
-
-    if (codeSource == null) {
-      return getSource();
-    }
-    return createSource(codeSource);
-  }
-
-  @Override
-  public BaseSource getOrCreateSource(String id, Supplier<BaseSource> sourceSupplier) {
-
-    BaseSource source = getSource(id);
-    if (source != null) {
-      return source;
-    }
-    return createSource(id);
-  }
-
-  private BaseSource createSource(Object arg) {
-
-    throw new IllegalStateException("Can not create source for external code in root context: " + arg);
   }
 
   @Override

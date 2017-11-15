@@ -10,9 +10,11 @@ import java.util.function.Supplier;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 
+import net.sf.mmm.code.base.loader.BaseSourceCodeProviderArchive;
 import net.sf.mmm.code.base.loader.BaseSourceCodeProviderDirectory;
 import net.sf.mmm.code.base.loader.BaseSourceLoader;
 import net.sf.mmm.code.base.loader.SourceCodeProvider;
+import net.sf.mmm.code.base.loader.SourceCodeProviderProxy;
 import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.source.BaseSourceHelper;
 import net.sf.mmm.code.base.source.BaseSourceImpl;
@@ -49,11 +51,26 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
   public BaseSource create(CodeSource source) {
 
     Objects.requireNonNull(source, "source");
-    Supplier<Model> supplier = () -> parseModel(BaseSourceHelper.asFile(source.getLocation()));
-    // TODO find sources archive from maven repo corresponding to CodeSource
-    SourceCodeProvider sourceCodeProvider = null;
+    File location = BaseSourceHelper.asFile(source.getLocation());
+    Supplier<Model> supplier = createModelSupplier(location);
+    SourceCodeProvider sourceCodeProvider = new SourceCodeProviderProxy(() -> createSourceCodeProvider(location, supplier));
     BaseSourceLoader loader = new JavaSourceLoader(sourceCodeProvider);
     return new JavaSourceUsingMaven(this, source, supplier, loader);
+  }
+
+  private SourceCodeProvider createSourceCodeProvider(File location, Supplier<Model> supplier) {
+
+    File artifactSources = this.mavenBridge.findArtifactSources(location);
+    if (artifactSources != null) {
+      return new BaseSourceCodeProviderArchive(artifactSources);
+    }
+    if (location.isDirectory()) {
+      Model model = supplier.get();
+      if (model != null) {
+        return new BaseSourceCodeProviderDirectory(ModelHelper.getSourceDirectory(model));
+      }
+    }
+    return null;
   }
 
   @Override
@@ -65,7 +82,14 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
     } else {
       location = sourceCodeLocation;
     }
-    return new JavaSourceUsingMaven(this, byteCodeLocation, sourceCodeLocation, () -> parseModel(location), null, createLoader(sourceCodeLocation));
+    Supplier<Model> modelSupplier = createModelSupplier(location);
+    return new JavaSourceUsingMaven(this, byteCodeLocation, sourceCodeLocation, modelSupplier, null, createLoader(sourceCodeLocation));
+  }
+
+  @SuppressWarnings("deprecation")
+  private Supplier<Model> createModelSupplier(File location) {
+
+    return new net.sf.mmm.code.impl.java.supplier.SupplierAdapter<>(() -> parseModel(location));
   }
 
   private BaseSourceLoader createLoader(File sourceCodeLocation) {
@@ -76,10 +100,7 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
     } else if (sourceCodeLocation.isDirectory()) {
       sourceCodeProvider = new BaseSourceCodeProviderDirectory(sourceCodeLocation);
     } else {
-      // TODO
-      // throw new IllegalStateException("TODO implement");
-      sourceCodeProvider = null;
-      // sourceCodeProvider = new BaseSourceCodeProviderArchive(sourceCodeLocation);
+      sourceCodeProvider = new BaseSourceCodeProviderArchive(sourceCodeLocation);
     }
     return new JavaSourceLoader(sourceCodeProvider);
   }
@@ -113,11 +134,23 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
     return new JavaSourceUsingMaven(this, byteCodeArtifact, sourceCodeArtifact, () -> parseModel(byteCodeArtifact), dependency.getScope(), loader);
   }
 
+  /**
+   * @param parentContext the {@link JavaContext} to inherit and use as {@link JavaContext#getParent()
+   *        parent}. Most likely {@link net.sf.mmm.code.impl.java.JavaRootContext#get()}.
+   * @return the {@link BaseSourceImpl source} for the Maven project at the current {@link File} location
+   *         (CWD).
+   */
   public BaseSourceImpl createFromLocalMavenProject(JavaContext parentContext) {
 
     return createFromLocalMavenProject(parentContext, new File(".").getAbsoluteFile().getParentFile());
   }
 
+  /**
+   * @param parentContext the {@link JavaContext} to inherit and use as {@link JavaContext#getParent()
+   *        parent}. Most likely {@link net.sf.mmm.code.impl.java.JavaRootContext#get()}.
+   * @param location the {@link File} pointing to the Maven project.
+   * @return the {@link BaseSourceImpl source} for the Maven project at the given {@link File} location.
+   */
   public BaseSourceImpl createFromLocalMavenProject(JavaContext parentContext, File location) {
 
     final Model model = parseModel(location);

@@ -35,6 +35,14 @@ public interface MavenBridge {
   File findArtifact(Dependency dependency);
 
   /**
+   * @param artifact the {@link File} (potentially) pointing to an artifact (e.g. JAR) in the local
+   *        repository.
+   * @return the corresponding sources archive or {@code null} if the given {@link File} was not pointing to a
+   *         maven artifact.
+   */
+  File findArtifactSources(File artifact);
+
+  /**
    * @param pomFile the {@link File} pointing to the maven {@code pom.xml} file to parse.
    * @return the plain {@link Model} of the parsed POM.
    * @see #readEffectiveModel(File)

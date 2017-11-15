@@ -4,7 +4,6 @@ package net.sf.mmm.code.base.type;
 
 import java.lang.reflect.Type;
 
-import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.type.CodeComposedType;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeTypePlaceholder;
@@ -130,10 +129,10 @@ public abstract class BaseGenericType extends BaseElementWithDeclaringTypeImpl i
   @Override
   public BaseGenericType getSourceCodeObject() {
 
-    CodeItem sourceItem = getParent().getSourceCodeObject();
-    if (sourceItem instanceof BaseSuperTypes) {
-      ((BaseSuperTypes) sourceItem).getDeclared();
-    }
+    // CodeItem sourceItem = getParent().getSourceCodeObject();
+    // if (sourceItem instanceof BaseSuperTypes) {
+    // ((BaseSuperTypes) sourceItem).getDeclared();
+    // }
     return null;
   }
 
