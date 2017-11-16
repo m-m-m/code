@@ -10,6 +10,7 @@ import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.node.CodeNode;
 import net.sf.mmm.code.api.node.CodeNodeItemContainer;
 import net.sf.mmm.code.base.annoation.BaseAnnotations;
+import net.sf.mmm.code.base.comment.BaseBlockComment;
 import net.sf.mmm.code.base.doc.BaseDoc;
 import net.sf.mmm.code.base.node.BaseNodeItemImpl;
 
@@ -92,6 +93,9 @@ public abstract class BaseElementImpl extends BaseNodeItemImpl implements BaseEl
       BaseElementImpl sourceElement = getSourceCodeObject();
       if (sourceElement != null) {
         this.comment = sourceElement.getComment();
+      }
+      if (this.comment == null) {
+        return BaseBlockComment.EMPTY_COMMENT;
       }
     }
     return this.comment;

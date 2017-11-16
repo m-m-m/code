@@ -14,6 +14,25 @@
   <name>${project.artifactId}</name>
   <description>Implementation of mmm-code-api for Java.</description>
 
+  <build>
+    <plugins>
+      <!-- Ensure sources are downloaded for tests (even in CI/travis) -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.0.2</version>
+        <executions>
+          <execution>
+            <id>download-sources</id>
+            <goals>
+              <goal>sources</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>

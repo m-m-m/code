@@ -14,8 +14,8 @@ import net.sf.mmm.code.api.comment.CodeComment;
 public abstract interface CodeItemWithComment extends CodeItem {
 
   /**
-   * @return the {@link CodeComment} comment above this item (e.g. header of {@link CodeFile}) or {@code null}
-   *         for none.
+   * @return the {@link CodeComment} comment above this item (e.g. header of {@link CodeFile}). Will be an
+   *         empty instance as fallback to avoid {@link NullPointerException}s.
    */
   CodeComment getComment();
 

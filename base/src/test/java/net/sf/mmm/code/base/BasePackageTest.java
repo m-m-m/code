@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.base.annoation.BaseAnnotation;
+import net.sf.mmm.code.base.comment.BaseBlockComment;
 import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
@@ -266,7 +267,7 @@ public class BasePackageTest extends BaseContextTest {
       assertThat(pkg.getChildren().getDeclared()).isEmpty();
     }
     assertThat(pkg.getDoc().isEmpty()).isTrue();
-    assertThat(pkg.getComment()).isNull();
+    assertThat(pkg.getComment()).isSameAs(BaseBlockComment.EMPTY_COMMENT);
     if (reflect) {
       assertThat(pkg.getReflectiveObject()).isNull();
     }

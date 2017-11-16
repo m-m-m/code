@@ -20,6 +20,9 @@ import net.sf.mmm.code.api.language.CodeLanguage;
  */
 public class BaseBlockComment extends BaseComment implements CodeBlockComment {
 
+  /** An empty comment instance. */
+  public static final BaseBlockComment EMPTY_COMMENT = new BaseBlockComment(Collections.emptyList());
+
   private final List<String> commentLines;
 
   /**

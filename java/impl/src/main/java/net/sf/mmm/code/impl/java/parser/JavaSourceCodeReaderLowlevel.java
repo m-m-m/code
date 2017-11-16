@@ -455,7 +455,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
 
   private void parseDocOrBlockComment(List<String> lines) {
 
-    String line = readUntil(CharFilter.NEWLINE_FILTER, true, "*/", false, true);
+    String line = readDocOrCommentLine();
     if (!line.isEmpty()) {
       lines.add(line);
     }
@@ -473,11 +473,26 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
           skipWhile(CharFilter.WHITESPACE_FILTER);
           return;
         }
-        skipWhile(CHAR_FILTER_SPACES); // trim does not consider tabs
       }
-      line = readUntil(CharFilter.NEWLINE_FILTER, true, "*/", false, true);
+      line = readDocOrCommentLine();
       lines.add(line);
     }
+  }
+
+  private String readDocOrCommentLine() {
+
+    expect(' ');
+    String line = readUntil(CharFilter.NEWLINE_FILTER, true, "*/", false, false);
+    // trim end
+    int max = line.length() - 1;
+    int end = max;
+    while ((end > 0) && (line.charAt(end) == ' ')) {
+      end--;
+    }
+    if (end < max) {
+      line = line.substring(0, end + 1);
+    }
+    return line;
   }
 
   /**

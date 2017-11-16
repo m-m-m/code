@@ -6,9 +6,12 @@ import java.io.File;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import javax.inject.Named;
+
 import org.junit.Test;
 
 import net.sf.mmm.code.api.source.CodeSourceDescriptor;
+import net.sf.mmm.code.base.member.BaseMethod;
 import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.source.BaseSourceImpl;
 import net.sf.mmm.code.base.type.BaseType;
@@ -83,10 +86,11 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
   }
 
   /**
-   * Test full integration of {@link JavaContext#getType(String)} from byte-code and source-code.
+   * Test full integration of {@link JavaContext#getType(String)} from byte-code and source-code (from local
+   * filesystem).
    */
   @Test
-  public void testFullType() {
+  public void testTypeWithSourceFromFilesystem() {
 
     // given
     JavaContext context = getContext();
@@ -102,6 +106,40 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
         "@author Joerg Hohwiller (hohwille at users.sourceforge.net)", "@since 1.0.0");
     assertThat(type.getMethods().getDeclared("getRootContext").getReturns().getDoc().getLines())
         .containsExactly("the root {@link JavaContext context} responsible for the fundamental code (from JDK).");
+  }
+
+  /**
+   * Test full integration of {@link JavaContext#getType(String)} from byte-code and source-code (from JAR
+   * files).
+   */
+  @Test
+  public void testTypeWithSourceFromJar() {
+
+    // given
+    JavaContext context = getContext();
+    // javax.inject (JSR-330) is expected to be stable so the test will not break
+    Class<?> clazz = Named.class;
+
+    // when
+    BaseType type = context.getType(clazz.getName());
+
+    // then
+    assertThat(type.getFile().getComment().getCommentLines()).containsExactly("Copyright (C) 2009 The JSR-330 Expert Group", "",
+        "Licensed under the Apache License, Version 2.0 (the \"License\");", "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at", "", "     http://www.apache.org/licenses/LICENSE-2.0", "",
+        "Unless required by applicable law or agreed to in writing, software", "distributed under the License is distributed on an \"AS IS\" BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.", "See the License for the specific language governing permissions and",
+        "limitations under the License.");
+
+    assertThat(type.getDoc().getLines()).containsExactly("String-based {@linkplain Qualifier qualifier}.", "", "<p>Example usage:", "", "<pre>",
+        "  public class Car {", "    &#064;Inject <b>@Named(\"driver\")</b> Seat driverSeat;",
+        "    &#064;Inject <b>@Named(\"passenger\")</b> Seat passengerSeat;", "    ...", "  }</pre>");
+
+    List<? extends BaseMethod> methods = type.getMethods().getDeclared();
+    assertThat(methods).hasSize(1);
+    BaseMethod method = methods.get(0);
+    assertThat(method.getName()).isEqualTo("value");
+    assertThat(method.getDoc().getLines()).containsExactly("The name.");
   }
 
 }
