@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Method;
 
-import net.sf.mmm.code.api.arg.CodeReturn;
+import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
@@ -31,6 +31,8 @@ public class BaseMethod extends BaseOperation implements CodeMethod, CodeNodeIte
   private BaseMethod sourceCodeObject;
 
   private BaseReturn returns;
+
+  private CodeExpression defaultValue;
 
   /**
    * The constructor.
@@ -129,10 +131,28 @@ public class BaseMethod extends BaseOperation implements CodeMethod, CodeNodeIte
   }
 
   @Override
-  public void setReturns(CodeReturn returns) {
+  public CodeExpression getDefaultValue() {
+
+    if (this.defaultValue == null) {
+      if (this.reflectiveObject != null) {
+        Object value = this.reflectiveObject.getDefaultValue();
+        if (value != null) {
+          boolean primitive = getReturns().getType().asType().isPrimitive();
+          this.defaultValue = getContext().createExpression(value, primitive);
+        }
+      }
+      if ((this.defaultValue == null) && (getSourceCodeObject() != null)) {
+        this.defaultValue = this.sourceCodeObject.getDefaultValue();
+      }
+    }
+    return this.defaultValue;
+  }
+
+  @Override
+  public void setDefaultValue(CodeExpression defaultValue) {
 
     verifyMutalbe();
-    this.returns = (BaseReturn) returns;
+    this.defaultValue = defaultValue;
   }
 
   @Override

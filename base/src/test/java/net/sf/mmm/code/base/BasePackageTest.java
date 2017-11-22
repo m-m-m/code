@@ -184,14 +184,12 @@ public class BasePackageTest extends BaseContextTest {
     if (!source) {
       sourceSupplier = () -> createPackage(pkg, simpleName, true);
     }
-    BasePackage basePackage = new BasePackage(pkg, simpleName, null, sourceSupplier);
+    BasePackage basePackage = new BasePackage(pkg, simpleName, null, sourceSupplier, !source);
     if (source) {
       basePackage.getAnnotations().add(getTestAnnotation(pkg.getContext().getSource()));
       basePackage.setComment(TEST_COMMENT);
       basePackage.getDoc().getLines().add(TEST_TEXT1);
       basePackage.getDoc().getLines().add(TEST_TEXT2);
-    } else {
-      basePackage.setImmutable();
     }
     return basePackage;
   }

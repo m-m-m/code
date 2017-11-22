@@ -7,7 +7,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract base implementation of {@link SourceCodeProvider}.
@@ -16,6 +24,8 @@ import java.util.Objects;
  * @since 1.0.0
  */
 public abstract class BaseSourceCodeProvider implements SourceCodeProvider {
+
+  private static final Logger LOG = LoggerFactory.getLogger(BaseSourceCodeProvider.class);
 
   /** {@link #getTypeExtension() Type extension} for Java. */
   protected static final String TYPE_EXTENSION_JAVA = ".java";
@@ -51,6 +61,80 @@ public abstract class BaseSourceCodeProvider implements SourceCodeProvider {
   public String getTypeExtension() {
 
     return this.typeExtension;
+  }
+
+  @Override
+  public Reader openType(String qualifiedName) throws IOException {
+
+    requireNotClosed();
+    String pathString = qualifiedName2TypePath(qualifiedName);
+    return openFile(pathString);
+  }
+
+  @Override
+  public Reader openPackage(String qualifiedName) throws IOException {
+
+    requireNotClosed();
+    String pathString = qualifiedName2PackagePath(qualifiedName);
+    return openFile(pathString);
+  }
+
+  private Reader openFile(String pathString) throws IOException {
+
+    Path path = getPath(pathString);
+    if (Files.isRegularFile(path)) {
+      LOG.debug("Opening file {} to parse source code.", pathString);
+      InputStream in = Files.newInputStream(path);
+      return openReader(in);
+    } else {
+      LOG.debug("File {} does not exist.", pathString);
+    }
+    return null;
+  }
+
+  @Override
+  public List<String> scanPackage(String qualifiedName) {
+
+    requireNotClosed();
+    String pathString = qualifiedName2Path(qualifiedName);
+    Path path = getPath(pathString);
+    List<String> result = null;
+    for (Path child : path) {
+      String simpleName = filename2TypeSimpleName(child.getFileName().toString());
+      if (simpleName != null) {
+        if (Files.isRegularFile(child)) {
+          if (result == null) {
+            result = new ArrayList<>();
+          }
+          result.add(simpleName);
+        }
+      }
+    }
+    if (result != null) {
+      return result;
+    }
+    return Collections.emptyList();
+  }
+
+  /**
+   * @param path the {@link Path} as {@link String}.
+   * @return the actual {@link Path}.
+   */
+  protected abstract Path getPath(String path);
+
+  /**
+   * @return {@code true} if {@link #close() close} was called, {@code false} otherwise.
+   */
+  protected abstract boolean isClosed();
+
+  /**
+   * Verifies that this provider has not yet been {@link #close()}d.
+   */
+  protected void requireNotClosed() {
+
+    if (isClosed()) {
+      throw new IllegalStateException("already closed!");
+    }
   }
 
   /**

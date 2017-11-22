@@ -59,7 +59,7 @@ public class JavaSourceCodeParserImplTest extends AbstractBaseTypeTest {
     } else {
       parentPkg = createPackage(source, parentName);
     }
-    return new BasePackage(parentPkg, simpleName, null, null);
+    return new BasePackage(parentPkg, simpleName, null, null, false);
   }
 
   BaseFile createFile(String qualifiedName) {

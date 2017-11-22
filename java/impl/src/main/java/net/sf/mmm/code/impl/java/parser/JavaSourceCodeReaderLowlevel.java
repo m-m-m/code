@@ -17,7 +17,6 @@ import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.api.annotation.CodeAnnotation;
 import net.sf.mmm.code.api.comment.CodeComment;
 import net.sf.mmm.code.api.expression.CodeExpression;
-import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.api.modifier.CodeVisibility;
 import net.sf.mmm.code.api.operator.CodeNAryOperator;
@@ -28,7 +27,10 @@ import net.sf.mmm.code.base.comment.BaseBlockComment;
 import net.sf.mmm.code.base.comment.BaseComments;
 import net.sf.mmm.code.base.comment.BaseSingleLineComment;
 import net.sf.mmm.code.base.expression.BaseArrayInstatiation;
+import net.sf.mmm.code.base.expression.BaseFieldReferenceLazy;
 import net.sf.mmm.code.base.expression.BaseMethodInvocation;
+import net.sf.mmm.code.base.imports.BaseImport;
+import net.sf.mmm.code.base.member.BaseMethod;
 import net.sf.mmm.code.base.operator.GenericOperator;
 import net.sf.mmm.code.impl.java.expression.JavaNAryOperatorExpression;
 import net.sf.mmm.code.impl.java.expression.literal.JavaLiteral;
@@ -260,6 +262,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
     Map<String, CodeExpression> parameters = annotation.getParameters();
     boolean first = true;
     while (!expect(')')) {
+      CodeExpression value = null;
       String key = readUntil(CHAR_FILTER_ANNOTATION_KEY, false, ")", false, true);
       if (key.isEmpty()) {
         if (first) {
@@ -270,25 +273,44 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
       } else {
         parseWhitespacesAndComments();
         if (!expect('=')) {
-          LOG.warn("Invalid character '{}' after annotation parameter {}.{} name in {}.", Character.toString(forcePeek()), annotationTypeName, key, this.file);
+          for (BaseImport importStatement : this.file.getImports()) {
+            if (importStatement.isStatic()) {
+              String reference = importStatement.getReference();
+              int index = reference.length() - key.length() - 1;
+              if (reference.endsWith(key) && (index > 0)) {
+                if ((reference.charAt(index) == '.')) {
+                  String fieldName = key;
+                  key = "value";
+                  String typeName = reference.substring(0, index);
+                  value = new BaseFieldReferenceLazy(this.file.getContext(), typeName, null, fieldName);
+                  break;
+                }
+              }
+            }
+          }
+          if (value == null) {
+            LOG.warn("Invalid character '{}' after annotation parameter {}.{} name in {}.", Character.toString(forcePeek()), annotationTypeName, key,
+                this.file);
+          }
         }
       }
-      CodeExpression value;
-      if (expect('{')) {
-        List<CodeExpression> args = new ArrayList<>();
-        CodeExpression arg;
-        do {
-          arg = parseAssignmentValue();
-          if (arg != null) {
-            args.add(arg);
+      if (value == null) {
+        if (expect('{')) {
+          List<CodeExpression> args = new ArrayList<>();
+          CodeExpression arg;
+          do {
+            arg = parseAssignmentValue();
+            if (arg != null) {
+              args.add(arg);
+            }
+          } while ((arg != null) && expect(','));
+          if (!expect('}')) {
+            LOG.warn("Invalid annotation array value - missing closing curly brace '}' for annotation {} at value {}", annotationTypeName, key);
           }
-        } while ((arg != null) && expect(','));
-        if (!expect('}')) {
-          LOG.warn("Invalid annotation array value - missing closing curly brace '}' for annotation {} at value {}", annotationTypeName, key);
+          value = new BaseArrayInstatiation(args);
+        } else {
+          value = parseAssignmentValue();
         }
-        value = new BaseArrayInstatiation(args);
-      } else {
-        value = parseAssignmentValue();
       }
       parameters.put(key, value);
     }
@@ -362,7 +384,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
       if (parent != null) {
 
       }
-      CodeMethod method = null;
+      BaseMethod method = null;
       expression = new BaseMethodInvocation(method, arguments);
     } else {
 

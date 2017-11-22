@@ -52,6 +52,12 @@ public class BaseReturn extends BaseOperationArg implements CodeReturn, CodeNode
   }
 
   @Override
+  protected BaseType getDefaultType() {
+
+    return getContext().getVoidType();
+  }
+
+  @Override
   public BaseMethod getParent() {
 
     return this.parent;

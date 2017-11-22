@@ -7,11 +7,12 @@ import java.util.Collections;
 import java.util.List;
 
 import net.sf.mmm.code.api.arg.CodeParameter;
+import net.sf.mmm.code.api.expression.CodeConstant;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.expression.CodeMethodInvocation;
 import net.sf.mmm.code.api.language.CodeLanguage;
-import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.type.CodeGenericType;
+import net.sf.mmm.code.base.member.BaseMethod;
 
 /**
  * Base implementation of {@link CodeMethodInvocation}.
@@ -21,9 +22,7 @@ import net.sf.mmm.code.api.type.CodeGenericType;
  */
 public class BaseMethodInvocation extends BaseMemberReference implements CodeMethodInvocation {
 
-  private final CodeGenericType type;
-
-  private final CodeMethod method;
+  private final BaseMethod method;
 
   private final List<? extends CodeGenericType> typeParameters;
 
@@ -34,7 +33,7 @@ public class BaseMethodInvocation extends BaseMemberReference implements CodeMet
    *
    * @param method the {@link #getMember() method} to invoke.
    */
-  public BaseMethodInvocation(CodeMethod method) {
+  public BaseMethodInvocation(BaseMethod method) {
 
     this(method, Collections.emptyList(), null, null, null);
     List<? extends CodeParameter> parameters = method.getParameters().getDeclared();
@@ -50,7 +49,7 @@ public class BaseMethodInvocation extends BaseMemberReference implements CodeMet
    * @param method the {@link #getMember() method} to invoke.
    * @param arguments the {@link #getArguments() arguments} for the method invocation.
    */
-  public BaseMethodInvocation(CodeMethod method, List<? extends CodeExpression> arguments) {
+  public BaseMethodInvocation(BaseMethod method, List<? extends CodeExpression> arguments) {
 
     this(method, arguments, null, null, null);
   }
@@ -62,7 +61,7 @@ public class BaseMethodInvocation extends BaseMemberReference implements CodeMet
    * @param arguments the {@link #getArguments() arguments} for the method invocation.
    * @param type the optional {@link #getType() type}.
    */
-  public BaseMethodInvocation(CodeMethod method, List<? extends CodeExpression> arguments, CodeGenericType type) {
+  public BaseMethodInvocation(BaseMethod method, List<? extends CodeExpression> arguments, CodeGenericType type) {
 
     this(method, arguments, null, type, null);
   }
@@ -75,7 +74,7 @@ public class BaseMethodInvocation extends BaseMemberReference implements CodeMet
    * @param type the optional {@link #getType() type}.
    * @param typeParameters the optional {@link #getTypeParameters() type parameters}.
    */
-  public BaseMethodInvocation(CodeMethod method, List<? extends CodeExpression> arguments, CodeGenericType type,
+  public BaseMethodInvocation(BaseMethod method, List<? extends CodeExpression> arguments, CodeGenericType type,
       List<? extends CodeGenericType> typeParameters) {
 
     this(method, arguments, null, type, typeParameters);
@@ -88,7 +87,7 @@ public class BaseMethodInvocation extends BaseMemberReference implements CodeMet
    * @param arguments the {@link #getArguments() arguments} for the method invocation.
    * @param expression the optional {@link #getExpression() expression}.
    */
-  public BaseMethodInvocation(CodeMethod method, List<? extends CodeExpression> arguments, CodeExpression expression) {
+  public BaseMethodInvocation(BaseMethod method, List<? extends CodeExpression> arguments, CodeExpression expression) {
 
     this(method, arguments, expression, null, null);
   }
@@ -101,7 +100,7 @@ public class BaseMethodInvocation extends BaseMemberReference implements CodeMet
    * @param expression the optional {@link #getExpression() expression}.
    * @param typeParameters the optional {@link #getTypeParameters() type parameters}.
    */
-  public BaseMethodInvocation(CodeMethod method, List<? extends CodeExpression> arguments, CodeExpression expression,
+  public BaseMethodInvocation(BaseMethod method, List<? extends CodeExpression> arguments, CodeExpression expression,
       List<? extends CodeGenericType> typeParameters) {
 
     this(method, arguments, expression, null, typeParameters);
@@ -116,19 +115,25 @@ public class BaseMethodInvocation extends BaseMemberReference implements CodeMet
    * @param type the optional {@link #getType() type}.
    * @param typeParameters the optional {@link #getTypeParameters() type parameters}.
    */
-  protected BaseMethodInvocation(CodeMethod method, List<? extends CodeExpression> arguments, CodeExpression expression, CodeGenericType type,
+  protected BaseMethodInvocation(BaseMethod method, List<? extends CodeExpression> arguments, CodeExpression expression, CodeGenericType type,
       List<? extends CodeGenericType> typeParameters) {
 
-    super(expression);
+    super(expression, type);
     // Objects.requireNonNull(method, "method");
     this.method = method;
     this.arguments = Collections.unmodifiableList(arguments);
-    this.type = type;
     if (typeParameters == null) {
       this.typeParameters = null;
     } else {
       this.typeParameters = Collections.unmodifiableList(typeParameters);
     }
+  }
+
+  @Override
+  public CodeConstant evaluate() {
+
+    // method can not be evaluated without context
+    return null;
   }
 
   @Override
@@ -144,13 +149,7 @@ public class BaseMethodInvocation extends BaseMemberReference implements CodeMet
   }
 
   @Override
-  public CodeGenericType getType() {
-
-    return this.type;
-  }
-
-  @Override
-  public CodeMethod getMember() {
+  public BaseMethod getMember() {
 
     return this.method;
   }
@@ -159,10 +158,6 @@ public class BaseMethodInvocation extends BaseMemberReference implements CodeMet
   protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     super.doWrite(sink, newline, defaultIndent, currentIndent, language);
-    if (this.type != null) {
-      this.type.writeReference(sink, false);
-      sink.append('.');
-    }
     if (this.typeParameters != null) {
       String prefix = "<";
       for (CodeGenericType typeParam : this.typeParameters) {

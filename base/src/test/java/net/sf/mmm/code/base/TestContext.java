@@ -165,7 +165,7 @@ public class TestContext extends BaseContextImplWithCache {
 
     private BasePackage createPackage(Package pkg, BasePackage parentPkg, String simpleName) {
 
-      BasePackage basePackage = new BasePackage(parentPkg, simpleName, pkg, null);
+      BasePackage basePackage = new BasePackage(parentPkg, simpleName, pkg, null, false);
       basePackage.setImmutable();
       return basePackage;
     }

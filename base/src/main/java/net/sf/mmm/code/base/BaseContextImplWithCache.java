@@ -9,6 +9,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.loader.BaseLoader;
@@ -27,6 +30,8 @@ import net.sf.mmm.util.exception.api.ObjectMismatchException;
  * @since 1.0.0
  */
 public abstract class BaseContextImplWithCache extends BaseContextImpl {
+
+  private static final Logger LOG = LoggerFactory.getLogger(BaseContextImplWithCache.class);
 
   private Map<String, BaseType> typeCache;
 
@@ -87,10 +92,7 @@ public abstract class BaseContextImplWithCache extends BaseContextImpl {
       return type;
     }
     type = getLoader().getType(qualifiedName);
-    if (type != null) {
-      this.typeCache.put(qualifiedName, type);
-    }
-    return type;
+    return getTypeAndPutInCache(qualifiedName, type);
   }
 
   @Override
@@ -102,10 +104,7 @@ public abstract class BaseContextImplWithCache extends BaseContextImpl {
       return type;
     }
     type = getLoader().getType(qName);
-    if (type != null) {
-      this.typeCache.put(qualifiedName, type);
-    }
-    return type;
+    return getTypeAndPutInCache(qualifiedName, type);
   }
 
   @Override
@@ -121,8 +120,15 @@ public abstract class BaseContextImplWithCache extends BaseContextImpl {
       return type;
     }
     type = (BaseType) getLoader().getType(clazz);
+    return getTypeAndPutInCache(qualifiedName, type);
+  }
+
+  private BaseType getTypeAndPutInCache(String qualifiedName, BaseType type) {
+
     if (type != null) {
       this.typeCache.put(qualifiedName, type);
+    } else {
+      LOG.debug("Failed to get type {}", qualifiedName);
     }
     return type;
   }

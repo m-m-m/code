@@ -5,7 +5,7 @@ package net.sf.mmm.code.api.member;
 import java.lang.reflect.Method;
 
 import net.sf.mmm.code.api.arg.CodeReturn;
-import net.sf.mmm.util.exception.api.ReadOnlyException;
+import net.sf.mmm.code.api.expression.CodeExpression;
 
 /**
  * {@link CodeOperation} that represents a method of a {@link net.sf.mmm.code.api.type.CodeType}.
@@ -29,10 +29,15 @@ public interface CodeMethod extends CodeOperation {
   CodeReturn getReturns();
 
   /**
-   * @param returns the new {@link #getReturns() returns}.
-   * @throws ReadOnlyException if {@link #isImmutable() immutable}.
+   * @return the default value of this method or {@code null} for none.
+   * @see java.lang.reflect.Method#getDefaultValue()
    */
-  void setReturns(CodeReturn returns);
+  CodeExpression getDefaultValue();
+
+  /**
+   * @param defaultValue the new value of {@link #getDefaultValue()}.
+   */
+  void setDefaultValue(CodeExpression defaultValue);
 
   /**
    * <b>Attention:</b><br>

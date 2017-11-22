@@ -13,7 +13,6 @@ import org.junit.Test;
 import net.sf.mmm.code.api.source.CodeSourceDescriptor;
 import net.sf.mmm.code.base.member.BaseMethod;
 import net.sf.mmm.code.base.source.BaseSource;
-import net.sf.mmm.code.base.source.BaseSourceImpl;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.impl.java.source.maven.JavaSourceProviderUsingMaven;
 
@@ -29,11 +28,7 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
 
   private JavaContext getContext() {
 
-    // TODO move code to new advanced contex class
-    JavaSourceProviderUsingMaven provider = new JavaSourceProviderUsingMaven();
-    JavaContext parentContext = JavaRootContext.get();
-    BaseSourceImpl source = provider.createFromLocalMavenProject(parentContext);
-    return new JavaExtendedContext(source, provider);
+    return JavaSourceProviderUsingMaven.createFromLocalMavenProject();
   }
 
   /**
@@ -67,11 +62,16 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
 
   private void verifyDescriptor(CodeSourceDescriptor descriptor, String scope, String artifactId) {
 
-    assertThat(descriptor.getGroupId()).isEqualTo("net.sf.m-m-m");
+    verifyDescriptor(descriptor, scope, artifactId, "net.sf.m-m-m");
+  }
+
+  private void verifyDescriptor(CodeSourceDescriptor descriptor, String scope, String artifactId, String groupId) {
+
+    assertThat(descriptor.getGroupId()).isEqualTo(groupId);
     assertThat(descriptor.getArtifactId()).isEqualTo(artifactId);
     String version = descriptor.getVersion();
     assertThat(version).matches(VERSION_PATTERN);
-    String expectedId = "net.sf.m-m-m:" + artifactId + ":" + version;
+    String expectedId = groupId + ":" + artifactId + ":" + version;
     if (scope != null) {
       expectedId = expectedId + ":" + scope;
     }

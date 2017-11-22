@@ -9,7 +9,6 @@ import java.util.List;
 import net.sf.mmm.code.api.member.CodeMethods;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeGenericType;
-import net.sf.mmm.code.base.arg.BaseReturn;
 import net.sf.mmm.code.base.type.BaseGenericType;
 import net.sf.mmm.code.base.type.BaseType;
 
@@ -110,9 +109,6 @@ public class BaseMethods extends BaseOperations<BaseMethod> implements CodeMetho
 
     verifyMutalbe();
     BaseMethod method = new BaseMethod(this, name);
-    BaseReturn returns = new BaseReturn(method, null);
-    returns.setType(getContext().getVoidType());
-    method.setReturns(returns);
     add(method);
     return method;
   }

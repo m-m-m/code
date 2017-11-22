@@ -144,7 +144,7 @@ public class BaseDocParser {
     }
     BaseDocTag tag = new BaseDocTag(tagDoc);
     BaseDocTag existing = map.put(name, tag);
-    if (existing == null) {
+    if (existing != null) {
       LOG.warn(duplicationLog, line);
     }
     return tag;

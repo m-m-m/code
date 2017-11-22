@@ -4,17 +4,12 @@ package net.sf.mmm.code.base.loader;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import net.sf.mmm.util.io.api.IoMode;
 import net.sf.mmm.util.io.api.RuntimeIoException;
@@ -66,47 +61,9 @@ public class BaseSourceCodeProviderArchive extends BaseSourceCodeProvider {
   }
 
   @Override
-  public Reader openType(String qualifiedName) throws IOException {
+  protected Path getPath(String path) {
 
-    Path path = this.fileSystem.getPath(qualifiedName2TypePath(qualifiedName));
-    if (Files.isRegularFile(path)) {
-      InputStream in = Files.newInputStream(path);
-      return openReader(in);
-    }
-    return null;
-  }
-
-  @Override
-  public Reader openPackage(String qualifiedName) throws IOException {
-
-    Path path = this.fileSystem.getPath(qualifiedName2PackagePath(qualifiedName));
-    if (Files.isRegularFile(path)) {
-      InputStream in = Files.newInputStream(path);
-      return openReader(in);
-    }
-    return null;
-  }
-
-  @Override
-  public List<String> scanPackage(String qualifiedName) {
-
-    Path path = this.fileSystem.getPath(qualifiedName2Path(qualifiedName));
-    List<String> result = null;
-    for (Path child : path) {
-      String simpleName = filename2TypeSimpleName(child.getFileName().toString());
-      if (simpleName != null) {
-        if (Files.isRegularFile(child)) {
-          if (result == null) {
-            result = new ArrayList<>();
-            result.add(simpleName);
-          }
-        }
-      }
-    }
-    if (result != null) {
-      return result;
-    }
-    return Collections.emptyList();
+    return this.fileSystem.getPath(path);
   }
 
   @Override
@@ -117,6 +74,12 @@ public class BaseSourceCodeProviderArchive extends BaseSourceCodeProvider {
     }
     this.fileSystem.close();
     this.fileSystem = null;
+  }
+
+  @Override
+  protected boolean isClosed() {
+
+    return (this.fileSystem == null);
   }
 
 }

@@ -67,6 +67,16 @@ public class BaseAnnotations extends BaseNodeItemContainerHierarchical<CodeAnnot
   }
 
   @Override
+  protected boolean isSystemImmutable() {
+
+    boolean systemImmutable = super.isSystemImmutable();
+    if (!systemImmutable && (this.parent != null)) {
+      systemImmutable = isSystemImmutable(this.parent);
+    }
+    return systemImmutable;
+  }
+
+  @Override
   protected void doInitialize() {
 
     super.doInitialize();

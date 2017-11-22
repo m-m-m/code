@@ -3,13 +3,8 @@
 package net.sf.mmm.code.base.loader;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Base implementation of {@link BaseSourceCodeProvider} for a source-code directory in the filesystem.
@@ -19,7 +14,7 @@ import java.util.List;
  */
 public class BaseSourceCodeProviderDirectory extends BaseSourceCodeProvider {
 
-  private File sourceFolder;
+  private String sourceDirectory;
 
   /**
    * The constructor.
@@ -43,60 +38,25 @@ public class BaseSourceCodeProviderDirectory extends BaseSourceCodeProvider {
 
     super(typeExtension);
     assert (sourceFolder.isDirectory());
-    this.sourceFolder = sourceFolder;
+    this.sourceDirectory = sourceFolder.getAbsolutePath();
   }
 
   @Override
-  public Reader openType(String qualifiedName) throws IOException {
+  protected Path getPath(String path) {
 
-    String path = qualifiedName2TypePath(qualifiedName);
-    File sourceFile = new File(this.sourceFolder, path);
-    if (sourceFile.exists()) {
-      InputStream in = new FileInputStream(sourceFile);
-      return openReader(in);
-    }
-    return null;
-  }
-
-  @Override
-  public Reader openPackage(String qualifiedName) throws IOException {
-
-    String path = qualifiedName2PackagePath(qualifiedName);
-    File sourceFile = new File(this.sourceFolder, path);
-    if (sourceFile.exists()) {
-      InputStream in = new FileInputStream(sourceFile);
-      return openReader(in);
-    }
-    return null;
-  }
-
-  @Override
-  public List<String> scanPackage(String qualifiedName) {
-
-    String path = qualifiedName2Path(qualifiedName);
-    File packageFolder = new File(this.sourceFolder, path);
-    if (packageFolder.isDirectory()) {
-      File[] children = packageFolder.listFiles();
-      if (children.length > 0) {
-        List<String> list = new ArrayList<>();
-        for (File child : children) {
-          if (child.isFile()) {
-            String simpleName = filename2TypeSimpleName(child.getName());
-            if (simpleName != null) {
-              list.add(simpleName);
-            }
-          }
-        }
-        return list;
-      }
-    }
-    return Collections.emptyList();
+    return Paths.get(this.sourceDirectory, path);
   }
 
   @Override
   public void close() throws Exception {
 
-    this.sourceFolder = null;
+    this.sourceDirectory = null;
+  }
+
+  @Override
+  protected boolean isClosed() {
+
+    return (this.sourceDirectory == null);
   }
 
 }

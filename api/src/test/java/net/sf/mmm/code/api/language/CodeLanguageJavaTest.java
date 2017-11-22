@@ -8,17 +8,12 @@ import org.mockito.Mockito;
 
 import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.type.CodeTypeCategory;
+import net.sf.mmm.test.TestValues;
 
 /**
  * Test of {@link CodeLanguageJava}.
  */
-public class CodeLanguageJavaTest extends Assertions {
-
-  private static final String LETTERS = "ĀƀɐʰΞЀԀԱހݐܐא";
-
-  private static final String DIGITS = "6६\u0cec";
-
-  private static final String NON_ALPHANUMERIC_SYMBOLS = "⊈⏭";
+public class CodeLanguageJavaTest extends Assertions implements TestValues {
 
   static final String DIGITS_NOT_SUPPORTED_BY_JAVA_8 = "௰Ⅹ\ud835\udfe8";
 
@@ -75,9 +70,9 @@ public class CodeLanguageJavaTest extends Assertions {
     // Error: Could not find or load main class net.sf.mmm.code.api.item.äöüß?????.MyClass
     verifyPackageName(language, pkg, "äöüßเ", true); // never do such
     char[] name = new char[2];
-    for (char letter : LETTERS.toCharArray()) {
+    for (char letter : UNICODE_LETTERS.toCharArray()) {
       name[0] = letter;
-      for (char digit : DIGITS.toCharArray()) {
+      for (char digit : UNICODE_DIGITS.toCharArray()) {
         name[1] = digit;
         verifyPackageName(language, pkg, new String(name), true);
       }
@@ -91,8 +86,8 @@ public class CodeLanguageJavaTest extends Assertions {
     verifyPackageName(language, pkg, "a%b", false);
     verifyPackageName(language, pkg, "a§b", false);
     verifyPackageName(language, pkg, "a௰", false);
-    for (int nonAlphaNum = 0; nonAlphaNum < NON_ALPHANUMERIC_SYMBOLS.length(); nonAlphaNum++) {
-      char c = NON_ALPHANUMERIC_SYMBOLS.charAt(nonAlphaNum);
+    for (int nonAlphaNum = 0; nonAlphaNum < UNICODE_NON_ALPHANUMERIC_SYMBOLS.length(); nonAlphaNum++) {
+      char c = UNICODE_NON_ALPHANUMERIC_SYMBOLS.charAt(nonAlphaNum);
       assertThat(Character.isLetterOrDigit(c)).as("isLetterOrDigit(" + name[0] + ") expected to be false").isFalse();
       verifyPackageName(language, pkg, Character.toString(c), false);
     }

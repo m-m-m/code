@@ -167,8 +167,8 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
 
   private BasePackage createPackage(BasePackage parentPackage, String simpleName) {
 
-    BasePackage pkg = new BasePackage(parentPackage, simpleName, null, () -> getSourcePackage(parentPackage, simpleName));
-    pkg.setImmutable();
+    BasePackage pkg = new BasePackage(parentPackage, simpleName, null, () -> getSourcePackage(parentPackage, simpleName), true);
+    // pkg.setImmutable();
     return pkg;
   }
 
@@ -177,12 +177,12 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
     if (this.sourceCodeProvider == null) {
       return null;
     }
-    BasePackage pkg = new BasePackage(parentPackage, simpleName, null, null);
+    BasePackage pkg = new BasePackage(parentPackage, simpleName, null, null, true);
     try (Reader reader = this.sourceCodeProvider.openPackage(pkg.getQualifiedName())) {
       if (reader != null) {
         getParser().parsePackage(reader, pkg);
       }
-      pkg.setImmutable();
+      // pkg.setImmutable();
     } catch (IOException e) {
       LOG.debug("Open package failed: {}", e.getMessage(), e);
     }

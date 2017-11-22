@@ -198,6 +198,9 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
   private boolean parseTypeElement(BaseType type) {
 
     consume();
+    if (peek() == '}') {
+      return false;
+    }
     CodeModifiers modifiers = parseModifiers(type.isInterface());
     CodeTypeCategory category = parseCategory();
     if (category != null) {
@@ -323,6 +326,11 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
 
     parseOperationArgs(operation);
     parseOperationThrows(operation);
+    if ((operation instanceof BaseMethod) && expect("default")) { // default result of annotation...
+      requireWhitespace(operation, "default", operation);
+      CodeExpression value = parseAssignmentValue();
+      ((BaseMethod) operation).setDefaultValue(value);
+    }
     parseOperationBody(operation);
   }
 
@@ -333,7 +341,9 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     while (todo) {
       parseWhitespacesAndComments();
       BaseGenericType argType = parseGenericType(operation, true, true, false);
-      requireWhitespace(operation, operation.getName(), operation.getParent().getParent());
+      // TODO: this is all nuts. We might however throw away all this code anyhow...
+      skipWhile(CharFilter.WHITESPACE_FILTER);
+      // requireWhitespace(operation, operation.getName(), operation.getParent().getParent());
       String name = parseIdentifier();
       if (name == null) {
         LOG.warn("Missing parameter name for operation {}", operation);

@@ -3,6 +3,9 @@
 package net.sf.mmm.code.api.expression;
 
 import net.sf.mmm.code.api.member.CodeMember;
+import net.sf.mmm.code.api.modifier.CodeModifiers;
+import net.sf.mmm.code.api.type.CodeGenericType;
+import net.sf.mmm.code.api.type.CodeType;
 
 /**
  * {@link CodeExpression} referencing a {@link CodeMember} from an optional {@link #getExpression()
@@ -19,6 +22,14 @@ public abstract interface CodeMemberReference extends CodeExpression {
    *         {@link net.sf.mmm.code.api.type.CodeType type}.
    */
   CodeExpression getExpression();
+
+  /**
+   * @return the optional {@link CodeGenericType} (typically {@link CodeType} but may be
+   *         {@link CodeType#isQualified() qualified}) from which the {@link #getMember() member} shall be
+   *         referenced statically. Should be {@code null} if {@link #getExpression() expression} is not
+   *         {@code null} or if {@link #getMember() member} is not {@link CodeModifiers#isStatic() static}.
+   */
+  CodeGenericType getType();
 
   /**
    * @return the referenced {@link CodeMember}. May not be {@code null}.

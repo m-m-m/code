@@ -44,6 +44,8 @@ public final class BasePackage extends BasePathElement implements CodePackage, C
 
   private final Package reflectiveObject;
 
+  private final boolean systemImmutable;
+
   private BasePackage sourceCodeObject;
 
   private Supplier<BasePackage> sourceSupplier;
@@ -59,6 +61,7 @@ public final class BasePackage extends BasePathElement implements CodePackage, C
     this.source = source;
     this.children = new BasePathElements(this);
     this.reflectiveObject = null;
+    this.systemImmutable = true; // depend on source?
   }
 
   /**
@@ -69,7 +72,7 @@ public final class BasePackage extends BasePathElement implements CodePackage, C
    */
   public BasePackage(BasePackage parentPackage, String simpleName) {
 
-    this(parentPackage, simpleName, null, null);
+    this(parentPackage, simpleName, null, null, false);
   }
 
   /**
@@ -79,8 +82,9 @@ public final class BasePackage extends BasePathElement implements CodePackage, C
    * @param simpleName the {@link #getSimpleName() simple name}.
    * @param reflectiveObject the {@link #getReflectiveObject() reflective object}.
    * @param sourceSupplier the optional {@link Supplier} for lazy-loading of source-code.
+   * @param systemImmutable the {@link #isSystemImmutable() system immutable flag}.
    */
-  public BasePackage(BasePackage parentPackage, String simpleName, Package reflectiveObject, Supplier<BasePackage> sourceSupplier) {
+  public BasePackage(BasePackage parentPackage, String simpleName, Package reflectiveObject, Supplier<BasePackage> sourceSupplier, boolean systemImmutable) {
 
     super(parentPackage, simpleName);
     this.source = parentPackage.getSource();
@@ -90,9 +94,12 @@ public final class BasePackage extends BasePathElement implements CodePackage, C
       if (CodeLanguageJava.LANGUAGE_NAME_JAVA.equals(getLanguage().getLanguageName())) {
         pkg = Package.getPackage(getQualifiedName());
       }
+    } else if (!systemImmutable) {
+      LOG.warn("System immutable flag needs to be true when reflective package is present.");
     }
     this.reflectiveObject = pkg;
     this.sourceSupplier = sourceSupplier;
+    this.systemImmutable = systemImmutable;
   }
 
   /**
@@ -107,6 +114,7 @@ public final class BasePackage extends BasePathElement implements CodePackage, C
     this.source = parentPackage.source;
     this.reflectiveObject = template.reflectiveObject;
     this.children = new BasePathElements(this);
+    this.systemImmutable = false;
   }
 
   /**
@@ -121,6 +129,7 @@ public final class BasePackage extends BasePathElement implements CodePackage, C
     this.source = source;
     this.reflectiveObject = template.reflectiveObject;
     this.children = new BasePathElements(this);
+    this.systemImmutable = false;
   }
 
   private static BasePackage parentCopy(BasePackage template, BaseSource source) {
@@ -241,6 +250,12 @@ public final class BasePackage extends BasePathElement implements CodePackage, C
       }
     }
     return false;
+  }
+
+  @Override
+  protected boolean isSystemImmutable() {
+
+    return this.systemImmutable;
   }
 
   @Override

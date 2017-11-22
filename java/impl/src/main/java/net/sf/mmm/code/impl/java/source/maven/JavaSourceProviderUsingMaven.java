@@ -21,6 +21,8 @@ import net.sf.mmm.code.base.source.BaseSourceImpl;
 import net.sf.mmm.code.base.source.BaseSourceProvider;
 import net.sf.mmm.code.base.source.BaseSourceProviderImpl;
 import net.sf.mmm.code.impl.java.JavaContext;
+import net.sf.mmm.code.impl.java.JavaExtendedContext;
+import net.sf.mmm.code.impl.java.JavaRootContext;
 import net.sf.mmm.code.impl.java.loader.JavaSourceLoader;
 import net.sf.mmm.code.java.maven.api.DependencyHelper;
 import net.sf.mmm.code.java.maven.api.MavenBridge;
@@ -142,7 +144,7 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
    */
   public BaseSourceImpl createFromLocalMavenProject(JavaContext parentContext) {
 
-    return createFromLocalMavenProject(parentContext, new File(".").getAbsoluteFile().getParentFile());
+    return createFromLocalMavenProject(parentContext, getCwd());
   }
 
   /**
@@ -168,6 +170,30 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
     JavaSourceUsingMaven testDependency = new JavaSourceUsingMaven(this, compileDependency, testByteCodeLocation, testSourceCodeLocation, modelSupplier,
         testLoader);
     return testDependency;
+  }
+
+  /**
+   * @return the {@link JavaContext} for the local Maven project in the current working directory.
+   */
+  public static JavaContext createFromLocalMavenProject() {
+
+    return createFromLocalMavenProject(getCwd());
+  }
+
+  /**
+   * @param location the {@link File} pointing to the Maven project.
+   * @return the {@link JavaContext} for the Maven project at the given {@code location}.
+   */
+  public static JavaContext createFromLocalMavenProject(File location) {
+
+    JavaSourceProviderUsingMaven provider = new JavaSourceProviderUsingMaven();
+    BaseSourceImpl source = provider.createFromLocalMavenProject(JavaRootContext.get(), location);
+    return new JavaExtendedContext(source, provider);
+  }
+
+  private static File getCwd() {
+
+    return new File(".").getAbsoluteFile().getParentFile();
   }
 
 }

@@ -4,11 +4,11 @@ package net.sf.mmm.code.base.expression;
 
 import java.io.IOException;
 
-import net.sf.mmm.code.api.expression.CodeConstant;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.expression.CodeMemberReference;
-import net.sf.mmm.code.api.member.CodeMember;
 import net.sf.mmm.code.api.language.CodeLanguage;
+import net.sf.mmm.code.api.type.CodeGenericType;
+import net.sf.mmm.code.base.member.BaseMember;
 
 /**
  * Generic implementation of {@link CodeMemberReference}.
@@ -20,6 +20,18 @@ public abstract class BaseMemberReference extends BaseExpression implements Code
 
   private final CodeExpression expression;
 
+  private final CodeGenericType type;
+
+  /**
+   * The constructor.
+   *
+   * @param type the {@link #getType() type}.
+   */
+  public BaseMemberReference(CodeGenericType type) {
+
+    this(null, type);
+  }
+
   /**
    * The constructor.
    *
@@ -27,15 +39,20 @@ public abstract class BaseMemberReference extends BaseExpression implements Code
    */
   public BaseMemberReference(CodeExpression expression) {
 
-    super();
-    this.expression = expression;
+    this(expression, null);
   }
 
-  @Override
-  public CodeConstant evaluate() {
+  /**
+   * The constructor.
+   *
+   * @param expression the {@link #getExpression() expression}.
+   * @param type the {@link #getType() type}.
+   */
+  protected BaseMemberReference(CodeExpression expression, CodeGenericType type) {
 
-    // TODO Auto-generated method stub
-    return null;
+    super();
+    this.expression = expression;
+    this.type = type;
   }
 
   @Override
@@ -45,17 +62,22 @@ public abstract class BaseMemberReference extends BaseExpression implements Code
   }
 
   @Override
-  public CodeMember getMember() {
+  public CodeGenericType getType() {
 
-    // TODO Auto-generated method stub
-    return null;
+    return this.type;
   }
+
+  @Override
+  public abstract BaseMember getMember();
 
   @Override
   protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     if (this.expression != null) {
       this.expression.write(sink, newline, defaultIndent, currentIndent, language);
+      sink.append('.');
+    } else if (this.type != null) {
+      this.type.writeReference(sink, false);
       sink.append('.');
     }
   }

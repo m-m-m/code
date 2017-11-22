@@ -12,6 +12,7 @@ import net.sf.mmm.code.base.element.BaseElementWithDeclaringTypeImpl;
 import net.sf.mmm.code.base.member.BaseOperation;
 import net.sf.mmm.code.base.node.BaseNode;
 import net.sf.mmm.code.base.type.BaseGenericType;
+import net.sf.mmm.code.base.type.BaseType;
 
 /**
  * Base implementation of {@link CodeOperationArg}.
@@ -63,10 +64,18 @@ public abstract class BaseOperationArg extends BaseElementWithDeclaringTypeImpl 
       if (reflectiveObjectType != null) {
         this.type = getContext().getType(reflectiveObjectType, getDeclaringOperation());
       } else {
-        this.type = getContext().getRootType();
+        this.type = getDefaultType();
       }
     }
     return this.type;
+  }
+
+  /**
+   * @return the default type to use if {@link #getType() type} was not {@link #setType(CodeGenericType) set}.
+   */
+  protected BaseType getDefaultType() {
+
+    return getContext().getRootType();
   }
 
   @Override
