@@ -6,6 +6,7 @@ import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Type;
 
 import net.sf.mmm.code.api.arg.CodeException;
+import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.base.member.BaseOperation;
 import net.sf.mmm.code.base.type.BaseType;
@@ -99,6 +100,13 @@ public class BaseException extends BaseOperationArg implements CodeException, Co
       }
     }
     return this.sourceCodeObject;
+  }
+
+  @Override
+  public CodeException merge(CodeException other, CodeMergeStrategy strategy) {
+
+    doMerge(other, strategy);
+    return this;
   }
 
   @Override

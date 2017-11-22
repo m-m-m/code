@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sf.mmm.code.api.member.CodeMethods;
+import net.sf.mmm.code.api.merge.CodeMergeStrategy;
+import net.sf.mmm.code.api.merge.CodeMergeStrategyDecider;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.base.type.BaseGenericType;
@@ -58,7 +60,7 @@ public class BaseMethods extends BaseOperations<BaseMethod> implements CodeMetho
   public Iterable<? extends BaseMethod> getAll() {
 
     List<BaseMethod> list = new ArrayList<>(getDeclared());
-    collectMethods(list);
+    collectMethods(list); // TODO implement with iterator instead and avoid returning parent methods
     return list;
   }
 
@@ -121,6 +123,31 @@ public class BaseMethods extends BaseOperations<BaseMethod> implements CodeMetho
       return null;
     }
     return sourceType.getMethods();
+  }
+
+  @Override
+  public CodeMethods<BaseMethod> merge(CodeMethods<?> o, CodeMergeStrategyDecider decider, CodeMergeStrategy parentStrategy) {
+
+    if (parentStrategy == CodeMergeStrategy.KEEP) {
+      return this;
+    }
+    BaseMethods other = (BaseMethods) o;
+    if (parentStrategy == CodeMergeStrategy.OVERRIDE) {
+      clear();
+      for (BaseMethod otherMethod : other.getDeclared()) {
+        add(otherMethod.copy(this));
+      }
+    } else {
+      for (BaseMethod otherMethod : other.getDeclared()) {
+        BaseMethod myMethod = get(otherMethod);
+        if (myMethod == null) {
+          add(otherMethod.copy(this));
+        } else {
+          myMethod.merge(otherMethod, decider, parentStrategy);
+        }
+      }
+    }
+    return this;
   }
 
   @Override

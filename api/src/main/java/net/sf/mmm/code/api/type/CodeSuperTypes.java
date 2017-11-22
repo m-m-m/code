@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import net.sf.mmm.code.api.item.CodeItem;
+import net.sf.mmm.code.api.merge.CodeSimpleMergeableItem;
 import net.sf.mmm.code.api.node.CodeNodeItemContainerHierarchical;
 
 /**
@@ -17,7 +18,7 @@ import net.sf.mmm.code.api.node.CodeNodeItemContainerHierarchical;
  * @param <T> the type of the contained {@link CodeGenericType}s.
  * @since 1.0.0
  */
-public interface CodeSuperTypes<T extends CodeGenericType> extends CodeNodeItemContainerHierarchical<T> {
+public interface CodeSuperTypes<T extends CodeGenericType> extends CodeNodeItemContainerHierarchical<T>, CodeSimpleMergeableItem<CodeSuperTypes<?>> {
 
   @Override
   CodeType getParent();

@@ -134,6 +134,18 @@ public abstract class BaseNodeItemContainer<I extends CodeItem> extends BaseNode
   }
 
   /**
+   * {@link List#clear() clears} all {@link #getDeclared() declared} items.
+   */
+  public void clear() {
+
+    verifyMutalbe();
+    this.list.clear();
+    if (this.map != null) {
+      this.map.clear();
+    }
+  }
+
+  /**
    * @param child the child to rename.
    * @param oldName the old {@link CodeItemWithName#getName() name}.
    * @param newName the new {@link CodeItemWithName#getName() name} to be set.

@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import net.sf.mmm.code.api.comment.CodeComment;
+import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.language.CodeLanguage;
+import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.node.CodeNode;
 import net.sf.mmm.code.api.node.CodeNodeItemContainer;
 import net.sf.mmm.code.base.annoation.BaseAnnotations;
@@ -120,6 +122,33 @@ public abstract class BaseElementImpl extends BaseNodeItemImpl implements BaseEl
   public BaseElementImpl getSourceCodeObject() {
 
     return null;
+  }
+
+  /**
+   * @param other the {@link CodeElement} to
+   *        {@link net.sf.mmm.code.api.merge.CodeMergeableItem#merge(net.sf.mmm.code.api.merge.CodeMergeableItem)
+   *        merge}.
+   * @param strategy the {@link CodeMergeStrategy}.
+   */
+  protected void doMerge(CodeElement other, CodeMergeStrategy strategy) {
+
+    verifyMutalbe();
+    if (strategy == CodeMergeStrategy.KEEP) {
+      return;
+    }
+    boolean override = (strategy == CodeMergeStrategy.OVERRIDE);
+    if (override || (this.comment == null)) {
+      CodeComment otherComment = other.getComment();
+      if (otherComment != BaseBlockComment.EMPTY_COMMENT) {
+        this.comment = otherComment;
+      } else if (override) {
+        this.comment = null;
+      }
+    } else {
+      // TODO merge without duplicating?
+    }
+    getAnnotations().merge(other.getAnnotations(), strategy);
+    getDoc().merge(other.getDoc(), strategy);
   }
 
   @Override

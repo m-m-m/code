@@ -6,6 +6,7 @@ import java.util.List;
 
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.item.CodeItem;
+import net.sf.mmm.code.api.merge.CodeSimpleMergeableItem;
 import net.sf.mmm.code.api.node.CodeNodeItem;
 
 /**
@@ -14,7 +15,7 @@ import net.sf.mmm.code.api.node.CodeNodeItem;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeDoc extends CodeNodeItem {
+public interface CodeDoc extends CodeNodeItem, CodeSimpleMergeableItem<CodeDoc> {
 
   /**
    * Tag for the documentation of the parameter of a function. This tag will be invisible via this API as the

@@ -6,10 +6,12 @@ import java.io.IOException;
 import java.lang.reflect.Executable;
 
 import net.sf.mmm.code.api.block.CodeBlockBody;
+import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.expression.CodeVariable;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.member.CodeOperation;
+import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.base.arg.BaseExceptions;
 import net.sf.mmm.code.base.arg.BaseParameter;
@@ -144,6 +146,25 @@ public abstract class BaseOperation extends BaseMember implements CodeOperation,
 
   @Override
   public abstract BaseOperation getSourceCodeObject();
+
+  /**
+   * @see #doMerge(CodeElement, CodeMergeStrategy)
+   * @param other the {@link CodeOperation} to merge.
+   * @param strategy the {@link CodeMergeStrategy}.
+   */
+  protected void doMerge(CodeOperation other, CodeMergeStrategy strategy) {
+
+    if (strategy == CodeMergeStrategy.KEEP) {
+      return;
+    }
+    super.doMerge(other, strategy);
+    getParameters().merge(other.getParameters(), strategy);
+    getExceptions().merge(other.getExceptions(), strategy);
+    if (strategy != CodeMergeStrategy.MERGE_KEEP_BODY) {
+      BaseBlockBody otherBody = (BaseBlockBody) other.getBody();
+      this.body = otherBody.copy(this);
+    }
+  }
 
   @Override
   public abstract BaseOperation copy();

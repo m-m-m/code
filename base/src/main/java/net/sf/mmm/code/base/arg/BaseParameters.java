@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 import net.sf.mmm.code.api.arg.CodeParameter;
 import net.sf.mmm.code.api.arg.CodeParameters;
 import net.sf.mmm.code.api.language.CodeLanguage;
+import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.base.member.BaseOperation;
 
@@ -104,6 +105,39 @@ public class BaseParameters extends BaseOperationArgs<BaseParameter>
   protected void rename(BaseParameter child, String oldName, String newName, Consumer<String> renamer) {
 
     super.rename(child, oldName, newName, renamer);
+  }
+
+  @Override
+  public CodeParameters<BaseParameter> merge(CodeParameters<?> o, CodeMergeStrategy strategy) {
+
+    if (strategy == CodeMergeStrategy.KEEP) {
+      return this;
+    }
+    BaseParameters other = (BaseParameters) o;
+    List<? extends BaseParameter> otherParameters = other.getDeclared();
+    if (strategy == CodeMergeStrategy.OVERRIDE) {
+      clear();
+      for (BaseParameter otherParameter : otherParameters) {
+        add(otherParameter.copy(this));
+      }
+    } else {
+      List<? extends BaseParameter> myParameters = getDeclared();
+      int i = 0;
+      int len = myParameters.size();
+      assert (len == otherParameters.size());
+      for (BaseParameter otherParameter : otherParameters) {
+        BaseParameter myParameter = null;
+        if (i < len) {
+          myParameter = myParameters.get(i++); // merging via index as by name could cause errors on mismatch
+        }
+        if (myParameter == null) {
+          add(otherParameter.copy(this));
+        } else {
+          myParameter.merge(otherParameter, strategy);
+        }
+      }
+    }
+    return this;
   }
 
   @Override

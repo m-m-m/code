@@ -15,6 +15,7 @@ import net.sf.mmm.code.api.annotation.CodeAnnotation;
 import net.sf.mmm.code.api.annotation.CodeAnnotations;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeMethod;
+import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.element.BaseElementImpl;
@@ -112,6 +113,17 @@ public class BaseAnnotations extends BaseNodeItemContainerHierarchical<CodeAnnot
     if (sourceList.isEmpty()) {
       return;
     }
+    Set<String> annotationTypes = createAnnotationTypeNameSet();
+    for (CodeAnnotation sourceAnnotation : sourceList) {
+      String key = sourceAnnotation.getType().getQualifiedName();
+      if (!annotationTypes.contains(key)) {
+        addInternal(sourceAnnotation);
+      }
+    }
+  }
+
+  private Set<String> createAnnotationTypeNameSet() {
+
     Set<String> annotationTypes = null;
     List<? extends CodeAnnotation> declared = getDeclared();
     if (declared.isEmpty()) {
@@ -122,12 +134,7 @@ public class BaseAnnotations extends BaseNodeItemContainerHierarchical<CodeAnnot
         annotationTypes.add(annotation.getType().getQualifiedName());
       }
     }
-    for (CodeAnnotation sourceAnnotation : sourceList) {
-      String key = sourceAnnotation.getType().getQualifiedName();
-      if (!annotationTypes.contains(key)) {
-        addInternal(sourceAnnotation);
-      }
-    }
+    return annotationTypes;
   }
 
   @Override
@@ -197,6 +204,24 @@ public class BaseAnnotations extends BaseNodeItemContainerHierarchical<CodeAnnot
       }
     }
     return this.sourceCodeObject;
+  }
+
+  @Override
+  public CodeAnnotations merge(CodeAnnotations other, CodeMergeStrategy strategy) {
+
+    if (strategy == CodeMergeStrategy.OVERRIDE) {
+      clear();
+      getList().addAll(other.getDeclared());
+    } else if (strategy != CodeMergeStrategy.KEEP) {
+      Set<String> annotationTypes = createAnnotationTypeNameSet();
+      for (CodeAnnotation annotation : other.getDeclared()) {
+        String key = annotation.getType().getQualifiedName();
+        if (!annotationTypes.contains(key)) {
+          add(annotation);
+        }
+      }
+    }
+    return this;
   }
 
   @Override

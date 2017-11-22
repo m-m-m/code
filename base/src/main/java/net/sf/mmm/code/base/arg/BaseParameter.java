@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 
 import net.sf.mmm.code.api.arg.CodeParameter;
 import net.sf.mmm.code.api.expression.CodeLiteral;
+import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.base.member.BaseOperation;
 import net.sf.mmm.code.base.type.BaseGenericType;
@@ -170,6 +171,17 @@ public class BaseParameter extends BaseOperationArg implements CodeParameter, Co
   public CodeLiteral evaluate() {
 
     return null;
+  }
+
+  @Override
+  public CodeParameter merge(CodeParameter other, CodeMergeStrategy strategy) {
+
+    doMerge(other, strategy);
+    if ((strategy == CodeMergeStrategy.OVERRIDE) || (strategy == CodeMergeStrategy.MERGE_OVERRIDE_BODY)) {
+      setName(other.getName());
+      this.varArgs = other.isVarArgs();
+    }
+    return this;
   }
 
   @Override

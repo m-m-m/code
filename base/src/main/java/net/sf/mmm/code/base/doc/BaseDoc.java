@@ -34,6 +34,7 @@ import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.member.CodeMethod;
+import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
@@ -427,6 +428,25 @@ public class BaseDoc extends BaseNodeItemImpl implements CodeDoc, CodeNodeItemWi
     }
     String[] segments = qualifiedName.split(separatorString);
     return Paths.get(".", segments);
+  }
+
+  @Override
+  public CodeDoc merge(CodeDoc other, CodeMergeStrategy strategy) {
+
+    if (strategy == CodeMergeStrategy.KEEP) {
+      return this;
+    }
+    List<String> myLines = getLines();
+    List<String> otherLines = other.getLines();
+    if (strategy == CodeMergeStrategy.OVERRIDE) {
+      myLines.clear();
+    }
+    if (myLines.isEmpty()) {
+      myLines.addAll(otherLines);
+    } else if (!otherLines.isEmpty()) {
+      // TODO merge without duplicating?
+    }
+    return this;
   }
 
   @Override

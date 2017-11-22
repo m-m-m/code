@@ -6,6 +6,8 @@ import java.lang.reflect.Constructor;
 
 import net.sf.mmm.code.api.member.CodeConstructors;
 import net.sf.mmm.code.api.member.CodeMethods;
+import net.sf.mmm.code.api.merge.CodeMergeStrategy;
+import net.sf.mmm.code.api.merge.CodeMergeStrategyDecider;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.base.type.BaseType;
@@ -91,6 +93,31 @@ public class BaseConstructors extends BaseOperations<BaseConstructor>
       return null;
     }
     return sourceType.getConstructors();
+  }
+
+  @Override
+  public CodeConstructors<BaseConstructor> merge(CodeConstructors<?> o, CodeMergeStrategyDecider decider, CodeMergeStrategy parentStrategy) {
+
+    if (parentStrategy == CodeMergeStrategy.KEEP) {
+      return this;
+    }
+    BaseConstructors other = (BaseConstructors) o;
+    if (parentStrategy == CodeMergeStrategy.OVERRIDE) {
+      clear();
+      for (BaseConstructor otherConstructor : other.getDeclared()) {
+        add(otherConstructor.copy(this));
+      }
+    } else {
+      for (BaseConstructor otherConstructor : other.getDeclared()) {
+        BaseConstructor myConstructor = get(otherConstructor);
+        if (myConstructor == null) {
+          add(otherConstructor.copy(this));
+        } else {
+          myConstructor.merge(otherConstructor, decider, parentStrategy);
+        }
+      }
+    }
+    return this;
   }
 
   @Override

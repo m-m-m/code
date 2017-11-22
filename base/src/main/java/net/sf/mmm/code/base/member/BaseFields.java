@@ -7,10 +7,12 @@ import java.lang.reflect.Field;
 import java.util.Iterator;
 import java.util.function.Predicate;
 
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.member.CodeFields;
+import net.sf.mmm.code.api.merge.CodeMergeStrategy;
+import net.sf.mmm.code.api.merge.CodeMergeStrategyDecider;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
-import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.base.type.BaseGenericType;
 import net.sf.mmm.code.base.type.BaseType;
@@ -111,6 +113,31 @@ public class BaseFields extends BaseMembers<BaseField> implements CodeFields<Bas
       return null;
     }
     return sourceType.getFields();
+  }
+
+  @Override
+  public CodeFields<BaseField> merge(CodeFields<?> o, CodeMergeStrategyDecider decider, CodeMergeStrategy parentStrategy) {
+
+    if (parentStrategy == CodeMergeStrategy.KEEP) {
+      return this;
+    }
+    BaseFields other = (BaseFields) o;
+    if (parentStrategy == CodeMergeStrategy.OVERRIDE) {
+      clear();
+      for (BaseField otherField : other.getDeclared()) {
+        add(otherField.copy(this));
+      }
+    } else {
+      for (BaseField otherField : other.getDeclared()) {
+        BaseField myField = get(otherField.getName());
+        if (myField == null) {
+          add(otherField.copy(this));
+        } else {
+          myField.merge(otherField, decider, parentStrategy);
+        }
+      }
+    }
+    return this;
   }
 
   @Override

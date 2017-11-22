@@ -5,6 +5,7 @@ package net.sf.mmm.code.api.arg;
 import java.lang.reflect.AnnotatedType;
 
 import net.sf.mmm.code.api.member.CodeOperation;
+import net.sf.mmm.code.api.merge.CodeSimpleMergeableItem;
 
 /**
  * {@link CodeOperationArg} for an {@link Throwable exception} in a throws declaration of a
@@ -15,7 +16,7 @@ import net.sf.mmm.code.api.member.CodeOperation;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeException extends CodeOperationArg {
+public interface CodeException extends CodeOperationArg, CodeSimpleMergeableItem<CodeException> {
 
   @Override
   CodeExceptions<?> getParent();

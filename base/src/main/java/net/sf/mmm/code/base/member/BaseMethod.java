@@ -9,6 +9,8 @@ import java.lang.reflect.Method;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeMethod;
+import net.sf.mmm.code.api.merge.CodeMergeStrategy;
+import net.sf.mmm.code.api.merge.CodeMergeStrategyDecider;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.base.arg.BaseReturn;
 import net.sf.mmm.code.base.type.BaseGenericType;
@@ -222,6 +224,25 @@ public class BaseMethod extends BaseOperation implements CodeMethod, CodeNodeIte
       }
     }
     return null;
+  }
+
+  @Override
+  public CodeMethod merge(CodeMethod other, CodeMergeStrategyDecider decider, CodeMergeStrategy parentStrategy) {
+
+    CodeMergeStrategy strategy = decider.decide(this, other, parentStrategy);
+    if (strategy == CodeMergeStrategy.KEEP) {
+      return this;
+    }
+    doMerge(other, strategy);
+    boolean override = (strategy == CodeMergeStrategy.OVERRIDE);
+    if (override) {
+      setName(other.getName());
+    }
+    getReturns().merge(other.getReturns(), strategy);
+    if (override || (strategy == CodeMergeStrategy.MERGE_OVERRIDE_BODY)) {
+      this.defaultValue = other.getDefaultValue();
+    }
+    return this;
   }
 
   @Override

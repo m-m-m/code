@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import net.sf.mmm.code.api.language.CodeLanguage;
+import net.sf.mmm.code.api.merge.CodeMergeStrategy;
+import net.sf.mmm.code.api.merge.CodeMergeStrategyDecider;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeNestedTypes;
 import net.sf.mmm.code.base.BaseContext;
@@ -108,6 +110,12 @@ public class BaseNestedTypes extends BaseNodeItemContainerHierarchicalWithName<B
   }
 
   @Override
+  protected String getKey(BaseType item) {
+
+    return item.getSimpleName();
+  }
+
+  @Override
   protected void add(BaseType item) {
 
     super.add(item);
@@ -127,6 +135,32 @@ public class BaseNestedTypes extends BaseNodeItemContainerHierarchicalWithName<B
       return sourceType.getNestedTypes();
     }
     return null;
+  }
+
+  @Override
+  public CodeNestedTypes<?> merge(CodeNestedTypes<?> o, CodeMergeStrategyDecider decider, CodeMergeStrategy strategy) {
+
+    if (strategy == CodeMergeStrategy.KEEP) {
+      return this;
+    }
+    BaseNestedTypes other = (BaseNestedTypes) o;
+    if (strategy == CodeMergeStrategy.OVERRIDE) {
+      clear();
+      for (BaseType otherNestedType : other) {
+        add(otherNestedType.copy(this.parent));
+      }
+    } else {
+      for (BaseType otherNestedType : other) {
+        String simpleName = otherNestedType.getSimpleName();
+        BaseType myNestedType = get(simpleName);
+        if (myNestedType == null) {
+          add(otherNestedType.copy(this.parent));
+        } else {
+          myNestedType.merge(otherNestedType, decider, strategy);
+        }
+      }
+    }
+    return this;
   }
 
   @Override

@@ -15,6 +15,7 @@ import net.sf.mmm.code.api.member.CodeFields;
 import net.sf.mmm.code.api.member.CodeMethods;
 import net.sf.mmm.code.api.member.CodeProperties;
 import net.sf.mmm.code.api.member.CodeProperty;
+import net.sf.mmm.code.api.merge.CodeAdvancedMergeableItem;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
@@ -23,7 +24,8 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeType extends CodeGenericType, CodeElementWithModifiers, CodeMutableItemWithQualifiedName, CodeElementWithTypeVariables {
+public interface CodeType
+    extends CodeGenericType, CodeElementWithModifiers, CodeMutableItemWithQualifiedName, CodeElementWithTypeVariables, CodeAdvancedMergeableItem<CodeType> {
 
   /**
    * @return the parent element of this type. Will either be the {@link #getFile() file} or the

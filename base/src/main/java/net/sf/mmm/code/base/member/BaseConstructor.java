@@ -5,6 +5,8 @@ package net.sf.mmm.code.base.member;
 import java.lang.reflect.Constructor;
 
 import net.sf.mmm.code.api.member.CodeConstructor;
+import net.sf.mmm.code.api.merge.CodeMergeStrategy;
+import net.sf.mmm.code.api.merge.CodeMergeStrategyDecider;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.base.type.BaseTypeVariables;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
@@ -50,7 +52,7 @@ public class BaseConstructor extends BaseOperation implements CodeConstructor, C
 
   /**
    * The constructor.
-   * 
+   *
    * @param parent the {@link #getParent() parent}.
    * @param typeVariables the {@link #getTypeParameters() type variables}.
    */
@@ -112,6 +114,14 @@ public class BaseConstructor extends BaseOperation implements CodeConstructor, C
   public void setName(String name) {
 
     throw new ReadOnlyException(getClass().getSimpleName(), "name");
+  }
+
+  @Override
+  public CodeConstructor merge(CodeConstructor other, CodeMergeStrategyDecider decider, CodeMergeStrategy parentStrategy) {
+
+    CodeMergeStrategy strategy = decider.decide(this, other, parentStrategy);
+    doMerge(other, strategy);
+    return this;
   }
 
   @Override

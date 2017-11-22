@@ -8,8 +8,9 @@ import java.lang.reflect.Executable;
 import java.util.List;
 
 import net.sf.mmm.code.api.arg.CodeExceptions;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.language.CodeLanguage;
+import net.sf.mmm.code.api.merge.CodeMergeStrategy;
+import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.base.member.BaseOperation;
 
@@ -86,6 +87,31 @@ public class BaseExceptions extends BaseOperationArgs<BaseException>
       return sourceOperation.getExceptions();
     }
     return null;
+  }
+
+  @Override
+  public CodeExceptions<?> merge(CodeExceptions<?> o, CodeMergeStrategy strategy) {
+
+    if (strategy == CodeMergeStrategy.KEEP) {
+      return this;
+    }
+    BaseExceptions other = (BaseExceptions) o;
+    if (strategy == CodeMergeStrategy.OVERRIDE) {
+      clear();
+      for (BaseException otherException : other.getDeclared()) {
+        add(otherException.copy(this));
+      }
+    } else {
+      for (BaseException otherException : other.getDeclared()) {
+        BaseException myException = get(otherException.getType());
+        if (myException == null) {
+          add(otherException.copy(this));
+        } else {
+          myException.merge(otherException, strategy);
+        }
+      }
+    }
+    return this;
   }
 
   @Override

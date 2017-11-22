@@ -4,14 +4,17 @@ package net.sf.mmm.code.base.type;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.language.CodeLanguage;
+import net.sf.mmm.code.api.merge.CodeMergeStrategy;
+import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeSuperTypes;
 import net.sf.mmm.code.api.type.CodeType;
@@ -141,6 +144,35 @@ public class BaseSuperTypes extends BaseNodeItemContainerHierarchical<BaseGeneri
       return sourceType.getSuperTypes();
     }
     return null;
+  }
+
+  @Override
+  public CodeSuperTypes<?> merge(CodeSuperTypes<?> o, CodeMergeStrategy strategy) {
+
+    if (strategy == CodeMergeStrategy.KEEP) {
+      return this;
+    }
+    BaseSuperTypes other = (BaseSuperTypes) o;
+    if (strategy == CodeMergeStrategy.OVERRIDE) {
+      clear();
+      for (BaseGenericType otherSuperType : other.getDeclared()) {
+        add(otherSuperType /* .copy(this) */);
+      }
+    } else {
+      Map<String, BaseGenericType> mySuperTypeMap = new HashMap<>();
+      for (BaseGenericType mySuperType : getDeclared()) {
+        mySuperTypeMap.put(mySuperType.getQualifiedName(), mySuperType);
+      }
+      for (BaseGenericType otherSuperType : other.getDeclared()) {
+        BaseGenericType mySuperType = mySuperTypeMap.get(otherSuperType.getQualifiedName());
+        if (mySuperType == null) {
+          add(otherSuperType /* .copy(this) */);
+        } else {
+          // TODO mySuperType.doMerge(otherSuperType, strategy);
+        }
+      }
+    }
+    return this;
   }
 
   @Override

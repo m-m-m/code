@@ -7,6 +7,7 @@ import java.lang.reflect.Type;
 
 import net.sf.mmm.code.api.arg.CodeOperationArg;
 import net.sf.mmm.code.api.language.CodeLanguage;
+import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.base.element.BaseElementWithDeclaringTypeImpl;
 import net.sf.mmm.code.base.member.BaseOperation;
@@ -91,6 +92,19 @@ public abstract class BaseOperationArg extends BaseElementWithDeclaringTypeImpl 
    * @see java.lang.reflect.AnnotatedType#getType()
    */
   protected abstract Type getReflectiveObjectType();
+
+  /**
+   * @see #doMerge(net.sf.mmm.code.api.element.CodeElement, CodeMergeStrategy)
+   * @param other the {@link CodeOperationArg} to merge.
+   * @param strategy the {@link CodeMergeStrategy}.
+   */
+  protected void doMerge(CodeOperationArg other, CodeMergeStrategy strategy) {
+
+    super.doMerge(other, strategy);
+    if (strategy == CodeMergeStrategy.OVERRIDE) {
+      this.type = (BaseGenericType) other.getType();
+    }
+  }
 
   @Override
   protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {

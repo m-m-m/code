@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 
 import net.sf.mmm.code.api.arg.CodeReturn;
 import net.sf.mmm.code.api.expression.CodeExpression;
+import net.sf.mmm.code.api.merge.CodeAdvancedMergeableItem;
 
 /**
  * {@link CodeOperation} that represents a method of a {@link net.sf.mmm.code.api.type.CodeType}.
@@ -16,7 +17,7 @@ import net.sf.mmm.code.api.expression.CodeExpression;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeMethod extends CodeOperation {
+public interface CodeMethod extends CodeOperation, CodeAdvancedMergeableItem<CodeMethod> {
 
   @Override
   CodeMethods<?> getParent();

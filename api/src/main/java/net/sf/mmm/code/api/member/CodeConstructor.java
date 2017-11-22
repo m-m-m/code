@@ -4,6 +4,7 @@ package net.sf.mmm.code.api.member;
 
 import java.lang.reflect.Constructor;
 
+import net.sf.mmm.code.api.merge.CodeAdvancedMergeableItem;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
@@ -16,7 +17,7 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeConstructor extends CodeOperation {
+public interface CodeConstructor extends CodeOperation, CodeAdvancedMergeableItem<CodeConstructor> {
 
   @Override
   CodeConstructors<?> getParent();

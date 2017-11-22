@@ -113,10 +113,13 @@ public abstract class BaseMutableItem extends BaseItem implements CodeMutableIte
   @Override
   public boolean isImmutable() {
 
+    if (this.immutable) {
+      return true;
+    }
     if (isSystemImmutable()) {
       return true;
     }
-    return this.immutable;
+    return false;
   }
 
   @Override
@@ -202,8 +205,7 @@ public abstract class BaseMutableItem extends BaseItem implements CodeMutableIte
    */
   protected void verifyMutalbe() {
 
-    initialize();
-    if (this.immutable) {
+    if (isImmutable()) {
       String detail = toString();
       String object = getClass().getSimpleName();
       if (!detail.isEmpty()) {

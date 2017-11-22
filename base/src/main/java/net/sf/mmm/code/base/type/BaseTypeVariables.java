@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 import net.sf.mmm.code.api.element.CodeElementWithTypeVariables;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeOperation;
+import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeTypeVariable;
 import net.sf.mmm.code.api.type.CodeTypeVariables;
@@ -229,9 +230,36 @@ public class BaseTypeVariables extends BaseGenericTypeParameters<BaseTypeVariabl
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
+  public CodeTypeVariables<?> merge(CodeTypeVariables<?> o, CodeMergeStrategy strategy) {
 
-    writeReference(sink, true);
+    if (strategy == CodeMergeStrategy.KEEP) {
+      return this;
+    }
+    BaseTypeVariables other = (BaseTypeVariables) o;
+    List<? extends BaseTypeVariable> otherTypeVariables = other.getDeclared();
+    if (strategy == CodeMergeStrategy.OVERRIDE) {
+      clear();
+      for (BaseTypeVariable otherTypeVariable : otherTypeVariables) {
+        add(otherTypeVariable.copy(this));
+      }
+    } else {
+      List<? extends BaseTypeVariable> myTypeVariables = getDeclared();
+      int i = 0;
+      int len = myTypeVariables.size();
+      assert (len == otherTypeVariables.size());
+      for (BaseTypeVariable otherTypeVariable : otherTypeVariables) {
+        BaseTypeVariable myTypeVariable = null;
+        if (i < len) {
+          myTypeVariable = myTypeVariables.get(i++); // merging via index as by name could cause errors
+        }
+        if (myTypeVariable == null) {
+          add(otherTypeVariable.copy(this));
+        } else {
+          // TODO myTypeVariable.doMerge(otherTypeVariable, strategy);
+        }
+      }
+    }
+    return this;
   }
 
   @Override
@@ -250,6 +278,12 @@ public class BaseTypeVariables extends BaseGenericTypeParameters<BaseTypeVariabl
     } else {
       throw new IllegalArgumentException("" + newParent);
     }
+  }
+
+  @Override
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
+
+    writeReference(sink, true);
   }
 
   void writeReference(Appendable sink, boolean declaration) throws IOException {

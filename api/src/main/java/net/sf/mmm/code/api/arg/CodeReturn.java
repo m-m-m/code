@@ -6,6 +6,7 @@ import java.lang.reflect.AnnotatedType;
 
 import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.member.CodeOperation;
+import net.sf.mmm.code.api.merge.CodeSimpleMergeableItem;
 
 /**
  * {@link CodeOperationArg} for the returned result of a {@link CodeMethod}.
@@ -15,7 +16,7 @@ import net.sf.mmm.code.api.member.CodeOperation;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeReturn extends CodeOperationArg {
+public interface CodeReturn extends CodeOperationArg, CodeSimpleMergeableItem<CodeReturn> {
 
   @Override
   CodeOperation getParent();

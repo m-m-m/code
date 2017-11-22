@@ -2,6 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.member;
 
+import net.sf.mmm.code.api.merge.CodeAdvancedMergeableItem;
 import net.sf.mmm.code.api.node.CodeNodeItemContainerHierarchical;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
@@ -13,7 +14,7 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @param <M> the type of the contained {@link CodeMethod}s.
  * @since 1.0.0
  */
-public interface CodeMethods<M extends CodeMethod> extends CodeOperations<M>, CodeNodeItemContainerHierarchical<M> {
+public interface CodeMethods<M extends CodeMethod> extends CodeOperations<M>, CodeNodeItemContainerHierarchical<M>, CodeAdvancedMergeableItem<CodeMethods<?>> {
 
   /**
    * @param name the {@link CodeOperation#getName() name} of the requested {@link CodeOperation}.

@@ -6,6 +6,7 @@ import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Type;
 
 import net.sf.mmm.code.api.arg.CodeReturn;
+import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.base.member.BaseMethod;
 import net.sf.mmm.code.base.member.BaseOperation;
@@ -100,6 +101,13 @@ public class BaseReturn extends BaseOperationArg implements CodeReturn, CodeNode
       }
     }
     return this.sourceCodeObject;
+  }
+
+  @Override
+  public CodeReturn merge(CodeReturn other, CodeMergeStrategy strategy) {
+
+    doMerge(other, strategy);
+    return this;
   }
 
   @Override

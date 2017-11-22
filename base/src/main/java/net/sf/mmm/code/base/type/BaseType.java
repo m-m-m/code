@@ -9,6 +9,8 @@ import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.block.CodeBlockInitializer;
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.language.CodeLanguage;
+import net.sf.mmm.code.api.merge.CodeMergeStrategy;
+import net.sf.mmm.code.api.merge.CodeMergeStrategyDecider;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeGenericType;
@@ -442,6 +444,25 @@ public class BaseType extends BaseGenericType implements CodeType, CodeNodeItemW
       }
     }
     return this.qualifiedType;
+  }
+
+  @Override
+  public CodeType merge(CodeType other, CodeMergeStrategyDecider decider, CodeMergeStrategy parentStrategy) {
+
+    CodeMergeStrategy strategy = decider.decide(this, other, parentStrategy);
+    if (strategy == CodeMergeStrategy.OVERRIDE) {
+      return other;
+    }
+    if (strategy.isMerge()) {
+      doMerge(other, strategy);
+      getNestedTypes().merge(other.getNestedTypes(), decider, strategy);
+      getFields().merge(other.getFields(), decider, strategy);
+      getConstructors().merge(other.getConstructors(), decider, strategy);
+      getMethods().merge(other.getMethods(), decider, strategy);
+      getTypeParameters().merge(other.getTypeParameters(), strategy);
+      getSuperTypes().merge(other.getSuperTypes(), strategy);
+    }
+    return this;
   }
 
   @Override

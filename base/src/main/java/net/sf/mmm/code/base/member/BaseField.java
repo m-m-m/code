@@ -9,6 +9,8 @@ import net.sf.mmm.code.api.expression.CodeConstant;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeField;
+import net.sf.mmm.code.api.merge.CodeMergeStrategy;
+import net.sf.mmm.code.api.merge.CodeMergeStrategyDecider;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeGenericType;
@@ -161,18 +163,22 @@ public class BaseField extends BaseMember implements CodeField, CodeNodeItemWith
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
+  public CodeField merge(CodeField other, CodeMergeStrategyDecider decider, CodeMergeStrategy parentStrategy) {
 
-    super.doWrite(sink, newline, defaultIndent, currentIndent, language);
-    getType().writeReference(sink, false);
-    sink.append(' ');
-    sink.append(getName());
-    if (this.initializer != null) {
-      sink.append(" = ");
-      this.initializer.write(sink, "", "");
+    CodeMergeStrategy strategy = decider.decide(this, other, parentStrategy);
+    if (strategy == CodeMergeStrategy.KEEP) {
+      return this;
     }
-    sink.append(';');
-    sink.append(newline);
+    doMerge(other, strategy);
+    boolean override = (strategy == CodeMergeStrategy.OVERRIDE);
+    if (override) {
+      this.type = (BaseGenericType) other.getType();
+      setName(other.getName());
+    }
+    if (override || (strategy == CodeMergeStrategy.MERGE_OVERRIDE_BODY)) {
+      this.initializer = other.getInitializer();
+    }
+    return this;
   }
 
   @Override
@@ -185,6 +191,21 @@ public class BaseField extends BaseMember implements CodeField, CodeNodeItemWith
   public BaseField copy(BaseFields newParent) {
 
     return new BaseField(this, newParent);
+  }
+
+  @Override
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
+
+    super.doWrite(sink, newline, defaultIndent, currentIndent, language);
+    getType().writeReference(sink, false);
+    sink.append(' ');
+    sink.append(getName());
+    if (this.initializer != null) {
+      sink.append(" = ");
+      this.initializer.write(sink, "", "");
+    }
+    sink.append(';');
+    sink.append(newline);
   }
 
 }
