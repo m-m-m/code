@@ -9,8 +9,8 @@ import java.util.List;
 import net.sf.mmm.code.api.block.CodeBlockBody;
 import net.sf.mmm.code.api.block.CodeBlockInitializer;
 import net.sf.mmm.code.api.expression.CodeVariable;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.statement.CodeStatement;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.type.BaseType;
 
 /**
@@ -19,7 +19,7 @@ import net.sf.mmm.code.base.type.BaseType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseBlockInitializer extends BaseBlock implements CodeBlockInitializer, CodeNodeItemWithGenericParent<BaseType, BaseBlockInitializer> {
+public class BaseBlockInitializer extends BaseBlock implements CodeBlockInitializer {
 
   private BaseType parent;
 
@@ -112,9 +112,9 @@ public class BaseBlockInitializer extends BaseBlock implements CodeBlockInitiali
   }
 
   @Override
-  public BaseBlockInitializer copy(BaseType newParent) {
+  public BaseBlockInitializer copy(CodeType newParent) {
 
-    return new BaseBlockInitializer(this, newParent);
+    return new BaseBlockInitializer(this, (BaseType) newParent);
   }
 
   @Override

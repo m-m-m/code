@@ -2,6 +2,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.block;
 
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
+
 /**
  * {@link CodeBlock} for an {@code if} block. <br>
  * Syntax: <pre>
@@ -16,7 +18,7 @@ package net.sf.mmm.code.api.block;
  * @author hohwille
  * @since 1.0.0
  */
-public interface CodeBlockIf extends CodeBlockWithCondition {
+public interface CodeBlockIf extends CodeBlockWithCondition, CodeNodeItemCopyable<CodeBlock, CodeBlockIf> {
 
   /**
    * @return the next {@code else} ({@code if}) block or {@code null} for none (if the end has been reached).

@@ -12,7 +12,6 @@ import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.merge.CodeMergeStrategyDecider;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.api.type.CodeTypeCategory;
@@ -33,7 +32,7 @@ import net.sf.mmm.code.base.member.BaseProperties;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseType extends BaseGenericType implements CodeType, CodeNodeItemWithGenericParent<CodeElement, BaseType>, BaseElementWithTypeVariables {
+public class BaseType extends BaseGenericType implements CodeType, BaseElementWithTypeVariables {
 
   private final BaseFile file;
 

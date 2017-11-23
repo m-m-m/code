@@ -5,10 +5,10 @@ package net.sf.mmm.code.base.block;
 import java.io.IOException;
 import java.util.List;
 
+import net.sf.mmm.code.api.block.CodeBlock;
 import net.sf.mmm.code.api.block.CodeBlockDoWhile;
 import net.sf.mmm.code.api.block.CodeBlockIf;
 import net.sf.mmm.code.api.expression.CodeCondition;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.statement.CodeStatement;
 
 /**
@@ -17,7 +17,7 @@ import net.sf.mmm.code.api.statement.CodeStatement;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseBlockIf extends BaseBlockStatementWithCondition implements CodeBlockIf, CodeNodeItemWithGenericParent<BaseBlock, BaseBlockIf> {
+public class BaseBlockIf extends BaseBlockStatementWithCondition implements CodeBlockIf {
 
   private BaseBlockIf elseIf;
 
@@ -69,9 +69,9 @@ public class BaseBlockIf extends BaseBlockStatementWithCondition implements Code
   }
 
   @Override
-  public BaseBlockIf copy(BaseBlock newParent) {
+  public BaseBlockIf copy(CodeBlock newParent) {
 
-    return new BaseBlockIf(this, newParent);
+    return new BaseBlockIf(this, (BaseBlock) newParent);
   }
 
   @Override

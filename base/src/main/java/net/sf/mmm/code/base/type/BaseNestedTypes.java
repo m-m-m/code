@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.merge.CodeMergeStrategyDecider;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeNestedTypes;
 import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.node.BaseNodeItemContainerHierarchicalWithName;
@@ -22,7 +22,7 @@ import net.sf.mmm.code.base.node.BaseNodeItemContainerHierarchicalWithName;
  * @since 1.0.0
  */
 public class BaseNestedTypes extends BaseNodeItemContainerHierarchicalWithName<BaseType>
-    implements CodeNestedTypes<BaseType>, CodeNodeItemWithGenericParent<BaseType, BaseNestedTypes> {
+    implements CodeNestedTypes<BaseType>, CodeNodeItemCopyable<BaseType, BaseNestedTypes> {
 
   private final BaseType parent;
 

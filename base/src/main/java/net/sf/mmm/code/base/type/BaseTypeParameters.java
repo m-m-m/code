@@ -5,7 +5,7 @@ package net.sf.mmm.code.base.type;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.type.CodeTypeParameters;
 import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.member.BaseOperation;
@@ -17,7 +17,7 @@ import net.sf.mmm.code.base.member.BaseOperation;
  * @since 1.0.0
  */
 public class BaseTypeParameters extends BaseGenericTypeParameters<BaseGenericType>
-    implements CodeTypeParameters<BaseGenericType>, CodeNodeItemWithGenericParent<BaseParameterizedType, BaseTypeParameters> {
+    implements CodeTypeParameters<BaseGenericType>, CodeNodeItemCopyable<BaseParameterizedType, BaseTypeParameters> {
 
   /** The empty and {@link #isImmutable() immutable} instance of {@link BaseTypeParameters}. */
   public static final BaseTypeParameters EMPTY = new BaseTypeParameters();

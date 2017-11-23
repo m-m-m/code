@@ -4,6 +4,7 @@ package net.sf.mmm.code.api.type;
 
 import java.lang.reflect.TypeVariable;
 
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.node.CodeNodeItemWithDeclaringOperation;
 
 /**
@@ -19,7 +20,8 @@ import net.sf.mmm.code.api.node.CodeNodeItemWithDeclaringOperation;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeTypeVariable extends CodeTypePlaceholder, CodeNodeItemWithDeclaringOperation {
+public interface CodeTypeVariable
+    extends CodeTypePlaceholder, CodeNodeItemWithDeclaringOperation, CodeNodeItemCopyable<CodeTypeVariables<?>, CodeTypeVariable> {
 
   @Override
   CodeTypeVariables<?> getParent();

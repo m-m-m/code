@@ -5,9 +5,9 @@ package net.sf.mmm.code.base.member;
 import java.lang.reflect.Constructor;
 
 import net.sf.mmm.code.api.member.CodeConstructor;
+import net.sf.mmm.code.api.member.CodeConstructors;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.merge.CodeMergeStrategyDecider;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.base.type.BaseTypeVariables;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
@@ -17,7 +17,7 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseConstructor extends BaseOperation implements CodeConstructor, CodeNodeItemWithGenericParent<BaseConstructors, BaseConstructor> {
+public class BaseConstructor extends BaseOperation implements CodeConstructor {
 
   private static final String CONSTRUCTOR_NAME = "UnnamedConstructor";
 
@@ -131,9 +131,9 @@ public class BaseConstructor extends BaseOperation implements CodeConstructor, C
   }
 
   @Override
-  public BaseConstructor copy(BaseConstructors newParent) {
+  public BaseConstructor copy(CodeConstructors<?> newParent) {
 
-    return new BaseConstructor(this, newParent);
+    return new BaseConstructor(this, (BaseConstructors) newParent);
   }
 
 }

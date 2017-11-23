@@ -5,9 +5,9 @@ package net.sf.mmm.code.base.block;
 import java.io.IOException;
 import java.util.List;
 
+import net.sf.mmm.code.api.block.CodeBlock;
 import net.sf.mmm.code.api.block.CodeBlockFor;
 import net.sf.mmm.code.api.expression.CodeForExpression;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.statement.CodeStatement;
 
 /**
@@ -16,7 +16,7 @@ import net.sf.mmm.code.api.statement.CodeStatement;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseBlockFor extends BaseBlockStatement implements CodeBlockFor, CodeNodeItemWithGenericParent<BaseBlock, BaseBlockFor> {
+public class BaseBlockFor extends BaseBlockStatement implements CodeBlockFor {
 
   private CodeForExpression expression;
 
@@ -71,9 +71,9 @@ public class BaseBlockFor extends BaseBlockStatement implements CodeBlockFor, Co
   }
 
   @Override
-  public BaseBlockFor copy(BaseBlock newParent) {
+  public BaseBlockFor copy(CodeBlock newParent) {
 
-    return new BaseBlockFor(this, newParent);
+    return new BaseBlockFor(this, (BaseBlock) newParent);
   }
 
   @Override

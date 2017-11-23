@@ -6,8 +6,8 @@ import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Type;
 
 import net.sf.mmm.code.api.arg.CodeReturn;
+import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.base.member.BaseMethod;
 import net.sf.mmm.code.base.member.BaseOperation;
 import net.sf.mmm.code.base.type.BaseType;
@@ -18,7 +18,7 @@ import net.sf.mmm.code.base.type.BaseType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseReturn extends BaseOperationArg implements CodeReturn, CodeNodeItemWithGenericParent<BaseMethod, BaseReturn> {
+public class BaseReturn extends BaseOperationArg implements CodeReturn {
 
   private final BaseMethod parent;
 
@@ -117,9 +117,9 @@ public class BaseReturn extends BaseOperationArg implements CodeReturn, CodeNode
   }
 
   @Override
-  public BaseReturn copy(BaseMethod newParent) {
+  public BaseReturn copy(CodeMethod newParent) {
 
-    return new BaseReturn(this, newParent);
+    return new BaseReturn(this, (BaseMethod) newParent);
   }
 
 }

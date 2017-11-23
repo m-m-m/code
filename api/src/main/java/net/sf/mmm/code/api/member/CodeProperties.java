@@ -2,7 +2,9 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.member;
 
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.node.CodeNodeItemContainerHierarchicalWithName;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
@@ -15,7 +17,8 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @param <P> the type of the contained {@link CodeProperty properties}.
  * @since 1.0.0
  */
-public interface CodeProperties<P extends CodeProperty> extends CodeMembers<P>, CodeNodeItemContainerHierarchicalWithName<P> {
+public interface CodeProperties<P extends CodeProperty>
+    extends CodeMembers<P>, CodeNodeItemContainerHierarchicalWithName<P>, CodeNodeItemCopyable<CodeType, CodeProperties<P>> {
 
   /**
    * @deprecated instances of {@link CodeProperty} are dynamically created on the fly.
@@ -26,8 +29,5 @@ public interface CodeProperties<P extends CodeProperty> extends CodeMembers<P>, 
 
     throw new ReadOnlyException(getDeclaringType().getSimpleName(), "properties");
   }
-
-  @Override
-  CodeProperties<P> copy();
 
 }

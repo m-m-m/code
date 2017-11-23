@@ -7,7 +7,7 @@ import java.util.List;
 
 import net.sf.mmm.code.api.block.CodeBlockBody;
 import net.sf.mmm.code.api.expression.CodeVariable;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
+import net.sf.mmm.code.api.node.CodeFunction;
 import net.sf.mmm.code.api.statement.CodeStatement;
 import net.sf.mmm.code.base.node.BaseFunction;
 
@@ -17,7 +17,7 @@ import net.sf.mmm.code.base.node.BaseFunction;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseBlockBody extends BaseBlock implements CodeBlockBody, CodeNodeItemWithGenericParent<BaseFunction, BaseBlockBody> {
+public class BaseBlockBody extends BaseBlock implements CodeBlockBody {
 
   private BaseFunction parent;
 
@@ -95,9 +95,9 @@ public class BaseBlockBody extends BaseBlock implements CodeBlockBody, CodeNodeI
   }
 
   @Override
-  public BaseBlockBody copy(BaseFunction newParent) {
+  public BaseBlockBody copy(CodeFunction newParent) {
 
-    return new BaseBlockBody(this, newParent);
+    return new BaseBlockBody(this, (BaseFunction) newParent);
   }
 
 }

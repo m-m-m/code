@@ -9,10 +9,10 @@ import net.sf.mmm.code.api.expression.CodeConstant;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeField;
+import net.sf.mmm.code.api.member.CodeFields;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.merge.CodeMergeStrategyDecider;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.base.type.BaseGenericType;
 
@@ -22,7 +22,7 @@ import net.sf.mmm.code.base.type.BaseGenericType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseField extends BaseMember implements CodeField, CodeNodeItemWithGenericParent<BaseFields, BaseField> {
+public class BaseField extends BaseMember implements CodeField {
 
   private final BaseFields parent;
 
@@ -188,9 +188,9 @@ public class BaseField extends BaseMember implements CodeField, CodeNodeItemWith
   }
 
   @Override
-  public BaseField copy(BaseFields newParent) {
+  public BaseField copy(CodeFields<?> newParent) {
 
-    return new BaseField(this, newParent);
+    return new BaseField(this, (BaseFields) newParent);
   }
 
   @Override

@@ -5,7 +5,7 @@ package net.sf.mmm.code.base.block;
 import java.util.List;
 
 import net.sf.mmm.code.api.block.CodeBlockStatement;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.statement.CodeStatement;
 
 /**
@@ -14,7 +14,7 @@ import net.sf.mmm.code.api.statement.CodeStatement;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseBlockStatementPlain extends BaseBlockStatement implements CodeNodeItemWithGenericParent<BaseBlock, BaseBlockStatementPlain> {
+public class BaseBlockStatementPlain extends BaseBlockStatement implements CodeNodeItemCopyable<BaseBlock, BaseBlockStatementPlain> {
 
   /**
    * The constructor.

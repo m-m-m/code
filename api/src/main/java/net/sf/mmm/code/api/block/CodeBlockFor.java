@@ -2,6 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.block;
 
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.expression.CodeForExpression;
 
 /**
@@ -14,7 +15,7 @@ import net.sf.mmm.code.api.expression.CodeForExpression;
  * @author hohwille
  * @since 1.0.0
  */
-public interface CodeBlockFor extends CodeBlockStatement {
+public interface CodeBlockFor extends CodeBlockStatement, CodeNodeItemCopyable<CodeBlock, CodeBlockFor> {
 
   /**
    * @return the {@link CodeForExpression}. May not be {@code null}.

@@ -4,6 +4,7 @@ package net.sf.mmm.code.api.arg;
 
 import java.lang.reflect.AnnotatedType;
 
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.merge.CodeSimpleMergeableItem;
 
@@ -16,15 +17,9 @@ import net.sf.mmm.code.api.merge.CodeSimpleMergeableItem;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeException extends CodeOperationArg, CodeSimpleMergeableItem<CodeException> {
-
-  @Override
-  CodeExceptions<?> getParent();
+public interface CodeException extends CodeOperationArg, CodeSimpleMergeableItem<CodeException>, CodeNodeItemCopyable<CodeExceptions<?>, CodeException> {
 
   @Override
   AnnotatedType getReflectiveObject();
-
-  @Override
-  CodeException copy();
 
 }

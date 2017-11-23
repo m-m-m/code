@@ -2,6 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.block;
 
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.node.CodeFunction;
 
 /**
@@ -11,9 +12,6 @@ import net.sf.mmm.code.api.node.CodeFunction;
  * @author hohwille
  * @since 1.0.0
  */
-public interface CodeBlockBody extends CodeBlock {
-
-  @Override
-  CodeFunction getParent();
+public interface CodeBlockBody extends CodeBlock, CodeNodeItemCopyable<CodeFunction, CodeBlockBody> {
 
 }

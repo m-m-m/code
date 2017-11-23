@@ -2,6 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.block;
 
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
@@ -14,7 +15,7 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @see net.sf.mmm.code.api.type.CodeType#getStaticInitializer()
  * @see net.sf.mmm.code.api.type.CodeType#getNonStaticInitializer()
  */
-public interface CodeBlockInitializer extends CodeBlock {
+public interface CodeBlockInitializer extends CodeBlock, CodeNodeItemCopyable<CodeType, CodeBlockInitializer> {
 
   @Override
   CodeType getParent();

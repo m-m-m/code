@@ -2,6 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.type;
 
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.element.CodeElementWithTypeVariables;
 import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.merge.CodeSimpleMergeableItem;
@@ -22,8 +23,8 @@ import net.sf.mmm.code.api.node.CodeNodeItemContainerFlatWithName;
  * @param <V> the type of the contained {@link CodeTypeVariable}s.
  * @since 1.0.0
  */
-public interface CodeTypeVariables<V extends CodeTypeVariable>
-    extends CodeGenericTypeParameters<V>, CodeNodeItemContainerFlatWithName<V>, CodeSimpleMergeableItem<CodeTypeVariables<?>> {
+public interface CodeTypeVariables<V extends CodeTypeVariable> extends CodeGenericTypeParameters<V>, CodeNodeItemContainerFlatWithName<V>,
+    CodeSimpleMergeableItem<CodeTypeVariables<?>>, CodeNodeItemCopyable<CodeElementWithTypeVariables, CodeTypeVariables<?>> {
 
   @Override
   CodeElementWithTypeVariables getParent();

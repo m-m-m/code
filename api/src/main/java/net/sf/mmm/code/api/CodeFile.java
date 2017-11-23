@@ -4,6 +4,7 @@ package net.sf.mmm.code.api;
 
 import java.util.List;
 
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.imports.CodeImport;
 import net.sf.mmm.code.api.imports.CodeImports;
 import net.sf.mmm.code.api.type.CodeType;
@@ -14,10 +15,7 @@ import net.sf.mmm.code.api.type.CodeType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract interface CodeFile extends CodePathElement {
-
-  @Override
-  CodePackage getParent();
+public abstract interface CodeFile extends CodePathElement, CodeNodeItemCopyable<CodePackage, CodeFile> {
 
   /**
    * @return the file extension including the dot (e.g. ".java").

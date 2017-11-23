@@ -7,7 +7,7 @@ import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Type;
 import java.util.Objects;
 
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.base.element.BaseElementWithDeclaringTypeImpl;
 import net.sf.mmm.util.exception.api.IllegalCaseException;
@@ -18,7 +18,7 @@ import net.sf.mmm.util.exception.api.IllegalCaseException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseArrayType extends BaseGenericType implements CodeNodeItemWithGenericParent<BaseElementWithDeclaringTypeImpl, BaseArrayType> {
+public class BaseArrayType extends BaseGenericType implements CodeNodeItemCopyable<BaseElementWithDeclaringTypeImpl, BaseArrayType> {
 
   private final BaseElementWithDeclaringTypeImpl parent;
 

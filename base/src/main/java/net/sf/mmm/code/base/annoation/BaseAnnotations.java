@@ -13,10 +13,10 @@ import java.util.Set;
 
 import net.sf.mmm.code.api.annotation.CodeAnnotation;
 import net.sf.mmm.code.api.annotation.CodeAnnotations;
+import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.element.BaseElementImpl;
 import net.sf.mmm.code.base.node.BaseNodeItemContainerHierarchical;
@@ -31,8 +31,7 @@ import net.sf.mmm.util.collection.base.AbstractIterator;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseAnnotations extends BaseNodeItemContainerHierarchical<CodeAnnotation>
-    implements CodeAnnotations, CodeNodeItemWithGenericParent<BaseElementImpl, BaseAnnotations> {
+public class BaseAnnotations extends BaseNodeItemContainerHierarchical<CodeAnnotation> implements CodeAnnotations {
 
   private final BaseElementImpl parent;
 
@@ -231,9 +230,9 @@ public class BaseAnnotations extends BaseNodeItemContainerHierarchical<CodeAnnot
   }
 
   @Override
-  public BaseAnnotations copy(BaseElementImpl newParent) {
+  public BaseAnnotations copy(CodeElement newParent) {
 
-    return new BaseAnnotations(this, newParent);
+    return new BaseAnnotations(this, (BaseElementImpl) newParent);
   }
 
   @Override

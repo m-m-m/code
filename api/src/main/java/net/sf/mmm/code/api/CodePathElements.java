@@ -4,6 +4,7 @@ package net.sf.mmm.code.api;
 
 import java.util.List;
 
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.node.CodeNodeItemContainerFlat;
 import net.sf.mmm.code.api.type.CodeType;
 
@@ -14,7 +15,7 @@ import net.sf.mmm.code.api.type.CodeType;
  * @param <P> the type of the contained {@link CodePathElement}s.
  * @since 1.0.0
  */
-public interface CodePathElements<P extends CodePathElement> extends CodeNodeItemContainerFlat<P> {
+public interface CodePathElements<P extends CodePathElement> extends CodeNodeItemContainerFlat<P>, CodeNodeItemCopyable<CodePackage, CodePathElements<P>> {
 
   @Override
   CodePackage getParent();

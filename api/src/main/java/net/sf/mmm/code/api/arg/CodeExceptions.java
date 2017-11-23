@@ -2,6 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.arg;
 
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.merge.CodeSimpleMergeableItem;
 import net.sf.mmm.code.api.node.CodeNodeItemContainer;
@@ -18,7 +19,8 @@ import net.sf.mmm.code.api.type.CodeType;
  * @param <E> the type of the contained {@link CodeException}s.
  * @since 1.0.0
  */
-public abstract interface CodeExceptions<E extends CodeException> extends CodeOperationArgs<E>, CodeSimpleMergeableItem<CodeExceptions<?>> {
+public abstract interface CodeExceptions<E extends CodeException>
+    extends CodeOperationArgs<E>, CodeSimpleMergeableItem<CodeExceptions<?>>, CodeNodeItemCopyable<CodeOperation, CodeExceptions<E>> {
 
   /**
    * @param type the {@link CodeType} reflection the {@link CodeType#isException() exception}.

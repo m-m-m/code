@@ -4,6 +4,7 @@ package net.sf.mmm.code.api.arg;
 
 import java.lang.reflect.Parameter;
 
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.element.CodeElementWithName;
 import net.sf.mmm.code.api.expression.CodeVariable;
 import net.sf.mmm.code.api.member.CodeOperation;
@@ -18,10 +19,8 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeParameter extends CodeOperationArg, CodeElementWithName, CodeVariable, CodeSimpleMergeableItem<CodeParameter> {
-
-  @Override
-  CodeParameters<?> getParent();
+public interface CodeParameter extends CodeOperationArg, CodeElementWithName, CodeVariable, CodeSimpleMergeableItem<CodeParameter>,
+    CodeNodeItemCopyable<CodeParameters<?>, CodeParameter> {
 
   /**
    * @return {@code true} in case of a var-arg parameter (e.g. {{@code String...}), {@code false} otherwise.
@@ -42,8 +41,5 @@ public interface CodeParameter extends CodeOperationArg, CodeElementWithName, Co
 
   @Override
   Parameter getReflectiveObject();
-
-  @Override
-  CodeParameter copy();
 
 }

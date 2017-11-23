@@ -12,8 +12,8 @@ import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.member.CodeFields;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.merge.CodeMergeStrategyDecider;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeGenericType;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.type.BaseGenericType;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.util.collection.base.AbstractIterator;
@@ -25,7 +25,7 @@ import net.sf.mmm.util.exception.api.DuplicateObjectException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseFields extends BaseMembers<BaseField> implements CodeFields<BaseField>, CodeNodeItemWithGenericParent<BaseType, BaseFields> {
+public class BaseFields extends BaseMembers<BaseField> implements CodeFields<BaseField> {
 
   /**
    * The constructor.
@@ -147,9 +147,9 @@ public class BaseFields extends BaseMembers<BaseField> implements CodeFields<Bas
   }
 
   @Override
-  public BaseFields copy(BaseType newParent) {
+  public BaseFields copy(CodeType newParent) {
 
-    return new BaseFields(this, newParent);
+    return new BaseFields(this, (BaseType) newParent);
   }
 
   @Override

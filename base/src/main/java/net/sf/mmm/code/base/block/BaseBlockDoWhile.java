@@ -5,9 +5,9 @@ package net.sf.mmm.code.base.block;
 import java.io.IOException;
 import java.util.List;
 
+import net.sf.mmm.code.api.block.CodeBlock;
 import net.sf.mmm.code.api.block.CodeBlockDoWhile;
 import net.sf.mmm.code.api.expression.CodeCondition;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.statement.CodeStatement;
 
 /**
@@ -16,7 +16,7 @@ import net.sf.mmm.code.api.statement.CodeStatement;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseBlockDoWhile extends BaseBlockStatementWithCondition implements CodeBlockDoWhile, CodeNodeItemWithGenericParent<BaseBlock, BaseBlockDoWhile> {
+public class BaseBlockDoWhile extends BaseBlockStatementWithCondition implements CodeBlockDoWhile {
 
   /**
    * The constructor.
@@ -60,9 +60,9 @@ public class BaseBlockDoWhile extends BaseBlockStatementWithCondition implements
   }
 
   @Override
-  public BaseBlockDoWhile copy(BaseBlock newParent) {
+  public BaseBlockDoWhile copy(CodeBlock newParent) {
 
-    return new BaseBlockDoWhile(this, newParent);
+    return new BaseBlockDoWhile(this, (BaseBlock) newParent);
   }
 
   @Override

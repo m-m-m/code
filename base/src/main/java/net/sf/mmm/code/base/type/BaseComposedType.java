@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeComposedType;
 import net.sf.mmm.code.api.type.CodeGenericType;
@@ -22,7 +22,7 @@ import net.sf.mmm.code.base.BaseContext;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseComposedType extends BaseGenericType implements CodeComposedType, CodeNodeItemWithGenericParent<BaseTypePlaceholder, BaseComposedType> {
+public class BaseComposedType extends BaseGenericType implements CodeComposedType, CodeNodeItemCopyable<BaseTypePlaceholder, BaseComposedType> {
 
   private final BaseTypePlaceholder parent;
 

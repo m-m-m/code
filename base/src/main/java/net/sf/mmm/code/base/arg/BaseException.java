@@ -6,8 +6,8 @@ import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Type;
 
 import net.sf.mmm.code.api.arg.CodeException;
+import net.sf.mmm.code.api.arg.CodeExceptions;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.base.member.BaseOperation;
 import net.sf.mmm.code.base.type.BaseType;
 
@@ -17,7 +17,7 @@ import net.sf.mmm.code.base.type.BaseType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseException extends BaseOperationArg implements CodeException, CodeNodeItemWithGenericParent<BaseExceptions, BaseException> {
+public class BaseException extends BaseOperationArg implements CodeException {
 
   private final BaseExceptions parent;
 
@@ -116,9 +116,9 @@ public class BaseException extends BaseOperationArg implements CodeException, Co
   }
 
   @Override
-  public BaseException copy(BaseExceptions newParent) {
+  public BaseException copy(CodeExceptions<?> newParent) {
 
-    return new BaseException(this, newParent);
+    return new BaseException(this, (BaseExceptions) newParent);
   }
 
 }

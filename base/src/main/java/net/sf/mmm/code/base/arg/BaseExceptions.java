@@ -9,8 +9,8 @@ import java.util.List;
 
 import net.sf.mmm.code.api.arg.CodeExceptions;
 import net.sf.mmm.code.api.language.CodeLanguage;
+import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.base.member.BaseOperation;
 
@@ -20,8 +20,7 @@ import net.sf.mmm.code.base.member.BaseOperation;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseExceptions extends BaseOperationArgs<BaseException>
-    implements CodeExceptions<BaseException>, CodeNodeItemWithGenericParent<BaseOperation, BaseExceptions> {
+public class BaseExceptions extends BaseOperationArgs<BaseException> implements CodeExceptions<BaseException> {
 
   /**
    * The constructor.
@@ -121,9 +120,9 @@ public class BaseExceptions extends BaseOperationArgs<BaseException>
   }
 
   @Override
-  public BaseExceptions copy(BaseOperation newParent) {
+  public BaseExceptions copy(CodeOperation newParent) {
 
-    return new BaseExceptions(this, newParent);
+    return new BaseExceptions(this, (BaseOperation) newParent);
   }
 
   @Override

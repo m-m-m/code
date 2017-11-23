@@ -2,6 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.member;
 
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.item.CodeMutableItemWithType;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.api.modifier.CodeVisibility;
@@ -17,10 +18,7 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract interface CodeProperty extends CodeMember, CodeMutableItemWithType {
-
-  @Override
-  CodeProperties<?> getParent();
+public abstract interface CodeProperty extends CodeMember, CodeMutableItemWithType, CodeNodeItemCopyable<CodeProperties<?>, CodeProperty> {
 
   /**
    * @return the {@link CodeField} corresponding to this property or {@code null} if no such field exists.
@@ -97,9 +95,6 @@ public abstract interface CodeProperty extends CodeMember, CodeMutableItemWithTy
    *         could not be resolved any further.
    */
   CodeProperty inherit(CodeType declaring);
-
-  @Override
-  CodeProperty copy();
 
   /**
    * @deprecated the {@link #getModifiers() modifiers} of a {@link CodeProperty} are calculated and cannot be

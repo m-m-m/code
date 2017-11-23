@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeSuperTypes;
 import net.sf.mmm.code.api.type.CodeType;
@@ -28,8 +27,7 @@ import net.sf.mmm.util.collection.base.AbstractIterator;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseSuperTypes extends BaseNodeItemContainerHierarchical<BaseGenericType>
-    implements CodeSuperTypes<BaseGenericType>, CodeNodeItemWithGenericParent<BaseType, BaseSuperTypes> {
+public class BaseSuperTypes extends BaseNodeItemContainerHierarchical<BaseGenericType> implements CodeSuperTypes<BaseGenericType> {
 
   private static final Logger LOG = LoggerFactory.getLogger(BaseSuperTypes.class);
 
@@ -182,9 +180,9 @@ public class BaseSuperTypes extends BaseNodeItemContainerHierarchical<BaseGeneri
   }
 
   @Override
-  public BaseSuperTypes copy(BaseType newParent) {
+  public BaseSuperTypes copy(CodeType newParent) {
 
-    return new BaseSuperTypes(this, newParent);
+    return new BaseSuperTypes(this, (BaseType) newParent);
   }
 
   @Override

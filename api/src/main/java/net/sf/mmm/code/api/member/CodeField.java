@@ -4,6 +4,7 @@ package net.sf.mmm.code.api.member;
 
 import java.lang.reflect.Field;
 
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.expression.CodeVariable;
 import net.sf.mmm.code.api.item.CodeMutableItemWithType;
@@ -20,10 +21,8 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract interface CodeField extends CodeMember, CodeMutableItemWithType, CodeVariable, CodeAdvancedMergeableItem<CodeField> {
-
-  @Override
-  CodeFields<?> getParent();
+public abstract interface CodeField
+    extends CodeMember, CodeMutableItemWithType, CodeVariable, CodeAdvancedMergeableItem<CodeField>, CodeNodeItemCopyable<CodeFields<?>, CodeField> {
 
   /**
    * @return the {@link CodeExpression} assigned to this field on initialization or {@code null} for none.
@@ -38,8 +37,5 @@ public abstract interface CodeField extends CodeMember, CodeMutableItemWithType,
 
   @Override
   Field getReflectiveObject();
-
-  @Override
-  CodeField copy();
 
 }

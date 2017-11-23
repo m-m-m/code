@@ -6,6 +6,7 @@ import java.util.List;
 
 import net.sf.mmm.code.api.CodeFile;
 import net.sf.mmm.code.api.block.CodeBlockInitializer;
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.element.CodeElementWithModifiers;
 import net.sf.mmm.code.api.element.CodeElementWithTypeVariables;
@@ -24,8 +25,8 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeType
-    extends CodeGenericType, CodeElementWithModifiers, CodeMutableItemWithQualifiedName, CodeElementWithTypeVariables, CodeAdvancedMergeableItem<CodeType> {
+public interface CodeType extends CodeGenericType, CodeElementWithModifiers, CodeMutableItemWithQualifiedName, CodeElementWithTypeVariables,
+    CodeAdvancedMergeableItem<CodeType>, CodeNodeItemCopyable<CodeElement, CodeType> {
 
   /**
    * @return the parent element of this type. Will either be the {@link #getFile() file} or the
@@ -204,8 +205,5 @@ public interface CodeType
 
     return this;
   }
-
-  @Override
-  CodeType copy();
 
 }

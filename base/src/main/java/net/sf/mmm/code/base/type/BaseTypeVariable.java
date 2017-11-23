@@ -6,8 +6,8 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 
 import net.sf.mmm.code.api.member.CodeOperation;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeTypeVariable;
+import net.sf.mmm.code.api.type.CodeTypeVariables;
 
 /**
  * Base implementation of {@link CodeTypeVariable}.
@@ -15,7 +15,7 @@ import net.sf.mmm.code.api.type.CodeTypeVariable;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseTypeVariable extends BaseTypePlaceholder implements CodeTypeVariable, CodeNodeItemWithGenericParent<BaseTypeVariables, BaseTypeVariable> {
+public class BaseTypeVariable extends BaseTypePlaceholder implements CodeTypeVariable {
 
   private final BaseTypeVariables parent;
 
@@ -187,9 +187,9 @@ public class BaseTypeVariable extends BaseTypePlaceholder implements CodeTypeVar
   }
 
   @Override
-  public BaseTypeVariable copy(BaseTypeVariables newParent) {
+  public BaseTypeVariable copy(CodeTypeVariables<?> newParent) {
 
-    return new BaseTypeVariable(this, newParent);
+    return new BaseTypeVariable(this, (BaseTypeVariables) newParent);
   }
 
 }

@@ -11,8 +11,8 @@ import java.util.function.Consumer;
 import net.sf.mmm.code.api.arg.CodeParameter;
 import net.sf.mmm.code.api.arg.CodeParameters;
 import net.sf.mmm.code.api.language.CodeLanguage;
+import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.base.member.BaseOperation;
 
 /**
@@ -21,8 +21,7 @@ import net.sf.mmm.code.base.member.BaseOperation;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseParameters extends BaseOperationArgs<BaseParameter>
-    implements CodeParameters<BaseParameter>, CodeNodeItemWithGenericParent<BaseOperation, BaseParameters> {
+public class BaseParameters extends BaseOperationArgs<BaseParameter> implements CodeParameters<BaseParameter> {
 
   /**
    * The constructor.
@@ -147,9 +146,9 @@ public class BaseParameters extends BaseOperationArgs<BaseParameter>
   }
 
   @Override
-  public BaseParameters copy(BaseOperation newParent) {
+  public BaseParameters copy(CodeOperation newParent) {
 
-    return new BaseParameters(this, newParent);
+    return new BaseParameters(this, (BaseOperation) newParent);
   }
 
   @Override

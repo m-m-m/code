@@ -9,9 +9,9 @@ import java.lang.reflect.Method;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeMethod;
+import net.sf.mmm.code.api.member.CodeMethods;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.merge.CodeMergeStrategyDecider;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.base.arg.BaseReturn;
 import net.sf.mmm.code.base.type.BaseGenericType;
 import net.sf.mmm.code.base.type.BaseSuperTypes;
@@ -24,7 +24,7 @@ import net.sf.mmm.code.base.type.BaseTypeVariables;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseMethod extends BaseOperation implements CodeMethod, CodeNodeItemWithGenericParent<BaseMethods, BaseMethod> {
+public class BaseMethod extends BaseOperation implements CodeMethod {
 
   private final BaseMethods parent;
 
@@ -252,9 +252,9 @@ public class BaseMethod extends BaseOperation implements CodeMethod, CodeNodeIte
   }
 
   @Override
-  public BaseMethod copy(BaseMethods newParent) {
+  public BaseMethod copy(CodeMethods<?> newParent) {
 
-    return new BaseMethod(this, newParent);
+    return new BaseMethod(this, (BaseMethods) newParent);
   }
 
   @Override

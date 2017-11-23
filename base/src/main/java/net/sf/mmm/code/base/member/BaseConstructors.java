@@ -8,8 +8,8 @@ import net.sf.mmm.code.api.member.CodeConstructors;
 import net.sf.mmm.code.api.member.CodeMethods;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.merge.CodeMergeStrategyDecider;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeGenericType;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.type.BaseType;
 
 /**
@@ -18,8 +18,7 @@ import net.sf.mmm.code.base.type.BaseType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseConstructors extends BaseOperations<BaseConstructor>
-    implements CodeConstructors<BaseConstructor>, CodeNodeItemWithGenericParent<BaseType, BaseConstructors> {
+public class BaseConstructors extends BaseOperations<BaseConstructor> implements CodeConstructors<BaseConstructor> {
 
   /**
    * The constructor.
@@ -127,9 +126,9 @@ public class BaseConstructors extends BaseOperations<BaseConstructor>
   }
 
   @Override
-  public BaseConstructors copy(BaseType newParent) {
+  public BaseConstructors copy(CodeType newParent) {
 
-    return new BaseConstructors(this, newParent);
+    return new BaseConstructors(this, (BaseType) newParent);
   }
 
 }

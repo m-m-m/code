@@ -9,8 +9,8 @@ import java.util.List;
 import net.sf.mmm.code.api.member.CodeMethods;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.merge.CodeMergeStrategyDecider;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeGenericType;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.type.BaseGenericType;
 import net.sf.mmm.code.base.type.BaseType;
 
@@ -20,7 +20,7 @@ import net.sf.mmm.code.base.type.BaseType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseMethods extends BaseOperations<BaseMethod> implements CodeMethods<BaseMethod>, CodeNodeItemWithGenericParent<BaseType, BaseMethods> {
+public class BaseMethods extends BaseOperations<BaseMethod> implements CodeMethods<BaseMethod> {
 
   /**
    * The constructor.
@@ -157,9 +157,9 @@ public class BaseMethods extends BaseOperations<BaseMethod> implements CodeMetho
   }
 
   @Override
-  public BaseMethods copy(BaseType newParent) {
+  public BaseMethods copy(CodeType newParent) {
 
-    return new BaseMethods(this, newParent);
+    return new BaseMethods(this, (BaseType) newParent);
   }
 
 }

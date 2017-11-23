@@ -12,7 +12,6 @@ import net.sf.mmm.code.api.element.CodeElementWithTypeVariables;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeTypeVariable;
 import net.sf.mmm.code.api.type.CodeTypeVariables;
 import net.sf.mmm.code.base.element.BaseElementWithTypeVariables;
@@ -24,8 +23,7 @@ import net.sf.mmm.code.base.member.BaseOperation;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseTypeVariables extends BaseGenericTypeParameters<BaseTypeVariable>
-    implements CodeTypeVariables<BaseTypeVariable>, CodeNodeItemWithGenericParent<BaseElementWithTypeVariables, BaseTypeVariables> {
+public class BaseTypeVariables extends BaseGenericTypeParameters<BaseTypeVariable> implements CodeTypeVariables<BaseTypeVariable> {
 
   /** The empty and {@link #isImmutable() immutable} instance of {@link BaseTypeVariables}. */
   public static final BaseTypeVariables EMPTY = new BaseTypeVariables();
@@ -269,7 +267,7 @@ public class BaseTypeVariables extends BaseGenericTypeParameters<BaseTypeVariabl
   }
 
   @Override
-  public BaseTypeVariables copy(BaseElementWithTypeVariables newParent) {
+  public BaseTypeVariables copy(CodeElementWithTypeVariables newParent) {
 
     if (newParent instanceof BaseType) {
       return new BaseTypeVariables(this, (BaseType) newParent);

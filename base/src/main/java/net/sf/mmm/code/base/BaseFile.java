@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import net.sf.mmm.code.api.CodeFile;
+import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.language.CodeLanguage;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.base.imports.BaseImports;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.util.exception.api.ObjectMismatchException;
@@ -20,7 +20,7 @@ import net.sf.mmm.util.exception.api.ObjectMismatchException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public final class BaseFile extends BasePathElement implements CodeFile, CodeNodeItemWithGenericParent<BasePackage, BaseFile> {
+public final class BaseFile extends BasePathElement implements CodeFile {
 
   private final BaseImports imports;
 
@@ -94,6 +94,7 @@ public final class BaseFile extends BasePathElement implements CodeFile, CodeNod
 
     super(template, parentPackage);
     this.imports = template.imports.copy(this);
+
     this.types = doCopy(template.types, this);
     this.reflectioveObject = null;
   }
@@ -227,9 +228,9 @@ public final class BaseFile extends BasePathElement implements CodeFile, CodeNod
   }
 
   @Override
-  public BaseFile copy(BasePackage newParent) {
+  public BaseFile copy(CodePackage newParent) {
 
-    return new BaseFile(this, newParent);
+    return new BaseFile(this, (BasePackage) newParent);
   }
 
   @Override

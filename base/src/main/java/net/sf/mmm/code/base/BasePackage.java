@@ -12,7 +12,6 @@ import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.language.CodeLanguageJava;
 import net.sf.mmm.code.api.node.CodeNode;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.base.node.BaseContainer;
 import net.sf.mmm.code.base.source.BaseSource;
 
@@ -22,7 +21,7 @@ import net.sf.mmm.code.base.source.BaseSource;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public final class BasePackage extends BasePathElement implements CodePackage, CodeNodeItemWithGenericParent<CodeNode, BasePackage>, BaseContainer {
+public final class BasePackage extends BasePathElement implements CodePackage, BaseContainer {
 
   /** {@link #getSimpleName() Simple name} of the default (root) package. */
   public static final String NAME_DEFAULT = "";

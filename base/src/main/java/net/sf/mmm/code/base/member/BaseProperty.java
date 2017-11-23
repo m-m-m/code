@@ -11,10 +11,10 @@ import org.slf4j.LoggerFactory;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.member.CodeMethod;
+import net.sf.mmm.code.api.member.CodeProperties;
 import net.sf.mmm.code.api.member.CodeProperty;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.api.modifier.CodeVisibility;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
 
@@ -24,7 +24,7 @@ import net.sf.mmm.code.api.type.CodeType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseProperty extends BaseMember implements CodeProperty, CodeNodeItemWithGenericParent<BaseProperties, BaseProperty> {
+public class BaseProperty extends BaseMember implements CodeProperty {
 
   private static final Logger LOG = LoggerFactory.getLogger(BaseProperty.class);
 
@@ -251,9 +251,9 @@ public class BaseProperty extends BaseMember implements CodeProperty, CodeNodeIt
   }
 
   @Override
-  public BaseProperty copy(BaseProperties newParent) {
+  public BaseProperty copy(CodeProperties<?> newParent) {
 
-    return new BaseProperty(this, newParent);
+    return new BaseProperty(this, (BaseProperties) newParent);
   }
 
   @Override

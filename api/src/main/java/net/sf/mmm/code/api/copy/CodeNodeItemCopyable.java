@@ -1,8 +1,10 @@
 /* Copyright (c) The m-m-m Team, Licensed under the Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0 */
-package net.sf.mmm.code.api.node;
+package net.sf.mmm.code.api.copy;
 
 import net.sf.mmm.code.api.item.CodeItem;
+import net.sf.mmm.code.api.node.CodeNode;
+import net.sf.mmm.code.api.node.CodeNodeItem;
 
 /**
  * {@link CodeItem} that has a generic {@link #getParent() parent}.
@@ -12,7 +14,7 @@ import net.sf.mmm.code.api.item.CodeItem;
  * @param <SELF> this type itself.
  * @since 1.0.0
  */
-public abstract interface CodeNodeItemWithGenericParent<P extends CodeNode, SELF extends CodeNodeItemWithGenericParent<P, SELF>> extends CodeNodeItem {
+public abstract interface CodeNodeItemCopyable<P extends CodeNode, SELF extends CodeNodeItemCopyable<P, SELF>> extends CodeNodeItem {
 
   @Override
   P getParent();

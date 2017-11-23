@@ -4,10 +4,10 @@ package net.sf.mmm.code.api.doc;
 
 import java.util.List;
 
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.merge.CodeSimpleMergeableItem;
-import net.sf.mmm.code.api.node.CodeNodeItem;
 
 /**
  * {@link CodeItem} representing API documentation (e.g. JavaDoc or JSDoc).
@@ -15,7 +15,7 @@ import net.sf.mmm.code.api.node.CodeNodeItem;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeDoc extends CodeNodeItem, CodeSimpleMergeableItem<CodeDoc> {
+public interface CodeDoc extends CodeSimpleMergeableItem<CodeDoc>, CodeNodeItemCopyable<CodeElement, CodeDoc> {
 
   /**
    * Tag for the documentation of the parameter of a function. This tag will be invisible via this API as the
@@ -62,9 +62,6 @@ public interface CodeDoc extends CodeNodeItem, CodeSimpleMergeableItem<CodeDoc> 
    */
   String TAG_VALUE = "value";
 
-  @Override
-  CodeElement getParent();
-
   /**
    * @param format the requested {@link CodeDocFormat}.
    * @return this documentation as {@link String} in the given {@link CodeDocFormat}. Will be the
@@ -95,8 +92,5 @@ public interface CodeDoc extends CodeNodeItem, CodeSimpleMergeableItem<CodeDoc> 
    * @return {@code true} if this documentation is empty.
    */
   boolean isEmpty();
-
-  @Override
-  CodeDoc copy();
 
 }

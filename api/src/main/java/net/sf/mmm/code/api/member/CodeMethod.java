@@ -5,6 +5,7 @@ package net.sf.mmm.code.api.member;
 import java.lang.reflect.Method;
 
 import net.sf.mmm.code.api.arg.CodeReturn;
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.merge.CodeAdvancedMergeableItem;
 
@@ -17,10 +18,7 @@ import net.sf.mmm.code.api.merge.CodeAdvancedMergeableItem;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeMethod extends CodeOperation, CodeAdvancedMergeableItem<CodeMethod> {
-
-  @Override
-  CodeMethods<?> getParent();
+public interface CodeMethod extends CodeOperation, CodeAdvancedMergeableItem<CodeMethod>, CodeNodeItemCopyable<CodeMethods<?>, CodeMethod> {
 
   /**
    * @return the {@link CodeReturn} with the information about the returned result of this method. Will never
@@ -54,8 +52,5 @@ public interface CodeMethod extends CodeOperation, CodeAdvancedMergeableItem<Cod
 
   @Override
   Method getReflectiveObject();
-
-  @Override
-  CodeMethod copy();
 
 }

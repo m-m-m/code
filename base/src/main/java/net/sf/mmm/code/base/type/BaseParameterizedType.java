@@ -8,8 +8,8 @@ import java.lang.reflect.ParameterizedType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.element.CodeElement;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeParameterizedType;
@@ -23,8 +23,7 @@ import net.sf.mmm.code.base.member.BaseOperation;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseParameterizedType extends BaseGenericType
-    implements CodeParameterizedType, CodeNodeItemWithGenericParent<BaseElementImpl, BaseParameterizedType> {
+public class BaseParameterizedType extends BaseGenericType implements CodeParameterizedType, CodeNodeItemCopyable<BaseElementImpl, BaseParameterizedType> {
 
   private static final Logger LOG = LoggerFactory.getLogger(BaseParameterizedType.class);
 

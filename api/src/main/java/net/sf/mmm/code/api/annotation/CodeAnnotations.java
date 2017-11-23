@@ -2,6 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.annotation;
 
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.merge.CodeSimpleMergeableItem;
 import net.sf.mmm.code.api.node.CodeNodeItemContainerHierarchical;
@@ -13,7 +14,8 @@ import net.sf.mmm.code.api.type.CodeType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeAnnotations extends CodeNodeItemContainerHierarchical<CodeAnnotation>, CodeSimpleMergeableItem<CodeAnnotations> {
+public interface CodeAnnotations
+    extends CodeNodeItemContainerHierarchical<CodeAnnotation>, CodeSimpleMergeableItem<CodeAnnotations>, CodeNodeItemCopyable<CodeElement, CodeAnnotations> {
 
   @Override
   CodeElement getParent();

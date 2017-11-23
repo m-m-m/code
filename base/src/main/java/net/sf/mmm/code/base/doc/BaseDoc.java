@@ -35,7 +35,6 @@ import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.api.type.CodeTypeVariable;
@@ -51,7 +50,7 @@ import net.sf.mmm.code.base.type.BaseTypeVariable;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseDoc extends BaseNodeItemImpl implements CodeDoc, CodeNodeItemWithGenericParent<BaseElementImpl, BaseDoc> {
+public class BaseDoc extends BaseNodeItemImpl implements CodeDoc {
 
   private static final Logger LOG = LoggerFactory.getLogger(BaseDoc.class);
 
@@ -456,9 +455,9 @@ public class BaseDoc extends BaseNodeItemImpl implements CodeDoc, CodeNodeItemWi
   }
 
   @Override
-  public BaseDoc copy(BaseElementImpl newParent) {
+  public BaseDoc copy(CodeElement newParent) {
 
-    return new BaseDoc(this, newParent);
+    return new BaseDoc(this, (BaseElementImpl) newParent);
   }
 
   @Override

@@ -10,7 +10,6 @@ import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.CodePathElements;
 import net.sf.mmm.code.api.language.CodeLanguage;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.node.BaseNodeItemContainerFlat;
 import net.sf.mmm.code.base.type.BaseType;
@@ -21,8 +20,7 @@ import net.sf.mmm.code.base.type.BaseType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
-    implements CodePathElements<BasePathElement>, CodeNodeItemWithGenericParent<BasePackage, BasePathElements> {
+public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement> implements CodePathElements<BasePathElement> {
 
   private final BasePackage parent;
 
@@ -382,9 +380,9 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
   }
 
   @Override
-  public BasePathElements copy(BasePackage newParent) {
+  public BasePathElements copy(CodePackage newParent) {
 
-    return new BasePathElements(this, newParent);
+    return new BasePathElements(this, (BasePackage) newParent);
   }
 
   @Override

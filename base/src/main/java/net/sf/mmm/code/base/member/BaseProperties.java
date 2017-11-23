@@ -8,7 +8,7 @@ import java.util.Map;
 import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.member.CodeMember;
 import net.sf.mmm.code.api.member.CodeProperties;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.type.BaseGenericType;
 import net.sf.mmm.code.base.type.BaseType;
 
@@ -18,7 +18,7 @@ import net.sf.mmm.code.base.type.BaseType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseProperties extends BaseMembers<BaseProperty> implements CodeProperties<BaseProperty>, CodeNodeItemWithGenericParent<BaseType, BaseProperties> {
+public class BaseProperties extends BaseMembers<BaseProperty> implements CodeProperties<BaseProperty> {
 
   /**
    * The constructor.
@@ -170,9 +170,9 @@ public class BaseProperties extends BaseMembers<BaseProperty> implements CodePro
   }
 
   @Override
-  public BaseProperties copy(BaseType newParent) {
+  public BaseProperties copy(CodeType newParent) {
 
-    return new BaseProperties(this, newParent);
+    return new BaseProperties(this, (BaseType) newParent);
   }
 
 }

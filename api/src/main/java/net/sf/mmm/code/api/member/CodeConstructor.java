@@ -4,6 +4,7 @@ package net.sf.mmm.code.api.member;
 
 import java.lang.reflect.Constructor;
 
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.merge.CodeAdvancedMergeableItem;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
@@ -17,10 +18,7 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeConstructor extends CodeOperation, CodeAdvancedMergeableItem<CodeConstructor> {
-
-  @Override
-  CodeConstructors<?> getParent();
+public interface CodeConstructor extends CodeOperation, CodeAdvancedMergeableItem<CodeConstructor>, CodeNodeItemCopyable<CodeConstructors<?>, CodeConstructor> {
 
   /**
    * @deprecated the {@link #getName() name} of a {@link CodeConstructor} has to be equal to the
@@ -36,8 +34,5 @@ public interface CodeConstructor extends CodeOperation, CodeAdvancedMergeableIte
 
   @Override
   Constructor<?> getReflectiveObject();
-
-  @Override
-  CodeConstructor copy();
 
 }

@@ -8,12 +8,12 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.language.CodeLanguageJava;
 import net.sf.mmm.code.api.node.CodeNode;
 import net.sf.mmm.code.api.node.CodeNodeItem;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.source.CodeSource;
 import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.item.BaseMutableItem;
@@ -62,16 +62,18 @@ public abstract class BaseNodeItemImpl extends BaseMutableItem implements BaseNo
 
   /**
    * @param <P> type of the parent.
-   * @param <N> type of the {@link List} elements.
-   * @param list the {@link List} to {@link CodeNodeItemWithGenericParent#copy(CodeNode) copy}.
-   * @param newParent the new {@link CodeNodeItemWithGenericParent#getParent() parent}.
+   * @param <N> type of the {@link CodeNodeItemCopyable}.
+   * @param <E> type of the actual {@link List} elements.
+   * @param list the {@link List} to {@link CodeNodeItemCopyable#copy(CodeNode) copy}.
+   * @param newParent the new {@link CodeNodeItemCopyable#getParent() parent}.
    * @return an mutable deep-copy of the {@link List}.
    */
-  protected <P extends CodeNode, N extends CodeNodeItemWithGenericParent<P, N>> List<N> doCopy(List<N> list, P newParent) {
+  @SuppressWarnings("unchecked")
+  protected <P extends CodeNode, N extends CodeNodeItemCopyable<P, N>, E extends N> List<E> doCopy(List<E> list, P newParent) {
 
-    List<N> copy = new ArrayList<>(list.size());
-    for (N node : list) {
-      copy.add(node.copy(newParent));
+    List<E> copy = new ArrayList<>(list.size());
+    for (E node : list) {
+      copy.add((E) node.copy(newParent));
     }
     return copy;
   }
@@ -86,17 +88,17 @@ public abstract class BaseNodeItemImpl extends BaseMutableItem implements BaseNo
   @SuppressWarnings({ "rawtypes", "unchecked" })
   protected <N extends CodeNodeItem, T extends N> T doCopy(N node, CodeNode newParent) {
 
-    return (T) doCopyNodeItemWithParent((CodeNodeItemWithGenericParent) node, newParent);
+    return (T) doCopyNodeItemWithParent((CodeNodeItemCopyable) node, newParent);
   }
 
   /**
    * @param <P> type of the parent.
-   * @param <N> type of the {@link CodeNodeItemWithGenericParent} to copy.
-   * @param node the {@link CodeNodeItemWithGenericParent} to copy.
+   * @param <N> type of the {@link CodeNodeItemCopyable} to copy.
+   * @param node the {@link CodeNodeItemCopyable} to copy.
    * @param newParent the new {@link #getParent() parent node}.
    * @return the copy.
    */
-  protected <P extends CodeNode, N extends CodeNodeItemWithGenericParent<P, N>> N doCopyNodeItemWithParent(N node, P newParent) {
+  protected <P extends CodeNode, N extends CodeNodeItemCopyable<P, N>> N doCopyNodeItemWithParent(N node, P newParent) {
 
     return node.copy(newParent);
   }

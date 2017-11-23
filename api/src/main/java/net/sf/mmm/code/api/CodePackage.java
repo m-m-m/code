@@ -2,8 +2,10 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api;
 
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.node.CodeContainer;
+import net.sf.mmm.code.api.node.CodeNode;
 
 /**
  * {@link CodeElement} representing a {@link Package} (or similar namespace concept in case of other
@@ -12,7 +14,7 @@ import net.sf.mmm.code.api.node.CodeContainer;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodePackage extends CodePathElement, CodeContainer {
+public interface CodePackage extends CodePathElement, CodeContainer, CodeNodeItemCopyable<CodeNode, CodePackage> {
 
   /**
    * The {@link #getParentPackage() parent package} or the {@link #getSource() source} if this is a root
@@ -42,8 +44,5 @@ public interface CodePackage extends CodePathElement, CodeContainer {
 
   @Override
   Package getReflectiveObject();
-
-  @Override
-  CodePackage copy();
 
 }

@@ -2,9 +2,11 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.member;
 
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.merge.CodeAdvancedMergeableItem;
 import net.sf.mmm.code.api.node.CodeNodeItemContainerFlat;
 import net.sf.mmm.code.api.type.CodeGenericType;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
@@ -14,8 +16,8 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @param <C> the type of the contained {@link CodeConstructor}s.
  * @since 1.0.0
  */
-public interface CodeConstructors<C extends CodeConstructor>
-    extends CodeOperations<C>, CodeNodeItemContainerFlat<C>, CodeAdvancedMergeableItem<CodeConstructors<?>> {
+public interface CodeConstructors<C extends CodeConstructor> extends CodeOperations<C>, CodeNodeItemContainerFlat<C>,
+    CodeAdvancedMergeableItem<CodeConstructors<?>>, CodeNodeItemCopyable<CodeType, CodeConstructors<C>> {
 
   /**
    * @param name the {@link CodeOperation#getName() name} of the requested {@link CodeOperation}.
@@ -32,8 +34,5 @@ public interface CodeConstructors<C extends CodeConstructor>
    * @throws ReadOnlyException if {@link #isImmutable() immutable}.
    */
   C add();
-
-  @Override
-  CodeConstructors<C> copy();
 
 }

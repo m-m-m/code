@@ -2,6 +2,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.block;
 
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
+
 /**
  * {@link CodeBlock} for a {@code while do} statement.<br>
  * Syntax: <pre>
@@ -12,6 +14,6 @@ package net.sf.mmm.code.api.block;
  * @author hohwille
  * @since 1.0.0
  */
-public interface CodeBlockWhileDo extends CodeBlockWithCondition {
+public interface CodeBlockWhileDo extends CodeBlockWithCondition, CodeNodeItemCopyable<CodeBlock, CodeBlockWhileDo> {
 
 }

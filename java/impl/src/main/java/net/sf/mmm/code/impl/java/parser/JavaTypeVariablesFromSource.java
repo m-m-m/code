@@ -7,6 +7,7 @@ import java.lang.reflect.GenericDeclaration;
 import net.sf.mmm.code.api.annotation.CodeAnnotations;
 import net.sf.mmm.code.api.comment.CodeComment;
 import net.sf.mmm.code.api.doc.CodeDoc;
+import net.sf.mmm.code.api.element.CodeElementWithTypeVariables;
 import net.sf.mmm.code.base.element.BaseElementWithTypeVariables;
 import net.sf.mmm.code.base.member.BaseOperation;
 import net.sf.mmm.code.base.type.BaseType;
@@ -75,7 +76,7 @@ public class JavaTypeVariablesFromSource extends BaseTypeVariables implements Ba
   }
 
   @Override
-  public JavaTypeVariablesFromSource copy(BaseElementWithTypeVariables newParent) {
+  public JavaTypeVariablesFromSource copy(CodeElementWithTypeVariables newParent) {
 
     if (newParent instanceof BaseType) {
       return new JavaTypeVariablesFromSource(this, (BaseType) newParent);

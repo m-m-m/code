@@ -8,9 +8,9 @@ import java.lang.reflect.Type;
 import java.util.function.Consumer;
 
 import net.sf.mmm.code.api.arg.CodeParameter;
+import net.sf.mmm.code.api.arg.CodeParameters;
 import net.sf.mmm.code.api.expression.CodeLiteral;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.base.member.BaseOperation;
 import net.sf.mmm.code.base.type.BaseGenericType;
 import net.sf.mmm.code.base.type.BaseType;
@@ -21,7 +21,7 @@ import net.sf.mmm.code.base.type.BaseType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseParameter extends BaseOperationArg implements CodeParameter, CodeNodeItemWithGenericParent<BaseParameters, BaseParameter> {
+public class BaseParameter extends BaseOperationArg implements CodeParameter {
 
   private final BaseParameters parent;
 
@@ -191,9 +191,9 @@ public class BaseParameter extends BaseOperationArg implements CodeParameter, Co
   }
 
   @Override
-  public BaseParameter copy(BaseParameters newParent) {
+  public BaseParameter copy(CodeParameters<?> newParent) {
 
-    return new BaseParameter(this, newParent);
+    return new BaseParameter(this, (BaseParameters) newParent);
   }
 
   @Override

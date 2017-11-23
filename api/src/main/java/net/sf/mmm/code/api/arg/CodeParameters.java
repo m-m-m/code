@@ -4,6 +4,7 @@ package net.sf.mmm.code.api.arg;
 
 import java.util.List;
 
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.merge.CodeSimpleMergeableItem;
 import net.sf.mmm.code.api.node.CodeNodeItemContainer;
@@ -21,8 +22,8 @@ import net.sf.mmm.code.api.type.CodeType;
  * @param <P> the type of the contained {@link CodeParameter}s.
  * @since 1.0.0
  */
-public abstract interface CodeParameters<P extends CodeParameter>
-    extends CodeOperationArgs<P>, CodeNodeItemContainerFlatWithName<P>, CodeSimpleMergeableItem<CodeParameters<?>> {
+public abstract interface CodeParameters<P extends CodeParameter> extends CodeOperationArgs<P>, CodeNodeItemContainerFlatWithName<P>,
+    CodeSimpleMergeableItem<CodeParameters<?>>, CodeNodeItemCopyable<CodeOperation, CodeParameters<P>> {
 
   /**
    * @param parameterTypes the {@link CodeType}s to use as parameters.
@@ -67,8 +68,5 @@ public abstract interface CodeParameters<P extends CodeParameter>
     }
     return true;
   }
-
-  @Override
-  CodeParameters<P> copy();
 
 }

@@ -5,10 +5,10 @@ package net.sf.mmm.code.base.block;
 import java.io.IOException;
 import java.util.List;
 
+import net.sf.mmm.code.api.block.CodeBlock;
 import net.sf.mmm.code.api.block.CodeBlockDoWhile;
 import net.sf.mmm.code.api.block.CodeBlockWhileDo;
 import net.sf.mmm.code.api.expression.CodeCondition;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.statement.CodeStatement;
 
 /**
@@ -17,7 +17,7 @@ import net.sf.mmm.code.api.statement.CodeStatement;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseBlockWhileDo extends BaseBlockStatementWithCondition implements CodeBlockWhileDo, CodeNodeItemWithGenericParent<BaseBlock, BaseBlockWhileDo> {
+public class BaseBlockWhileDo extends BaseBlockStatementWithCondition implements CodeBlockWhileDo {
 
   /**
    * The constructor.
@@ -61,9 +61,9 @@ public class BaseBlockWhileDo extends BaseBlockStatementWithCondition implements
   }
 
   @Override
-  public BaseBlockWhileDo copy(BaseBlock newParent) {
+  public BaseBlockWhileDo copy(CodeBlock newParent) {
 
-    return new BaseBlockWhileDo(this, newParent);
+    return new BaseBlockWhileDo(this, (BaseBlock) newParent);
   }
 
   @Override

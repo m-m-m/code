@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 import net.sf.mmm.code.api.comment.CodeComment;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.base.annoation.BaseAnnotations;
@@ -21,7 +21,7 @@ import net.sf.mmm.code.base.element.BaseElementWithTypeVariables;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseTypeProxy extends BaseGenericTypeProxy implements CodeNodeItemWithGenericParent<BaseElementImpl, BaseTypeProxy> {
+public class BaseTypeProxy extends BaseGenericTypeProxy implements CodeNodeItemCopyable<BaseElementImpl, BaseTypeProxy> {
 
   private final BaseElementImpl parent;
 

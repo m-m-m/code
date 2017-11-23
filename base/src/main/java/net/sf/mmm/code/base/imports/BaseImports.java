@@ -6,11 +6,11 @@ import java.io.IOException;
 import java.util.List;
 import java.util.TreeSet;
 
+import net.sf.mmm.code.api.CodeFile;
 import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.imports.CodeImport;
 import net.sf.mmm.code.api.imports.CodeImports;
 import net.sf.mmm.code.api.language.CodeLanguage;
-import net.sf.mmm.code.api.node.CodeNodeItemWithGenericParent;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.BaseFile;
 import net.sf.mmm.code.base.node.BaseNodeItemContainerFlat;
@@ -21,8 +21,7 @@ import net.sf.mmm.code.base.node.BaseNodeItemContainerFlat;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseImports extends BaseNodeItemContainerFlat<BaseImport>
-    implements CodeImports<BaseImport>, CodeNodeItemWithGenericParent<BaseFile, BaseImports> {
+public class BaseImports extends BaseNodeItemContainerFlat<BaseImport> implements CodeImports<BaseImport> {
 
   private static final String DUMMY_PACKAGE_PREFIX = ".";
 
@@ -100,9 +99,9 @@ public class BaseImports extends BaseNodeItemContainerFlat<BaseImport>
   }
 
   @Override
-  public BaseImports copy(BaseFile newParent) {
+  public BaseImports copy(CodeFile newParent) {
 
-    return new BaseImports(this, newParent);
+    return new BaseImports(this, (BaseFile) newParent);
   }
 
   @Override

@@ -3,6 +3,7 @@
 package net.sf.mmm.code.api.imports;
 
 import net.sf.mmm.code.api.CodeFile;
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.node.CodeNodeItemContainerFlat;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
@@ -21,10 +22,7 @@ import net.sf.mmm.code.api.type.CodeTypeVariables;
  * @param <I> the type of the contained {@link CodeImport}s.
  * @since 1.0.0
  */
-public abstract interface CodeImports<I extends CodeImport> extends CodeNodeItemContainerFlat<I> {
-
-  @Override
-  CodeFile getParent();
+public abstract interface CodeImports<I extends CodeImport> extends CodeNodeItemContainerFlat<I>, CodeNodeItemCopyable<CodeFile, CodeImports<I>> {
 
   /**
    * @param type the {@link CodeType} to import.
@@ -32,8 +30,5 @@ public abstract interface CodeImports<I extends CodeImport> extends CodeNodeItem
    *         required.
    */
   I add(CodeType type);
-
-  @Override
-  CodeImports<I> copy();
 
 }
