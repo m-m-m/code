@@ -37,4 +37,38 @@ public interface CodeMethods<M extends CodeMethod>
    */
   M add(String name);
 
+  /**
+   * @param name the {@link CodeMethod#getName() method name}.
+   * @return the first {@link CodeMethod} with the given {@code name} that has been found or {@code null} if
+   *         no such method exists. Please note that languages such as Java can have many methods with the
+   *         same name. In such case it is unspecified which of these methods is returned. However, for
+   *         convenience this method can be handy to find getters, setters, hashCode, etc.
+   */
+  default M getFirst(String name) {
+
+    for (M method : getDeclared()) {
+      if (method.getName().equals(name)) {
+        return method;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * @param name the {@link CodeMethod#getName() method name}.
+   * @return the {@link #getFirst(String) first} {@link CodeMethod} with the given {@code name} that has been
+   *         found or a {@link #add(String) newly added one} if no such method exists. Please note that
+   *         languages such as Java can have many methods with the same name. In such case it is unspecified
+   *         which of these methods is returned.
+   */
+  default M getFirstOrCreate(String name) {
+
+    for (M method : getDeclared()) {
+      if (method.getName().equals(name)) {
+        return method;
+      }
+    }
+    return null;
+  }
+
 }

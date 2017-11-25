@@ -6,6 +6,7 @@ import java.lang.reflect.AccessibleObject;
 
 import net.sf.mmm.code.api.element.CodeElementWithModifiers;
 import net.sf.mmm.code.api.element.CodeElementWithName;
+import net.sf.mmm.code.api.item.CodeItemWithType;
 
 /**
  * {@link CodeElementWithModifiers} representing a {@link java.lang.reflect.Member} of a
@@ -14,7 +15,7 @@ import net.sf.mmm.code.api.element.CodeElementWithName;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract interface CodeMember extends CodeElementWithModifiers, CodeElementWithName {
+public abstract interface CodeMember extends CodeElementWithModifiers, CodeElementWithName, CodeItemWithType {
 
   @Override
   CodeMembers<?> getParent();

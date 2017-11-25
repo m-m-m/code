@@ -6,6 +6,7 @@ import java.lang.reflect.Constructor;
 
 import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.merge.CodeAdvancedMergeableItem;
+import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
@@ -19,6 +20,12 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @since 1.0.0
  */
 public interface CodeConstructor extends CodeOperation, CodeAdvancedMergeableItem<CodeConstructor>, CodeNodeItemCopyable<CodeConstructors<?>, CodeConstructor> {
+
+  @Override
+  default CodeGenericType getType() {
+
+    return getDeclaringType();
+  }
 
   /**
    * @deprecated the {@link #getName() name} of a {@link CodeConstructor} has to be equal to the
