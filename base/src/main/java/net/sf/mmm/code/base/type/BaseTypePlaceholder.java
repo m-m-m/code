@@ -7,6 +7,7 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeTypePlaceholder;
@@ -49,10 +50,11 @@ public abstract class BaseTypePlaceholder extends BaseGenericType implements Cod
    * The copy-constructor.
    *
    * @param template the {@link BaseTypePlaceholder} to copy.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseTypePlaceholder(BaseTypePlaceholder template) {
+  public BaseTypePlaceholder(BaseTypePlaceholder template, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
     this.bound = template.bound;
   }
 
@@ -121,8 +123,8 @@ public abstract class BaseTypePlaceholder extends BaseGenericType implements Cod
   }
 
   /**
-   * @deprecated a {@link CodeTypeVariable} can not have {@link CodeTypeVariables}. The result will always be
-   *             empty and {@link #isImmutable() immutable}.
+   * @deprecated a {@link CodeTypeVariable} can not have {@link CodeTypeVariables}. The result will always be empty and
+   *             {@link #isImmutable() immutable}.
    */
   @Override
   @Deprecated

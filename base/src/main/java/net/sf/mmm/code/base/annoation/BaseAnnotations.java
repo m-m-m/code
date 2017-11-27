@@ -13,6 +13,8 @@ import java.util.Set;
 
 import net.sf.mmm.code.api.annotation.CodeAnnotation;
 import net.sf.mmm.code.api.annotation.CodeAnnotations;
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeMethod;
@@ -35,7 +37,7 @@ public class BaseAnnotations extends BaseNodeItemContainerHierarchical<CodeAnnot
 
   private final BaseElementImpl parent;
 
-  private BaseAnnotations sourceCodeObject;
+  private CodeAnnotations sourceCodeObject;
 
   /**
    * The constructor.
@@ -53,10 +55,11 @@ public class BaseAnnotations extends BaseNodeItemContainerHierarchical<CodeAnnot
    *
    * @param template the {@link BaseAnnotations} to copy.
    * @param parent the {@link #getParent() parent}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseAnnotations(BaseAnnotations template, BaseElementImpl parent) {
+  public BaseAnnotations(BaseAnnotations template, BaseElementImpl parent, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
     this.parent = parent;
   }
 
@@ -104,7 +107,7 @@ public class BaseAnnotations extends BaseNodeItemContainerHierarchical<CodeAnnot
 
   private void doInitSourceCode() {
 
-    BaseAnnotations sourceAnnotations = getSourceCodeObject();
+    CodeAnnotations sourceAnnotations = getSourceCodeObject();
     if (sourceAnnotations == null) {
       return;
     }
@@ -194,10 +197,10 @@ public class BaseAnnotations extends BaseNodeItemContainerHierarchical<CodeAnnot
   }
 
   @Override
-  public BaseAnnotations getSourceCodeObject() {
+  public CodeAnnotations getSourceCodeObject() {
 
     if ((this.sourceCodeObject == null) && !isInitialized() && (this.parent != null)) {
-      BaseElementImpl sourceElement = this.parent.getSourceCodeObject();
+      CodeElement sourceElement = this.parent.getSourceCodeObject();
       if (sourceElement != null) {
         this.sourceCodeObject = sourceElement.getAnnotations();
       }
@@ -232,7 +235,13 @@ public class BaseAnnotations extends BaseNodeItemContainerHierarchical<CodeAnnot
   @Override
   public BaseAnnotations copy(CodeElement newParent) {
 
-    return new BaseAnnotations(this, (BaseElementImpl) newParent);
+    return copy(newParent, CodeCopyMapperNone.INSTANCE);
+  }
+
+  @Override
+  public BaseAnnotations copy(CodeElement newParent, CodeCopyMapper mapper) {
+
+    return new BaseAnnotations(this, (BaseElementImpl) newParent, mapper);
   }
 
   @Override

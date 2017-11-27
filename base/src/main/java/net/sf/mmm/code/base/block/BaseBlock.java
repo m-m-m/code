@@ -8,11 +8,12 @@ import java.util.Collections;
 import java.util.List;
 
 import net.sf.mmm.code.api.block.CodeBlock;
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.expression.CodeVariable;
 import net.sf.mmm.code.api.item.CodeItem;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.statement.CodeReturnStatement;
 import net.sf.mmm.code.api.statement.CodeStatement;
-import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.base.node.BaseNodeItemImpl;
 
 /**
@@ -50,10 +51,11 @@ public abstract class BaseBlock extends BaseNodeItemImpl implements CodeBlock {
    * The copy-constructor.
    *
    * @param template the {@link BaseBlock} to copy.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseBlock(BaseBlock template) {
+  public BaseBlock(BaseBlock template, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
   }
 
   @Override
@@ -134,13 +136,12 @@ public abstract class BaseBlock extends BaseNodeItemImpl implements CodeBlock {
   /**
    * Writes a prefix e.g. for loops.
    *
-   * @param sink the {@link Appendable} where to {@link Appendable#append(CharSequence) append} the code from
-   *        this {@link CodeItem}.
+   * @param sink the {@link Appendable} where to {@link Appendable#append(CharSequence) append} the code from this
+   *        {@link CodeItem}.
    * @param newline the newline {@link String}.
-   * @param defaultIndent the {@link String} used for indentation (e.g. a number of spaces to insert per
-   *        indent level).
-   * @param currentIndent the current indent (number of spaces). Initially the empty string ({@code ""}).
-   *        Before a recursion the {@code indent} will be appended.
+   * @param defaultIndent the {@link String} used for indentation (e.g. a number of spaces to insert per indent level).
+   * @param currentIndent the current indent (number of spaces). Initially the empty string ({@code ""}). Before a
+   *        recursion the {@code indent} will be appended.
    * @throws IOException if thrown by {@link Appendable}.
    */
   protected void writePrefix(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {
@@ -151,13 +152,12 @@ public abstract class BaseBlock extends BaseNodeItemImpl implements CodeBlock {
   /**
    * Writes a suffix e.g. for do-while loops.
    *
-   * @param sink the {@link Appendable} where to {@link Appendable#append(CharSequence) append} the code from
-   *        this {@link CodeItem}.
+   * @param sink the {@link Appendable} where to {@link Appendable#append(CharSequence) append} the code from this
+   *        {@link CodeItem}.
    * @param newline the newline {@link String}.
-   * @param defaultIndent the {@link String} used for indentation (e.g. a number of spaces to insert per
-   *        indent level).
-   * @param currentIndent the current indent (number of spaces). Initially the empty string ({@code ""}).
-   *        Before a recursion the {@code indent} will be appended.
+   * @param defaultIndent the {@link String} used for indentation (e.g. a number of spaces to insert per indent level).
+   * @param currentIndent the current indent (number of spaces). Initially the empty string ({@code ""}). Before a
+   *        recursion the {@code indent} will be appended.
    * @throws IOException if thrown by {@link Appendable}.
    */
   protected void writeSuffix(Appendable sink, String newline, String defaultIndent, String currentIndent) throws IOException {

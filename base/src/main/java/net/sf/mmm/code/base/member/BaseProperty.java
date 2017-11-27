@@ -8,6 +8,8 @@ import java.lang.reflect.AccessibleObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.member.CodeMethod;
@@ -55,10 +57,11 @@ public class BaseProperty extends BaseMember implements CodeProperty {
    *
    * @param template the {@link BaseProperty} to copy.
    * @param parent the {@link #getParent() parent}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseProperty(BaseProperty template, BaseProperties parent) {
+  public BaseProperty(BaseProperty template, BaseProperties parent, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
     this.parent = parent;
   }
 
@@ -144,8 +147,8 @@ public class BaseProperty extends BaseMember implements CodeProperty {
   }
 
   /**
-   * @deprecated a {@link BaseProperty} is a virtual object that can never have a reflective object. Use that
-   *             method on {@link #getField()}, {@link #getGetter()}, or {@link #getSetter()} instead.
+   * @deprecated a {@link BaseProperty} is a virtual object that can never have a reflective object. Use that method on
+   *             {@link #getField()}, {@link #getGetter()}, or {@link #getSetter()} instead.
    */
   @Deprecated
   @Override
@@ -155,8 +158,8 @@ public class BaseProperty extends BaseMember implements CodeProperty {
   }
 
   /**
-   * @deprecated a {@link BaseProperty} is a virtual object that can never have a source-code object. Use that
-   *             method on {@link #getField()}, {@link #getGetter()}, or {@link #getSetter()} instead.
+   * @deprecated a {@link BaseProperty} is a virtual object that can never have a source-code object. Use that method on
+   *             {@link #getField()}, {@link #getGetter()}, or {@link #getSetter()} instead.
    */
   @Deprecated
   @Override
@@ -172,7 +175,7 @@ public class BaseProperty extends BaseMember implements CodeProperty {
     if (resolvedType == this.type) {
       return this;
     }
-    BaseProperty copy = new BaseProperty(this, this.parent);
+    BaseProperty copy = copy(this.parent);
     copy.type = resolvedType;
     return copy;
   }
@@ -251,9 +254,15 @@ public class BaseProperty extends BaseMember implements CodeProperty {
   }
 
   @Override
-  public BaseProperty copy(CodeProperties<?> newParent) {
+  public BaseProperty copy(CodeProperties newParent) {
 
-    return new BaseProperty(this, (BaseProperties) newParent);
+    return copy(newParent, CodeCopyMapperNone.INSTANCE);
+  }
+
+  @Override
+  public BaseProperty copy(CodeProperties newParent, CodeCopyMapper mapper) {
+
+    return new BaseProperty(this, (BaseProperties) newParent, mapper);
   }
 
   @Override

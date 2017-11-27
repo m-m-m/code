@@ -2,6 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api;
 
+import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
 
 /**
@@ -13,8 +14,7 @@ import net.sf.mmm.code.api.type.CodeType;
 public abstract interface CodeLoader extends CodeWithContext {
 
   /**
-   * @param qualifiedName the {@link CodeType#getQualifiedName() qualified name} of the requested
-   *        {@link CodeType}.
+   * @param qualifiedName the {@link CodeType#getQualifiedName() qualified name} of the requested {@link CodeType}.
    * @return the requested {@link CodeType} or {@code null} if not found.
    */
   CodeType getType(String qualifiedName);
@@ -25,4 +25,13 @@ public abstract interface CodeLoader extends CodeWithContext {
    */
   CodeType getType(CodeName qualifiedName);
 
+  /**
+   * This method makes only sense for Java. For other {@link net.sf.mmm.code.api.language.CodeLanguage}s please ignore
+   * this method.
+   *
+   * @param clazz the {@link Class} to get as {@link CodeGenericType}.
+   * @return the existing or otherwise newly created {@link CodeGenericType}. Typically a {@link CodeType} but may also
+   *         be a {@link CodeType#createArray() array type} in case an {@link Class#isArray() array} was given.
+   */
+  CodeGenericType getType(Class<?> clazz);
 }

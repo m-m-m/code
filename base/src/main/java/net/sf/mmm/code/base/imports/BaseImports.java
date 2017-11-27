@@ -8,6 +8,8 @@ import java.util.TreeSet;
 
 import net.sf.mmm.code.api.CodeFile;
 import net.sf.mmm.code.api.CodePackage;
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.imports.CodeImport;
 import net.sf.mmm.code.api.imports.CodeImports;
 import net.sf.mmm.code.api.language.CodeLanguage;
@@ -21,7 +23,7 @@ import net.sf.mmm.code.base.node.BaseNodeItemContainerFlat;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseImports extends BaseNodeItemContainerFlat<BaseImport> implements CodeImports<BaseImport> {
+public class BaseImports extends BaseNodeItemContainerFlat<CodeImport> implements CodeImports {
 
   private static final String DUMMY_PACKAGE_PREFIX = ".";
 
@@ -43,10 +45,11 @@ public class BaseImports extends BaseNodeItemContainerFlat<BaseImport> implement
    *
    * @param template the {@link BaseImports} to copy.
    * @param parent the {@link #getParent() parent}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseImports(BaseImports template, BaseFile parent) {
+  public BaseImports(BaseImports template, BaseFile parent, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
     this.parent = parent;
   }
 
@@ -57,7 +60,7 @@ public class BaseImports extends BaseNodeItemContainerFlat<BaseImport> implement
   }
 
   @Override
-  public BaseImport add(CodeType type) {
+  public CodeImport add(CodeType type) {
 
     verifyMutalbe();
     CodePackage pkg = type.getParentPackage();
@@ -69,7 +72,7 @@ public class BaseImports extends BaseNodeItemContainerFlat<BaseImport> implement
       return null;
     }
     String qname = type.getQualifiedName();
-    for (BaseImport imp : getDeclared()) {
+    for (CodeImport imp : getDeclared()) {
       if (!imp.isStatic() && imp.getReference().equals(qname)) {
         return null;
       }
@@ -84,7 +87,7 @@ public class BaseImports extends BaseNodeItemContainerFlat<BaseImport> implement
    * @param staticFlag the {@link BaseImport#isStatic() static} flag.
    * @return the {@link BaseImport} that has been created and added.
    */
-  public BaseImport add(String reference, boolean staticFlag) {
+  public CodeImport add(String reference, boolean staticFlag) {
 
     verifyMutalbe();
     BaseImport imp = new BaseImport(reference, staticFlag);
@@ -101,13 +104,19 @@ public class BaseImports extends BaseNodeItemContainerFlat<BaseImport> implement
   @Override
   public BaseImports copy(CodeFile newParent) {
 
-    return new BaseImports(this, (BaseFile) newParent);
+    return copy(newParent, CodeCopyMapperNone.INSTANCE);
+  }
+
+  @Override
+  public BaseImports copy(CodeFile newParent, CodeCopyMapper mapper) {
+
+    return new BaseImports(this, (BaseFile) newParent, mapper);
   }
 
   @Override
   protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
-    List<BaseImport> imports = getList();
+    List<CodeImport> imports = getList();
     if (imports.isEmpty()) {
       return;
     }

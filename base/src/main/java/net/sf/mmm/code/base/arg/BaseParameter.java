@@ -9,6 +9,8 @@ import java.util.function.Consumer;
 
 import net.sf.mmm.code.api.arg.CodeParameter;
 import net.sf.mmm.code.api.arg.CodeParameters;
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.expression.CodeLiteral;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.base.member.BaseOperation;
@@ -31,7 +33,7 @@ public class BaseParameter extends BaseOperationArg implements CodeParameter {
 
   private boolean varArgs;
 
-  private BaseParameter sourceCodeObject;
+  private CodeParameter sourceCodeObject;
 
   /**
    * The constructor.
@@ -62,7 +64,7 @@ public class BaseParameter extends BaseOperationArg implements CodeParameter {
    * @param name the {@link #getName() name}.
    * @param reflectiveObject the {@link #getReflectiveObject() reflective object}. May be {@code null}.
    */
-  BaseParameter(BaseParameters parent, String name, Parameter reflectiveObject, BaseParameter sourceCodeObject) {
+  BaseParameter(BaseParameters parent, String name, Parameter reflectiveObject, CodeParameter sourceCodeObject) {
 
     super();
     this.parent = parent;
@@ -75,10 +77,11 @@ public class BaseParameter extends BaseOperationArg implements CodeParameter {
    *
    * @param template the {@link BaseParameter} to copy.
    * @param parent the {@link #getParent() parent}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseParameter(BaseParameter template, BaseParameters parent) {
+  public BaseParameter(BaseParameter template, BaseParameters parent, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
     this.parent = parent;
     this.name = template.name;
     this.reflectiveObject = null;
@@ -153,12 +156,12 @@ public class BaseParameter extends BaseOperationArg implements CodeParameter {
   }
 
   @Override
-  public BaseParameter getSourceCodeObject() {
+  public CodeParameter getSourceCodeObject() {
 
     if ((this.sourceCodeObject == null) && !isInitialized()) {
-      BaseParameters sourceParameters = this.parent.getSourceCodeObject();
+      CodeParameters sourceParameters = this.parent.getSourceCodeObject();
       if (sourceParameters != null) {
-        BaseParameter sourceParameter = sourceParameters.get(this.name);
+        CodeParameter sourceParameter = sourceParameters.get(this.name);
         if ((sourceParameter != null) && getType().getQualifiedName().equals(sourceParameter.getType().getQualifiedName())) {
           this.sourceCodeObject = sourceParameter;
         }
@@ -191,9 +194,15 @@ public class BaseParameter extends BaseOperationArg implements CodeParameter {
   }
 
   @Override
-  public BaseParameter copy(CodeParameters<?> newParent) {
+  public BaseParameter copy(CodeParameters newParent) {
 
-    return new BaseParameter(this, (BaseParameters) newParent);
+    return copy(newParent, CodeCopyMapperNone.INSTANCE);
+  }
+
+  @Override
+  public BaseParameter copy(CodeParameters newParent, CodeCopyMapper mapper) {
+
+    return new BaseParameter(this, (BaseParameters) newParent, mapper);
   }
 
   @Override

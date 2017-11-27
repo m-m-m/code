@@ -5,7 +5,9 @@ package net.sf.mmm.code.base.member;
 import java.lang.reflect.AccessibleObject;
 import java.util.function.Consumer;
 
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.member.CodeMember;
+import net.sf.mmm.code.api.member.CodeMembers;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.base.element.BaseElementWithModifiers;
 import net.sf.mmm.code.base.type.BaseType;
@@ -27,7 +29,7 @@ public abstract class BaseMember extends BaseElementWithModifiers implements Cod
    * @param modifiers the {@link #getModifiers() modifiers}.
    * @param name the {@link #getName() name}.
    */
-  public BaseMember(BaseMembers<?> parent, CodeModifiers modifiers, String name) {
+  public BaseMember(CodeMembers<?> parent, CodeModifiers modifiers, String name) {
 
     super(modifiers);
     this.name = parent.getLanguage().verifyName(this, name);
@@ -37,10 +39,11 @@ public abstract class BaseMember extends BaseElementWithModifiers implements Cod
    * The copy-constructor.
    *
    * @param template the {@link BaseMember} to copy.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseMember(BaseMember template) {
+  public BaseMember(BaseMember template, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
     this.name = template.name;
   }
 
@@ -80,7 +83,7 @@ public abstract class BaseMember extends BaseElementWithModifiers implements Cod
   public abstract AccessibleObject getReflectiveObject();
 
   @Override
-  public abstract BaseMember getSourceCodeObject();
+  public abstract CodeMember getSourceCodeObject();
 
   @Override
   public abstract BaseMember copy();

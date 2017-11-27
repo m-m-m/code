@@ -7,6 +7,8 @@ import java.lang.reflect.Field;
 import java.util.Iterator;
 import java.util.function.Predicate;
 
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.member.CodeFields;
@@ -14,7 +16,6 @@ import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.merge.CodeMergeStrategyDecider;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
-import net.sf.mmm.code.base.type.BaseGenericType;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.util.collection.base.AbstractIterator;
 import net.sf.mmm.util.exception.api.DuplicateObjectException;
@@ -25,7 +26,7 @@ import net.sf.mmm.util.exception.api.DuplicateObjectException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseFields extends BaseMembers<BaseField> implements CodeFields<BaseField> {
+public class BaseFields extends BaseMembers<CodeField> implements CodeFields {
 
   /**
    * The constructor.
@@ -42,10 +43,11 @@ public class BaseFields extends BaseMembers<BaseField> implements CodeFields<Bas
    *
    * @param template the {@link BaseFields} to copy.
    * @param parent the {@link #getParent() parent}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseFields(BaseFields template, BaseType parent) {
+  public BaseFields(BaseFields template, BaseType parent, CodeCopyMapper mapper) {
 
-    super(template, parent);
+    super(template, parent, mapper);
   }
 
   @Override
@@ -62,7 +64,7 @@ public class BaseFields extends BaseMembers<BaseField> implements CodeFields<Bas
   }
 
   @Override
-  public Iterable<? extends BaseField> getAll() {
+  public Iterable<? extends CodeField> getAll() {
 
     BaseType declaringType = getDeclaringType();
     CodeGenericType superClass = declaringType.getSuperTypes().getSuperClass();
@@ -74,18 +76,18 @@ public class BaseFields extends BaseMembers<BaseField> implements CodeFields<Bas
   }
 
   @Override
-  public BaseField getDeclared(String name) {
+  public CodeField getDeclared(String name) {
 
     initialize();
     return getByName(name);
   }
 
   @Override
-  public BaseField get(String name) {
+  public CodeField get(String name) {
 
-    BaseField field = getDeclared(name);
+    CodeField field = getDeclared(name);
     if (field == null) {
-      BaseGenericType superType = getDeclaringType().getSuperTypes().getSuperClass();
+      CodeGenericType superType = getDeclaringType().getSuperTypes().getSuperClass();
       if (superType != null) {
         field = superType.asType().getFields().get(name);
       }
@@ -106,9 +108,9 @@ public class BaseFields extends BaseMembers<BaseField> implements CodeFields<Bas
   }
 
   @Override
-  public BaseFields getSourceCodeObject() {
+  public CodeFields getSourceCodeObject() {
 
-    BaseType sourceType = getParent().getSourceCodeObject();
+    CodeType sourceType = getParent().getSourceCodeObject();
     if (sourceType == null) {
       return null;
     }
@@ -116,7 +118,7 @@ public class BaseFields extends BaseMembers<BaseField> implements CodeFields<Bas
   }
 
   @Override
-  public CodeFields<BaseField> merge(CodeFields<?> o, CodeMergeStrategyDecider decider, CodeMergeStrategy parentStrategy) {
+  public CodeFields merge(CodeFields o, CodeMergeStrategyDecider decider, CodeMergeStrategy parentStrategy) {
 
     if (parentStrategy == CodeMergeStrategy.KEEP) {
       return this;
@@ -124,12 +126,12 @@ public class BaseFields extends BaseMembers<BaseField> implements CodeFields<Bas
     BaseFields other = (BaseFields) o;
     if (parentStrategy == CodeMergeStrategy.OVERRIDE) {
       clear();
-      for (BaseField otherField : other.getDeclared()) {
+      for (CodeField otherField : other.getDeclared()) {
         add(otherField.copy(this));
       }
     } else {
-      for (BaseField otherField : other.getDeclared()) {
-        BaseField myField = get(otherField.getName());
+      for (CodeField otherField : other.getDeclared()) {
+        CodeField myField = get(otherField.getName());
         if (myField == null) {
           add(otherField.copy(this));
         } else {
@@ -149,7 +151,13 @@ public class BaseFields extends BaseMembers<BaseField> implements CodeFields<Bas
   @Override
   public BaseFields copy(CodeType newParent) {
 
-    return new BaseFields(this, (BaseType) newParent);
+    return copy(newParent, CodeCopyMapperNone.INSTANCE);
+  }
+
+  @Override
+  public BaseFields copy(CodeType newParent, CodeCopyMapper mapper) {
+
+    return new BaseFields(this, (BaseType) newParent, mapper);
   }
 
   @Override
@@ -169,13 +177,13 @@ public class BaseFields extends BaseMembers<BaseField> implements CodeFields<Bas
     }
   }
 
-  private static class FieldIterator extends AbstractIterator<BaseField> {
+  private static class FieldIterator extends AbstractIterator<CodeField> {
 
-    private BaseType type;
+    private CodeType type;
 
-    private Iterator<? extends BaseField> currentIterator;
+    private Iterator<? extends CodeField> currentIterator;
 
-    private FieldIterator(BaseType type) {
+    private FieldIterator(CodeType type) {
 
       super();
       this.type = type;
@@ -184,7 +192,7 @@ public class BaseFields extends BaseMembers<BaseField> implements CodeFields<Bas
     }
 
     @Override
-    protected BaseField findNext() {
+    protected CodeField findNext() {
 
       if (this.currentIterator == null) {
         return null;
@@ -192,7 +200,7 @@ public class BaseFields extends BaseMembers<BaseField> implements CodeFields<Bas
       if (this.currentIterator.hasNext()) {
         return this.currentIterator.next();
       }
-      BaseGenericType superClass = this.type.getSuperTypes().getSuperClass();
+      CodeGenericType superClass = this.type.getSuperTypes().getSuperClass();
       if (superClass == null) {
         return null;
       }

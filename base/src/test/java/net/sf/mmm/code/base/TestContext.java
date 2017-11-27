@@ -154,7 +154,7 @@ public class TestContext extends BaseContextImplWithCache {
         parentPackage = getPackage(parentPackage.getChildren(), source.parseName(pkgName), false, factory, true, true);
       }
       BasePathElements children = parentPackage.getChildren();
-      BaseType type = children.getType(clazz.getSimpleName(), false);
+      BaseType type = (BaseType) children.getType(clazz.getSimpleName(), false);
       if (type == null) {
         BaseFile file = new BaseFile(parentPackage, clazz, null);
         addPathElementInternal(children, file);

@@ -20,12 +20,25 @@ public abstract interface CodeNodeItemCopyable<P extends CodeNode, SELF extends 
   P getParent();
 
   @Override
-  SELF copy();
+  default SELF copy() {
+
+    return copy(getParent());
+  }
 
   /**
    * @param newParent the new {@link #getParent() parent}.
    * @return a {@link #copy()} with the give {@link #getParent() parent}.
    */
-  SELF copy(P newParent);
+  default SELF copy(P newParent) {
+
+    return copy(newParent, CodeCopyMapperNone.INSTANCE);
+  }
+
+  /**
+   * @param newParent the new {@link #getParent() parent}.
+   * @param mapper the {@link CodeCopyMapper} used to map involved nodes during copy.
+   * @return a {@link #copy()} with the give {@link #getParent() parent}.
+   */
+  SELF copy(P newParent, CodeCopyMapper mapper);
 
 }

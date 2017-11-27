@@ -11,9 +11,9 @@ import net.sf.mmm.code.api.expression.CodeConstant;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.expression.CodeFieldReference;
 import net.sf.mmm.code.api.language.CodeLanguage;
+import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.base.BaseContext;
-import net.sf.mmm.code.base.member.BaseField;
 import net.sf.mmm.code.base.type.BaseType;
 
 /**
@@ -36,16 +36,15 @@ public class BaseFieldReferenceLazy extends BaseExpression implements CodeFieldR
 
   private BaseType type;
 
-  private BaseField field;
+  private CodeField field;
 
   /**
    * The constructor.
    *
    * @param context the {@link BaseContext}.
    * @param typeName the fully qualified type name.
-   * @param qualified - {@code Boolean#TRUE} for {@link BaseType#getQualifiedType() qualified},
-   *        {@code Boolean#FALSE} for unqualified, and {@code null} to omit {@link #getType() type} in
-   *        reference.
+   * @param qualified - {@code Boolean#TRUE} for {@link BaseType#getQualifiedType() qualified}, {@code Boolean#FALSE}
+   *        for unqualified, and {@code null} to omit {@link #getType() type} in reference.
    * @param fieldName the field name.
    */
   public BaseFieldReferenceLazy(BaseContext context, String typeName, Boolean qualified, String fieldName) {
@@ -99,7 +98,7 @@ public class BaseFieldReferenceLazy extends BaseExpression implements CodeFieldR
   }
 
   @Override
-  public BaseField getMember() {
+  public CodeField getMember() {
 
     if (this.field == null) {
       BaseType baseType = getTypeInternal();

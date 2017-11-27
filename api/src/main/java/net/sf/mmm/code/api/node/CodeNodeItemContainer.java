@@ -19,6 +19,9 @@ import net.sf.mmm.code.api.item.CodeItem;
  */
 public abstract interface CodeNodeItemContainer<I extends CodeItem> extends CodeNodeItem, CodeNodeContainer<I> {
 
+  @Override
+  CodeNodeItem getParent();
+
   /**
    * @param item the child item to remove.
    * @return {@code true} if successfully removed (inheritance not supported), {@code false} otherwise.

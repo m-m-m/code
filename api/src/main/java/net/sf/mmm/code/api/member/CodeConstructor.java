@@ -19,7 +19,7 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeConstructor extends CodeOperation, CodeAdvancedMergeableItem<CodeConstructor>, CodeNodeItemCopyable<CodeConstructors<?>, CodeConstructor> {
+public interface CodeConstructor extends CodeOperation, CodeAdvancedMergeableItem<CodeConstructor>, CodeNodeItemCopyable<CodeConstructors, CodeConstructor> {
 
   @Override
   default CodeGenericType getType() {
@@ -29,8 +29,7 @@ public interface CodeConstructor extends CodeOperation, CodeAdvancedMergeableIte
 
   /**
    * @deprecated the {@link #getName() name} of a {@link CodeConstructor} has to be equal to the
-   *             {@link CodeType#getSimpleName() simple name} of its {@link #getDeclaringType() declaring
-   *             type}.
+   *             {@link CodeType#getSimpleName() simple name} of its {@link #getDeclaringType() declaring type}.
    */
   @Deprecated
   @Override
@@ -42,4 +41,6 @@ public interface CodeConstructor extends CodeOperation, CodeAdvancedMergeableIte
   @Override
   Constructor<?> getReflectiveObject();
 
+  @Override
+  CodeConstructor copy();
 }

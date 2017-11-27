@@ -5,6 +5,8 @@ package net.sf.mmm.code.base.member;
 import java.io.IOException;
 import java.util.function.Consumer;
 
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeMember;
 import net.sf.mmm.code.api.member.CodeMembers;
@@ -38,10 +40,11 @@ public abstract class BaseMembers<M extends CodeMember> extends BaseNodeItemCont
    *
    * @param template the {@link BaseMembers} to copy.
    * @param parent the {@link #getParent() parent}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseMembers(BaseMembers<M> template, BaseType parent) {
+  public BaseMembers(BaseMembers<M> template, BaseType parent, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
     this.parent = parent;
   }
 
@@ -58,11 +61,13 @@ public abstract class BaseMembers<M extends CodeMember> extends BaseNodeItemCont
     this.parent.getProperties().renameMember(member, oldName, newName);
   }
 
+  @SuppressWarnings({ "rawtypes", "unchecked" })
   @Override
-  public void add(M item) {
+  public void add(M member) {
 
+    M item = member;
     if (item.getParent() != this) {
-      throw new IllegalStateException();
+      item = (M) ((CodeNodeItemCopyable) member).copy(this);
     }
     super.add(item);
   }
@@ -74,7 +79,7 @@ public abstract class BaseMembers<M extends CodeMember> extends BaseNodeItemCont
   }
 
   @Override
-  public abstract BaseMembers<M> getSourceCodeObject();
+  public abstract CodeMembers<M> getSourceCodeObject();
 
   @Override
   public abstract BaseMembers<M> copy();

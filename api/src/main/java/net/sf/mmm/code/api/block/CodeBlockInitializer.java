@@ -21,8 +21,8 @@ public interface CodeBlockInitializer extends CodeBlock, CodeNodeItemCopyable<Co
   CodeType getParent();
 
   /**
-   * @return {@code true} if this {@link CodeBlockInitializer} is {@link CodeModifiers#isStatic() static},
-   *         {@code false} otherwise.
+   * @return {@code true} if this {@link CodeBlockInitializer} is {@link CodeModifiers#isStatic() static}, {@code false}
+   *         otherwise.
    */
   boolean isStatic();
 
@@ -31,4 +31,7 @@ public interface CodeBlockInitializer extends CodeBlock, CodeNodeItemCopyable<Co
    * @throws ReadOnlyException if {@link #isImmutable() immutable}.
    */
   void setStatic(boolean isStatic);
+
+  @Override
+  CodeBlockInitializer copy();
 }

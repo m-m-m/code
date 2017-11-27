@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import net.sf.mmm.code.api.source.CodeSourceDependencies;
+import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.node.BaseNode;
 
 /**
@@ -74,6 +75,12 @@ public class BaseSourceDependencies implements CodeSourceDependencies<BaseSource
   public BaseSource getSource() {
 
     return this.parent;
+  }
+
+  @Override
+  public BaseContext getContext() {
+
+    return this.parent.getContext();
   }
 
 }

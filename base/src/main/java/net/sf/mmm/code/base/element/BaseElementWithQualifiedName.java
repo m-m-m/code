@@ -3,6 +3,7 @@
 package net.sf.mmm.code.base.element;
 
 import net.sf.mmm.code.api.CodePackage;
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.item.CodeMutableItemWithQualifiedName;
 import net.sf.mmm.code.base.BasePackage;
 
@@ -44,23 +45,12 @@ public abstract class BaseElementWithQualifiedName extends BaseElementImpl imple
    * The copy-constructor.
    *
    * @param template the {@link BaseElementWithQualifiedName} to copy.
-   */
-  public BaseElementWithQualifiedName(BaseElementWithQualifiedName template) {
-
-    super(template);
-    this.simpleName = template.simpleName;
-    this.parentPackage = template.parentPackage;
-  }
-
-  /**
-   * The copy-constructor.
-   *
-   * @param template the {@link BaseElementWithQualifiedName} to copy.
    * @param parentPackage the {@link #getParentPackage() parent package}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseElementWithQualifiedName(BaseElementWithQualifiedName template, BasePackage parentPackage) {
+  public BaseElementWithQualifiedName(BaseElementWithQualifiedName template, BasePackage parentPackage, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
     this.simpleName = template.simpleName;
     this.parentPackage = parentPackage;
   }

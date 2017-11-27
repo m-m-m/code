@@ -2,21 +2,19 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.type;
 
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
+
 /**
  * {@link CodeGenericTypeParameters} with generic bound to {@link CodeGenericType}.
  *
  * @see CodeTypeVariables
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
- * @param <P> the type of the contained type parameters.
  * @since 1.0.0
  */
-public interface CodeTypeParameters<P extends CodeGenericType> extends CodeGenericTypeParameters<P> {
+public interface CodeTypeParameters extends CodeGenericTypeParameters<CodeGenericType>, CodeNodeItemCopyable<CodeParameterizedType, CodeTypeParameters> {
 
   @Override
-  CodeParameterizedType getParent();
-
-  @Override
-  CodeTypeParameters<P> copy();
+  CodeTypeParameters copy();
 
 }

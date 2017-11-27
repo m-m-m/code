@@ -15,18 +15,9 @@ import net.sf.mmm.code.base.source.BaseSource;
 public interface BaseNode extends CodeNode {
 
   @Override
-  BaseNode getParent();
+  BaseContext getContext();
 
   @Override
-  default BaseContext getContext() {
-
-    return getParent().getContext();
-  }
-
-  @Override
-  default BaseSource getSource() {
-
-    return getParent().getSource();
-  }
+  BaseSource getSource();
 
 }

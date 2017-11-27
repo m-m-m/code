@@ -5,30 +5,24 @@ package net.sf.mmm.code.api.imports;
 import net.sf.mmm.code.api.CodeFile;
 import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.node.CodeNodeItemContainerFlat;
-import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
-import net.sf.mmm.code.api.type.CodeTypeVariables;
 
 /**
- * {@link CodeGenericType} representing a type variable. It is a variable as a placeholder for a
- * {@link CodeGenericType generic} {@link CodeType type}.
+ * {@link CodeNodeItemContainerFlat} containing the {@link CodeImport}s of a {@link CodeFile}.
  *
- * @see java.lang.reflect.TypeVariable
- * @see CodeType#getTypeParameters()
- * @see CodeGenericType#asTypeVariable()
- * @see CodeTypeVariables
+ * @see CodeFile#getImports()
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
- * @param <I> the type of the contained {@link CodeImport}s.
  * @since 1.0.0
  */
-public abstract interface CodeImports<I extends CodeImport> extends CodeNodeItemContainerFlat<I>, CodeNodeItemCopyable<CodeFile, CodeImports<I>> {
+public abstract interface CodeImports extends CodeNodeItemContainerFlat<CodeImport>, CodeNodeItemCopyable<CodeFile, CodeImports> {
 
   /**
    * @param type the {@link CodeType} to import.
-   * @return the new {@link CodeImport} that has been added or {@code null} if no (additional) import is
-   *         required.
+   * @return the new {@link CodeImport} that has been added or {@code null} if no (additional) import is required.
    */
-  I add(CodeType type);
+  CodeImport add(CodeType type);
 
+  @Override
+  CodeImports copy();
 }

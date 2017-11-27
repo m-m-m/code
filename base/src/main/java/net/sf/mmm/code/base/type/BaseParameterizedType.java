@@ -8,7 +8,8 @@ import java.lang.reflect.ParameterizedType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeGenericType;
@@ -23,7 +24,7 @@ import net.sf.mmm.code.base.member.BaseOperation;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseParameterizedType extends BaseGenericType implements CodeParameterizedType, CodeNodeItemCopyable<BaseElementImpl, BaseParameterizedType> {
+public class BaseParameterizedType extends BaseGenericType implements CodeParameterizedType {
 
   private static final Logger LOG = LoggerFactory.getLogger(BaseParameterizedType.class);
 
@@ -42,8 +43,8 @@ public class BaseParameterizedType extends BaseGenericType implements CodeParame
    *
    * @param parent the {@link #getParent() parent}.
    * @param type the {@link #getType() type} that gets parameterized. Should have the same number of
-   *        {@link BaseType#getTypeParameters() type variables} as the {@link #getTypeParameters() type
-   *        parameters of this type} when initialized.
+   *        {@link BaseType#getTypeParameters() type variables} as the {@link #getTypeParameters() type parameters of
+   *        this type} when initialized.
    */
   public BaseParameterizedType(BaseElementImpl parent, BaseType type) {
 
@@ -67,8 +68,8 @@ public class BaseParameterizedType extends BaseGenericType implements CodeParame
    * @param parent the {@link #getParent() parent}.
    * @param reflectiveObject the {@link #getReflectiveObject() reflective object}. May be {@code null}.
    * @param type the {@link #getType() type} that gets parameterized. Should have the same number of
-   *        {@link BaseType#getTypeParameters() type variables} as the {@link #getTypeParameters() type
-   *        parameters of this type} when initialized.
+   *        {@link BaseType#getTypeParameters() type variables} as the {@link #getTypeParameters() type parameters of
+   *        this type} when initialized.
    */
   public BaseParameterizedType(BaseElementImpl parent, ParameterizedType reflectiveObject, BaseType type) {
 
@@ -84,10 +85,11 @@ public class BaseParameterizedType extends BaseGenericType implements CodeParame
    *
    * @param template the {@link BaseParameterizedType} to copy.
    * @param parent the {@link #getParent() parent}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseParameterizedType(BaseParameterizedType template, BaseElementImpl parent) {
+  public BaseParameterizedType(BaseParameterizedType template, BaseElementImpl parent, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
     this.parent = parent;
     this.typeVariables = template.typeVariables.copy(this);
     this.reflectiveObject = null;
@@ -123,7 +125,7 @@ public class BaseParameterizedType extends BaseGenericType implements CodeParame
   public BaseParameterizedType getSourceCodeObject() {
 
     if ((this.sourceCodeObject == null) && !isInitialized()) {
-      BaseElementImpl sourceElement = this.parent.getSourceCodeObject();
+      CodeElement sourceElement = this.parent.getSourceCodeObject();
       if (sourceElement != null) {
         this.sourceCodeObject = null; // TODO
       }
@@ -217,9 +219,15 @@ public class BaseParameterizedType extends BaseGenericType implements CodeParame
   }
 
   @Override
-  public BaseParameterizedType copy(BaseElementImpl newParent) {
+  public BaseParameterizedType copy(CodeElement newParent) {
 
-    return new BaseParameterizedType(this, newParent);
+    return copy(newParent, CodeCopyMapperNone.INSTANCE);
+  }
+
+  @Override
+  public BaseParameterizedType copy(CodeElement newParent, CodeCopyMapper mapper) {
+
+    return new BaseParameterizedType(this, (BaseElementImpl) newParent, mapper);
   }
 
   @Override

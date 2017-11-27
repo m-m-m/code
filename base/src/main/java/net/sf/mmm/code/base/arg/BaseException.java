@@ -7,6 +7,8 @@ import java.lang.reflect.Type;
 
 import net.sf.mmm.code.api.arg.CodeException;
 import net.sf.mmm.code.api.arg.CodeExceptions;
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.base.member.BaseOperation;
 import net.sf.mmm.code.base.type.BaseType;
@@ -23,7 +25,7 @@ public class BaseException extends BaseOperationArg implements CodeException {
 
   private final AnnotatedType reflectiveObject;
 
-  private BaseException sourceCodeObject;
+  private CodeException sourceCodeObject;
 
   /**
    * The constructor.
@@ -43,10 +45,11 @@ public class BaseException extends BaseOperationArg implements CodeException {
    *
    * @param template the {@link BaseException} to copy.
    * @param parent the {@link #getParent() parent}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseException(BaseException template, BaseExceptions parent) {
+  public BaseException(BaseException template, BaseExceptions parent, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
     this.parent = parent;
     this.reflectiveObject = null;
   }
@@ -85,13 +88,13 @@ public class BaseException extends BaseOperationArg implements CodeException {
   }
 
   @Override
-  public BaseException getSourceCodeObject() {
+  public CodeException getSourceCodeObject() {
 
     if ((this.sourceCodeObject == null) && !isInitialized()) {
-      BaseExceptions sourceExceptions = this.parent.getSourceCodeObject();
+      CodeExceptions sourceExceptions = this.parent.getSourceCodeObject();
       if (sourceExceptions != null) {
         String exceptionTypeName = getType().getQualifiedName();
-        for (BaseException sourceException : sourceExceptions.getDeclared()) {
+        for (CodeException sourceException : sourceExceptions.getDeclared()) {
           if (exceptionTypeName.equals(sourceException.getType().getQualifiedName())) {
             this.sourceCodeObject = sourceException;
             break;
@@ -116,9 +119,15 @@ public class BaseException extends BaseOperationArg implements CodeException {
   }
 
   @Override
-  public BaseException copy(CodeExceptions<?> newParent) {
+  public BaseException copy(CodeExceptions newParent) {
 
-    return new BaseException(this, (BaseExceptions) newParent);
+    return copy(newParent, CodeCopyMapperNone.INSTANCE);
+  }
+
+  @Override
+  public BaseException copy(CodeExceptions newParent, CodeCopyMapper mapper) {
+
+    return new BaseException(this, (BaseExceptions) newParent, mapper);
   }
 
 }

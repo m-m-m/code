@@ -6,12 +6,14 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
+import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.member.CodeMethods;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.merge.CodeMergeStrategyDecider;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
-import net.sf.mmm.code.base.type.BaseGenericType;
 import net.sf.mmm.code.base.type.BaseType;
 
 /**
@@ -20,7 +22,7 @@ import net.sf.mmm.code.base.type.BaseType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseMethods extends BaseOperations<BaseMethod> implements CodeMethods<BaseMethod> {
+public class BaseMethods extends BaseOperations<CodeMethod> implements CodeMethods {
 
   /**
    * The constructor.
@@ -37,10 +39,11 @@ public class BaseMethods extends BaseOperations<BaseMethod> implements CodeMetho
    *
    * @param template the {@link BaseMethods} to copy.
    * @param declaringType the {@link #getDeclaringType()}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseMethods(BaseMethods template, BaseType declaringType) {
+  public BaseMethods(BaseMethods template, BaseType declaringType, CodeCopyMapper mapper) {
 
-    super(template, declaringType);
+    super(template, declaringType, mapper);
   }
 
   @Override
@@ -57,35 +60,35 @@ public class BaseMethods extends BaseOperations<BaseMethod> implements CodeMetho
   }
 
   @Override
-  public Iterable<? extends BaseMethod> getAll() {
+  public Iterable<? extends CodeMethod> getAll() {
 
-    List<BaseMethod> list = new ArrayList<>(getDeclared());
+    List<CodeMethod> list = new ArrayList<>(getDeclared());
     collectMethods(list); // TODO implement with iterator instead and avoid returning parent methods
     return list;
   }
 
-  private void collectMethods(List<BaseMethod> list) {
+  private void collectMethods(List<CodeMethod> list) {
 
-    for (BaseGenericType superType : getDeclaringType().getSuperTypes().getDeclared()) {
-      BaseMethods javaMethods = superType.asType().getMethods();
+    for (CodeGenericType superType : getDeclaringType().getSuperTypes().getDeclared()) {
+      BaseMethods javaMethods = (BaseMethods) superType.asType().getMethods();
       list.addAll(javaMethods.getDeclared());
       javaMethods.collectMethods(list);
     }
   }
 
   @Override
-  public BaseMethod get(BaseMethod method) {
+  public CodeMethod get(CodeMethod method) {
 
     String name = method.getName();
-    for (BaseMethod myMethod : getDeclared()) {
+    for (CodeMethod myMethod : getDeclared()) {
       if (myMethod.getName().equals(name)) {
         if (myMethod.getParameters().isInvokable(method.getParameters())) {
           return myMethod;
         }
       }
     }
-    for (BaseGenericType superType : getDeclaringType().getSuperTypes().getDeclared()) {
-      BaseMethod myMethod = superType.asType().getMethods().get(method);
+    for (CodeGenericType superType : getDeclaringType().getSuperTypes().getDeclared()) {
+      CodeMethod myMethod = superType.asType().getMethods().get(method);
       if (myMethod != null) {
         return myMethod;
       }
@@ -94,9 +97,9 @@ public class BaseMethods extends BaseOperations<BaseMethod> implements CodeMetho
   }
 
   @Override
-  public BaseMethod getDeclared(String name, CodeGenericType... parameterTypes) {
+  public CodeMethod getDeclared(String name, CodeGenericType... parameterTypes) {
 
-    for (BaseMethod method : getDeclared()) {
+    for (CodeMethod method : getDeclared()) {
       if (method.getName().equals(name)) {
         if (method.getParameters().isInvokable(parameterTypes)) {
           return method;
@@ -116,9 +119,9 @@ public class BaseMethods extends BaseOperations<BaseMethod> implements CodeMetho
   }
 
   @Override
-  public BaseMethods getSourceCodeObject() {
+  public CodeMethods getSourceCodeObject() {
 
-    BaseType sourceType = getParent().getSourceCodeObject();
+    CodeType sourceType = getParent().getSourceCodeObject();
     if (sourceType == null) {
       return null;
     }
@@ -126,20 +129,19 @@ public class BaseMethods extends BaseOperations<BaseMethod> implements CodeMetho
   }
 
   @Override
-  public CodeMethods<BaseMethod> merge(CodeMethods<?> o, CodeMergeStrategyDecider decider, CodeMergeStrategy parentStrategy) {
+  public CodeMethods merge(CodeMethods other, CodeMergeStrategyDecider decider, CodeMergeStrategy parentStrategy) {
 
     if (parentStrategy == CodeMergeStrategy.KEEP) {
       return this;
     }
-    BaseMethods other = (BaseMethods) o;
     if (parentStrategy == CodeMergeStrategy.OVERRIDE) {
       clear();
-      for (BaseMethod otherMethod : other.getDeclared()) {
+      for (CodeMethod otherMethod : other.getDeclared()) {
         add(otherMethod.copy(this));
       }
     } else {
-      for (BaseMethod otherMethod : other.getDeclared()) {
-        BaseMethod myMethod = get(otherMethod);
+      for (CodeMethod otherMethod : other.getDeclared()) {
+        CodeMethod myMethod = get(otherMethod);
         if (myMethod == null) {
           add(otherMethod.copy(this));
         } else {
@@ -159,7 +161,13 @@ public class BaseMethods extends BaseOperations<BaseMethod> implements CodeMetho
   @Override
   public BaseMethods copy(CodeType newParent) {
 
-    return new BaseMethods(this, (BaseType) newParent);
+    return copy(newParent, CodeCopyMapperNone.INSTANCE);
+  }
+
+  @Override
+  public BaseMethods copy(CodeType newParent, CodeCopyMapper mapper) {
+
+    return new BaseMethods(this, (BaseType) newParent, mapper);
   }
 
 }

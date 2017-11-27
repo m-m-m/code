@@ -10,6 +10,8 @@ import java.util.function.Consumer;
 
 import net.sf.mmm.code.api.arg.CodeParameter;
 import net.sf.mmm.code.api.arg.CodeParameters;
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
@@ -21,7 +23,7 @@ import net.sf.mmm.code.base.member.BaseOperation;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseParameters extends BaseOperationArgs<BaseParameter> implements CodeParameters<BaseParameter> {
+public class BaseParameters extends BaseOperationArgs<CodeParameter> implements CodeParameters {
 
   /**
    * The constructor.
@@ -38,10 +40,11 @@ public class BaseParameters extends BaseOperationArgs<BaseParameter> implements 
    *
    * @param template the {@link BaseParameters} to copy.
    * @param parent the {@link #getParent() parent}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseParameters(BaseParameters template, BaseOperation parent) {
+  public BaseParameters(BaseParameters template, BaseOperation parent, CodeCopyMapper mapper) {
 
-    super(template, parent);
+    super(template, parent, mapper);
   }
 
   @Override
@@ -49,19 +52,19 @@ public class BaseParameters extends BaseOperationArgs<BaseParameter> implements 
 
     super.doInitialize();
     Executable reflectiveObject = getParent().getReflectiveObject();
-    List<? extends BaseParameter> sourceParams = null;
+    List<? extends CodeParameter> sourceParams = null;
     int sourceParamsCount = 0;
-    BaseParameters sourceParameters = getSourceCodeObject();
+    CodeParameters sourceParameters = getSourceCodeObject();
     if (sourceParameters != null) {
       sourceParams = sourceParameters.getDeclared();
       sourceParamsCount = sourceParams.size();
     }
     if (reflectiveObject != null) {
-      List<BaseParameter> list = getList();
+      List<CodeParameter> list = getList();
       int i = 0;
       for (Parameter param : reflectiveObject.getParameters()) {
         String name = null;
-        BaseParameter baseParameter = null;
+        CodeParameter baseParameter = null;
         if ((i < sourceParamsCount) && (sourceParams != null)) {
           baseParameter = sourceParams.get(i++);
           name = baseParameter.getName();
@@ -76,14 +79,14 @@ public class BaseParameters extends BaseOperationArgs<BaseParameter> implements 
   }
 
   @Override
-  public BaseParameter getDeclared(String name) {
+  public CodeParameter getDeclared(String name) {
 
     initialize();
     return getByName(name);
   }
 
   @Override
-  public BaseParameter add(String name) {
+  public CodeParameter add(String name) {
 
     BaseParameter parameter = new BaseParameter(this, name);
     add(parameter);
@@ -91,9 +94,9 @@ public class BaseParameters extends BaseOperationArgs<BaseParameter> implements 
   }
 
   @Override
-  public BaseParameters getSourceCodeObject() {
+  public CodeParameters getSourceCodeObject() {
 
-    BaseOperation sourceOperation = getParent().getSourceCodeObject();
+    CodeOperation sourceOperation = getParent().getSourceCodeObject();
     if (sourceOperation != null) {
       return sourceOperation.getParameters();
     }
@@ -101,31 +104,31 @@ public class BaseParameters extends BaseOperationArgs<BaseParameter> implements 
   }
 
   @Override
-  protected void rename(BaseParameter child, String oldName, String newName, Consumer<String> renamer) {
+  protected void rename(CodeParameter child, String oldName, String newName, Consumer<String> renamer) {
 
     super.rename(child, oldName, newName, renamer);
   }
 
   @Override
-  public CodeParameters<BaseParameter> merge(CodeParameters<?> o, CodeMergeStrategy strategy) {
+  public CodeParameters merge(CodeParameters o, CodeMergeStrategy strategy) {
 
     if (strategy == CodeMergeStrategy.KEEP) {
       return this;
     }
     BaseParameters other = (BaseParameters) o;
-    List<? extends BaseParameter> otherParameters = other.getDeclared();
+    List<? extends CodeParameter> otherParameters = other.getDeclared();
     if (strategy == CodeMergeStrategy.OVERRIDE) {
       clear();
-      for (BaseParameter otherParameter : otherParameters) {
+      for (CodeParameter otherParameter : otherParameters) {
         add(otherParameter.copy(this));
       }
     } else {
-      List<? extends BaseParameter> myParameters = getDeclared();
+      List<? extends CodeParameter> myParameters = getDeclared();
       int i = 0;
       int len = myParameters.size();
       assert (len == otherParameters.size());
-      for (BaseParameter otherParameter : otherParameters) {
-        BaseParameter myParameter = null;
+      for (CodeParameter otherParameter : otherParameters) {
+        CodeParameter myParameter = null;
         if (i < len) {
           myParameter = myParameters.get(i++); // merging via index as by name could cause errors on mismatch
         }
@@ -148,7 +151,13 @@ public class BaseParameters extends BaseOperationArgs<BaseParameter> implements 
   @Override
   public BaseParameters copy(CodeOperation newParent) {
 
-    return new BaseParameters(this, (BaseOperation) newParent);
+    return copy(newParent, CodeCopyMapperNone.INSTANCE);
+  }
+
+  @Override
+  public BaseParameters copy(CodeOperation newParent, CodeCopyMapper mapper) {
+
+    return new BaseParameters(this, (BaseOperation) newParent, mapper);
   }
 
   @Override

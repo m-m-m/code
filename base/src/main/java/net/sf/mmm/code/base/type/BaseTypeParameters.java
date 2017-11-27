@@ -5,7 +5,10 @@ package net.sf.mmm.code.base.type;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
-import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
+import net.sf.mmm.code.api.type.CodeGenericType;
+import net.sf.mmm.code.api.type.CodeParameterizedType;
 import net.sf.mmm.code.api.type.CodeTypeParameters;
 import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.member.BaseOperation;
@@ -16,8 +19,7 @@ import net.sf.mmm.code.base.member.BaseOperation;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseTypeParameters extends BaseGenericTypeParameters<BaseGenericType>
-    implements CodeTypeParameters<BaseGenericType>, CodeNodeItemCopyable<BaseParameterizedType, BaseTypeParameters> {
+public class BaseTypeParameters extends BaseGenericTypeParameters<CodeGenericType> implements CodeTypeParameters {
 
   /** The empty and {@link #isImmutable() immutable} instance of {@link BaseTypeParameters}. */
   public static final BaseTypeParameters EMPTY = new BaseTypeParameters();
@@ -51,10 +53,11 @@ public class BaseTypeParameters extends BaseGenericTypeParameters<BaseGenericTyp
    *
    * @param template the {@link BaseTypeParameters} to copy.
    * @param parent the {@link #getParent() parent}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseTypeParameters(BaseTypeParameters template, BaseParameterizedType parent) {
+  public BaseTypeParameters(BaseTypeParameters template, BaseParameterizedType parent, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
     this.parent = parent;
   }
 
@@ -109,9 +112,15 @@ public class BaseTypeParameters extends BaseGenericTypeParameters<BaseGenericTyp
   }
 
   @Override
-  public BaseTypeParameters copy(BaseParameterizedType newParent) {
+  public BaseTypeParameters copy(CodeParameterizedType newParent) {
 
-    return new BaseTypeParameters(this, newParent);
+    return copy(newParent, CodeCopyMapperNone.INSTANCE);
+  }
+
+  @Override
+  public BaseTypeParameters copy(CodeParameterizedType newParent, CodeCopyMapper mapper) {
+
+    return new BaseTypeParameters(this, (BaseParameterizedType) newParent, mapper);
   }
 
 }

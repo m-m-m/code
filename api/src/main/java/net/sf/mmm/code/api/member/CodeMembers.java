@@ -22,4 +22,10 @@ public abstract interface CodeMembers<M extends CodeMember> extends CodeNodeItem
   @Override
   CodeMembers<M> copy();
 
+  /**
+   * @param member the member to add. If its {@link CodeMember#getParent() parent} does not point to this
+   *        {@link CodeMembers}, it will be {@link CodeMember#copy() copied}.
+   */
+  void add(M member);
+
 }

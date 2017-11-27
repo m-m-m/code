@@ -10,10 +10,10 @@ import javax.inject.Named;
 
 import org.junit.Test;
 
+import net.sf.mmm.code.api.member.CodeMethod;
+import net.sf.mmm.code.api.source.CodeSource;
 import net.sf.mmm.code.api.source.CodeSourceDescriptor;
-import net.sf.mmm.code.base.member.BaseMethod;
-import net.sf.mmm.code.base.source.BaseSource;
-import net.sf.mmm.code.base.type.BaseType;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.impl.java.source.maven.JavaSourceProviderUsingMaven;
 
 /**
@@ -40,18 +40,18 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
     // given
     JavaContext context = getContext();
     // when
-    BaseSource source = context.getSource();
+    CodeSource source = context.getSource();
     // then
     verifyDependency(source, "target/test-classes", "src/test/java", "test");
     assertThat(source.getId()).contains("/code/java/impl");
     assertThat(source.getSource()).isSameAs(source);
 
-    List<? extends BaseSource> dependencies = source.getDependencies().getDeclared();
+    List<? extends CodeSource> dependencies = source.getDependencies().getDeclared();
     assertThat(dependencies).hasSize(2);
-    BaseSource compileDependency = dependencies.get(0);
+    CodeSource compileDependency = dependencies.get(0);
     verifyDependency(compileDependency, "target/classes", "src/main/java", "compile");
     assertThat(source.getParent()).isSameAs(compileDependency);
-    BaseSource testDependency = dependencies.get(1);
+    CodeSource testDependency = dependencies.get(1);
     verifyDescriptor(testDependency.getDescriptor(), "test", "mmm-util-test");
   }
 
@@ -78,7 +78,7 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
     assertThat(descriptor.getId()).isEqualTo(expectedId);
   }
 
-  private void verifyDependency(BaseSource source, String bytePath, String sourcePath, String scope) {
+  private void verifyDependency(CodeSource source, String bytePath, String sourcePath, String scope) {
 
     assertThat(source.getByteCodeLocation().getAbsolutePath()).isEqualTo(new File(bytePath).getAbsolutePath());
     assertThat(source.getSourceCodeLocation().getAbsolutePath()).isEqualTo(new File(sourcePath).getAbsolutePath());
@@ -97,7 +97,7 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
     Class<JavaContext> clazz = JavaContext.class;
 
     // when
-    BaseType type = context.getType(clazz.getName());
+    CodeType type = context.getType(clazz.getName());
 
     // then
     verifyHeader(type.getFile());
@@ -109,8 +109,7 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
   }
 
   /**
-   * Test full integration of {@link JavaContext#getType(String)} from byte-code and source-code (from JAR
-   * files).
+   * Test full integration of {@link JavaContext#getType(String)} from byte-code and source-code (from JAR files).
    */
   @Test
   public void testTypeWithSourceFromJar() {
@@ -121,7 +120,7 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
     Class<?> clazz = Named.class;
 
     // when
-    BaseType type = context.getType(clazz.getName());
+    CodeType type = context.getType(clazz.getName());
 
     // then
     assertThat(type.getFile().getComment().getCommentLines()).containsExactly("Copyright (C) 2009 The JSR-330 Expert Group", "",
@@ -135,9 +134,9 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
         "  public class Car {", "    &#064;Inject <b>@Named(\"driver\")</b> Seat driverSeat;",
         "    &#064;Inject <b>@Named(\"passenger\")</b> Seat passengerSeat;", "    ...", "  }</pre>");
 
-    List<? extends BaseMethod> methods = type.getMethods().getDeclared();
+    List<? extends CodeMethod> methods = type.getMethods().getDeclared();
     assertThat(methods).hasSize(1);
-    BaseMethod method = methods.get(0);
+    CodeMethod method = methods.get(0);
     assertThat(method.getName()).isEqualTo("value");
     assertThat(method.getDoc().getLines()).containsExactly("The name.");
   }

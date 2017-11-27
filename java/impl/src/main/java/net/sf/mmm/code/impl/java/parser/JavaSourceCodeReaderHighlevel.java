@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.annotation.CodeAnnotation;
 import net.sf.mmm.code.api.annotation.CodeAnnotations;
+import net.sf.mmm.code.api.arg.CodeParameter;
 import net.sf.mmm.code.api.block.CodeBlockInitializer;
 import net.sf.mmm.code.api.comment.CodeComment;
 import net.sf.mmm.code.api.expression.CodeExpression;
@@ -22,7 +23,6 @@ import net.sf.mmm.code.api.type.CodeTypeCategory;
 import net.sf.mmm.code.api.type.CodeTypePlaceholder;
 import net.sf.mmm.code.base.BaseFile;
 import net.sf.mmm.code.base.arg.BaseExceptions;
-import net.sf.mmm.code.base.arg.BaseParameter;
 import net.sf.mmm.code.base.arg.BaseParameters;
 import net.sf.mmm.code.base.block.BaseBlockBody;
 import net.sf.mmm.code.base.block.BaseBlockInitializer;
@@ -151,7 +151,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     if (simpleName == null) {
       return null;
     }
-    BaseType type = this.file.getType(simpleName, false);
+    BaseType type = (BaseType) this.file.getType(simpleName, false);
     if (type == null) {
       type = new BaseType(this.file, simpleName, declaringType, null);
       this.file.getTypes().add(type);
@@ -348,7 +348,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
       if (name == null) {
         LOG.warn("Missing parameter name for operation {}", operation);
       } else {
-        BaseParameter parameter = parameters.add(name);
+        CodeParameter parameter = parameters.add(name);
         parameter.setType(argType);
       }
       todo = !(expect(')'));

@@ -16,4 +16,6 @@ import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
  */
 public interface CodeBlockDoWhile extends CodeBlockWithCondition, CodeNodeItemCopyable<CodeBlock, CodeBlockDoWhile> {
 
+  @Override
+  CodeBlockDoWhile copy();
 }

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 
 import net.sf.mmm.code.api.arg.CodeOperationArg;
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.type.CodeGenericType;
@@ -37,10 +38,11 @@ public abstract class BaseOperationArg extends BaseElementWithDeclaringTypeImpl 
    * The copy-constructor.
    *
    * @param template the {@link BaseOperationArg} to copy.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseOperationArg(BaseOperationArg template) {
+  public BaseOperationArg(BaseOperationArg template, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
     this.type = template.type;
   }
 

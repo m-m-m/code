@@ -5,6 +5,7 @@ package net.sf.mmm.code.base.element;
 import java.io.IOException;
 import java.util.Objects;
 
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.element.CodeElementWithModifiers;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
@@ -34,10 +35,11 @@ public abstract class BaseElementWithModifiers extends BaseElementWithDeclaringT
    * The copy-constructor.
    *
    * @param template the {@link BaseElementWithModifiers} to copy.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseElementWithModifiers(BaseElementWithModifiers template) {
+  public BaseElementWithModifiers(BaseElementWithModifiers template, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
     this.modifiers = template.modifiers;
   }
 

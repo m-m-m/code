@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import net.sf.mmm.code.api.comment.CodeComment;
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
@@ -42,10 +43,11 @@ public abstract class BaseElementImpl extends BaseNodeItemImpl implements BaseEl
    * The copy-constructor.
    *
    * @param template the {@link BaseElementImpl} to copy.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseElementImpl(BaseElementImpl template) {
+  public BaseElementImpl(BaseElementImpl template, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
     this.doc = template.getDoc().copy(this);
     this.comment = template.getComment();
     this.annotations = doCopy(template.getAnnotations(), this);
@@ -92,7 +94,7 @@ public abstract class BaseElementImpl extends BaseNodeItemImpl implements BaseEl
   public CodeComment getComment() {
 
     if (this.comment == null) {
-      BaseElementImpl sourceElement = getSourceCodeObject();
+      CodeElement sourceElement = getSourceCodeObject();
       if (sourceElement != null) {
         this.comment = sourceElement.getComment();
       }
@@ -119,7 +121,7 @@ public abstract class BaseElementImpl extends BaseNodeItemImpl implements BaseEl
   }
 
   @Override
-  public BaseElementImpl getSourceCodeObject() {
+  public CodeElement getSourceCodeObject() {
 
     return null;
   }

@@ -22,7 +22,7 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @since 1.0.0
  */
 public abstract interface CodeField
-    extends CodeMember, CodeMutableItemWithType, CodeVariable, CodeAdvancedMergeableItem<CodeField>, CodeNodeItemCopyable<CodeFields<?>, CodeField> {
+    extends CodeMember, CodeMutableItemWithType, CodeVariable, CodeAdvancedMergeableItem<CodeField>, CodeNodeItemCopyable<CodeFields, CodeField> {
 
   /**
    * @return the {@link CodeExpression} assigned to this field on initialization or {@code null} for none.
@@ -38,4 +38,6 @@ public abstract interface CodeField
   @Override
   Field getReflectiveObject();
 
+  @Override
+  CodeField copy();
 }

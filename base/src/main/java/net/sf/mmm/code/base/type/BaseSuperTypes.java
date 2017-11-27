@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.type.CodeGenericType;
@@ -27,7 +29,7 @@ import net.sf.mmm.util.collection.base.AbstractIterator;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseSuperTypes extends BaseNodeItemContainerHierarchical<BaseGenericType> implements CodeSuperTypes<BaseGenericType> {
+public class BaseSuperTypes extends BaseNodeItemContainerHierarchical<CodeGenericType> implements CodeSuperTypes {
 
   private static final Logger LOG = LoggerFactory.getLogger(BaseSuperTypes.class);
 
@@ -49,10 +51,11 @@ public class BaseSuperTypes extends BaseNodeItemContainerHierarchical<BaseGeneri
    *
    * @param template the {@link BaseSuperTypes} to copy.
    * @param parent the {@link #getParent() parent}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseSuperTypes(BaseSuperTypes template, BaseType parent) {
+  public BaseSuperTypes(BaseSuperTypes template, BaseType parent, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
     this.parent = parent;
   }
 
@@ -81,19 +84,13 @@ public class BaseSuperTypes extends BaseNodeItemContainerHierarchical<BaseGeneri
   }
 
   @Override
-  public Iterable<? extends BaseGenericType> getAll() {
+  public Iterable<? extends CodeGenericType> getAll() {
 
     return () -> new SuperTypeIterator(this.parent);
   }
 
   @Override
   public void add(CodeGenericType superType) {
-
-    add((BaseGenericType) superType);
-  }
-
-  @Override
-  public void add(BaseGenericType superType) {
 
     if (!(superType instanceof BaseGenericTypeProxy) && superType.asType().equals(this.parent)) {
       throw new IllegalStateException("Type " + this.parent.getQualifiedName() + " can not extend itself");
@@ -102,25 +99,25 @@ public class BaseSuperTypes extends BaseNodeItemContainerHierarchical<BaseGeneri
   }
 
   @Override
-  public BaseGenericType getSuperClass() {
+  public CodeGenericType getSuperClass() {
 
-    BaseGenericType superClass = getSuperClassAsDeclared();
+    CodeGenericType superClass = getSuperClassAsDeclared();
     if (superClass != null) {
       return superClass;
     }
     CodeType rootType = getContext().getRootType();
     if (this.parent != rootType) {
-      return (BaseType) rootType;
+      return rootType;
     }
     return null;
   }
 
-  private BaseGenericType getSuperClassAsDeclared() {
+  private CodeGenericType getSuperClassAsDeclared() {
 
     if (this.parent.isInterface() || this.parent.isAnnotation()) {
       return null;
     }
-    for (BaseGenericType type : getDeclared()) {
+    for (CodeGenericType type : getDeclared()) {
       if (type.isClass()) {
         return type;
       }
@@ -129,15 +126,15 @@ public class BaseSuperTypes extends BaseNodeItemContainerHierarchical<BaseGeneri
   }
 
   @Override
-  public List<? extends BaseGenericType> getSuperInterfaces() {
+  public List<? extends CodeGenericType> getSuperInterfaces() {
 
     return getDeclared().stream().filter(x -> x.isInterface()).collect(Collectors.toList());
   }
 
   @Override
-  public BaseSuperTypes getSourceCodeObject() {
+  public CodeSuperTypes getSourceCodeObject() {
 
-    BaseType sourceType = this.parent.getSourceCodeObject();
+    CodeType sourceType = this.parent.getSourceCodeObject();
     if (sourceType != null) {
       return sourceType.getSuperTypes();
     }
@@ -145,7 +142,7 @@ public class BaseSuperTypes extends BaseNodeItemContainerHierarchical<BaseGeneri
   }
 
   @Override
-  public CodeSuperTypes<?> merge(CodeSuperTypes<?> o, CodeMergeStrategy strategy) {
+  public CodeSuperTypes merge(CodeSuperTypes o, CodeMergeStrategy strategy) {
 
     if (strategy == CodeMergeStrategy.KEEP) {
       return this;
@@ -153,16 +150,16 @@ public class BaseSuperTypes extends BaseNodeItemContainerHierarchical<BaseGeneri
     BaseSuperTypes other = (BaseSuperTypes) o;
     if (strategy == CodeMergeStrategy.OVERRIDE) {
       clear();
-      for (BaseGenericType otherSuperType : other.getDeclared()) {
+      for (CodeGenericType otherSuperType : other.getDeclared()) {
         add(otherSuperType /* .copy(this) */);
       }
     } else {
-      Map<String, BaseGenericType> mySuperTypeMap = new HashMap<>();
-      for (BaseGenericType mySuperType : getDeclared()) {
+      Map<String, CodeGenericType> mySuperTypeMap = new HashMap<>();
+      for (CodeGenericType mySuperType : getDeclared()) {
         mySuperTypeMap.put(mySuperType.getQualifiedName(), mySuperType);
       }
-      for (BaseGenericType otherSuperType : other.getDeclared()) {
-        BaseGenericType mySuperType = mySuperTypeMap.get(otherSuperType.getQualifiedName());
+      for (CodeGenericType otherSuperType : other.getDeclared()) {
+        CodeGenericType mySuperType = mySuperTypeMap.get(otherSuperType.getQualifiedName());
         if (mySuperType == null) {
           add(otherSuperType /* .copy(this) */);
         } else {
@@ -182,7 +179,13 @@ public class BaseSuperTypes extends BaseNodeItemContainerHierarchical<BaseGeneri
   @Override
   public BaseSuperTypes copy(CodeType newParent) {
 
-    return new BaseSuperTypes(this, (BaseType) newParent);
+    return copy(newParent, CodeCopyMapperNone.INSTANCE);
+  }
+
+  @Override
+  public BaseSuperTypes copy(CodeType newParent, CodeCopyMapper mapper) {
+
+    return new BaseSuperTypes(this, (BaseType) newParent, mapper);
   }
 
   @Override
@@ -214,7 +217,7 @@ public class BaseSuperTypes extends BaseNodeItemContainerHierarchical<BaseGeneri
     }
   }
 
-  private static class SuperTypeIterator extends AbstractIterator<BaseGenericType> {
+  private static class SuperTypeIterator extends AbstractIterator<CodeGenericType> {
 
     private final InternalSuperTypeIterator root;
 
@@ -234,7 +237,7 @@ public class BaseSuperTypes extends BaseNodeItemContainerHierarchical<BaseGeneri
     }
 
     @Override
-    protected BaseGenericType findNext() {
+    protected CodeGenericType findNext() {
 
       if (this.iterator.hasNext()) {
         this.iterator = this.iterator.next();

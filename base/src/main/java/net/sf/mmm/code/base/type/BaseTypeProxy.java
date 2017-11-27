@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.Objects;
 
 import net.sf.mmm.code.api.comment.CodeComment;
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeGenericType;
@@ -14,9 +16,9 @@ import net.sf.mmm.code.base.element.BaseElementImpl;
 import net.sf.mmm.code.base.element.BaseElementWithTypeVariables;
 
 /**
- * {@link BaseGenericTypeProxy} {@link #getDelegate() delegating} to a {@link BaseType} in order to change
- * attributes. Used to represent references to {@link BaseType} in the code that are {@link #isQualified()
- * fully qualified}, have individual {@link #getComment() comments}, or {@link #getAnnotations() annotations}.
+ * {@link BaseGenericTypeProxy} {@link #getDelegate() delegating} to a {@link BaseType} in order to change attributes.
+ * Used to represent references to {@link BaseType} in the code that are {@link #isQualified() fully qualified}, have
+ * individual {@link #getComment() comments}, or {@link #getAnnotations() annotations}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
@@ -69,10 +71,11 @@ public class BaseTypeProxy extends BaseGenericTypeProxy implements CodeNodeItemC
    *
    * @param template the {@link BaseTypeProxy} to copy.
    * @param parent the {@link #getParent() parent}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseTypeProxy(BaseTypeProxy template, BaseElementImpl parent) {
+  public BaseTypeProxy(BaseTypeProxy template, BaseElementImpl parent, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
     this.parent = parent;
     this.type = template.type;
   }
@@ -172,7 +175,13 @@ public class BaseTypeProxy extends BaseGenericTypeProxy implements CodeNodeItemC
   @Override
   public BaseTypeProxy copy(BaseElementImpl newParent) {
 
-    return new BaseTypeProxy(this, newParent);
+    return copy(newParent, CodeCopyMapperNone.INSTANCE);
+  }
+
+  @Override
+  public BaseTypeProxy copy(BaseElementImpl newParent, CodeCopyMapper mapper) {
+
+    return new BaseTypeProxy(this, newParent, mapper);
   }
 
   /**

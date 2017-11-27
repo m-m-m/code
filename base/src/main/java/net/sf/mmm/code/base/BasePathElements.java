@@ -9,6 +9,8 @@ import net.sf.mmm.code.api.CodeFile;
 import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.CodePathElements;
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.node.BaseNodeItemContainerFlat;
@@ -40,10 +42,11 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
    *
    * @param template the {@link BasePathElements} to copy.
    * @param parent the {@link #getParent() parent}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BasePathElements(BasePathElements template, BasePackage parent) {
+  public BasePathElements(BasePathElements template, BasePackage parent, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
     this.parent = parent;
   }
 
@@ -134,8 +137,7 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
   }
 
   /**
-   * @param simpleName the {@link CodePackage#getSimpleName() simple name} of the requested
-   *        {@link CodePackage}.
+   * @param simpleName the {@link CodePackage#getSimpleName() simple name} of the requested {@link CodePackage}.
    * @param init - {@code true} to {@link #initialize() initialize}, {@code false} otherwise.
    * @return the {@link BasePackage} with the given {@code name} or {@code null} if not found.
    */
@@ -155,8 +157,7 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
   }
 
   /**
-   * @param path the {@link CodeName} leading to the requested child. See
-   *        {@link #getPackage(CodeName, boolean)}.
+   * @param path the {@link CodeName} leading to the requested child. See {@link #getPackage(CodeName, boolean)}.
    * @param init - {@code true} to {@link #initialize() initialize}, {@code false} otherwise.
    * @return the traversed {@link BasePackage} or {@code null} if not found.
    */
@@ -166,14 +167,13 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
   }
 
   /**
-   * @param path the {@link CodeName} leading to the requested child. See
-   *        {@link #getPackage(CodeName, boolean)}.
+   * @param path the {@link CodeName} leading to the requested child. See {@link #getPackage(CodeName, boolean)}.
    * @param init - {@code true} to {@link #initialize() initialize}, {@code false} otherwise.
    * @param factory the {@link BiFunction} used as factory to create missing packages.
-   * @param add - {@code true} to {@link #add(BasePathElement) add} new packages created by the given
-   *        {@code factory}, {@code false} otherwise.
-   * @return the traversed {@link BasePackage}. Has been created if it did not already exist and was produced
-   *         by the given {@code factory}.
+   * @param add - {@code true} to {@link #add(BasePathElement) add} new packages created by the given {@code factory},
+   *        {@code false} otherwise.
+   * @return the traversed {@link BasePackage}. Has been created if it did not already exist and was produced by the
+   *         given {@code factory}.
    */
   public BasePackage getPackage(CodeName path, boolean init, BiFunction<BasePackage, String, BasePackage> factory, boolean add) {
 
@@ -187,12 +187,12 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
    * @param path the {@link CodeName} to traverse.
    * @param init - {@code true} to {@link #initialize() initialize}, {@code false} otherwise.
    * @param factory the {@link BiFunction} used as factory to create missing packages.
-   * @param add - {@code true} to {@link #add(BasePathElement) add} new packages created by the given
-   *        {@code factory}, {@code false} otherwise.
-   * @param forceAdd - {@code true} to force adding (if {@code add} is {@code true} but {@link #isImmutable()
-   *        is immutable}), {@code false} otherwise.
-   * @return the traversed {@link BasePackage}. Has been created if it did not already exist and was produced
-   *         by the given {@code factory}.
+   * @param add - {@code true} to {@link #add(BasePathElement) add} new packages created by the given {@code factory},
+   *        {@code false} otherwise.
+   * @param forceAdd - {@code true} to force adding (if {@code add} is {@code true} but {@link #isImmutable() is
+   *        immutable}), {@code false} otherwise.
+   * @return the traversed {@link BasePackage}. Has been created if it did not already exist and was produced by the
+   *         given {@code factory}.
    */
   protected BasePackage getPackage(CodeName path, boolean init, BiFunction<BasePackage, String, BasePackage> factory, boolean add, boolean forceAdd) {
 
@@ -240,8 +240,7 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
   /**
    * @param path the {@link CodeName} leading to the requested child. See
    *        {@link #getOrCreatePackage(CodeName, boolean)}.
-   * @param add - {@code true} to {@link #add(BasePathElement) add} newly created packages, {@code false}
-   *        otherwise.
+   * @param add - {@code true} to {@link #add(BasePathElement) add} newly created packages, {@code false} otherwise.
    * @param init - {@code true} to {@link #initialize() initialize}, {@code false} otherwise.
    * @return the traversed {@link BasePackage}. Has been created if it did not already exist.
    */
@@ -253,11 +252,10 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
   /**
    * @param path the {@link CodeName} leading to the requested child. See
    *        {@link #getOrCreatePackage(CodeName, boolean)}.
-   * @param add - {@code true} to {@link #add(BasePathElement) add} newly created packages, {@code false}
-   *        otherwise.
+   * @param add - {@code true} to {@link #add(BasePathElement) add} newly created packages, {@code false} otherwise.
    * @param init - {@code true} to {@link #initialize() initialize}, {@code false} otherwise.
-   * @param forceAdd - {@code true} to force adding (if {@code add} is {@code true} but {@link #isImmutable()
-   *        is immutable}), {@code false} otherwise.
+   * @param forceAdd - {@code true} to force adding (if {@code add} is {@code true} but {@link #isImmutable() is
+   *        immutable}), {@code false} otherwise.
    * @return the traversed {@link BasePackage}. Has been created if it did not already exist.
    */
   protected BasePackage getOrCreatePackage(CodeName path, boolean add, boolean init, boolean forceAdd) {
@@ -278,12 +276,10 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
   }
 
   /**
-   * @param path the {@link CodeName} leading to the requested child. See
-   *        {@link #getOrCreateFile(CodeName, boolean)}.
+   * @param path the {@link CodeName} leading to the requested child. See {@link #getOrCreateFile(CodeName, boolean)}.
    * @param add - {@code true} to add a newly created {@link CodeFile}, {@code false} otherwise.
    * @param init - {@code true} to {@link #initialize() initialize}, {@code false} otherwise.
-   * @return the {@link #getFile(String) existing} or {@link #createFile(String) newly created}
-   *         {@link CodeFile}.
+   * @return the {@link #getFile(String) existing} or {@link #createFile(String) newly created} {@link CodeFile}.
    */
   public BaseFile getOrCreateFile(CodeName path, boolean add, boolean init) {
 
@@ -291,14 +287,12 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
   }
 
   /**
-   * @param path the {@link CodeName} leading to the requested child. See
-   *        {@link #getOrCreateFile(CodeName, boolean)}.
+   * @param path the {@link CodeName} leading to the requested child. See {@link #getOrCreateFile(CodeName, boolean)}.
    * @param add - {@code true} to add a newly created {@link CodeFile}, {@code false} otherwise.
    * @param init - {@code true} to {@link #initialize() initialize}, {@code false} otherwise.
-   * @param forceAdd - {@code true} to force adding (if {@code add} is {@code true} but {@link #isImmutable()
-   *        is immutable}), {@code false} otherwise.
-   * @return the {@link #getFile(String) existing} or {@link #createFile(String) newly created}
-   *         {@link CodeFile}.
+   * @param forceAdd - {@code true} to force adding (if {@code add} is {@code true} but {@link #isImmutable() is
+   *        immutable}), {@code false} otherwise.
+   * @return the {@link #getFile(String) existing} or {@link #createFile(String) newly created} {@link CodeFile}.
    */
   protected BaseFile getOrCreateFile(CodeName path, boolean add, boolean init, boolean forceAdd) {
 
@@ -337,7 +331,7 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
   }
 
   @Override
-  public BaseType getType(String simpleName) {
+  public CodeType getType(String simpleName) {
 
     return getType(simpleName, true);
   }
@@ -347,7 +341,7 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
    * @param init - {@code true} to {@link #initialize() initialize}, {@code false} otherwise.
    * @return the {@link CodeType} with the given {@code name} or {@code null} if not found.
    */
-  public BaseType getType(String simpleName, boolean init) {
+  public CodeType getType(String simpleName, boolean init) {
 
     BaseFile file = getFile(simpleName, init);
     if (file != null) {
@@ -358,7 +352,7 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
     }
     for (BasePathElement child : getList()) {
       if (child.isFile()) {
-        BaseType type = ((BaseFile) child).getType(simpleName, init);
+        CodeType type = ((BaseFile) child).getType(simpleName, init);
         if (type != null) {
           return type;
         }
@@ -382,7 +376,13 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
   @Override
   public BasePathElements copy(CodePackage newParent) {
 
-    return new BasePathElements(this, (BasePackage) newParent);
+    return copy(newParent, CodeCopyMapperNone.INSTANCE);
+  }
+
+  @Override
+  public BasePathElements copy(CodePackage newParent, CodeCopyMapper mapper) {
+
+    return new BasePathElements(this, (BasePackage) newParent, mapper);
   }
 
   @Override

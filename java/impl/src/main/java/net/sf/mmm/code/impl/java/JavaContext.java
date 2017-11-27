@@ -13,6 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.CodeName;
+import net.sf.mmm.code.api.element.CodeElementWithTypeVariables;
+import net.sf.mmm.code.api.node.CodeNode;
+import net.sf.mmm.code.api.type.CodeTypeVariable;
 import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.BaseContextImplWithCache;
 import net.sf.mmm.code.base.arg.BaseOperationArg;
@@ -99,7 +102,7 @@ public abstract class JavaContext extends BaseContextImplWithCache {
           return new BaseTypeVariable(operation.getTypeParameters(), typeVar);
         }
       }
-      BaseTypeVariable typeVariable = findTypeVariable(declaringElement, typeVar.getName());
+      BaseTypeVariable typeVariable = (BaseTypeVariable) findTypeVariable(declaringElement, typeVar.getName());
       if (typeVariable != null) {
         return typeVariable;
       }
@@ -121,16 +124,16 @@ public abstract class JavaContext extends BaseContextImplWithCache {
     }
   }
 
-  private static BaseTypeVariable findTypeVariable(BaseNode node, String name) {
+  private static CodeTypeVariable findTypeVariable(BaseNode node, String name) {
 
-    BaseElementWithTypeVariables elementWithTypeVariables = findElementWithTypeVariables(node);
+    CodeElementWithTypeVariables elementWithTypeVariables = findElementWithTypeVariables(node);
     if (elementWithTypeVariables != null) {
       return elementWithTypeVariables.getTypeParameters().get(name, true);
     }
     return null;
   }
 
-  private static BaseElementWithTypeVariables findElementWithTypeVariables(BaseNode node) {
+  private static CodeElementWithTypeVariables findElementWithTypeVariables(CodeNode node) {
 
     if (node instanceof BaseElementWithTypeVariables) {
       return (BaseElementWithTypeVariables) node;

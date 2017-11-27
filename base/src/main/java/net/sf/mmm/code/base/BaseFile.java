@@ -9,7 +9,10 @@ import java.util.function.Supplier;
 
 import net.sf.mmm.code.api.CodeFile;
 import net.sf.mmm.code.api.CodePackage;
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.language.CodeLanguage;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.imports.BaseImports;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.util.exception.api.ObjectMismatchException;
@@ -48,8 +51,7 @@ public final class BaseFile extends BasePathElement implements CodeFile {
    *
    * @param parentPackage the {@link #getParentPackage() parent package}.
    * @param reflectiveObject the {@link #getReflectiveObject() reflective object}. May be {@code null}.
-   * @param sourceSupplier the {@link Supplier} of the lazy-loaded {@link #getSourceCodeObject() source code
-   *        object}.
+   * @param sourceSupplier the {@link Supplier} of the lazy-loaded {@link #getSourceCodeObject() source code object}.
    */
   public BaseFile(BasePackage parentPackage, Class<?> reflectiveObject, Supplier<BaseFile> sourceSupplier) {
 
@@ -89,13 +91,14 @@ public final class BaseFile extends BasePathElement implements CodeFile {
    *
    * @param template the {@link BaseFile} to copy.
    * @param parentPackage the {@link #getParentPackage() parent package}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseFile(BaseFile template, BasePackage parentPackage) {
+  public BaseFile(BaseFile template, BasePackage parentPackage, CodeCopyMapper mapper) {
 
-    super(template, parentPackage);
+    super(template, parentPackage, mapper);
     this.imports = template.imports.copy(this);
 
-    this.types = doCopy(template.types, this);
+    this.types = doCopyList(template.types, this, mapper);
     this.reflectioveObject = null;
   }
 
@@ -142,7 +145,7 @@ public final class BaseFile extends BasePathElement implements CodeFile {
    *        {@link BaseType#getNestedTypes() recursively} contained in this {@link BaseFile}.
    * @return the requested {@link BaseType} or {@code null} if not found.
    */
-  public BaseType getType(String simpleName) {
+  public CodeType getType(String simpleName) {
 
     return getType(simpleName, true);
   }
@@ -154,13 +157,13 @@ public final class BaseFile extends BasePathElement implements CodeFile {
    *        {@code false} otherwise (to avoid initialization e.g. for internal calls during initialization).
    * @return the requested {@link BaseType} or {@code null} if not found.
    */
-  public BaseType getType(String simpleName, boolean init) {
+  public CodeType getType(String simpleName, boolean init) {
 
     for (BaseType type : getTypes(init)) {
       if (type.getSimpleName().equals(simpleName)) {
         return type;
       }
-      BaseType nestedType = getContainerItem(type.getNestedTypes(), simpleName, init);
+      CodeType nestedType = getContainerItem(type.getNestedTypes(), simpleName, init);
       if (nestedType != null) {
         return nestedType;
       }
@@ -169,19 +172,18 @@ public final class BaseFile extends BasePathElement implements CodeFile {
   }
 
   /**
-   * @param simpleName the {@link BaseType#getSimpleName() simple name} of the requested {@link BaseType} to
-   *        resolve in the context of this {@link BaseFile}.
+   * @param simpleName the {@link BaseType#getSimpleName() simple name} of the requested {@link BaseType} to resolve in
+   *        the context of this {@link BaseFile}.
    * @param init - {@code true} to ensure the child types are properly initialized and the result is adequate,
    *        {@code false} otherwise (to avoid initialization e.g. for internal calls during initialization).
    * @param resolve - {@code true} to resolve the requested {@link BaseType} in the
-   *        {@link BaseContext#getQualifiedName(String, CodeFile, boolean) context} of this file,
-   *        {@code false} otherwise (to only search for files contained in this file like
-   *        {@link #getType(String, boolean)}).
+   *        {@link BaseContext#getQualifiedName(String, CodeFile, boolean) context} of this file, {@code false}
+   *        otherwise (to only search for files contained in this file like {@link #getType(String, boolean)}).
    * @return the requested {@link BaseType} or {@code null} if not found.
    */
-  public BaseType getType(String simpleName, boolean init, boolean resolve) {
+  public CodeType getType(String simpleName, boolean init, boolean resolve) {
 
-    BaseType type = getType(simpleName, init);
+    CodeType type = getType(simpleName, init);
     if ((type == null) && resolve) {
       String qualifiedName = getContext().getQualifiedName(simpleName, this, false);
       type = getContext().getType(qualifiedName);
@@ -230,7 +232,13 @@ public final class BaseFile extends BasePathElement implements CodeFile {
   @Override
   public BaseFile copy(CodePackage newParent) {
 
-    return new BaseFile(this, (BasePackage) newParent);
+    return copy(newParent, CodeCopyMapperNone.INSTANCE);
+  }
+
+  @Override
+  public BaseFile copy(CodePackage newParent, CodeCopyMapper mapper) {
+
+    return new BaseFile(this, (BasePackage) newParent, mapper);
   }
 
   @Override

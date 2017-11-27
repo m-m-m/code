@@ -5,6 +5,8 @@ package net.sf.mmm.code.base.member;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.expression.CodeConstant;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.language.CodeLanguage;
@@ -32,7 +34,7 @@ public class BaseField extends BaseMember implements CodeField {
 
   private CodeExpression initializer;
 
-  private BaseField sourceCodeObject;
+  private CodeField sourceCodeObject;
 
   /**
    * The constructor.
@@ -75,10 +77,11 @@ public class BaseField extends BaseMember implements CodeField {
    *
    * @param template the {@link BaseField} to copy.
    * @param parent the {@link #getParent() parent}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseField(BaseField template, BaseFields parent) {
+  public BaseField(BaseField template, BaseFields parent, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
     this.parent = parent;
     this.reflectiveObject = null;
     this.type = template.type;
@@ -147,7 +150,7 @@ public class BaseField extends BaseMember implements CodeField {
   }
 
   @Override
-  public BaseField getSourceCodeObject() {
+  public CodeField getSourceCodeObject() {
 
     if (this.sourceCodeObject != null) {
       return this.sourceCodeObject;
@@ -155,7 +158,7 @@ public class BaseField extends BaseMember implements CodeField {
     if (isInitialized()) {
       return null;
     }
-    BaseFields sourceFields = this.parent.getSourceCodeObject();
+    CodeFields sourceFields = this.parent.getSourceCodeObject();
     if (sourceFields != null) {
       this.sourceCodeObject = sourceFields.getDeclared(getName());
     }
@@ -188,9 +191,15 @@ public class BaseField extends BaseMember implements CodeField {
   }
 
   @Override
-  public BaseField copy(CodeFields<?> newParent) {
+  public BaseField copy(CodeFields newParent) {
 
-    return new BaseField(this, (BaseFields) newParent);
+    return copy(newParent, CodeCopyMapperNone.INSTANCE);
+  }
+
+  @Override
+  public BaseField copy(CodeFields newParent, CodeCopyMapper mapper) {
+
+    return new BaseField(this, (BaseFields) newParent, mapper);
   }
 
   @Override

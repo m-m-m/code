@@ -5,6 +5,8 @@ package net.sf.mmm.code.base.type;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.type.CodeTypeVariable;
 import net.sf.mmm.code.api.type.CodeTypeVariables;
@@ -21,7 +23,7 @@ public class BaseTypeVariable extends BaseTypePlaceholder implements CodeTypeVar
 
   private final TypeVariable<?> reflectiveObject;
 
-  private BaseTypeVariable sourceCodeObject;
+  private CodeTypeVariable sourceCodeObject;
 
   private String name;
 
@@ -72,10 +74,11 @@ public class BaseTypeVariable extends BaseTypePlaceholder implements CodeTypeVar
    *
    * @param template the {@link BaseTypeVariable} to copy.
    * @param parent the {@link #getParent() parent}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseTypeVariable(BaseTypeVariable template, BaseTypeVariables parent) {
+  public BaseTypeVariable(BaseTypeVariable template, BaseTypeVariables parent, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
     this.parent = parent;
     this.reflectiveObject = null;
     this.name = template.name;
@@ -100,10 +103,10 @@ public class BaseTypeVariable extends BaseTypePlaceholder implements CodeTypeVar
   }
 
   @Override
-  public BaseTypeVariable getSourceCodeObject() {
+  public CodeTypeVariable getSourceCodeObject() {
 
     if ((this.sourceCodeObject == null) && !isInitialized()) {
-      BaseTypeVariables sourceTypeVariables = this.parent.getSourceCodeObject();
+      CodeTypeVariables sourceTypeVariables = this.parent.getSourceCodeObject();
       if (sourceTypeVariables != null) {
         this.sourceCodeObject = sourceTypeVariables.get(this.name);
       }
@@ -187,9 +190,15 @@ public class BaseTypeVariable extends BaseTypePlaceholder implements CodeTypeVar
   }
 
   @Override
-  public BaseTypeVariable copy(CodeTypeVariables<?> newParent) {
+  public BaseTypeVariable copy(CodeTypeVariables newParent) {
 
-    return new BaseTypeVariable(this, (BaseTypeVariables) newParent);
+    return copy(newParent, CodeCopyMapperNone.INSTANCE);
+  }
+
+  @Override
+  public BaseTypeVariable copy(CodeTypeVariables newParent, CodeCopyMapper mapper) {
+
+    return new BaseTypeVariable(this, (BaseTypeVariables) newParent, mapper);
   }
 
 }

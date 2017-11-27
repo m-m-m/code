@@ -22,4 +22,6 @@ public interface CodeBlockFor extends CodeBlockStatement, CodeNodeItemCopyable<C
    */
   CodeForExpression getExpression();
 
+  @Override
+  CodeBlockFor copy();
 }

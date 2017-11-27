@@ -138,7 +138,7 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
 
     String simpleName = clazz.getSimpleName();
     Class<?> declaringClass = clazz.getDeclaringClass();
-    BaseType type = pkg.getChildren().getType(simpleName, false);
+    BaseType type = (BaseType) pkg.getChildren().getType(simpleName, false);
     if (type != null) {
       return type;
     }
@@ -226,7 +226,7 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
     if (declaringType == null) {
       return null;
     }
-    return declaringType.getNestedTypes().get(simpleName);
+    return (BaseType) declaringType.getNestedTypes().get(simpleName);
   }
 
   @Override

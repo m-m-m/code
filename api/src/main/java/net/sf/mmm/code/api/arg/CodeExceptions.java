@@ -16,11 +16,10 @@ import net.sf.mmm.code.api.type.CodeType;
  * @see CodeException
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
- * @param <E> the type of the contained {@link CodeException}s.
  * @since 1.0.0
  */
-public abstract interface CodeExceptions<E extends CodeException>
-    extends CodeOperationArgs<E>, CodeSimpleMergeableItem<CodeExceptions<?>>, CodeNodeItemCopyable<CodeOperation, CodeExceptions<E>> {
+public abstract interface CodeExceptions
+    extends CodeOperationArgs<CodeException>, CodeSimpleMergeableItem<CodeExceptions>, CodeNodeItemCopyable<CodeOperation, CodeExceptions> {
 
   /**
    * @param type the {@link CodeType} reflection the {@link CodeType#isException() exception}.
@@ -36,8 +35,8 @@ public abstract interface CodeExceptions<E extends CodeException>
 
   /**
    * @param type the {@link CodeType} reflection the {@link CodeType#isException() exception}.
-   * @return the {@link #get(CodeGenericType) matching} {@link CodeException} or the
-   *         {@link #add(CodeGenericType) new} one that was added.
+   * @return the {@link #get(CodeGenericType) matching} {@link CodeException} or the {@link #add(CodeGenericType) new}
+   *         one that was added.
    */
   default CodeException getOrCreate(CodeGenericType type) {
 
@@ -49,6 +48,6 @@ public abstract interface CodeExceptions<E extends CodeException>
   }
 
   @Override
-  CodeExceptions<E> copy();
+  CodeExceptions copy();
 
 }

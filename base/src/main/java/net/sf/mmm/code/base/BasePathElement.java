@@ -3,6 +3,7 @@
 package net.sf.mmm.code.base;
 
 import net.sf.mmm.code.api.CodePathElement;
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.base.element.BaseElementWithQualifiedName;
 import net.sf.mmm.util.exception.api.DuplicateObjectException;
 
@@ -30,10 +31,11 @@ public abstract class BasePathElement extends BaseElementWithQualifiedName imple
    *
    * @param template the {@link BasePathElement} to copy.
    * @param parentPackage the {@link #getParentPackage() parent package}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BasePathElement(BasePathElement template, BasePackage parentPackage) {
+  public BasePathElement(BasePathElement template, BasePackage parentPackage, CodeCopyMapper mapper) {
 
-    super(template, parentPackage);
+    super(template, parentPackage, mapper);
   }
 
   @Override

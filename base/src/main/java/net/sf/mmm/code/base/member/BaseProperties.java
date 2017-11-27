@@ -5,11 +5,14 @@ package net.sf.mmm.code.base.member;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.member.CodeMember;
 import net.sf.mmm.code.api.member.CodeProperties;
+import net.sf.mmm.code.api.member.CodeProperty;
+import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
-import net.sf.mmm.code.base.type.BaseGenericType;
 import net.sf.mmm.code.base.type.BaseType;
 
 /**
@@ -18,7 +21,7 @@ import net.sf.mmm.code.base.type.BaseType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseProperties extends BaseMembers<BaseProperty> implements CodeProperties<BaseProperty> {
+public class BaseProperties extends BaseMembers<CodeProperty> implements CodeProperties {
 
   /**
    * The constructor.
@@ -35,25 +38,26 @@ public class BaseProperties extends BaseMembers<BaseProperty> implements CodePro
    *
    * @param template the {@link BaseProperties} to copy.
    * @param parent the {@link #getParent() parent}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseProperties(BaseProperties template, BaseType parent) {
+  public BaseProperties(BaseProperties template, BaseType parent, CodeCopyMapper mapper) {
 
-    super(template, parent);
+    super(template, parent, mapper);
   }
 
   @Override
-  public Iterable<? extends BaseProperty> getAll() {
+  public Iterable<? extends CodeProperty> getAll() {
 
-    Map<String, BaseProperty> map = new HashMap<>(getMap());
+    Map<String, CodeProperty> map = new HashMap<>(getMap());
     collectProperties(map);
     return map.values();
   }
 
-  private void collectProperties(Map<String, BaseProperty> map) {
+  private void collectProperties(Map<String, CodeProperty> map) {
 
-    for (BaseGenericType superType : getDeclaringType().getSuperTypes()) {
-      BaseProperties properties = superType.asType().getProperties();
-      for (BaseProperty property : properties) {
+    for (CodeGenericType superType : getDeclaringType().getSuperTypes()) {
+      BaseProperties properties = (BaseProperties) superType.asType().getProperties();
+      for (CodeProperty property : properties) {
         map.putIfAbsent(property.getName(), property.inherit(getParent()));
       }
       properties.collectProperties(map);
@@ -61,14 +65,14 @@ public class BaseProperties extends BaseMembers<BaseProperty> implements CodePro
   }
 
   @Override
-  public BaseProperty get(String name) {
+  public CodeProperty get(String name) {
 
-    BaseProperty property = getByName(name);
+    CodeProperty property = getByName(name);
     if (property != null) {
       return property;
     }
-    for (BaseGenericType superType : getDeclaringType().getSuperTypes().getDeclared()) {
-      BaseProperties javaProperties = superType.asType().getProperties();
+    for (CodeGenericType superType : getDeclaringType().getSuperTypes().getDeclared()) {
+      CodeProperties javaProperties = superType.asType().getProperties();
       property = javaProperties.get(name);
       if (property != null) {
         return property.inherit(getParent());
@@ -87,19 +91,9 @@ public class BaseProperties extends BaseMembers<BaseProperty> implements CodePro
   }
 
   @Override
-  public BaseProperty getDeclared(String name) {
+  public CodeProperty getDeclared(String name) {
 
     return getByName(name);
-  }
-
-  @Override
-  public BaseProperty getDeclaredOrCreate(String name) {
-
-    BaseProperty property = getDeclared(name);
-    if (property == null) {
-      property = add(name);
-    }
-    return property;
   }
 
   void renameMember(CodeMember member, String oldName, String newName) {
@@ -113,24 +107,24 @@ public class BaseProperties extends BaseMembers<BaseProperty> implements CodePro
 
   private void rename(CodeField field, String oldName, String newName) {
 
-    Map<String, BaseProperty> map = getMap();
-    BaseProperty property = map.get(oldName);
+    Map<String, CodeProperty> map = getMap();
+    BaseProperty property = (BaseProperty) map.get(oldName);
     if ((property != null) && property.getField() == field) {
       property.setField(null);
       if (property.isEmpty()) {
         remove(property);
       }
     }
-    property = getDeclaredOrCreate(newName);
+    property = (BaseProperty) getDeclaredOrCreate(newName);
     property.join(field);
   }
 
   private void rename(BaseMethod method, String oldName, String newName) {
 
-    Map<String, BaseProperty> map = getMap();
+    Map<String, CodeProperty> map = getMap();
     String propertyName = BaseProperty.getPropertyName(oldName);
     if (propertyName != null) {
-      BaseProperty property = map.get(propertyName);
+      BaseProperty property = (BaseProperty) map.get(propertyName);
       if (property != null) {
         if (oldName.startsWith("set")) {
           if (property.getSetter() == method) {
@@ -148,7 +142,7 @@ public class BaseProperties extends BaseMembers<BaseProperty> implements CodePro
     }
     propertyName = BaseProperty.getPropertyName(method, true);
     if (propertyName != null) {
-      BaseProperty property = getDeclaredOrCreate(propertyName);
+      BaseProperty property = (BaseProperty) getDeclaredOrCreate(propertyName);
       property.join(method);
     }
   }
@@ -172,7 +166,13 @@ public class BaseProperties extends BaseMembers<BaseProperty> implements CodePro
   @Override
   public BaseProperties copy(CodeType newParent) {
 
-    return new BaseProperties(this, (BaseType) newParent);
+    return copy(newParent, CodeCopyMapperNone.INSTANCE);
+  }
+
+  @Override
+  public BaseProperties copy(CodeType newParent, CodeCopyMapper mapper) {
+
+    return new BaseProperties(this, (BaseType) newParent, mapper);
   }
 
 }

@@ -25,4 +25,6 @@ public interface CodeBlockIf extends CodeBlockWithCondition, CodeNodeItemCopyabl
    */
   CodeBlockIf getElse();
 
+  @Override
+  CodeBlockIf copy();
 }

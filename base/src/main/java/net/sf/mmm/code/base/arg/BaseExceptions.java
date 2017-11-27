@@ -7,7 +7,10 @@ import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Executable;
 import java.util.List;
 
+import net.sf.mmm.code.api.arg.CodeException;
 import net.sf.mmm.code.api.arg.CodeExceptions;
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
@@ -20,7 +23,7 @@ import net.sf.mmm.code.base.member.BaseOperation;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseExceptions extends BaseOperationArgs<BaseException> implements CodeExceptions<BaseException> {
+public class BaseExceptions extends BaseOperationArgs<CodeException> implements CodeExceptions {
 
   /**
    * The constructor.
@@ -37,10 +40,11 @@ public class BaseExceptions extends BaseOperationArgs<BaseException> implements 
    *
    * @param template the {@link BaseExceptions} to copy.
    * @param parent the {@link #getParent() parent}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseExceptions(BaseExceptions template, BaseOperation parent) {
+  public BaseExceptions(BaseExceptions template, BaseOperation parent, CodeCopyMapper mapper) {
 
-    super(template, parent);
+    super(template, parent, mapper);
   }
 
   @Override
@@ -49,7 +53,7 @@ public class BaseExceptions extends BaseOperationArgs<BaseException> implements 
     super.doInitialize();
     Executable reflectiveObject = getParent().getReflectiveObject();
     if (reflectiveObject != null) {
-      List<BaseException> list = getList();
+      List<CodeException> list = getList();
       for (AnnotatedType exceptionType : reflectiveObject.getAnnotatedExceptionTypes()) {
         BaseException exception = new BaseException(this, exceptionType);
         list.add(exception);
@@ -58,9 +62,9 @@ public class BaseExceptions extends BaseOperationArgs<BaseException> implements 
   }
 
   @Override
-  public BaseException get(CodeGenericType type) {
+  public CodeException get(CodeGenericType type) {
 
-    for (BaseException exception : getDeclared()) {
+    for (CodeException exception : getDeclared()) {
       if (exception.getType().equals(type)) {
         return exception;
       }
@@ -69,7 +73,7 @@ public class BaseExceptions extends BaseOperationArgs<BaseException> implements 
   }
 
   @Override
-  public BaseException add(CodeGenericType type) {
+  public CodeException add(CodeGenericType type) {
 
     verifyMutalbe();
     BaseException exception = new BaseException(this, null);
@@ -79,9 +83,9 @@ public class BaseExceptions extends BaseOperationArgs<BaseException> implements 
   }
 
   @Override
-  public BaseExceptions getSourceCodeObject() {
+  public CodeExceptions getSourceCodeObject() {
 
-    BaseOperation sourceOperation = getParent().getSourceCodeObject();
+    CodeOperation sourceOperation = getParent().getSourceCodeObject();
     if (sourceOperation != null) {
       return sourceOperation.getExceptions();
     }
@@ -89,7 +93,7 @@ public class BaseExceptions extends BaseOperationArgs<BaseException> implements 
   }
 
   @Override
-  public CodeExceptions<?> merge(CodeExceptions<?> o, CodeMergeStrategy strategy) {
+  public CodeExceptions merge(CodeExceptions o, CodeMergeStrategy strategy) {
 
     if (strategy == CodeMergeStrategy.KEEP) {
       return this;
@@ -97,12 +101,12 @@ public class BaseExceptions extends BaseOperationArgs<BaseException> implements 
     BaseExceptions other = (BaseExceptions) o;
     if (strategy == CodeMergeStrategy.OVERRIDE) {
       clear();
-      for (BaseException otherException : other.getDeclared()) {
+      for (CodeException otherException : other.getDeclared()) {
         add(otherException.copy(this));
       }
     } else {
-      for (BaseException otherException : other.getDeclared()) {
-        BaseException myException = get(otherException.getType());
+      for (CodeException otherException : other.getDeclared()) {
+        CodeException myException = get(otherException.getType());
         if (myException == null) {
           add(otherException.copy(this));
         } else {
@@ -122,18 +126,24 @@ public class BaseExceptions extends BaseOperationArgs<BaseException> implements 
   @Override
   public BaseExceptions copy(CodeOperation newParent) {
 
-    return new BaseExceptions(this, (BaseOperation) newParent);
+    return copy(newParent, CodeCopyMapperNone.INSTANCE);
+  }
+
+  @Override
+  public BaseExceptions copy(CodeOperation newParent, CodeCopyMapper mapper) {
+
+    return new BaseExceptions(this, (BaseOperation) newParent, mapper);
   }
 
   @Override
   protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
-    List<BaseException> list = getList();
+    List<CodeException> list = getList();
     if (list.isEmpty()) {
       return;
     }
     String prefix = " throws ";
-    for (BaseException exception : list) {
+    for (CodeException exception : list) {
       sink.append(prefix);
       exception.write(sink, newline, null, "", language);
       prefix = ", ";

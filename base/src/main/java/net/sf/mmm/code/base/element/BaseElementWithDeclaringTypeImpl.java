@@ -2,7 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.base.element;
 
-import net.sf.mmm.code.base.type.BaseType;
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
 
 /**
  * Base implementation of {@link BaseElement}.
@@ -24,13 +24,11 @@ public abstract class BaseElementWithDeclaringTypeImpl extends BaseElementImpl i
    * The copy-constructor.
    *
    * @param template the {@link BaseElementWithDeclaringTypeImpl} to copy.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseElementWithDeclaringTypeImpl(BaseElementWithDeclaringTypeImpl template) {
+  public BaseElementWithDeclaringTypeImpl(BaseElementWithDeclaringTypeImpl template, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
   }
-
-  @Override
-  public abstract BaseType getDeclaringType();
 
 }

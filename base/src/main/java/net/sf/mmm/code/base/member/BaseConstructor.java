@@ -4,6 +4,8 @@ package net.sf.mmm.code.base.member;
 
 import java.lang.reflect.Constructor;
 
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.member.CodeConstructor;
 import net.sf.mmm.code.api.member.CodeConstructors;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
@@ -25,7 +27,7 @@ public class BaseConstructor extends BaseOperation implements CodeConstructor {
 
   private final Constructor<?> reflectiveObject;
 
-  private BaseConstructor sourceCodeObject;
+  private CodeConstructor sourceCodeObject;
 
   /**
    * The constructor.
@@ -68,10 +70,11 @@ public class BaseConstructor extends BaseOperation implements CodeConstructor {
    *
    * @param template the {@link BaseConstructor} to copy.
    * @param parent the {@link #getParent() parent}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseConstructor(BaseConstructor template, BaseConstructors parent) {
+  public BaseConstructor(BaseConstructor template, BaseConstructors parent, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
     this.parent = parent;
     this.reflectiveObject = null;
   }
@@ -89,7 +92,7 @@ public class BaseConstructor extends BaseOperation implements CodeConstructor {
   }
 
   @Override
-  public BaseConstructor getSourceCodeObject() {
+  public CodeConstructor getSourceCodeObject() {
 
     if (this.sourceCodeObject != null) {
       return this.sourceCodeObject;
@@ -97,7 +100,7 @@ public class BaseConstructor extends BaseOperation implements CodeConstructor {
     if (isInitialized()) {
       return null;
     }
-    BaseConstructors sourceConstructors = this.parent.getSourceCodeObject();
+    CodeConstructors sourceConstructors = this.parent.getSourceCodeObject();
     if (sourceConstructors != null) {
       this.sourceCodeObject = sourceConstructors.get(this);
     }
@@ -131,9 +134,15 @@ public class BaseConstructor extends BaseOperation implements CodeConstructor {
   }
 
   @Override
-  public BaseConstructor copy(CodeConstructors<?> newParent) {
+  public BaseConstructor copy(CodeConstructors newParent) {
 
-    return new BaseConstructor(this, (BaseConstructors) newParent);
+    return copy(newParent, CodeCopyMapperNone.INSTANCE);
+  }
+
+  @Override
+  public BaseConstructor copy(CodeConstructors newParent, CodeCopyMapper mapper) {
+
+    return new BaseConstructor(this, (BaseConstructors) newParent, mapper);
   }
 
 }

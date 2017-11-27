@@ -4,6 +4,7 @@ package net.sf.mmm.code.api.type;
 
 import java.util.List;
 
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
@@ -19,12 +20,12 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeComposedType extends CodeGenericType {
+public interface CodeComposedType extends CodeGenericType, CodeNodeItemCopyable<CodeTypePlaceholder, CodeComposedType> {
 
   /**
-   * @return the {@link List} of {@link CodeGenericType}s this virtual type is composed of. Should contain at
-   *         least two elements in order to make any sense. For Java this can only be instances of
-   *         {@link CodeType} or otherwise {@link CodeGenericType#isQualified() qualified} references.
+   * @return the {@link List} of {@link CodeGenericType}s this virtual type is composed of. Should contain at least two
+   *         elements in order to make any sense. For Java this can only be instances of {@link CodeType} or otherwise
+   *         {@link CodeGenericType#isQualified() qualified} references.
    */
   List<? extends CodeGenericType> getTypes();
 

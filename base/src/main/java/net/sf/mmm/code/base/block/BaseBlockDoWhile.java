@@ -7,6 +7,8 @@ import java.util.List;
 
 import net.sf.mmm.code.api.block.CodeBlock;
 import net.sf.mmm.code.api.block.CodeBlockDoWhile;
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.expression.CodeCondition;
 import net.sf.mmm.code.api.statement.CodeStatement;
 
@@ -47,10 +49,11 @@ public class BaseBlockDoWhile extends BaseBlockStatementWithCondition implements
    *
    * @param parent the {@link #getParent() parent}.
    * @param template the {@link BaseBlockStatementWithCondition} to copy.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseBlockDoWhile(BaseBlockStatementWithCondition template, BaseBlock parent) {
+  public BaseBlockDoWhile(BaseBlockStatementWithCondition template, BaseBlock parent, CodeCopyMapper mapper) {
 
-    super(template, parent);
+    super(template, parent, mapper);
   }
 
   @Override
@@ -62,7 +65,13 @@ public class BaseBlockDoWhile extends BaseBlockStatementWithCondition implements
   @Override
   public BaseBlockDoWhile copy(CodeBlock newParent) {
 
-    return new BaseBlockDoWhile(this, (BaseBlock) newParent);
+    return copy(newParent, CodeCopyMapperNone.INSTANCE);
+  }
+
+  @Override
+  public BaseBlockDoWhile copy(CodeBlock newParent, CodeCopyMapper mapper) {
+
+    return new BaseBlockDoWhile(this, (BaseBlock) newParent, mapper);
   }
 
   @Override

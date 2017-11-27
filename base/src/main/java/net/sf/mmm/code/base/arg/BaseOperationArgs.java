@@ -2,7 +2,9 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.base.arg;
 
+import net.sf.mmm.code.api.arg.CodeOperationArg;
 import net.sf.mmm.code.api.arg.CodeOperationArgs;
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.base.member.BaseOperation;
 import net.sf.mmm.code.base.node.BaseNodeItemContainerFlat;
 import net.sf.mmm.code.base.type.BaseType;
@@ -14,7 +16,7 @@ import net.sf.mmm.code.base.type.BaseType;
  * @param <A> type of the contained {@link BaseOperationArg}s.
  * @since 1.0.0
  */
-public abstract class BaseOperationArgs<A extends BaseOperationArg> extends BaseNodeItemContainerFlat<A> implements CodeOperationArgs<A> {
+public abstract class BaseOperationArgs<A extends CodeOperationArg> extends BaseNodeItemContainerFlat<A> implements CodeOperationArgs<A> {
 
   private final BaseOperation parent;
 
@@ -34,10 +36,11 @@ public abstract class BaseOperationArgs<A extends BaseOperationArg> extends Base
    *
    * @param template the {@link BaseOperationArgs} to copy.
    * @param parent the {@link #getParent() parent}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseOperationArgs(BaseOperationArgs<A> template, BaseOperation parent) {
+  public BaseOperationArgs(BaseOperationArgs<A> template, BaseOperation parent, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
     this.parent = parent;
   }
 
@@ -54,7 +57,7 @@ public abstract class BaseOperationArgs<A extends BaseOperationArg> extends Base
   }
 
   @Override
-  public abstract BaseOperationArgs<A> getSourceCodeObject();
+  public abstract CodeOperationArgs<A> getSourceCodeObject();
 
   @Override
   public abstract BaseOperationArgs<A> copy();

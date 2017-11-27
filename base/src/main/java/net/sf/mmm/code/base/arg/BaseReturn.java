@@ -6,6 +6,8 @@ import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Type;
 
 import net.sf.mmm.code.api.arg.CodeReturn;
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.base.member.BaseMethod;
@@ -24,7 +26,7 @@ public class BaseReturn extends BaseOperationArg implements CodeReturn {
 
   private final AnnotatedType reflectiveObject;
 
-  private BaseReturn sourceCodeObject;
+  private CodeReturn sourceCodeObject;
 
   /**
    * The constructor.
@@ -44,10 +46,11 @@ public class BaseReturn extends BaseOperationArg implements CodeReturn {
    *
    * @param template the {@link BaseReturn} to copy.
    * @param parent the {@link #getParent() parent}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseReturn(BaseReturn template, BaseMethod parent) {
+  public BaseReturn(BaseReturn template, BaseMethod parent, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
     this.parent = parent;
     this.reflectiveObject = null;
   }
@@ -92,10 +95,10 @@ public class BaseReturn extends BaseOperationArg implements CodeReturn {
   }
 
   @Override
-  public BaseReturn getSourceCodeObject() {
+  public CodeReturn getSourceCodeObject() {
 
     if (this.sourceCodeObject == null) {
-      BaseMethod sourceMethod = this.parent.getSourceCodeObject();
+      CodeMethod sourceMethod = this.parent.getSourceCodeObject();
       if (sourceMethod != null) {
         this.sourceCodeObject = sourceMethod.getReturns();
       }
@@ -119,7 +122,13 @@ public class BaseReturn extends BaseOperationArg implements CodeReturn {
   @Override
   public BaseReturn copy(CodeMethod newParent) {
 
-    return new BaseReturn(this, (BaseMethod) newParent);
+    return copy(newParent, CodeCopyMapperNone.INSTANCE);
+  }
+
+  @Override
+  public BaseReturn copy(CodeMethod newParent, CodeCopyMapper mapper) {
+
+    return new BaseReturn(this, (BaseMethod) newParent, mapper);
   }
 
 }

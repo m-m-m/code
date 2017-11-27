@@ -35,18 +35,21 @@ public abstract interface CodeFile extends CodePathElement, CodeNodeItemCopyable
   }
 
   /**
-   * @return the {@link List} with all {@link CodeType#isNested() top-level} {@link CodeType}s contained in
-   *         this file. For clean Java code this should be only one single type.
+   * @return the {@link List} with all {@link CodeType#isNested() top-level} {@link CodeType}s contained in this file.
+   *         For clean Java code this should be only one single type.
    */
   List<? extends CodeType> getTypes();
 
   /**
-   * @return the {@link CodeImports} containing the {@link CodeImport}s. May be {@link List#isEmpty() empty}
-   *         but is never {@code null}.
+   * @return the {@link CodeImports} containing the {@link CodeImport}s. May be {@link List#isEmpty() empty} but is
+   *         never {@code null}.
    */
-  CodeImports<?> getImports();
+  CodeImports getImports();
 
   @Override
   Class<?> getReflectiveObject();
+
+  @Override
+  CodeFile copy();
 
 }

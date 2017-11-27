@@ -4,6 +4,7 @@ package net.sf.mmm.code.base.type;
 
 import java.lang.reflect.Type;
 
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.type.CodeComposedType;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeTypePlaceholder;
@@ -34,10 +35,11 @@ public abstract class BaseGenericType extends BaseElementWithDeclaringTypeImpl i
    * The copy-constructor.
    *
    * @param template the {@link BaseGenericType} to copy.
+   * @param mapper the {@link CodeCopyMapper} to use.
    */
-  public BaseGenericType(BaseGenericType template) {
+  public BaseGenericType(BaseGenericType template, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
   }
 
   @Override
@@ -121,13 +123,10 @@ public abstract class BaseGenericType extends BaseElementWithDeclaringTypeImpl i
   public abstract BaseGenericType resolve(CodeGenericType context);
 
   @Override
-  public abstract BaseGenericType copy();
-
-  @Override
   public abstract Type getReflectiveObject();
 
   @Override
-  public BaseGenericType getSourceCodeObject() {
+  public CodeGenericType getSourceCodeObject() {
 
     // CodeItem sourceItem = getParent().getSourceCodeObject();
     // if (sourceItem instanceof BaseSuperTypes) {
@@ -135,5 +134,11 @@ public abstract class BaseGenericType extends BaseElementWithDeclaringTypeImpl i
     // }
     return null;
   }
+
+  @Override
+  public abstract BaseGenericType copy();
+
+  @Override
+  public abstract BaseType getDeclaringType();
 
 }

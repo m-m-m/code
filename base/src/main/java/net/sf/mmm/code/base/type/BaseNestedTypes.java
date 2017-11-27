@@ -7,11 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.merge.CodeMergeStrategyDecider;
 import net.sf.mmm.code.api.type.CodeNestedTypes;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.node.BaseNodeItemContainerHierarchicalWithName;
 
@@ -21,8 +23,7 @@ import net.sf.mmm.code.base.node.BaseNodeItemContainerHierarchicalWithName;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseNestedTypes extends BaseNodeItemContainerHierarchicalWithName<BaseType>
-    implements CodeNestedTypes<BaseType>, CodeNodeItemCopyable<BaseType, BaseNestedTypes> {
+public class BaseNestedTypes extends BaseNodeItemContainerHierarchicalWithName<CodeType> implements CodeNestedTypes {
 
   private final BaseType parent;
 
@@ -42,10 +43,11 @@ public class BaseNestedTypes extends BaseNodeItemContainerHierarchicalWithName<B
    *
    * @param template the {@link BaseNestedTypes} to copy.
    * @param parent the {@link #getParent() parent}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseNestedTypes(BaseNestedTypes template, BaseType parent) {
+  public BaseNestedTypes(BaseNestedTypes template, BaseType parent, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
     this.parent = parent;
   }
 
@@ -53,10 +55,10 @@ public class BaseNestedTypes extends BaseNodeItemContainerHierarchicalWithName<B
   protected void doInitialize() {
 
     super.doInitialize();
-    BaseNestedTypes sourceNestedTypes = getSourceCodeObject();
+    CodeNestedTypes sourceNestedTypes = getSourceCodeObject();
     if (sourceNestedTypes != null) {
       BaseContext context = getContext();
-      for (BaseType sourceNestedType : sourceNestedTypes.getDeclared()) {
+      for (CodeType sourceNestedType : sourceNestedTypes.getDeclared()) {
         context.getType(sourceNestedType.getQualifiedName());
       }
     }
@@ -69,30 +71,30 @@ public class BaseNestedTypes extends BaseNodeItemContainerHierarchicalWithName<B
   }
 
   @Override
-  public List<? extends BaseType> getAll() {
+  public List<? extends CodeType> getAll() {
 
-    List<BaseType> list = new ArrayList<>(getList());
+    List<CodeType> list = new ArrayList<>(getList());
     collectNestedTypes(list);
     return list;
   }
 
-  private void collectNestedTypes(List<BaseType> list) {
+  private void collectNestedTypes(List<CodeType> list) {
 
-    for (BaseType nested : getDeclared()) {
-      BaseNestedTypes nestedContainer = nested.getNestedTypes();
+    for (CodeType nested : getDeclared()) {
+      BaseNestedTypes nestedContainer = (BaseNestedTypes) nested.getNestedTypes();
       list.addAll(nestedContainer.getDeclared());
       nestedContainer.collectNestedTypes(list);
     }
   }
 
   @Override
-  protected BaseType get(String name, boolean init) {
+  protected CodeType get(String name, boolean init) {
 
-    BaseType nestedType = getDeclared(name, init);
+    CodeType nestedType = getDeclared(name, init);
     if (nestedType != null) {
       return nestedType;
     }
-    for (BaseType nested : getList()) {
+    for (CodeType nested : getList()) {
       nestedType = nested.getNestedTypes().get(name);
       if (nestedType != null) {
         return nestedType;
@@ -110,27 +112,27 @@ public class BaseNestedTypes extends BaseNodeItemContainerHierarchicalWithName<B
   }
 
   @Override
-  protected String getKey(BaseType item) {
+  protected String getKey(CodeType item) {
 
     return item.getSimpleName();
   }
 
   @Override
-  protected void add(BaseType item) {
+  protected void add(CodeType item) {
 
     super.add(item);
   }
 
   @Override
-  protected void rename(BaseType child, String oldName, String newName, Consumer<String> renamer) {
+  protected void rename(CodeType child, String oldName, String newName, Consumer<String> renamer) {
 
     super.rename(child, oldName, newName, renamer);
   }
 
   @Override
-  public BaseNestedTypes getSourceCodeObject() {
+  public CodeNestedTypes getSourceCodeObject() {
 
-    BaseType sourceType = this.parent.getSourceCodeObject();
+    CodeType sourceType = this.parent.getSourceCodeObject();
     if (sourceType != null) {
       return sourceType.getNestedTypes();
     }
@@ -138,7 +140,7 @@ public class BaseNestedTypes extends BaseNodeItemContainerHierarchicalWithName<B
   }
 
   @Override
-  public CodeNestedTypes<?> merge(CodeNestedTypes<?> o, CodeMergeStrategyDecider decider, CodeMergeStrategy strategy) {
+  public CodeNestedTypes merge(CodeNestedTypes o, CodeMergeStrategyDecider decider, CodeMergeStrategy strategy) {
 
     if (strategy == CodeMergeStrategy.KEEP) {
       return this;
@@ -146,13 +148,13 @@ public class BaseNestedTypes extends BaseNodeItemContainerHierarchicalWithName<B
     BaseNestedTypes other = (BaseNestedTypes) o;
     if (strategy == CodeMergeStrategy.OVERRIDE) {
       clear();
-      for (BaseType otherNestedType : other) {
+      for (CodeType otherNestedType : other) {
         add(otherNestedType.copy(this.parent));
       }
     } else {
-      for (BaseType otherNestedType : other) {
+      for (CodeType otherNestedType : other) {
         String simpleName = otherNestedType.getSimpleName();
-        BaseType myNestedType = get(simpleName);
+        CodeType myNestedType = get(simpleName);
         if (myNestedType == null) {
           add(otherNestedType.copy(this.parent));
         } else {
@@ -170,20 +172,26 @@ public class BaseNestedTypes extends BaseNodeItemContainerHierarchicalWithName<B
   }
 
   @Override
-  public BaseNestedTypes copy(BaseType newParent) {
+  public BaseNestedTypes copy(CodeType newParent) {
 
-    return new BaseNestedTypes(this, newParent);
+    return copy(newParent, CodeCopyMapperNone.INSTANCE);
+  }
+
+  @Override
+  public BaseNestedTypes copy(CodeType newParent, CodeCopyMapper mapper) {
+
+    return new BaseNestedTypes(this, (BaseType) newParent, mapper);
   }
 
   @Override
   protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
-    List<? extends BaseType> nestedTypes = getDeclared();
+    List<? extends CodeType> nestedTypes = getDeclared();
     if (nestedTypes.isEmpty()) {
       return;
     }
     String childIndent = currentIndent + defaultIndent;
-    for (BaseType nestedType : nestedTypes) {
+    for (CodeType nestedType : nestedTypes) {
       sink.append(newline);
       nestedType.write(sink, newline, defaultIndent, childIndent);
     }

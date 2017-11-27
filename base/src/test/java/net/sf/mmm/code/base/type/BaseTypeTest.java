@@ -7,13 +7,15 @@ import java.util.List;
 
 import org.junit.Test;
 
+import net.sf.mmm.code.api.arg.CodeParameter;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
+import net.sf.mmm.code.api.type.CodeGenericType;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.api.type.CodeTypeCategory;
 import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.BaseContextTest;
 import net.sf.mmm.code.base.BasePackage;
 import net.sf.mmm.code.base.BasePathElements;
-import net.sf.mmm.code.base.arg.BaseParameter;
 import net.sf.mmm.code.base.member.BaseMethod;
 
 /**
@@ -57,8 +59,8 @@ public class BaseTypeTest extends BaseContextTest {
   }
 
   /**
-   * Test of {@link BaseType} with {@link BaseType#getNestedTypes() nested types} of all
-   * {@link BaseType#getCategory() categories}.
+   * Test of {@link BaseType} with {@link BaseType#getNestedTypes() nested types} of all {@link BaseType#getCategory()
+   * categories}.
    */
   @SuppressWarnings("unchecked")
   @Test
@@ -89,7 +91,7 @@ public class BaseTypeTest extends BaseContextTest {
     typeVariable.getDoc().getLines().add("generic value");
     method.getReturns().setType(typeVariable);
     method.getReturns().getDoc().getLines().add("the converted value that rocks.");
-    BaseParameter parameter = method.getParameters().add("value");
+    CodeParameter parameter = method.getParameters().add("value");
     parameter.setType(typeVariable);
     parameter.getDoc().getLines().add("the value to convert.");
     BaseType classNested21 = interfacetypeNested2.getNestedTypes().add(simpleNameNested21);
@@ -148,10 +150,10 @@ public class BaseTypeTest extends BaseContextTest {
         "}\n");
   }
 
-  private void addDummyDoc(BaseType type) {
+  private void addDummyDoc(CodeType type) {
 
     type.getDoc().getLines().add("Doc for {@link " + type.getSimpleName() + "}.");
-    for (BaseType child : type.getNestedTypes().getDeclared()) {
+    for (CodeType child : type.getNestedTypes().getDeclared()) {
       addDummyDoc(child);
     }
   }
@@ -191,10 +193,10 @@ public class BaseTypeTest extends BaseContextTest {
     assertThat(getAllSuperTypesAsList(class2Foo)).containsExactly(class1Other, interface1Other, interface2Bar, interface4Foo, interface3Some);
   }
 
-  private List<BaseGenericType> getAllSuperTypesAsList(BaseType class2Foo) {
+  private List<CodeGenericType> getAllSuperTypesAsList(BaseType class2Foo) {
 
-    List<BaseGenericType> superTypeList = new ArrayList<>();
-    for (BaseGenericType superType : class2Foo.getSuperTypes().getAll()) {
+    List<CodeGenericType> superTypeList = new ArrayList<>();
+    for (CodeGenericType superType : class2Foo.getSuperTypes().getAll()) {
       superTypeList.add(superType);
     }
     return superTypeList;

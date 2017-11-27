@@ -10,8 +10,8 @@ import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.util.collection.base.AbstractIterator;
 
 /**
- * Internal class to iterate over all {@link net.sf.mmm.code.api.type.CodeType#getSuperTypes() super types} of
- * a {@link net.sf.mmm.code.api.type.CodeType} super types left recursively.
+ * Internal class to iterate over all {@link net.sf.mmm.code.api.type.CodeType#getSuperTypes() super types} of a
+ * {@link net.sf.mmm.code.api.type.CodeType} super types left recursively.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
@@ -22,9 +22,9 @@ public final class InternalSuperTypeIterator extends AbstractIterator<InternalSu
 
   private final InternalSuperTypeIterator parent;
 
-  private final BaseGenericType type;
+  private final CodeGenericType type;
 
-  private final Iterator<? extends BaseGenericType> superTypes;
+  private final Iterator<? extends CodeGenericType> superTypes;
 
   /**
    * The constructor.
@@ -36,7 +36,7 @@ public final class InternalSuperTypeIterator extends AbstractIterator<InternalSu
     this(type, null);
   }
 
-  private InternalSuperTypeIterator(BaseGenericType type, InternalSuperTypeIterator parent) {
+  private InternalSuperTypeIterator(CodeGenericType type, InternalSuperTypeIterator parent) {
 
     super();
     this.parent = parent;
@@ -52,7 +52,7 @@ public final class InternalSuperTypeIterator extends AbstractIterator<InternalSu
   /**
    * @return the currently iterated super-type.
    */
-  public BaseGenericType getType() {
+  public CodeGenericType getType() {
 
     return this.type;
   }
@@ -61,7 +61,7 @@ public final class InternalSuperTypeIterator extends AbstractIterator<InternalSu
   protected InternalSuperTypeIterator findNext() {
 
     while (this.superTypes.hasNext()) {
-      BaseGenericType superType = this.superTypes.next();
+      CodeGenericType superType = this.superTypes.next();
       boolean added = this.iteratedTypes.add(superType);
       if (added) {
         InternalSuperTypeIterator child = new InternalSuperTypeIterator(superType, this);

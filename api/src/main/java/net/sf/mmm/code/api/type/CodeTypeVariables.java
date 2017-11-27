@@ -20,11 +20,10 @@ import net.sf.mmm.code.api.node.CodeNodeItemContainerFlatWithName;
  * @see CodeTypeVariable
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
- * @param <V> the type of the contained {@link CodeTypeVariable}s.
  * @since 1.0.0
  */
-public interface CodeTypeVariables<V extends CodeTypeVariable> extends CodeGenericTypeParameters<V>, CodeNodeItemContainerFlatWithName<V>,
-    CodeSimpleMergeableItem<CodeTypeVariables<?>>, CodeNodeItemCopyable<CodeElementWithTypeVariables, CodeTypeVariables<?>> {
+public interface CodeTypeVariables extends CodeGenericTypeParameters<CodeTypeVariable>, CodeNodeItemContainerFlatWithName<CodeTypeVariable>,
+    CodeSimpleMergeableItem<CodeTypeVariables>, CodeNodeItemCopyable<CodeElementWithTypeVariables, CodeTypeVariables> {
 
   @Override
   CodeElementWithTypeVariables getParent();
@@ -33,15 +32,14 @@ public interface CodeTypeVariables<V extends CodeTypeVariable> extends CodeGener
    * @param name the {@link CodeTypeVariable#getName() name} of the requested {@link CodeTypeVariable}.
    * @param includeParents - {@code true} if the search should recurse into {@link #getParent() parents}
    *        ({@link CodeOperation#getDeclaringType() declaring type} of {@link CodeOperation} or
-   *        {@link CodeType#getDeclaringType() declaring types} of {@link CodeType#isNested() nested}
-   *        {@link CodeType}s) if non-{@link net.sf.mmm.code.api.modifier.CodeModifiers#isStatic() static},
-   *        {@code false} otherwise
+   *        {@link CodeType#getDeclaringType() declaring types} of {@link CodeType#isNested() nested} {@link CodeType}s)
+   *        if non-{@link net.sf.mmm.code.api.modifier.CodeModifiers#isStatic() static}, {@code false} otherwise
    * @return the requested {@link CodeTypeVariable} or {@code null} if not found.
    * @see #get(String)
    */
-  V get(String name, boolean includeParents);
+  CodeTypeVariable get(String name, boolean includeParents);
 
   @Override
-  CodeTypeVariables<V> copy();
+  CodeTypeVariables copy();
 
 }

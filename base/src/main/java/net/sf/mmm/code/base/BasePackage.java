@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.CodePackage;
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.language.CodeLanguageJava;
 import net.sf.mmm.code.api.node.CodeNode;
@@ -106,10 +108,11 @@ public final class BasePackage extends BasePathElement implements CodePackage, B
    *
    * @param template the {@link BasePackage} to copy.
    * @param parentPackage the {@link #getParentPackage() parent package}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BasePackage(BasePackage template, BasePackage parentPackage) {
+  public BasePackage(BasePackage template, BasePackage parentPackage, CodeCopyMapper mapper) {
 
-    super(template, parentPackage);
+    super(template, parentPackage, mapper);
     this.source = parentPackage.source;
     this.reflectiveObject = template.reflectiveObject;
     this.children = new BasePathElements(this);
@@ -121,22 +124,23 @@ public final class BasePackage extends BasePathElement implements CodePackage, B
    *
    * @param template the {@link BasePackage} to copy.
    * @param source the {@link #getSource() source}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BasePackage(BasePackage template, BaseSource source) {
+  public BasePackage(BasePackage template, BaseSource source, CodeCopyMapper mapper) {
 
-    super(template, parentCopy(template, source));
+    super(template, parentCopy(template, source, mapper), mapper);
     this.source = source;
     this.reflectiveObject = template.reflectiveObject;
     this.children = new BasePathElements(this);
     this.systemImmutable = false;
   }
 
-  private static BasePackage parentCopy(BasePackage template, BaseSource source) {
+  private static BasePackage parentCopy(BasePackage template, BaseSource source, CodeCopyMapper mapper) {
 
     if (template.isRoot()) {
       return null;
     }
-    return new BasePackage(template.getParentPackage(), source);
+    return new BasePackage(template.getParentPackage(), source, mapper);
   }
 
   @Override
@@ -237,8 +241,7 @@ public final class BasePackage extends BasePathElement implements CodePackage, B
   }
 
   /**
-   * @return {@code true} if this is the "{@code java.lang}" package (that requires no import), {@code false}
-   *         otherwise.
+   * @return {@code true} if this is the "{@code java.lang}" package (that requires no import), {@code false} otherwise.
    */
   public boolean isJavaLang() {
 
@@ -266,10 +269,16 @@ public final class BasePackage extends BasePathElement implements CodePackage, B
   @Override
   public BasePackage copy(CodeNode newParent) {
 
+    return copy(newParent, CodeCopyMapperNone.INSTANCE);
+  }
+
+  @Override
+  public BasePackage copy(CodeNode newParent, CodeCopyMapper mapper) {
+
     if (newParent instanceof BasePackage) {
-      return new BasePackage(this, (BasePackage) newParent);
+      return new BasePackage(this, (BasePackage) newParent, mapper);
     } else if (newParent instanceof BaseSource) {
-      return new BasePackage(this, (BaseSource) newParent);
+      return new BasePackage(this, (BaseSource) newParent, mapper);
     } else {
       throw new IllegalArgumentException("" + newParent);
     }

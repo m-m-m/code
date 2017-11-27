@@ -8,16 +8,16 @@ import java.lang.reflect.Method;
 
 import org.assertj.core.api.Assertions;
 
+import net.sf.mmm.code.api.member.CodeConstructor;
+import net.sf.mmm.code.api.member.CodeConstructors;
+import net.sf.mmm.code.api.member.CodeField;
+import net.sf.mmm.code.api.member.CodeFields;
+import net.sf.mmm.code.api.member.CodeMethod;
+import net.sf.mmm.code.api.member.CodeMethods;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeTypeCategory;
 import net.sf.mmm.code.base.BaseContext;
-import net.sf.mmm.code.base.member.BaseConstructor;
-import net.sf.mmm.code.base.member.BaseConstructors;
-import net.sf.mmm.code.base.member.BaseField;
-import net.sf.mmm.code.base.member.BaseFields;
-import net.sf.mmm.code.base.member.BaseMethod;
-import net.sf.mmm.code.base.member.BaseMethods;
 
 /**
  * Test of {@link JavaRootContext}.
@@ -51,7 +51,7 @@ public abstract class AbstractBaseTypeTest extends Assertions {
     verifyMethods(type.getMethods(), clazz.getDeclaredMethods(), context);
   }
 
-  public static void verifyFields(BaseFields fields, Field[] declaredFields, BaseContext context) {
+  public static void verifyFields(CodeFields fields, Field[] declaredFields, BaseContext context) {
 
     assertThat(fields.getDeclared()).hasSameSizeAs(declaredFields);
     for (Field field : declaredFields) {
@@ -59,9 +59,9 @@ public abstract class AbstractBaseTypeTest extends Assertions {
     }
   }
 
-  public static void verifyField(BaseFields fields, Field field, BaseContext context) {
+  public static void verifyField(CodeFields fields, Field field, BaseContext context) {
 
-    BaseField javaField = fields.get(field.getName());
+    CodeField javaField = fields.get(field.getName());
     assertThat(javaField).as(field.toGenericString()).isNotNull();
     assertThat(javaField.getName()).isEqualTo(field.getName());
     CodeGenericType type = javaField.getType();
@@ -71,7 +71,7 @@ public abstract class AbstractBaseTypeTest extends Assertions {
     assertThat(type).as("Type of " + javaField).isEqualTo(context.getType(field.getType()));
   }
 
-  public static void verifyConstructors(BaseConstructors constructors, Constructor<?>[] declaredConstructors, BaseContext context) {
+  public static void verifyConstructors(CodeConstructors constructors, Constructor<?>[] declaredConstructors, BaseContext context) {
 
     assertThat(constructors.getDeclared()).hasSameSizeAs(declaredConstructors);
     for (Constructor<?> constructor : declaredConstructors) {
@@ -79,19 +79,19 @@ public abstract class AbstractBaseTypeTest extends Assertions {
     }
   }
 
-  public static void verifyConstructor(BaseConstructors constructors, Constructor<?> constructor, BaseContext context) {
+  public static void verifyConstructor(CodeConstructors constructors, Constructor<?> constructor, BaseContext context) {
 
     Class<?>[] parameters = constructor.getParameterTypes();
     CodeGenericType[] parameterTypes = new CodeGenericType[parameters.length];
     for (int i = 0; i < parameters.length; i++) {
       parameterTypes[i] = context.getType(parameters[i]);
     }
-    BaseConstructor javaConstructor = constructors.get(parameterTypes);
+    CodeConstructor javaConstructor = constructors.get(parameterTypes);
     assertThat(javaConstructor).as(constructor.toGenericString()).isNotNull();
     assertThat(constructor.getName()).isEqualTo(constructor.getName());
   }
 
-  public static void verifyMethods(BaseMethods methods, Method[] declaredMethods, BaseContext context) {
+  public static void verifyMethods(CodeMethods methods, Method[] declaredMethods, BaseContext context) {
 
     assertThat(methods.getDeclared()).hasSameSizeAs(declaredMethods);
     for (Method method : declaredMethods) {
@@ -99,14 +99,14 @@ public abstract class AbstractBaseTypeTest extends Assertions {
     }
   }
 
-  public static void verifyMethod(BaseMethods methods, Method method, BaseContext context) {
+  public static void verifyMethod(CodeMethods methods, Method method, BaseContext context) {
 
     Class<?>[] parameters = method.getParameterTypes();
     CodeGenericType[] parameterTypes = new CodeGenericType[parameters.length];
     for (int i = 0; i < parameters.length; i++) {
       parameterTypes[i] = context.getType(parameters[i]);
     }
-    BaseMethod javaMethod = methods.getDeclared(method.getName(), parameterTypes);
+    CodeMethod javaMethod = methods.getDeclared(method.getName(), parameterTypes);
     assertThat(javaMethod).as(method.toGenericString()).isNotNull();
     assertThat(javaMethod.getName()).isEqualTo(method.getName());
   }

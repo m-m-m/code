@@ -12,11 +12,11 @@ import org.junit.Test;
 import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.api.annotation.CodeAnnotation;
 import net.sf.mmm.code.api.block.CodeBlockBody;
+import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.modifier.CodeVisibility;
 import net.sf.mmm.code.api.type.CodeTypeCategory;
 import net.sf.mmm.code.base.BaseFile;
 import net.sf.mmm.code.base.BasePackage;
-import net.sf.mmm.code.base.member.BaseMethod;
 import net.sf.mmm.code.base.parser.SourceCodeParser;
 import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.type.BaseType;
@@ -112,10 +112,10 @@ public class JavaSourceCodeParserImplTest extends AbstractBaseTypeTest {
     verifyHeader(type.getFile());
     assertThat(type.getFields().getDeclared()).isEmpty();
     assertThat(type.getConstructors().getDeclared()).isEmpty();
-    List<? extends BaseMethod> methods = type.getMethods().getDeclared();
+    List<? extends CodeMethod> methods = type.getMethods().getDeclared();
     assertThat(methods.stream().map(x -> x.getName())).containsExactlyInAnyOrder("getParser", "getContext", "createPackage", "createFile", "parse",
         "testMyself");
-    for (BaseMethod method : methods) {
+    for (CodeMethod method : methods) {
       if (method.getName().equals("createFile")) {
         assertThat(method.getModifiers().getVisibility()).isEqualTo(CodeVisibility.DEFAULT);
         assertThat(method.getModifiers().getModifiers()).isEmpty();

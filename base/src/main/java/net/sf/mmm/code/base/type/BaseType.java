@@ -7,6 +7,8 @@ import java.util.Objects;
 
 import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.block.CodeBlockInitializer;
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
@@ -68,7 +70,7 @@ public class BaseType extends BaseGenericType implements CodeType, BaseElementWi
 
   private CodeBlockInitializer nonStaticInitializer;
 
-  private BaseType sourceCodeObject;
+  private CodeType sourceCodeObject;
 
   /**
    * The constructor.
@@ -144,10 +146,11 @@ public class BaseType extends BaseGenericType implements CodeType, BaseElementWi
    * @param template the {@link BaseType} to copy.
    * @param file the {@link #getFile() file}.
    * @param declaringType the {@link #getDeclaringType() declaringType}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseType(BaseType template, BaseFile file, BaseType declaringType) {
+  public BaseType(BaseType template, BaseFile file, BaseType declaringType, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
     this.file = file;
     this.declaringType = declaringType;
     this.simpleName = template.simpleName;
@@ -473,12 +476,18 @@ public class BaseType extends BaseGenericType implements CodeType, BaseElementWi
   @Override
   public BaseType copy(CodeElement newParent) {
 
+    return copy(newParent, CodeCopyMapperNone.INSTANCE);
+  }
+
+  @Override
+  public BaseType copy(CodeElement newParent, CodeCopyMapper mapper) {
+
     if (newParent instanceof BaseFile) {
       assert (this.declaringType == null);
-      return new BaseType(this, (BaseFile) newParent, null);
+      return new BaseType(this, (BaseFile) newParent, null, mapper);
     } else if (newParent instanceof BaseType) {
       BaseType parentType = (BaseType) newParent;
-      return new BaseType(this, parentType.file, parentType);
+      return new BaseType(this, parentType.file, parentType, mapper);
     } else {
       throw new IllegalArgumentException("" + newParent);
     }
@@ -556,7 +565,7 @@ public class BaseType extends BaseGenericType implements CodeType, BaseElementWi
   }
 
   @Override
-  public BaseType getSourceCodeObject() {
+  public CodeType getSourceCodeObject() {
 
     if (this.sourceCodeObject == null) {
       BaseFile sourceFile = this.file.getSourceCodeObject();

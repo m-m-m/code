@@ -13,40 +13,37 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * {@link CodeMembers} as a container for the {@link CodeMethod}s.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
- * @param <M> the type of the contained {@link CodeMethod}s.
  * @since 1.0.0
  */
-public interface CodeMethods<M extends CodeMethod>
-    extends CodeOperations<M>, CodeNodeItemContainerHierarchical<M>, CodeAdvancedMergeableItem<CodeMethods<?>>, CodeNodeItemCopyable<CodeType, CodeMethods<M>> {
+public interface CodeMethods extends CodeOperations<CodeMethod>, CodeNodeItemContainerHierarchical<CodeMethod>, CodeAdvancedMergeableItem<CodeMethods>,
+    CodeNodeItemCopyable<CodeType, CodeMethods> {
 
   /**
    * @param name the {@link CodeOperation#getName() name} of the requested {@link CodeOperation}.
-   * @param parameterTypes the {@link CodeGenericType}s of the {@link CodeOperation#getParameters()
-   *        parameters}.
+   * @param parameterTypes the {@link CodeGenericType}s of the {@link CodeOperation#getParameters() parameters}.
    * @return the requested {@link CodeOperation} or {@code null} if not found.
    */
-  M getDeclared(String name, CodeGenericType... parameterTypes);
+  CodeMethod getDeclared(String name, CodeGenericType... parameterTypes);
 
   /**
    * @param name the {@link CodeMethod#getName() method name}.
-   * @return a new {@link CodeMethod} that has been added to {@link #getDeclared()}. The
-   *         {@link CodeMethod#getReturns() return type} will be initialized as {@link void}. It will not have
-   *         any {@link CodeMethod#getParameters() parameters} or {@link CodeMethod#getExceptions()
-   *         exceptions}. Simply add those afterwards as needed.
+   * @return a new {@link CodeMethod} that has been added to {@link #getDeclared()}. The {@link CodeMethod#getReturns()
+   *         return type} will be initialized as {@link void}. It will not have any {@link CodeMethod#getParameters()
+   *         parameters} or {@link CodeMethod#getExceptions() exceptions}. Simply add those afterwards as needed.
    * @throws ReadOnlyException if {@link #isImmutable() immutable}.
    */
-  M add(String name);
+  CodeMethod add(String name);
 
   /**
    * @param name the {@link CodeMethod#getName() method name}.
-   * @return the first {@link CodeMethod} with the given {@code name} that has been found or {@code null} if
-   *         no such method exists. Please note that languages such as Java can have many methods with the
-   *         same name. In such case it is unspecified which of these methods is returned. However, for
-   *         convenience this method can be handy to find getters, setters, hashCode, etc.
+   * @return the first {@link CodeMethod} with the given {@code name} that has been found or {@code null} if no such
+   *         method exists. Please note that languages such as Java can have many methods with the same name. In such
+   *         case it is unspecified which of these methods is returned. However, for convenience this method can be
+   *         handy to find getters, setters, hashCode, etc.
    */
-  default M getFirst(String name) {
+  default CodeMethod getFirst(String name) {
 
-    for (M method : getDeclared()) {
+    for (CodeMethod method : getDeclared()) {
       if (method.getName().equals(name)) {
         return method;
       }
@@ -56,14 +53,13 @@ public interface CodeMethods<M extends CodeMethod>
 
   /**
    * @param name the {@link CodeMethod#getName() method name}.
-   * @return the {@link #getFirst(String) first} {@link CodeMethod} with the given {@code name} that has been
-   *         found or a {@link #add(String) newly added one} if no such method exists. Please note that
-   *         languages such as Java can have many methods with the same name. In such case it is unspecified
-   *         which of these methods is returned.
+   * @return the {@link #getFirst(String) first} {@link CodeMethod} with the given {@code name} that has been found or a
+   *         {@link #add(String) newly added one} if no such method exists. Please note that languages such as Java can
+   *         have many methods with the same name. In such case it is unspecified which of these methods is returned.
    */
-  default M getFirstOrCreate(String name) {
+  default CodeMethod getFirstOrCreate(String name) {
 
-    for (M method : getDeclared()) {
+    for (CodeMethod method : getDeclared()) {
       if (method.getName().equals(name)) {
         return method;
       }
@@ -71,4 +67,6 @@ public interface CodeMethods<M extends CodeMethod>
     return null;
   }
 
+  @Override
+  CodeMethods copy();
 }

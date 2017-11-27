@@ -5,8 +5,10 @@ package net.sf.mmm.code.base.type;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 
-import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.item.CodeItemWithDeclaringType;
+import net.sf.mmm.code.api.node.CodeNodeItem;
 import net.sf.mmm.code.api.type.CodeTypeWildcard;
 import net.sf.mmm.code.base.element.BaseElementWithTypeVariables;
 import net.sf.mmm.code.base.node.BaseNodeItemImpl;
@@ -18,7 +20,7 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseTypeWildcard extends BaseTypePlaceholder implements CodeTypeWildcard, CodeNodeItemCopyable<BaseNodeItemImpl, BaseTypeWildcard> {
+public class BaseTypeWildcard extends BaseTypePlaceholder implements CodeTypeWildcard {
 
   private final BaseNodeItemImpl parent;
 
@@ -94,10 +96,11 @@ public class BaseTypeWildcard extends BaseTypePlaceholder implements CodeTypeWil
    *
    * @param template the {@link BaseTypeWildcard} to copy.
    * @param parent the {@link #getParent() parent}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseTypeWildcard(BaseTypeWildcard template, BaseNodeItemImpl parent) {
+  public BaseTypeWildcard(BaseTypeWildcard template, BaseNodeItemImpl parent, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
     this.parent = parent;
     this.reflectiveObject = null;
     this.superWildcard = template.superWildcard;
@@ -188,9 +191,15 @@ public class BaseTypeWildcard extends BaseTypePlaceholder implements CodeTypeWil
   }
 
   @Override
-  public BaseTypeWildcard copy(BaseNodeItemImpl newParent) {
+  public BaseTypeWildcard copy(CodeNodeItem newParent) {
 
-    return new BaseTypeWildcard(this, newParent);
+    return copy(newParent, CodeCopyMapperNone.INSTANCE);
+  }
+
+  @Override
+  public BaseTypeWildcard copy(CodeNodeItem newParent, CodeCopyMapper mapper) {
+
+    return new BaseTypeWildcard(this, (BaseNodeItemImpl) newParent, mapper);
   }
 
 }

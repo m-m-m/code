@@ -15,10 +15,10 @@ import net.sf.mmm.code.api.type.CodeTypeVariables;
 public abstract interface CodeElementWithTypeVariables extends CodeElement {
 
   /**
-   * @return the {@link CodeTypeVariables} containing the {@link net.sf.mmm.code.api.type.CodeTypeVariable}s.
-   *         May be empty but never {@code null}.
+   * @return the {@link CodeTypeVariables} containing the {@link net.sf.mmm.code.api.type.CodeTypeVariable}s. May be
+   *         empty but never {@code null}.
    */
-  CodeTypeVariables<?> getTypeParameters();
+  CodeTypeVariables getTypeParameters();
 
   @Override
   GenericDeclaration getReflectiveObject();

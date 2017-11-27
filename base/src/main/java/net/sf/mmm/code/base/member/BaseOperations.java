@@ -2,6 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.base.member;
 
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.member.CodeMembers;
 import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.member.CodeOperations;
@@ -14,7 +15,7 @@ import net.sf.mmm.code.base.type.BaseType;
  * @param <O> type of the contained {@link CodeOperation}s.
  * @since 1.0.0
  */
-public abstract class BaseOperations<O extends BaseOperation> extends BaseMembers<O> implements CodeOperations<O> {
+public abstract class BaseOperations<O extends CodeOperation> extends BaseMembers<O> implements CodeOperations<O> {
 
   /**
    * The constructor.
@@ -31,14 +32,15 @@ public abstract class BaseOperations<O extends BaseOperation> extends BaseMember
    *
    * @param template the {@link BaseOperations} to copy.
    * @param parent the {@link #getParent() parent}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseOperations(BaseOperations<O> template, BaseType parent) {
+  public BaseOperations(BaseOperations<O> template, BaseType parent, CodeCopyMapper mapper) {
 
-    super(template, parent);
+    super(template, parent, mapper);
   }
 
   @Override
-  public abstract BaseOperations<O> getSourceCodeObject();
+  public abstract CodeOperations<O> getSourceCodeObject();
 
   @Override
   public abstract BaseOperations<O> copy();

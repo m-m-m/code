@@ -5,7 +5,9 @@ package net.sf.mmm.code.base.member;
 import java.io.IOException;
 import java.lang.reflect.Executable;
 
+import net.sf.mmm.code.api.arg.CodeParameter;
 import net.sf.mmm.code.api.block.CodeBlockBody;
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.expression.CodeVariable;
 import net.sf.mmm.code.api.language.CodeLanguage;
@@ -14,7 +16,6 @@ import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.base.arg.BaseExceptions;
-import net.sf.mmm.code.base.arg.BaseParameter;
 import net.sf.mmm.code.base.arg.BaseParameters;
 import net.sf.mmm.code.base.block.BaseBlockBody;
 import net.sf.mmm.code.base.element.BaseElementWithTypeVariables;
@@ -72,13 +73,14 @@ public abstract class BaseOperation extends BaseMember implements CodeOperation,
    * The copy-constructor.
    *
    * @param template the {@link BaseOperation} to copy.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseOperation(BaseOperation template) {
+  public BaseOperation(BaseOperation template, CodeCopyMapper mapper) {
 
-    super(template);
-    this.typeVariables = template.typeVariables.copy(getDeclaringType());
-    this.parameters = template.parameters.copy(this);
-    this.exceptions = template.exceptions.copy(this);
+    super(template, mapper);
+    this.typeVariables = template.typeVariables.copy(getDeclaringType(), mapper);
+    this.parameters = template.parameters.copy(this, mapper);
+    this.exceptions = template.exceptions.copy(this, mapper);
   }
 
   @Override
@@ -87,7 +89,7 @@ public abstract class BaseOperation extends BaseMember implements CodeOperation,
   @Override
   public CodeVariable getVariable(String name) {
 
-    BaseParameter parameter = this.parameters.get(name);
+    CodeParameter parameter = this.parameters.get(name);
     if (parameter != null) {
       return parameter;
     }
@@ -145,7 +147,7 @@ public abstract class BaseOperation extends BaseMember implements CodeOperation,
   public abstract Executable getReflectiveObject();
 
   @Override
-  public abstract BaseOperation getSourceCodeObject();
+  public abstract CodeOperation getSourceCodeObject();
 
   /**
    * @see #doMerge(CodeElement, CodeMergeStrategy)
@@ -193,10 +195,9 @@ public abstract class BaseOperation extends BaseMember implements CodeOperation,
    *
    * @param sink the {@link Appendable}.
    * @param newline the newline {@link String}.
-   * @param defaultIndent the {@link String} used for indentation (e.g. a number of spaces to insert per
-   *        indent level).
-   * @param currentIndent the current indent (number of spaces). Initially the empty string ({@code ""}).
-   *        Before a recursion the {@code indent} will be appended.
+   * @param defaultIndent the {@link String} used for indentation (e.g. a number of spaces to insert per indent level).
+   * @param currentIndent the current indent (number of spaces). Initially the empty string ({@code ""}). Before a
+   *        recursion the {@code indent} will be appended.
    * @param language the {@link CodeLanguage} to use.
    * @throws IOException if thrown by {@link Appendable}.
    */
@@ -212,10 +213,9 @@ public abstract class BaseOperation extends BaseMember implements CodeOperation,
    *
    * @param sink the {@link Appendable}.
    * @param newline the newline {@link String}.
-   * @param defaultIndent the {@link String} used for indentation (e.g. a number of spaces to insert per
-   *        indent level).
-   * @param currentIndent the current indent (number of spaces). Initially the empty string ({@code ""}).
-   *        Before a recursion the {@code indent} will be appended.
+   * @param defaultIndent the {@link String} used for indentation (e.g. a number of spaces to insert per indent level).
+   * @param currentIndent the current indent (number of spaces). Initially the empty string ({@code ""}). Before a
+   *        recursion the {@code indent} will be appended.
    * @param language the {@link CodeLanguage} to use.
    * @throws IOException if thrown by {@link Appendable}.
    */

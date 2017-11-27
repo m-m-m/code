@@ -21,4 +21,7 @@ public interface CodeReturn extends CodeOperationArg, CodeSimpleMergeableItem<Co
   @Override
   AnnotatedType getReflectiveObject();
 
+  @Override
+  CodeReturn copy();
+
 }

@@ -4,6 +4,9 @@ package net.sf.mmm.code.base.member;
 
 import java.lang.reflect.Constructor;
 
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
+import net.sf.mmm.code.api.member.CodeConstructor;
 import net.sf.mmm.code.api.member.CodeConstructors;
 import net.sf.mmm.code.api.member.CodeMethods;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
@@ -18,7 +21,7 @@ import net.sf.mmm.code.base.type.BaseType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseConstructors extends BaseOperations<BaseConstructor> implements CodeConstructors<BaseConstructor> {
+public class BaseConstructors extends BaseOperations<CodeConstructor> implements CodeConstructors {
 
   /**
    * The constructor.
@@ -35,10 +38,11 @@ public class BaseConstructors extends BaseOperations<BaseConstructor> implements
    *
    * @param template the {@link BaseConstructors} to copy.
    * @param parent the {@link #getParent() parent}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseConstructors(BaseConstructors template, BaseType parent) {
+  public BaseConstructors(BaseConstructors template, BaseType parent, CodeCopyMapper mapper) {
 
-    super(template, parent);
+    super(template, parent, mapper);
   }
 
   @Override
@@ -55,9 +59,9 @@ public class BaseConstructors extends BaseOperations<BaseConstructor> implements
   }
 
   @Override
-  public BaseConstructor get(BaseConstructor constructor) {
+  public CodeConstructor get(CodeConstructor constructor) {
 
-    for (BaseConstructor myConstructor : getDeclared()) {
+    for (CodeConstructor myConstructor : getDeclared()) {
       if (myConstructor.getParameters().isInvokable(constructor.getParameters())) {
         return constructor;
       }
@@ -66,9 +70,9 @@ public class BaseConstructors extends BaseOperations<BaseConstructor> implements
   }
 
   @Override
-  public BaseConstructor get(CodeGenericType... parameterTypes) {
+  public CodeConstructor get(CodeGenericType... parameterTypes) {
 
-    for (BaseConstructor constructor : getDeclared()) {
+    for (CodeConstructor constructor : getDeclared()) {
       if (constructor.getParameters().isInvokable(parameterTypes)) {
         return constructor;
       }
@@ -77,7 +81,7 @@ public class BaseConstructors extends BaseOperations<BaseConstructor> implements
   }
 
   @Override
-  public BaseConstructor add() {
+  public CodeConstructor add() {
 
     BaseConstructor constructor = new BaseConstructor(this);
     add(constructor);
@@ -85,9 +89,9 @@ public class BaseConstructors extends BaseOperations<BaseConstructor> implements
   }
 
   @Override
-  public BaseConstructors getSourceCodeObject() {
+  public CodeConstructors getSourceCodeObject() {
 
-    BaseType sourceType = getParent().getSourceCodeObject();
+    CodeType sourceType = getParent().getSourceCodeObject();
     if (sourceType == null) {
       return null;
     }
@@ -95,7 +99,7 @@ public class BaseConstructors extends BaseOperations<BaseConstructor> implements
   }
 
   @Override
-  public CodeConstructors<BaseConstructor> merge(CodeConstructors<?> o, CodeMergeStrategyDecider decider, CodeMergeStrategy parentStrategy) {
+  public CodeConstructors merge(CodeConstructors o, CodeMergeStrategyDecider decider, CodeMergeStrategy parentStrategy) {
 
     if (parentStrategy == CodeMergeStrategy.KEEP) {
       return this;
@@ -103,12 +107,12 @@ public class BaseConstructors extends BaseOperations<BaseConstructor> implements
     BaseConstructors other = (BaseConstructors) o;
     if (parentStrategy == CodeMergeStrategy.OVERRIDE) {
       clear();
-      for (BaseConstructor otherConstructor : other.getDeclared()) {
+      for (CodeConstructor otherConstructor : other.getDeclared()) {
         add(otherConstructor.copy(this));
       }
     } else {
-      for (BaseConstructor otherConstructor : other.getDeclared()) {
-        BaseConstructor myConstructor = get(otherConstructor);
+      for (CodeConstructor otherConstructor : other.getDeclared()) {
+        CodeConstructor myConstructor = get(otherConstructor);
         if (myConstructor == null) {
           add(otherConstructor.copy(this));
         } else {
@@ -128,7 +132,13 @@ public class BaseConstructors extends BaseOperations<BaseConstructor> implements
   @Override
   public BaseConstructors copy(CodeType newParent) {
 
-    return new BaseConstructors(this, (BaseType) newParent);
+    return copy(newParent, CodeCopyMapperNone.INSTANCE);
+  }
+
+  @Override
+  public BaseConstructors copy(CodeType newParent, CodeCopyMapper mapper) {
+
+    return new BaseConstructors(this, (BaseType) newParent, mapper);
   }
 
 }

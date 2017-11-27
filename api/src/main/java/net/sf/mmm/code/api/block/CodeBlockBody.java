@@ -14,4 +14,7 @@ import net.sf.mmm.code.api.node.CodeFunction;
  */
 public interface CodeBlockBody extends CodeBlock, CodeNodeItemCopyable<CodeFunction, CodeBlockBody> {
 
+  @Override
+  CodeBlockBody copy();
+
 }

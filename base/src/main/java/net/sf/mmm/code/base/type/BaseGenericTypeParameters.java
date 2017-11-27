@@ -5,7 +5,9 @@ package net.sf.mmm.code.base.type;
 import java.io.IOException;
 import java.util.List;
 
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.language.CodeLanguage;
+import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeGenericTypeParameters;
 import net.sf.mmm.code.base.node.BaseNodeItemContainerFlat;
 
@@ -16,8 +18,7 @@ import net.sf.mmm.code.base.node.BaseNodeItemContainerFlat;
  * @param <P> the type of the contained {@link BaseGenericType}s.
  * @since 1.0.0
  */
-public abstract class BaseGenericTypeParameters<P extends BaseGenericType> extends BaseNodeItemContainerFlat<P>
-    implements CodeGenericTypeParameters<P> {
+public abstract class BaseGenericTypeParameters<P extends CodeGenericType> extends BaseNodeItemContainerFlat<P> implements CodeGenericTypeParameters<P> {
 
   /**
    * The constructor.
@@ -31,10 +32,11 @@ public abstract class BaseGenericTypeParameters<P extends BaseGenericType> exten
    * The copy-constructor.
    *
    * @param template the {@link BaseGenericTypeParameters} to copy.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseGenericTypeParameters(BaseGenericTypeParameters<P> template) {
+  public BaseGenericTypeParameters(BaseGenericTypeParameters<P> template, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
   }
 
   @Override

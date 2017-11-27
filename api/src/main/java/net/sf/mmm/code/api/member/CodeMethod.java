@@ -19,7 +19,7 @@ import net.sf.mmm.code.api.type.CodeGenericType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeMethod extends CodeOperation, CodeAdvancedMergeableItem<CodeMethod>, CodeNodeItemCopyable<CodeMethods<?>, CodeMethod> {
+public interface CodeMethod extends CodeOperation, CodeAdvancedMergeableItem<CodeMethod>, CodeNodeItemCopyable<CodeMethods, CodeMethod> {
 
   /**
    * @return the return type of this method.
@@ -62,4 +62,6 @@ public interface CodeMethod extends CodeOperation, CodeAdvancedMergeableItem<Cod
   @Override
   Method getReflectiveObject();
 
+  @Override
+  CodeMethod copy();
 }

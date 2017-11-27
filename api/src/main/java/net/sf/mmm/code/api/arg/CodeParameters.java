@@ -19,16 +19,15 @@ import net.sf.mmm.code.api.type.CodeType;
  * @see CodeParameter
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
- * @param <P> the type of the contained {@link CodeParameter}s.
  * @since 1.0.0
  */
-public abstract interface CodeParameters<P extends CodeParameter> extends CodeOperationArgs<P>, CodeNodeItemContainerFlatWithName<P>,
-    CodeSimpleMergeableItem<CodeParameters<?>>, CodeNodeItemCopyable<CodeOperation, CodeParameters<P>> {
+public abstract interface CodeParameters extends CodeOperationArgs<CodeParameter>, CodeNodeItemContainerFlatWithName<CodeParameter>,
+    CodeSimpleMergeableItem<CodeParameters>, CodeNodeItemCopyable<CodeOperation, CodeParameters> {
 
   /**
    * @param parameterTypes the {@link CodeType}s to use as parameters.
-   * @return {@code true} if this operation can be invoked with parameters of the given {@link CodeType}s,
-   *         {@code false} otherwise.
+   * @return {@code true} if this operation can be invoked with parameters of the given {@link CodeType}s, {@code false}
+   *         otherwise.
    */
   default boolean isInvokable(CodeGenericType... parameterTypes) {
 
@@ -48,10 +47,10 @@ public abstract interface CodeParameters<P extends CodeParameter> extends CodeOp
 
   /**
    * @param parameters the {@link CodeParameters} representing the expected signature to check.
-   * @return {@code true} if this operation can be invoked with parameters of the given {@link CodeType}s,
-   *         {@code false} otherwise.
+   * @return {@code true} if this operation can be invoked with parameters of the given {@link CodeType}s, {@code false}
+   *         otherwise.
    */
-  default boolean isInvokable(CodeParameters<P> parameters) {
+  default boolean isInvokable(CodeParameters parameters) {
 
     List<? extends CodeParameter> myParams = getDeclared();
     List<? extends CodeParameter> otherParams = parameters.getDeclared();
@@ -68,5 +67,8 @@ public abstract interface CodeParameters<P extends CodeParameter> extends CodeOp
     }
     return true;
   }
+
+  @Override
+  CodeParameters copy();
 
 }

@@ -28,8 +28,7 @@ public interface CodePathElements<P extends CodePathElement> extends CodeNodeIte
   List<? extends P> getDeclared();
 
   /**
-   * @param simpleName the {@link CodePathElement#getSimpleName() simple name} of the requested
-   *        {@link CodePathElement}.
+   * @param simpleName the {@link CodePathElement#getSimpleName() simple name} of the requested {@link CodePathElement}.
    * @return the {@link CodePathElement} from {@link #getDeclared() all items} with the given {@code name} or
    *         {@code null} if not found.
    */
@@ -54,40 +53,38 @@ public interface CodePathElements<P extends CodePathElement> extends CodeNodeIte
   CodeFile createFile(String simpleName);
 
   /**
-   * @param path the {@link CodeName} leading to the requested child relative to the {@link #getParent()
-   *        package of this children}. Will typically be invoked on the {@link CodePackage#getChildren()
-   *        children} of a {@link net.sf.mmm.code.api.source.CodeSource#getRootPackage() root package} with a
-   *        {@link net.sf.mmm.code.api.item.CodeItemWithQualifiedName#getQualifiedName() qualified name}
-   *        parsed via {@link net.sf.mmm.code.api.source.CodeSource#parseName(String)}.
+   * @param path the {@link CodeName} leading to the requested child relative to the {@link #getParent() package of this
+   *        children}. Will typically be invoked on the {@link CodePackage#getChildren() children} of a
+   *        {@link net.sf.mmm.code.api.source.CodeSource#getRootPackage() root package} with a
+   *        {@link net.sf.mmm.code.api.item.CodeItemWithQualifiedName#getQualifiedName() qualified name} parsed via
+   *        {@link net.sf.mmm.code.api.source.CodeSource#parseName(String)}.
    * @param add - {@code true} to add a newly created {@link CodeFile}, {@code false} otherwise.
-   * @return the {@link #getFile(String) existing} or {@link #createFile(String) newly created}
-   *         {@link CodeFile}.
+   * @return the {@link #getFile(String) existing} or {@link #createFile(String) newly created} {@link CodeFile}.
    */
   CodeFile getOrCreateFile(CodeName path, boolean add);
 
   /**
-   * @param simpleName the {@link CodePackage#getSimpleName() simple name} of the requested
-   *        {@link CodePackage}.
+   * @param simpleName the {@link CodePackage#getSimpleName() simple name} of the requested {@link CodePackage}.
    * @return the {@link CodePackage} with the given {@code name} or {@code null} if not found.
    */
   CodePackage getPackage(String simpleName);
 
   /**
-   * @param path the {@link CodeName} leading to the requested child relative to the {@link #getParent()
-   *        package of this children}. Will typically be invoked on the {@link CodePackage#getChildren()
-   *        children} of a {@link net.sf.mmm.code.api.source.CodeSource#getRootPackage() root package} with a
-   *        {@link net.sf.mmm.code.api.item.CodeItemWithQualifiedName#getQualifiedName() qualified name}
-   *        parsed via {@link net.sf.mmm.code.api.source.CodeSource#parseName(String)}.
+   * @param path the {@link CodeName} leading to the requested child relative to the {@link #getParent() package of this
+   *        children}. Will typically be invoked on the {@link CodePackage#getChildren() children} of a
+   *        {@link net.sf.mmm.code.api.source.CodeSource#getRootPackage() root package} with a
+   *        {@link net.sf.mmm.code.api.item.CodeItemWithQualifiedName#getQualifiedName() qualified name} parsed via
+   *        {@link net.sf.mmm.code.api.source.CodeSource#parseName(String)}.
    * @return the traversed {@link CodePackage} or {@code null} if not found.
    */
   CodePackage getPackage(CodeName path);
 
   /**
-   * @param path the {@link CodeName} leading to the requested child relative to the {@link #getParent()
-   *        package of this children}. Will typically be invoked on the {@link CodePackage#getChildren()
-   *        children} of a {@link net.sf.mmm.code.api.source.CodeSource#getRootPackage() root package} with a
-   *        {@link net.sf.mmm.code.api.item.CodeItemWithQualifiedName#getQualifiedName() qualified name}
-   *        parsed via {@link net.sf.mmm.code.api.source.CodeSource#parseName(String)}.
+   * @param path the {@link CodeName} leading to the requested child relative to the {@link #getParent() package of this
+   *        children}. Will typically be invoked on the {@link CodePackage#getChildren() children} of a
+   *        {@link net.sf.mmm.code.api.source.CodeSource#getRootPackage() root package} with a
+   *        {@link net.sf.mmm.code.api.item.CodeItemWithQualifiedName#getQualifiedName() qualified name} parsed via
+   *        {@link net.sf.mmm.code.api.source.CodeSource#parseName(String)}.
    * @param add - {@code true} to add newly created packages, {@code false} otherwise.
    * @return the traversed {@link CodePackage}. Has been created if it did not already exist.
    */
@@ -111,5 +108,8 @@ public interface CodePathElements<P extends CodePathElement> extends CodeNodeIte
    * @see #createFile(String)
    */
   CodeType createType(String simpleName);
+
+  @Override
+  CodePathElements<P> copy();
 
 }

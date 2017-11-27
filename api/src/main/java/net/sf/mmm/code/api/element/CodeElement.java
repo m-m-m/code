@@ -11,8 +11,8 @@ import net.sf.mmm.code.api.node.CodeNodeItem;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
- * {@link CodeMutableItemWithType} that can be {@link #getAnnotations() annotated}, {@link #getDoc()
- * documented}, or {@link #getComment() commented}.
+ * {@link CodeMutableItemWithType} that can be {@link #getAnnotations() annotated}, {@link #getDoc() documented}, or
+ * {@link #getComment() commented}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
@@ -20,22 +20,22 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
 public abstract interface CodeElement extends CodeNodeItem, CodeMutableItemWithComment {
 
   /**
-   * @return the {@link CodeDoc documentation} of this element. May be {@link CodeDoc#isEmpty() empty} but
-   *         will never be {@code null}.
+   * @return the {@link CodeDoc documentation} of this element. May be {@link CodeDoc#isEmpty() empty} but will never be
+   *         {@code null}.
    */
   CodeDoc getDoc();
 
   /**
-   * @return the {@link CodeAnnotations} with the {@link net.sf.mmm.code.api.annotation.CodeAnnotation}s of
-   *         this element.
+   * @return the {@link CodeAnnotations} with the {@link net.sf.mmm.code.api.annotation.CodeAnnotation}s of this
+   *         element.
    */
   CodeAnnotations getAnnotations();
 
   /**
    * Destroys this node and disconnects it from its parent.
    *
-   * @throws ReadOnlyException if this {@link CodeNode} or its {@link #getParent() parent} is
-   *         {@link #isImmutable() immutable}.
+   * @throws ReadOnlyException if this {@link CodeNode} or its {@link #getParent() parent} is {@link #isImmutable()
+   *         immutable}.
    */
   void removeFromParent();
 

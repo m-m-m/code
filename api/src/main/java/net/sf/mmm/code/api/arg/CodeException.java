@@ -9,17 +9,19 @@ import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.merge.CodeSimpleMergeableItem;
 
 /**
- * {@link CodeOperationArg} for an {@link Throwable exception} in a throws declaration of a
- * {@link CodeOperation}.
+ * {@link CodeOperationArg} for an {@link Throwable exception} in a throws declaration of a {@link CodeOperation}.
  *
  * @see CodeOperation#getExceptions()
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeException extends CodeOperationArg, CodeSimpleMergeableItem<CodeException>, CodeNodeItemCopyable<CodeExceptions<?>, CodeException> {
+public interface CodeException extends CodeOperationArg, CodeSimpleMergeableItem<CodeException>, CodeNodeItemCopyable<CodeExceptions, CodeException> {
 
   @Override
   AnnotatedType getReflectiveObject();
+
+  @Override
+  CodeException copy();
 
 }

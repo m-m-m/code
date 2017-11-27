@@ -4,6 +4,7 @@ package net.sf.mmm.code.api.type;
 
 import java.lang.reflect.ParameterizedType;
 
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.item.CodeMutableItemWithType;
 import net.sf.mmm.code.api.node.CodeNodeItemWithDeclaringOperation;
@@ -19,14 +20,15 @@ import net.sf.mmm.code.api.node.CodeNodeItemWithDeclaringOperation;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeParameterizedType extends CodeGenericType, CodeMutableItemWithType, CodeNodeItemWithDeclaringOperation {
+public interface CodeParameterizedType
+    extends CodeGenericType, CodeMutableItemWithType, CodeNodeItemWithDeclaringOperation, CodeNodeItemCopyable<CodeElement, CodeParameterizedType> {
 
   @Override
   CodeElement getParent();
 
   /**
-   * @return the raw {@link CodeType} that is parameterized here. In other words this method returns this
-   *         parameterized type with its {@link #getTypeParameters() type parameters} removed.
+   * @return the raw {@link CodeType} that is parameterized here. In other words this method returns this parameterized
+   *         type with its {@link #getTypeParameters() type parameters} removed.
    * @see java.lang.reflect.ParameterizedType#getRawType()
    */
   @Override

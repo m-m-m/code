@@ -25,10 +25,10 @@ import net.sf.mmm.code.base.type.BaseTypeVariable;
 import net.sf.mmm.code.base.type.BaseTypeWildcard;
 
 /**
- * {@link BaseGenericTypeProxy} used to create types from source code with lazy evaluation. In Java types can
- * be referenced before they are actually declared (e.g. a nested class can be used in its parent class before
- * it is defined in the source code). Therefore instances of this class can be created whilst parsing the
- * source code and will be resolved via lazy initialization after the parsing has completed.
+ * {@link BaseGenericTypeProxy} used to create types from source code with lazy evaluation. In Java types can be
+ * referenced before they are actually declared (e.g. a nested class can be used in its parent class before it is
+ * defined in the source code). Therefore instances of this class can be created whilst parsing the source code and will
+ * be resolved via lazy initialization after the parsing has completed.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
@@ -130,7 +130,7 @@ public class JavaGenericTypeFromSource extends BaseGenericTypeProxy {
 
   private BaseGenericType toGenericTypeByName(String typeName) {
 
-    BaseTypeVariable typeVariable = this.parent.getTypeParameters().get(typeName, true);
+    BaseTypeVariable typeVariable = (BaseTypeVariable) this.parent.getTypeParameters().get(typeName, true);
     if (typeVariable != null) {
       return typeVariable;
     }
@@ -209,8 +209,8 @@ public class JavaGenericTypeFromSource extends BaseGenericTypeProxy {
   }
 
   /**
-   * @return {@code true} if diamond operator ({@literal <>}) was present in source-code for this type
-   *         reference, {@code false} otherwise. E.g. needed for constructor references.
+   * @return {@code true} if diamond operator ({@literal <>}) was present in source-code for this type reference,
+   *         {@code false} otherwise. E.g. needed for constructor references.
    */
   public boolean isDiamonOperator() {
 
@@ -306,9 +306,9 @@ public class JavaGenericTypeFromSource extends BaseGenericTypeProxy {
   }
 
   /**
-   * @return the length of the array (in case of an array initializer such as 1024 in {@code new byte[1024]}
-   *         but may also be a variable, field reference, calculation expression, etc.) or {@code null} if not
-   *         an array initializer.
+   * @return the length of the array (in case of an array initializer such as 1024 in {@code new byte[1024]} but may
+   *         also be a variable, field reference, calculation expression, etc.) or {@code null} if not an array
+   *         initializer.
    */
   public String getArrayLengthExpression() {
 

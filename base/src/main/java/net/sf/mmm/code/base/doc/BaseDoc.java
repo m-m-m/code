@@ -22,6 +22,8 @@ import net.sf.mmm.code.api.CodeContext;
 import net.sf.mmm.code.api.arg.CodeException;
 import net.sf.mmm.code.api.arg.CodeParameter;
 import net.sf.mmm.code.api.arg.CodeReturn;
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.doc.CodeDoc;
 import net.sf.mmm.code.api.doc.CodeDocFormat;
 import net.sf.mmm.code.api.doc.CodeDocLink;
@@ -42,7 +44,6 @@ import net.sf.mmm.code.base.element.BaseElementImpl;
 import net.sf.mmm.code.base.member.BaseOperation;
 import net.sf.mmm.code.base.node.BaseNodeItemImpl;
 import net.sf.mmm.code.base.type.BaseType;
-import net.sf.mmm.code.base.type.BaseTypeVariable;
 
 /**
  * Base implementation of {@link CodeDoc}.
@@ -82,8 +83,9 @@ public class BaseDoc extends BaseNodeItemImpl implements CodeDoc {
    *
    * @param template the {@link BaseDoc} to copy.
    * @param parent the new {@link #getParent() parent element}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseDoc(BaseDoc template, BaseElementImpl parent) {
+  public BaseDoc(BaseDoc template, BaseElementImpl parent, CodeCopyMapper mapper) {
 
     super();
     this.parent = parent;
@@ -103,7 +105,7 @@ public class BaseDoc extends BaseNodeItemImpl implements CodeDoc {
     if (this.parent == null) {
       return;
     }
-    BaseElementImpl sourceElement = this.parent.getSourceCodeObject();
+    CodeElement sourceElement = this.parent.getSourceCodeObject();
     if (sourceElement != null) {
       this.lines.addAll(sourceElement.getDoc().getLines());
     }
@@ -261,8 +263,7 @@ public class BaseDoc extends BaseNodeItemImpl implements CodeDoc {
   }
 
   /**
-   * @param link the {@link BaseDocLink} to resolve as value (e.g. to resolve "&#64;{value Foo#BAR}" or
-   *        "&#64;{value}").
+   * @param link the {@link BaseDocLink} to resolve as value (e.g. to resolve "&#64;{value Foo#BAR}" or "&#64;{value}").
    * @return the resolved value.
    */
   protected Object resolveLinkValue(CodeDocLink link) {
@@ -328,9 +329,8 @@ public class BaseDoc extends BaseNodeItemImpl implements CodeDoc {
 
   /**
    * @param link the {@link BaseDocLink} to resolve.
-   * @return the {@link BaseDocLink#getQualifiedName() qualified name} of the {@link BaseDocLink}. In case it
-   *         is {@code null} the resolved qualified name from the {@link BaseDocLink#getSimpleName() simple
-   *         name}.
+   * @return the {@link BaseDocLink#getQualifiedName() qualified name} of the {@link BaseDocLink}. In case it is
+   *         {@code null} the resolved qualified name from the {@link BaseDocLink#getSimpleName() simple name}.
    */
   protected String resolveLinkQualifiedName(CodeDocLink link) {
 
@@ -348,8 +348,8 @@ public class BaseDoc extends BaseNodeItemImpl implements CodeDoc {
   /**
    * @param url the base URL or relative path.
    * @param link the {@link BaseDocLink}.
-   * @param absolute - {@code true} if the {@link BaseDocLink#getQualifiedName() qualified name} should be
-   *        appended as path to the URL, {@code false} otherwise.
+   * @param absolute - {@code true} if the {@link BaseDocLink#getQualifiedName() qualified name} should be appended as
+   *        path to the URL, {@code false} otherwise.
    * @return the resolved URL.
    */
   protected String resolveLinkUrl(String url, CodeDocLink link, boolean absolute) {
@@ -457,7 +457,13 @@ public class BaseDoc extends BaseNodeItemImpl implements CodeDoc {
   @Override
   public BaseDoc copy(CodeElement newParent) {
 
-    return new BaseDoc(this, (BaseElementImpl) newParent);
+    return copy(newParent, CodeCopyMapperNone.INSTANCE);
+  }
+
+  @Override
+  public BaseDoc copy(CodeElement newParent, CodeCopyMapper mapper) {
+
+    return new BaseDoc(this, (BaseElementImpl) newParent, mapper);
   }
 
   @Override
@@ -465,7 +471,7 @@ public class BaseDoc extends BaseNodeItemImpl implements CodeDoc {
 
     int size = getLines().size();
     BaseOperation operation = null;
-    List<? extends BaseTypeVariable> typeParameters = null;
+    List<? extends CodeTypeVariable> typeParameters = null;
     CodeElement element = getParent();
     if (element instanceof BaseOperation) {
       operation = (BaseOperation) element;
@@ -532,7 +538,7 @@ public class BaseDoc extends BaseNodeItemImpl implements CodeDoc {
     sink.append(newline);
   }
 
-  private void doWriteTypeParameters(Appendable sink, String newline, String currentIndent, List<? extends BaseTypeVariable> typeParameters)
+  private void doWriteTypeParameters(Appendable sink, String newline, String currentIndent, List<? extends CodeTypeVariable> typeParameters)
       throws IOException {
 
     for (CodeTypeVariable variable : typeParameters) {

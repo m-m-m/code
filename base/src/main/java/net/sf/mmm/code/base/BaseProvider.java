@@ -22,7 +22,7 @@ public interface BaseProvider extends CodeProvider, BaseLoader, BaseNode {
   @Override
   default BaseContext getContext() {
 
-    return getParent().getContext();
+    return (BaseContext) getParent().getContext();
   }
 
   @Override

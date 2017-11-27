@@ -7,6 +7,8 @@ import java.util.List;
 
 import net.sf.mmm.code.api.block.CodeBlock;
 import net.sf.mmm.code.api.block.CodeBlockFor;
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.expression.CodeForExpression;
 import net.sf.mmm.code.api.statement.CodeStatement;
 
@@ -51,10 +53,11 @@ public class BaseBlockFor extends BaseBlockStatement implements CodeBlockFor {
    *
    * @param parent the {@link #getParent() parent}.
    * @param template the {@link BaseBlockStatement} to copy.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseBlockFor(BaseBlockFor template, BaseBlock parent) {
+  public BaseBlockFor(BaseBlockFor template, BaseBlock parent, CodeCopyMapper mapper) {
 
-    super(template, parent);
+    super(template, parent, mapper);
     this.expression = template.expression;
   }
 
@@ -73,7 +76,13 @@ public class BaseBlockFor extends BaseBlockStatement implements CodeBlockFor {
   @Override
   public BaseBlockFor copy(CodeBlock newParent) {
 
-    return new BaseBlockFor(this, (BaseBlock) newParent);
+    return copy(newParent, CodeCopyMapperNone.INSTANCE);
+  }
+
+  @Override
+  public BaseBlockFor copy(CodeBlock newParent, CodeCopyMapper mapper) {
+
+    return new BaseBlockFor(this, (BaseBlock) newParent, mapper);
   }
 
   @Override

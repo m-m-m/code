@@ -6,15 +6,18 @@ import java.io.IOException;
 import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Method;
 
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.member.CodeMethods;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.merge.CodeMergeStrategyDecider;
+import net.sf.mmm.code.api.type.CodeGenericType;
+import net.sf.mmm.code.api.type.CodeSuperTypes;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.arg.BaseReturn;
-import net.sf.mmm.code.base.type.BaseGenericType;
-import net.sf.mmm.code.base.type.BaseSuperTypes;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.base.type.BaseTypeVariables;
 
@@ -30,7 +33,7 @@ public class BaseMethod extends BaseOperation implements CodeMethod {
 
   private final Method reflectiveObject;
 
-  private BaseMethod sourceCodeObject;
+  private CodeMethod sourceCodeObject;
 
   private BaseReturn returns;
 
@@ -91,10 +94,11 @@ public class BaseMethod extends BaseOperation implements CodeMethod {
    *
    * @param template the {@link BaseMethod} to copy.
    * @param parent the {@link #getParent() parent}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseMethod(BaseMethod template, BaseMethods parent) {
+  public BaseMethod(BaseMethod template, BaseMethods parent, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
     this.parent = parent;
     this.reflectiveObject = null;
   }
@@ -164,10 +168,10 @@ public class BaseMethod extends BaseOperation implements CodeMethod {
   }
 
   @Override
-  public BaseMethod getSourceCodeObject() {
+  public CodeMethod getSourceCodeObject() {
 
     if (this.sourceCodeObject == null) {
-      BaseMethods sourceMethods = this.parent.getSourceCodeObject();
+      CodeMethods sourceMethods = this.parent.getSourceCodeObject();
       if (sourceMethods != null) {
         this.sourceCodeObject = sourceMethods.get(this); // TODO getDeclared instead of get
       }
@@ -176,14 +180,14 @@ public class BaseMethod extends BaseOperation implements CodeMethod {
   }
 
   @Override
-  public BaseMethod getParentMethod() {
+  public CodeMethod getParentMethod() {
 
     return getParentMethod(this.parent.getParent());
   }
 
-  private BaseMethod getParentMethod(BaseType type) {
+  private CodeMethod getParentMethod(BaseType type) {
 
-    BaseMethod parentMethod;
+    CodeMethod parentMethod;
     if (type.isClass() || type.isEnumeration()) { // enumeration can override Object methods
       parentMethod = getParentMethodFromClasses(type);
       if (parentMethod != null) {
@@ -193,27 +197,27 @@ public class BaseMethod extends BaseOperation implements CodeMethod {
     return getParentMethodFromInterfaces(type);
   }
 
-  private BaseMethod getParentMethodFromClasses(BaseType type) {
+  private CodeMethod getParentMethodFromClasses(CodeType type) {
 
-    BaseGenericType superGenericClass = type.getSuperTypes().getSuperClass();
+    CodeGenericType superGenericClass = type.getSuperTypes().getSuperClass();
     if (superGenericClass == null) {
       return null;
     }
-    BaseType superClass = superGenericClass.asType();
-    BaseMethod parentMethod = superClass.getMethods().get(this);
+    CodeType superClass = superGenericClass.asType();
+    CodeMethod parentMethod = superClass.getMethods().get(this);
     if (parentMethod != null) {
       return parentMethod;
     }
     return getParentMethodFromClasses(superClass);
   }
 
-  private BaseMethod getParentMethodFromInterfaces(BaseType type) {
+  private CodeMethod getParentMethodFromInterfaces(CodeType type) {
 
-    BaseSuperTypes superTypes = type.getSuperTypes();
-    for (BaseGenericType superType : superTypes.getDeclared()) {
+    CodeSuperTypes superTypes = type.getSuperTypes();
+    for (CodeGenericType superType : superTypes.getDeclared()) {
       if (superType.isInterface()) {
-        BaseType superInterface = superType.asType();
-        BaseMethod parentMethod = superInterface.getMethods().get(this);
+        CodeType superInterface = superType.asType();
+        CodeMethod parentMethod = superInterface.getMethods().get(this);
         if (parentMethod != null) {
           return parentMethod;
         }
@@ -252,9 +256,15 @@ public class BaseMethod extends BaseOperation implements CodeMethod {
   }
 
   @Override
-  public BaseMethod copy(CodeMethods<?> newParent) {
+  public BaseMethod copy(CodeMethods newParent) {
 
-    return new BaseMethod(this, (BaseMethods) newParent);
+    return copy(newParent, CodeCopyMapperNone.INSTANCE);
+  }
+
+  @Override
+  public BaseMethod copy(CodeMethods newParent, CodeCopyMapper mapper) {
+
+    return new BaseMethod(this, (BaseMethods) newParent, mapper);
   }
 
   @Override

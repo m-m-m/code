@@ -50,32 +50,31 @@ public interface CodeType extends CodeGenericType, CodeElementWithModifiers, Cod
   void setCategory(CodeTypeCategory category);
 
   /**
-   * @return the {@link List} of {@link CodeGenericType}s inherited by this type. This model does not
-   *         distinguish {@code extends} vs. {@code inherits} and potentially allows multi-inheritance of
-   *         classes for languages other than Java.
+   * @return the {@link List} of {@link CodeGenericType}s inherited by this type. This model does not distinguish
+   *         {@code extends} vs. {@code inherits} and potentially allows multi-inheritance of classes for languages
+   *         other than Java.
    */
-  CodeSuperTypes<?> getSuperTypes();
+  CodeSuperTypes getSuperTypes();
 
   /**
    * @return the {@link CodeFields} containing the actual {@link net.sf.mmm.code.api.member.CodeField}s.
    */
-  CodeFields<?> getFields();
+  CodeFields getFields();
 
   /**
    * @return the {@link CodeMethods} containing the actual {@link net.sf.mmm.code.api.member.CodeMethod}s.
    */
-  CodeMethods<?> getMethods();
+  CodeMethods getMethods();
 
   /**
-   * @return the {@link CodeConstructors} containing the actual
-   *         {@link net.sf.mmm.code.api.member.CodeConstructor}s.
+   * @return the {@link CodeConstructors} containing the actual {@link net.sf.mmm.code.api.member.CodeConstructor}s.
    */
-  CodeConstructors<?> getConstructors();
+  CodeConstructors getConstructors();
 
   /**
    * @return the {@link CodeProperties} containing instances of {@link CodeProperty}.
    */
-  CodeProperties<?> getProperties();
+  CodeProperties getProperties();
 
   /**
    * @return the {@link CodeType} containing this {@link CodeType} or {@code this} type itself if not a
@@ -85,8 +84,8 @@ public interface CodeType extends CodeGenericType, CodeElementWithModifiers, Cod
   CodeType getDeclaringType();
 
   /**
-   * @return {@code true} if this a nested type (sometimes called "inner class"), {@code false} otherwise
-   *         (called a "top-level" type).
+   * @return {@code true} if this a nested type (sometimes called "inner class"), {@code false} otherwise (called a
+   *         "top-level" type).
    * @see #getDeclaringType()
    */
   default boolean isNested() {
@@ -98,12 +97,12 @@ public interface CodeType extends CodeGenericType, CodeElementWithModifiers, Cod
    * @return the {@link CodeNestedTypes} containing the {@link #isNested() nested} {@link CodeType}s. May be
    *         {@link List#isEmpty() empty} but is never {@code null}.
    */
-  CodeNestedTypes<?> getNestedTypes();
+  CodeNestedTypes getNestedTypes();
 
   /**
-   * @return the static initializer block. Will be omitted if empty. To create an empty static initializer
-   *         simply add an empty statement to it. For simplicity only a single static initializer is supported
-   *         by this API. Multiple static initializers will be joined (appended) automatically.
+   * @return the static initializer block. Will be omitted if empty. To create an empty static initializer simply add an
+   *         empty statement to it. For simplicity only a single static initializer is supported by this API. Multiple
+   *         static initializers will be joined (appended) automatically.
    */
   CodeBlockInitializer getStaticInitializer();
 
@@ -115,10 +114,9 @@ public interface CodeType extends CodeGenericType, CodeElementWithModifiers, Cod
   void setStaticInitializer(CodeBlockInitializer initializer);
 
   /**
-   * @return the non-static initializer block. Will be omitted if empty. To create an empty non-static
-   *         initializer simply add an empty statement to it. For simplicity only a single non-static
-   *         initializer is supported by this API. Multiple non-static initializers will be joined (appended)
-   *         automatically.
+   * @return the non-static initializer block. Will be omitted if empty. To create an empty non-static initializer
+   *         simply add an empty statement to it. For simplicity only a single non-static initializer is supported by
+   *         this API. Multiple non-static initializers will be joined (appended) automatically.
    */
   CodeBlockInitializer getNonStaticInitializer();
 
@@ -151,8 +149,7 @@ public interface CodeType extends CodeGenericType, CodeElementWithModifiers, Cod
   boolean isBoolean();
 
   /**
-   * @return {@code true} if this type represents an exception (in Java any type assignable to
-   *         {@link Throwable}).
+   * @return {@code true} if this type represents an exception (in Java any type assignable to {@link Throwable}).
    */
   boolean isException();
 
@@ -183,17 +180,15 @@ public interface CodeType extends CodeGenericType, CodeElementWithModifiers, Cod
   /**
    * This method should only be called if this type actually has {@link #getTypeParameters() type variables}.
    *
-   * @param parent the {@link CodeParameterizedType#getParent() parent} of the new
-   *        {@link CodeParameterizedType}.
-   * @return a new {@link CodeParameterizedType} with this type as {@link CodeParameterizedType#getType() raw
-   *         type}.
+   * @param parent the {@link CodeParameterizedType#getParent() parent} of the new {@link CodeParameterizedType}.
+   * @return a new {@link CodeParameterizedType} with this type as {@link CodeParameterizedType#getType() raw type}.
    */
   CodeParameterizedType createParameterizedType(CodeElement parent);
 
   /**
-   * @return the {@link CodeGenericType} representing this {@link CodeType} as {@link #isQualified() fully
-   *         qualified} type. If this {@link CodeType} {@link #getParentPackage() is contained} in the default
-   *         package this will return this type itself (e.g. for primitive types).
+   * @return the {@link CodeGenericType} representing this {@link CodeType} as {@link #isQualified() fully qualified}
+   *         type. If this {@link CodeType} {@link #getParentPackage() is contained} in the default package this will
+   *         return this type itself (e.g. for primitive types).
    */
   CodeGenericType getQualifiedType();
 
@@ -206,4 +201,6 @@ public interface CodeType extends CodeGenericType, CodeElementWithModifiers, Cod
     return this;
   }
 
+  @Override
+  CodeType copy();
 }

@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.item.CodeItemWithName;
 import net.sf.mmm.code.api.item.CodeItemWithQualifiedName;
@@ -54,12 +55,13 @@ public abstract class BaseNodeItemContainer<I extends CodeItem> extends BaseNode
    * The copy-constructor.
    *
    * @param template the {@link BaseNodeItemContainer} to copy.
+   * @param mapper the {@link CodeCopyMapper}.
    */
   @SuppressWarnings({ "rawtypes", "unchecked" })
-  public BaseNodeItemContainer(BaseNodeItemContainer<I> template) {
+  public BaseNodeItemContainer(BaseNodeItemContainer<I> template, CodeCopyMapper mapper) {
 
-    super(template);
-    this.mutableList = doCopy((List) template.list, this);
+    super(template, mapper);
+    this.mutableList = doCopyList((List) template.list, this, mapper);
     this.list = this.mutableList;
     if (template.map == null) {
       this.map = null;
@@ -77,9 +79,6 @@ public abstract class BaseNodeItemContainer<I extends CodeItem> extends BaseNode
     super.doSetImmutable();
     this.list = makeImmutable(this.mutableList, !isKeepListView());
   }
-
-  @Override
-  public abstract BaseNodeItem getParent();
 
   @Override
   protected boolean isSystemImmutable() {

@@ -7,7 +7,9 @@ import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.Type;
 import java.util.Objects;
 
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
+import net.sf.mmm.code.api.element.CodeElementWithDeclaringType;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.base.element.BaseElementWithDeclaringTypeImpl;
 import net.sf.mmm.util.exception.api.IllegalCaseException;
@@ -18,7 +20,7 @@ import net.sf.mmm.util.exception.api.IllegalCaseException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseArrayType extends BaseGenericType implements CodeNodeItemCopyable<BaseElementWithDeclaringTypeImpl, BaseArrayType> {
+public class BaseArrayType extends BaseGenericType implements CodeNodeItemCopyable<CodeElementWithDeclaringType, BaseArrayType> {
 
   private final BaseElementWithDeclaringTypeImpl parent;
 
@@ -29,8 +31,7 @@ public class BaseArrayType extends BaseGenericType implements CodeNodeItemCopyab
   /**
    * The constructor.
    *
-   * @param componentType the {@link #getComponentType() component type} to also use as {@link #getParent()
-   *        parent}.
+   * @param componentType the {@link #getComponentType() component type} to also use as {@link #getParent() parent}.
    */
   public BaseArrayType(BaseGenericType componentType) {
 
@@ -82,12 +83,13 @@ public class BaseArrayType extends BaseGenericType implements CodeNodeItemCopyab
    *
    * @param template the {@link BaseArrayType} to copy.
    * @param parent the {@link #getParent() parent}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseArrayType(BaseArrayType template, BaseElementWithDeclaringTypeImpl parent) {
+  public BaseArrayType(BaseArrayType template, BaseElementWithDeclaringTypeImpl parent, CodeCopyMapper mapper) {
 
-    super(template);
-    this.parent = parent;
-    this.componentType = template.getComponentType();
+    super(template, mapper);
+    this.parent = mapper.map(parent);
+    this.componentType = mapper.map(template.getComponentType());
     this.reflectiveObject = null;
   }
 
@@ -184,9 +186,9 @@ public class BaseArrayType extends BaseGenericType implements CodeNodeItemCopyab
   }
 
   @Override
-  public BaseArrayType copy(BaseElementWithDeclaringTypeImpl newParent) {
+  public BaseArrayType copy(CodeElementWithDeclaringType newParent, CodeCopyMapper mapper) {
 
-    return new BaseArrayType(this, newParent);
+    return new BaseArrayType(this, (BaseElementWithDeclaringTypeImpl) newParent, mapper);
   }
 
 }

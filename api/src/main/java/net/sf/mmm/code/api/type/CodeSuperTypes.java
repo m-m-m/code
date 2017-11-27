@@ -6,31 +6,29 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
-import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.merge.CodeSimpleMergeableItem;
 import net.sf.mmm.code.api.node.CodeNodeItemContainerHierarchical;
 
 /**
- * {@link CodeItem} containing the super types of a {@link CodeType}.
+ * {@link CodeNodeItemContainerHierarchical} containing the super types of a {@link CodeType}.
  *
  * @see CodeType#getSuperTypes()
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
- * @param <T> the type of the contained {@link CodeGenericType}s.
  * @since 1.0.0
  */
-public interface CodeSuperTypes<T extends CodeGenericType>
-    extends CodeNodeItemContainerHierarchical<T>, CodeSimpleMergeableItem<CodeSuperTypes<?>>, CodeNodeItemCopyable<CodeType, CodeSuperTypes<?>> {
+public interface CodeSuperTypes
+    extends CodeNodeItemContainerHierarchical<CodeGenericType>, CodeSimpleMergeableItem<CodeSuperTypes>, CodeNodeItemCopyable<CodeType, CodeSuperTypes> {
 
   @Override
   CodeType getParent();
 
   /**
-   * @return the (first) {@link CodeGenericType#isClass() class} of the {@link CodeType#getSuperTypes() super
-   *         types} or {@code null} if none exists. In case the {@link #getParent() type} is a
-   *         {@link CodeGenericType#isClass() class} or {@link CodeGenericType#isEnumeration() enumeration}
-   *         the {@link net.sf.mmm.code.api.CodeContext#getRootType() root type} is considered as super class
-   *         even if is not explicitly in the {@link #getDeclared() list of extended types}.
+   * @return the (first) {@link CodeGenericType#isClass() class} of the {@link CodeType#getSuperTypes() super types} or
+   *         {@code null} if none exists. In case the {@link #getParent() type} is a {@link CodeGenericType#isClass()
+   *         class} or {@link CodeGenericType#isEnumeration() enumeration} the
+   *         {@link net.sf.mmm.code.api.CodeContext#getRootType() root type} is considered as super class even if is not
+   *         explicitly in the {@link #getDeclared() list of extended types}.
    */
   default CodeGenericType getSuperClass() {
 
@@ -43,8 +41,8 @@ public interface CodeSuperTypes<T extends CodeGenericType>
   }
 
   /**
-   * @return the {@link List} of {@link CodeGenericType#isInterface() interfaces} of the {@link #getAll()
-   *         super types}. May be {@link List#isEmpty() empty} but is never {@code null}.
+   * @return the {@link List} of {@link CodeGenericType#isInterface() interfaces} of the {@link #getAll() super types}.
+   *         May be {@link List#isEmpty() empty} but is never {@code null}.
    */
   default List<? extends CodeGenericType> getSuperInterfaces() {
 
@@ -57,6 +55,6 @@ public interface CodeSuperTypes<T extends CodeGenericType>
   void add(CodeGenericType superType);
 
   @Override
-  CodeSuperTypes<T> copy();
+  CodeSuperTypes copy();
 
 }

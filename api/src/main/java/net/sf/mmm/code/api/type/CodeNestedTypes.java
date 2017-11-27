@@ -2,6 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.type;
 
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.merge.CodeAdvancedMergeableItem;
 import net.sf.mmm.code.api.node.CodeNodeItemContainerHierarchical;
 import net.sf.mmm.code.api.node.CodeNodeItemContainerHierarchicalWithName;
@@ -12,16 +13,15 @@ import net.sf.mmm.code.api.node.CodeNodeItemContainerHierarchicalWithName;
  * @see Class#getDeclaringClass()
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
- * @param <T> the type of the contained {@link CodeType}s.
  * @since 1.0.0
  */
-public abstract interface CodeNestedTypes<T extends CodeType>
-    extends CodeNodeItemContainerHierarchicalWithName<T>, CodeAdvancedMergeableItem<CodeNestedTypes<?>> {
+public abstract interface CodeNestedTypes
+    extends CodeNodeItemContainerHierarchicalWithName<CodeType>, CodeAdvancedMergeableItem<CodeNestedTypes>, CodeNodeItemCopyable<CodeType, CodeNestedTypes> {
 
   @Override
-  T getParent();
+  CodeType getParent();
 
   @Override
-  CodeNestedTypes<T> copy();
+  CodeNestedTypes copy();
 
 }

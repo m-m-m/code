@@ -11,10 +11,11 @@ import net.sf.mmm.code.api.type.CodeType;
  * {@link CodeMembers} as a container for the {@link CodeField}s.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
- * @param <F> the type of the contained {@link CodeField}s.
  * @since 1.0.0
  */
-public interface CodeFields<F extends CodeField> extends CodeMembers<F>, CodeNodeItemContainerHierarchicalWithName<F>, CodeAdvancedMergeableItem<CodeFields<?>>,
-    CodeNodeItemCopyable<CodeType, CodeFields<F>> {
+public interface CodeFields extends CodeMembers<CodeField>, CodeNodeItemContainerHierarchicalWithName<CodeField>, CodeAdvancedMergeableItem<CodeFields>,
+    CodeNodeItemCopyable<CodeType, CodeFields> {
 
+  @Override
+  CodeFields copy();
 }

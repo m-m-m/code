@@ -8,6 +8,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.language.CodeLanguage;
@@ -41,8 +42,9 @@ public abstract class BaseNodeItemImpl extends BaseMutableItem implements BaseNo
    * The copy-constructor.
    *
    * @param template the {@link BaseNodeItemImpl} to copy.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseNodeItemImpl(BaseNodeItemImpl template) {
+  public BaseNodeItemImpl(BaseNodeItemImpl template, CodeCopyMapper mapper) {
 
     super(template);
   }
@@ -66,14 +68,15 @@ public abstract class BaseNodeItemImpl extends BaseMutableItem implements BaseNo
    * @param <E> type of the actual {@link List} elements.
    * @param list the {@link List} to {@link CodeNodeItemCopyable#copy(CodeNode) copy}.
    * @param newParent the new {@link CodeNodeItemCopyable#getParent() parent}.
+   * @param mapper the {@link CodeCopyMapper}.
    * @return an mutable deep-copy of the {@link List}.
    */
   @SuppressWarnings("unchecked")
-  protected <P extends CodeNode, N extends CodeNodeItemCopyable<P, N>, E extends N> List<E> doCopy(List<E> list, P newParent) {
+  protected <P extends CodeNode, N extends CodeNodeItemCopyable<P, N>, E extends N> List<E> doCopyList(List<E> list, P newParent, CodeCopyMapper mapper) {
 
     List<E> copy = new ArrayList<>(list.size());
     for (E node : list) {
-      copy.add((E) node.copy(newParent));
+      copy.add((E) node.copy(newParent, mapper));
     }
     return copy;
   }
@@ -106,9 +109,9 @@ public abstract class BaseNodeItemImpl extends BaseMutableItem implements BaseNo
   @Override
   public BaseContext getContext() {
 
-    BaseNode parent = getParent();
+    CodeNode parent = getParent();
     if (parent != null) {
-      return parent.getContext();
+      return (BaseContext) parent.getContext();
     }
     return null;
   }
@@ -116,9 +119,9 @@ public abstract class BaseNodeItemImpl extends BaseMutableItem implements BaseNo
   @Override
   public BaseSource getSource() {
 
-    BaseNode parent = getParent();
+    CodeNode parent = getParent();
     if (parent != null) {
-      return parent.getSource();
+      return (BaseSource) parent.getSource();
     }
     return null;
   }

@@ -6,6 +6,7 @@ import java.util.List;
 
 import net.sf.mmm.code.api.block.CodeBlockStatement;
 import net.sf.mmm.code.api.block.CodeBlockWithCondition;
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.expression.CodeCondition;
 import net.sf.mmm.code.api.statement.CodeStatement;
 
@@ -48,10 +49,11 @@ public abstract class BaseBlockStatementWithCondition extends BaseBlockStatement
    *
    * @param parent the {@link #getParent() parent}.
    * @param template the {@link BaseBlockStatementWithCondition} to copy.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseBlockStatementWithCondition(BaseBlockStatementWithCondition template, BaseBlock parent) {
+  public BaseBlockStatementWithCondition(BaseBlockStatementWithCondition template, BaseBlock parent, CodeCopyMapper mapper) {
 
-    super(template, parent);
+    super(template, parent, mapper);
   }
 
   @Override

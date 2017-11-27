@@ -17,6 +17,7 @@ import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.api.annotation.CodeAnnotation;
 import net.sf.mmm.code.api.comment.CodeComment;
 import net.sf.mmm.code.api.expression.CodeExpression;
+import net.sf.mmm.code.api.imports.CodeImport;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.api.modifier.CodeVisibility;
 import net.sf.mmm.code.api.operator.CodeNAryOperator;
@@ -29,7 +30,6 @@ import net.sf.mmm.code.base.comment.BaseSingleLineComment;
 import net.sf.mmm.code.base.expression.BaseArrayInstatiation;
 import net.sf.mmm.code.base.expression.BaseFieldReferenceLazy;
 import net.sf.mmm.code.base.expression.BaseMethodInvocation;
-import net.sf.mmm.code.base.imports.BaseImport;
 import net.sf.mmm.code.base.member.BaseMethod;
 import net.sf.mmm.code.base.operator.GenericOperator;
 import net.sf.mmm.code.impl.java.expression.JavaNAryOperatorExpression;
@@ -135,8 +135,8 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
   }
 
   /**
-   * @return the {@link CodeComment} for the currently parsed "element" (type, member, etc.) parsed by the
-   *         last invocation of {@link #consume()}.
+   * @return the {@link CodeComment} for the currently parsed "element" (type, member, etc.) parsed by the last
+   *         invocation of {@link #consume()}.
    */
   public CodeComment getElementComment() {
 
@@ -153,8 +153,8 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
   }
 
   /**
-   * @return the plain JavaDoc lines that have been parsed by the last invocation of {@link #consume()}. Will
-   *         be {@link List#isEmpty() empty} for no JavaDoc.
+   * @return the plain JavaDoc lines that have been parsed by the last invocation of {@link #consume()}. Will be
+   *         {@link List#isEmpty() empty} for no JavaDoc.
    */
   public List<String> getJavaDocLines() {
 
@@ -273,7 +273,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
       } else {
         parseWhitespacesAndComments();
         if (!expect('=')) {
-          for (BaseImport importStatement : this.file.getImports()) {
+          for (CodeImport importStatement : this.file.getImports()) {
             if (importStatement.isStatic()) {
               String reference = importStatement.getReference();
               int index = reference.length() - key.length() - 1;
@@ -518,8 +518,8 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
   }
 
   /**
-   * @param inInterface - {@code true} if in the context of an interface (where public is the default),
-   *        {@code false} otherwise.
+   * @param inInterface - {@code true} if in the context of an interface (where public is the default), {@code false}
+   *        otherwise.
    * @return the parsed {@link CodeModifiers}.
    */
   protected CodeModifiers parseModifiers(boolean inInterface) {

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 
 import net.sf.mmm.code.api.comment.CodeComment;
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeGenericType;
@@ -33,10 +34,11 @@ public abstract class BaseGenericTypeProxy extends BaseGenericType {
    * The copy-constructor.
    *
    * @param template the {@link BaseGenericTypeProxy} to copy.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseGenericTypeProxy(BaseGenericTypeProxy template) {
+  public BaseGenericTypeProxy(BaseGenericTypeProxy template, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
   }
 
   /**
@@ -81,8 +83,8 @@ public abstract class BaseGenericTypeProxy extends BaseGenericType {
   }
 
   /**
-   * @param fromDelegate - {@code true} to get from {@link #getDelegate()}, {@code false} otherwise (to get
-   *        from {@code super} class).
+   * @param fromDelegate - {@code true} to get from {@link #getDelegate()}, {@code false} otherwise (to get from
+   *        {@code super} class).
    * @return the {@link #getComment() comment}.
    */
   public CodeComment getComment(boolean fromDelegate) {
@@ -101,8 +103,8 @@ public abstract class BaseGenericTypeProxy extends BaseGenericType {
   }
 
   /**
-   * @param fromDelegate - {@code true} to get from {@link #getDelegate()}, {@code false} otherwise (to get
-   *        from {@code super} class).
+   * @param fromDelegate - {@code true} to get from {@link #getDelegate()}, {@code false} otherwise (to get from
+   *        {@code super} class).
    * @return the {@link #getAnnotations() annotations}.
    */
   public BaseAnnotations getAnnotations(boolean fromDelegate) {
@@ -152,16 +154,15 @@ public abstract class BaseGenericTypeProxy extends BaseGenericType {
 
   /**
    * @see #doWrite(Appendable, String, String, String, CodeLanguage)
-   * @param sink the {@link Appendable} where to {@link Appendable#append(CharSequence) append} the code from
-   *        this {@link CodeItem}.
+   * @param sink the {@link Appendable} where to {@link Appendable#append(CharSequence) append} the code from this
+   *        {@link CodeItem}.
    * @param newline the newline {@link String}.
-   * @param defaultIndent the {@link String} used for indentation (e.g. a number of spaces to insert per
-   *        indent level).
-   * @param currentIndent the current indent (number of spaces). Initially the empty string ({@code ""}).
-   *        Before a recursion the {@code indent} will be appended.
+   * @param defaultIndent the {@link String} used for indentation (e.g. a number of spaces to insert per indent level).
+   * @param currentIndent the current indent (number of spaces). Initially the empty string ({@code ""}). Before a
+   *        recursion the {@code indent} will be appended.
    * @param language the {@link CodeLanguage} to use.
-   * @param fromDelegate - {@code true} to get from {@link #getDelegate()}, {@code false} otherwise (to get
-   *        from {@code super} class).
+   * @param fromDelegate - {@code true} to get from {@link #getDelegate()}, {@code false} otherwise (to get from
+   *        {@code super} class).
    * @throws IOException if thrown by {@link Appendable}.
    */
   protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language, boolean fromDelegate)

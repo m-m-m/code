@@ -8,13 +8,15 @@ import java.lang.reflect.TypeVariable;
 import java.util.List;
 import java.util.function.Consumer;
 
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.element.CodeElementWithTypeVariables;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.api.type.CodeTypeVariable;
 import net.sf.mmm.code.api.type.CodeTypeVariables;
-import net.sf.mmm.code.base.element.BaseElementWithTypeVariables;
 import net.sf.mmm.code.base.member.BaseOperation;
 
 /**
@@ -23,7 +25,7 @@ import net.sf.mmm.code.base.member.BaseOperation;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseTypeVariables extends BaseGenericTypeParameters<BaseTypeVariable> implements CodeTypeVariables<BaseTypeVariable> {
+public class BaseTypeVariables extends BaseGenericTypeParameters<CodeTypeVariable> implements CodeTypeVariables {
 
   /** The empty and {@link #isImmutable() immutable} instance of {@link BaseTypeVariables}. */
   public static final BaseTypeVariables EMPTY = new BaseTypeVariables();
@@ -32,7 +34,7 @@ public class BaseTypeVariables extends BaseGenericTypeParameters<BaseTypeVariabl
 
   private BaseType declaringType;
 
-  private BaseTypeVariables sourceCodeObject;
+  private CodeTypeVariables sourceCodeObject;
 
   /**
    * The constructor for {@link #EMPTY}.
@@ -74,10 +76,11 @@ public class BaseTypeVariables extends BaseGenericTypeParameters<BaseTypeVariabl
    *
    * @param template the {@link BaseTypeVariables} to copy.
    * @param declaringType the {@link #getDeclaringType() declaring type}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseTypeVariables(BaseTypeVariables template, BaseType declaringType) {
+  public BaseTypeVariables(BaseTypeVariables template, BaseType declaringType, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
     this.declaringType = declaringType;
     this.declaringOperation = null;
   }
@@ -87,10 +90,11 @@ public class BaseTypeVariables extends BaseGenericTypeParameters<BaseTypeVariabl
    *
    * @param template the {@link BaseTypeVariables} to copy.
    * @param declaringOperation the {@link #getDeclaringOperation() declaring operation}.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseTypeVariables(BaseTypeVariables template, BaseOperation declaringOperation) {
+  public BaseTypeVariables(BaseTypeVariables template, BaseOperation declaringOperation, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
     this.declaringType = declaringOperation.getDeclaringType();
     this.declaringOperation = declaringOperation;
   }
@@ -134,7 +138,7 @@ public class BaseTypeVariables extends BaseGenericTypeParameters<BaseTypeVariabl
   }
 
   @Override
-  public BaseElementWithTypeVariables getParent() {
+  public CodeElementWithTypeVariables getParent() {
 
     if (this.declaringOperation != null) {
       return this.declaringOperation;
@@ -158,16 +162,16 @@ public class BaseTypeVariables extends BaseGenericTypeParameters<BaseTypeVariabl
   }
 
   @Override
-  public BaseTypeVariables getSourceCodeObject() {
+  public CodeTypeVariables getSourceCodeObject() {
 
     if ((this.sourceCodeObject == null) && !isInitialized()) {
       if (this.declaringOperation != null) {
-        BaseOperation sourceOperation = this.declaringOperation.getSourceCodeObject();
+        CodeOperation sourceOperation = this.declaringOperation.getSourceCodeObject();
         if (sourceOperation != null) {
           this.sourceCodeObject = sourceOperation.getTypeParameters();
         }
       } else if (this.declaringType != null) {
-        BaseType sourceType = this.declaringType.getSourceCodeObject();
+        CodeType sourceType = this.declaringType.getSourceCodeObject();
         if (sourceType != null) {
           this.sourceCodeObject = sourceType.getTypeParameters();
         }
@@ -177,7 +181,7 @@ public class BaseTypeVariables extends BaseGenericTypeParameters<BaseTypeVariabl
   }
 
   @Override
-  protected String getKey(BaseTypeVariable item) {
+  protected String getKey(CodeTypeVariable item) {
 
     return item.getName();
   }
@@ -191,21 +195,21 @@ public class BaseTypeVariables extends BaseGenericTypeParameters<BaseTypeVariabl
   }
 
   @Override
-  public BaseTypeVariable getDeclared(String name) {
+  public CodeTypeVariable getDeclared(String name) {
 
     return get(name, false, true);
   }
 
   @Override
-  public BaseTypeVariable get(String name, boolean includeDeclaringTypes) {
+  public CodeTypeVariable get(String name, boolean includeDeclaringTypes) {
 
     return get(name, includeDeclaringTypes, true);
   }
 
-  BaseTypeVariable get(String name, boolean includeDeclaringTypes, boolean init) {
+  CodeTypeVariable get(String name, boolean includeDeclaringTypes, boolean init) {
 
     initialize(init);
-    BaseTypeVariable typeVariable = getByName(name);
+    CodeTypeVariable typeVariable = getByName(name);
     if (typeVariable != null) {
       return typeVariable;
     }
@@ -222,31 +226,31 @@ public class BaseTypeVariables extends BaseGenericTypeParameters<BaseTypeVariabl
   }
 
   @Override
-  protected void rename(BaseTypeVariable child, String oldName, String newName, Consumer<String> renamer) {
+  protected void rename(CodeTypeVariable child, String oldName, String newName, Consumer<String> renamer) {
 
     super.rename(child, oldName, newName, renamer);
   }
 
   @Override
-  public CodeTypeVariables<?> merge(CodeTypeVariables<?> o, CodeMergeStrategy strategy) {
+  public CodeTypeVariables merge(CodeTypeVariables o, CodeMergeStrategy strategy) {
 
     if (strategy == CodeMergeStrategy.KEEP) {
       return this;
     }
     BaseTypeVariables other = (BaseTypeVariables) o;
-    List<? extends BaseTypeVariable> otherTypeVariables = other.getDeclared();
+    List<? extends CodeTypeVariable> otherTypeVariables = other.getDeclared();
     if (strategy == CodeMergeStrategy.OVERRIDE) {
       clear();
-      for (BaseTypeVariable otherTypeVariable : otherTypeVariables) {
+      for (CodeTypeVariable otherTypeVariable : otherTypeVariables) {
         add(otherTypeVariable.copy(this));
       }
     } else {
-      List<? extends BaseTypeVariable> myTypeVariables = getDeclared();
+      List<? extends CodeTypeVariable> myTypeVariables = getDeclared();
       int i = 0;
       int len = myTypeVariables.size();
       assert (len == otherTypeVariables.size());
-      for (BaseTypeVariable otherTypeVariable : otherTypeVariables) {
-        BaseTypeVariable myTypeVariable = null;
+      for (CodeTypeVariable otherTypeVariable : otherTypeVariables) {
+        CodeTypeVariable myTypeVariable = null;
         if (i < len) {
           myTypeVariable = myTypeVariables.get(i++); // merging via index as by name could cause errors
         }
@@ -269,10 +273,16 @@ public class BaseTypeVariables extends BaseGenericTypeParameters<BaseTypeVariabl
   @Override
   public BaseTypeVariables copy(CodeElementWithTypeVariables newParent) {
 
+    return copy(newParent, CodeCopyMapperNone.INSTANCE);
+  }
+
+  @Override
+  public BaseTypeVariables copy(CodeElementWithTypeVariables newParent, CodeCopyMapper mapper) {
+
     if (newParent instanceof BaseType) {
-      return new BaseTypeVariables(this, (BaseType) newParent);
+      return new BaseTypeVariables(this, (BaseType) newParent, mapper);
     } else if (newParent instanceof BaseOperation) {
-      return new BaseTypeVariables(this, (BaseOperation) newParent);
+      return new BaseTypeVariables(this, (BaseOperation) newParent, mapper);
     } else {
       throw new IllegalArgumentException("" + newParent);
     }
@@ -286,7 +296,7 @@ public class BaseTypeVariables extends BaseGenericTypeParameters<BaseTypeVariabl
 
   void writeReference(Appendable sink, boolean declaration) throws IOException {
 
-    List<BaseTypeVariable> typeVariables = getList();
+    List<CodeTypeVariable> typeVariables = getList();
     if (!typeVariables.isEmpty()) {
       String prefix = "<";
       for (CodeTypeVariable variable : typeVariables) {

@@ -5,6 +5,7 @@ package net.sf.mmm.code.base.block;
 import java.util.List;
 
 import net.sf.mmm.code.api.block.CodeBlockStatement;
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.expression.CodeVariable;
 import net.sf.mmm.code.api.statement.CodeStatement;
 
@@ -47,10 +48,11 @@ public abstract class BaseBlockStatement extends BaseBlock implements CodeBlockS
    *
    * @param parent the {@link #getParent() parent}.
    * @param template the {@link BaseBlockStatement} to copy.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseBlockStatement(BaseBlockStatement template, BaseBlock parent) {
+  public BaseBlockStatement(BaseBlockStatement template, BaseBlock parent, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
     this.parent = parent;
   }
 

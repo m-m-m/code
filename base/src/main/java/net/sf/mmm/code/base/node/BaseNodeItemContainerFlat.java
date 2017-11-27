@@ -2,6 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.base.node;
 
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.node.CodeNodeItemContainerFlat;
 
@@ -26,10 +27,11 @@ public abstract class BaseNodeItemContainerFlat<I extends CodeItem> extends Base
    * The copy-constructor.
    *
    * @param template the {@link BaseNodeItemContainerFlat} to copy.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseNodeItemContainerFlat(BaseNodeItemContainerFlat<I> template) {
+  public BaseNodeItemContainerFlat(BaseNodeItemContainerFlat<I> template, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
   }
 
 }
