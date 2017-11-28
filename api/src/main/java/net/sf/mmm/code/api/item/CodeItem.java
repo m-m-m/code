@@ -42,8 +42,7 @@ public abstract interface CodeItem {
    * @param sink the {@link Appendable} where to {@link Appendable#append(CharSequence) append} the
    *        {@link #getSourceCode() source code} from this {@link CodeItem}.
    * @param newline the newline {@link String}.
-   * @param defaultIndent the {@link String} used for indentation (e.g. a number of spaces to insert per
-   *        indent level).
+   * @param defaultIndent the {@link String} used for indentation (e.g. a number of spaces to insert per indent level).
    */
   default void write(Appendable sink, String newline, String defaultIndent) {
 
@@ -53,11 +52,10 @@ public abstract interface CodeItem {
   /**
    * @param sink the {@link Appendable} where to {@link Appendable#append(CharSequence) append} the
    *        {@link #getSourceCode() source code} from this {@link CodeItem}.
-   * @param defaultIndent the {@link String} used for indentation (e.g. a number of spaces to insert per
-   *        indent level).
+   * @param defaultIndent the {@link String} used for indentation (e.g. a number of spaces to insert per indent level).
    * @param newline the newline {@link String}.
-   * @param currentIndent the current indent (number of spaces). Initially the empty string ({@code ""}).
-   *        Before a recursion the {@code indent} will be appended.
+   * @param currentIndent the current indent (number of spaces). Initially the empty string ({@code ""}). Before a
+   *        recursion the {@code defaultIndent} will be appended.
    */
   default void write(Appendable sink, String newline, String defaultIndent, String currentIndent) {
 
@@ -75,11 +73,10 @@ public abstract interface CodeItem {
   /**
    * @param sink the {@link Appendable} where to {@link Appendable#append(CharSequence) append} the
    *        {@link #getSourceCode() source code} from this {@link CodeItem}.
-   * @param defaultIndent the {@link String} used for indentation (e.g. a number of spaces to insert per
-   *        indent level).
    * @param newline the newline {@link String}.
-   * @param currentIndent the current indent (number of spaces). Initially the empty string ({@code ""}).
-   *        Before a recursion the {@code indent} will be appended.
+   * @param defaultIndent the {@link String} used for indentation (e.g. a number of spaces to insert per indent level).
+   * @param currentIndent the current indent (number of spaces). Initially the empty string ({@code ""}). Before a
+   *        recursion the {@code defaultIndent} will be appended.
    * @param language the {@link CodeLanguage} to use.
    */
   void write(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language);

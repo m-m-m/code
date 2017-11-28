@@ -14,7 +14,7 @@ import java.util.Set;
 import net.sf.mmm.code.api.annotation.CodeAnnotation;
 import net.sf.mmm.code.api.annotation.CodeAnnotations;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
+import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeMethod;
@@ -54,13 +54,18 @@ public class BaseAnnotations extends BaseNodeItemContainerHierarchical<CodeAnnot
    * The copy-constructor.
    *
    * @param template the {@link BaseAnnotations} to copy.
-   * @param parent the {@link #getParent() parent}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseAnnotations(BaseAnnotations template, BaseElementImpl parent, CodeCopyMapper mapper) {
+  public BaseAnnotations(BaseAnnotations template, CodeCopyMapper mapper) {
 
     super(template, mapper);
-    this.parent = parent;
+    this.parent = mapper.map(template.parent, CodeCopyType.PARENT);
+  }
+
+  @Override
+  protected CodeCopyType getItemCopyType() {
+
+    return null;
   }
 
   @Override
@@ -229,36 +234,24 @@ public class BaseAnnotations extends BaseNodeItemContainerHierarchical<CodeAnnot
   @Override
   public BaseAnnotations copy() {
 
-    return copy(this.parent);
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BaseAnnotations copy(CodeElement newParent) {
+  public BaseAnnotations copy(CodeCopyMapper mapper) {
 
-    return copy(newParent, CodeCopyMapperNone.INSTANCE);
-  }
-
-  @Override
-  public BaseAnnotations copy(CodeElement newParent, CodeCopyMapper mapper) {
-
-    return new BaseAnnotations(this, (BaseElementImpl) newParent, mapper);
+    return new BaseAnnotations(this, mapper);
   }
 
   @Override
   protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
-    String prefix = "";
     for (CodeAnnotation annotation : getDeclared()) {
-      if (defaultIndent == null) {
-        sink.append(prefix);
-        prefix = " ";
-      } else {
-        sink.append(newline);
-        sink.append(currentIndent);
-      }
       annotation.write(sink, newline, defaultIndent, currentIndent, language);
+      if (defaultIndent == null) {
+        sink.append(' ');
+      }
     }
-    sink.append(prefix);
   }
 
   private abstract class AnnotationIterator extends AbstractIterator<CodeAnnotation> {

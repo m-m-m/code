@@ -5,11 +5,10 @@ package net.sf.mmm.code.base.block;
 import java.io.IOException;
 import java.util.List;
 
-import net.sf.mmm.code.api.block.CodeBlock;
 import net.sf.mmm.code.api.block.CodeBlockDoWhile;
 import net.sf.mmm.code.api.block.CodeBlockIf;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
+import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.expression.CodeCondition;
 import net.sf.mmm.code.api.statement.CodeStatement;
 
@@ -50,13 +49,13 @@ public class BaseBlockIf extends BaseBlockStatementWithCondition implements Code
   /**
    * The copy-constructor.
    *
-   * @param parent the {@link #getParent() parent}.
    * @param template the {@link BaseBlockStatementWithCondition} to copy.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseBlockIf(BaseBlockStatementWithCondition template, BaseBlock parent, CodeCopyMapper mapper) {
+  public BaseBlockIf(BaseBlockIf template, CodeCopyMapper mapper) {
 
-    super(template, parent, mapper);
+    super(template, mapper);
+    this.elseIf = mapper.map(template.elseIf, CodeCopyType.CHILD);
   }
 
   @Override
@@ -68,19 +67,13 @@ public class BaseBlockIf extends BaseBlockStatementWithCondition implements Code
   @Override
   public BaseBlockIf copy() {
 
-    return copy(getParent());
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BaseBlockIf copy(CodeBlock newParent) {
+  public BaseBlockIf copy(CodeCopyMapper mapper) {
 
-    return copy(newParent, CodeCopyMapperNone.INSTANCE);
-  }
-
-  @Override
-  public BaseBlockIf copy(CodeBlock newParent, CodeCopyMapper mapper) {
-
-    return new BaseBlockIf(this, (BaseBlock) newParent, mapper);
+    return new BaseBlockIf(this, mapper);
   }
 
   @Override

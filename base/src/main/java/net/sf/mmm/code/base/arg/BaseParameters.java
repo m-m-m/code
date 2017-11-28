@@ -11,7 +11,6 @@ import java.util.function.Consumer;
 import net.sf.mmm.code.api.arg.CodeParameter;
 import net.sf.mmm.code.api.arg.CodeParameters;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
@@ -39,12 +38,11 @@ public class BaseParameters extends BaseOperationArgs<CodeParameter> implements 
    * The copy-constructor.
    *
    * @param template the {@link BaseParameters} to copy.
-   * @param parent the {@link #getParent() parent}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseParameters(BaseParameters template, BaseOperation parent, CodeCopyMapper mapper) {
+  public BaseParameters(BaseParameters template, CodeCopyMapper mapper) {
 
-    super(template, parent, mapper);
+    super(template, mapper);
   }
 
   @Override
@@ -120,7 +118,8 @@ public class BaseParameters extends BaseOperationArgs<CodeParameter> implements 
     if (strategy == CodeMergeStrategy.OVERRIDE) {
       clear();
       for (CodeParameter otherParameter : otherParameters) {
-        add(otherParameter.copy(this));
+        CodeParameter copyParameter = doCopyNode(otherParameter, this);
+        add(copyParameter);
       }
     } else {
       List<? extends CodeParameter> myParameters = getDeclared();
@@ -133,7 +132,8 @@ public class BaseParameters extends BaseOperationArgs<CodeParameter> implements 
           myParameter = myParameters.get(i++); // merging via index as by name could cause errors on mismatch
         }
         if (myParameter == null) {
-          add(otherParameter.copy(this));
+          CodeParameter copyParameter = doCopyNode(otherParameter, this);
+          add(copyParameter);
         } else {
           myParameter.merge(otherParameter, strategy);
         }
@@ -145,19 +145,13 @@ public class BaseParameters extends BaseOperationArgs<CodeParameter> implements 
   @Override
   public BaseParameters copy() {
 
-    return copy(getParent());
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BaseParameters copy(CodeOperation newParent) {
+  public BaseParameters copy(CodeCopyMapper mapper) {
 
-    return copy(newParent, CodeCopyMapperNone.INSTANCE);
-  }
-
-  @Override
-  public BaseParameters copy(CodeOperation newParent, CodeCopyMapper mapper) {
-
-    return new BaseParameters(this, (BaseOperation) newParent, mapper);
+    return new BaseParameters(this, mapper);
   }
 
   @Override

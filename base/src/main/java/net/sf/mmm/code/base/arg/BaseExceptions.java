@@ -10,7 +10,6 @@ import java.util.List;
 import net.sf.mmm.code.api.arg.CodeException;
 import net.sf.mmm.code.api.arg.CodeExceptions;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
@@ -39,12 +38,11 @@ public class BaseExceptions extends BaseOperationArgs<CodeException> implements 
    * The copy-constructor.
    *
    * @param template the {@link BaseExceptions} to copy.
-   * @param parent the {@link #getParent() parent}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseExceptions(BaseExceptions template, BaseOperation parent, CodeCopyMapper mapper) {
+  public BaseExceptions(BaseExceptions template, CodeCopyMapper mapper) {
 
-    super(template, parent, mapper);
+    super(template, mapper);
   }
 
   @Override
@@ -102,13 +100,15 @@ public class BaseExceptions extends BaseOperationArgs<CodeException> implements 
     if (strategy == CodeMergeStrategy.OVERRIDE) {
       clear();
       for (CodeException otherException : other.getDeclared()) {
-        add(otherException.copy(this));
+        CodeException copy = doCopyNode(otherException, this);
+        add(copy);
       }
     } else {
       for (CodeException otherException : other.getDeclared()) {
         CodeException myException = get(otherException.getType());
         if (myException == null) {
-          add(otherException.copy(this));
+          CodeException copy = doCopyNode(otherException, this);
+          add(copy);
         } else {
           myException.merge(otherException, strategy);
         }
@@ -120,19 +120,13 @@ public class BaseExceptions extends BaseOperationArgs<CodeException> implements 
   @Override
   public BaseExceptions copy() {
 
-    return copy(getParent());
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BaseExceptions copy(CodeOperation newParent) {
+  public BaseExceptions copy(CodeCopyMapper mapper) {
 
-    return copy(newParent, CodeCopyMapperNone.INSTANCE);
-  }
-
-  @Override
-  public BaseExceptions copy(CodeOperation newParent, CodeCopyMapper mapper) {
-
-    return new BaseExceptions(this, (BaseOperation) newParent, mapper);
+    return new BaseExceptions(this, mapper);
   }
 
   @Override

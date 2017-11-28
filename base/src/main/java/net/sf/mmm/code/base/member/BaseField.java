@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
+import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.expression.CodeConstant;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.language.CodeLanguage;
@@ -76,16 +76,15 @@ public class BaseField extends BaseMember implements CodeField {
    * The copy-constructor.
    *
    * @param template the {@link BaseField} to copy.
-   * @param parent the {@link #getParent() parent}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseField(BaseField template, BaseFields parent, CodeCopyMapper mapper) {
+  public BaseField(BaseField template, CodeCopyMapper mapper) {
 
     super(template, mapper);
-    this.parent = parent;
+    this.parent = mapper.map(template.parent, CodeCopyType.PARENT);
     this.reflectiveObject = null;
-    this.type = template.type;
-    this.initializer = template.initializer;
+    this.type = mapper.map(template.type, CodeCopyType.REFERENCE);
+    this.initializer = template.initializer; // TODO mapper.map(template.initializer, CodeCopyType.CHILD);
   }
 
   @Override
@@ -187,28 +186,20 @@ public class BaseField extends BaseMember implements CodeField {
   @Override
   public BaseField copy() {
 
-    return copy(this.parent);
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BaseField copy(CodeFields newParent) {
+  public BaseField copy(CodeCopyMapper mapper) {
 
-    return copy(newParent, CodeCopyMapperNone.INSTANCE);
-  }
-
-  @Override
-  public BaseField copy(CodeFields newParent, CodeCopyMapper mapper) {
-
-    return new BaseField(this, (BaseFields) newParent, mapper);
+    return new BaseField(this, mapper);
   }
 
   @Override
   protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     super.doWrite(sink, newline, defaultIndent, currentIndent, language);
-    getType().writeReference(sink, false);
-    sink.append(' ');
-    sink.append(getName());
+    language.writeDeclaration(this, sink);
     if (this.initializer != null) {
       sink.append(" = ");
       this.initializer.write(sink, "", "");

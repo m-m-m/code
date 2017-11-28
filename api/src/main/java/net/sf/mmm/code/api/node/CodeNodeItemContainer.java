@@ -2,14 +2,14 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.node;
 
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.item.CodeItem;
 
 /**
- * {@link CodeItem} containing {@link CodeItem}s of a particular type. It groups these items and all the
- * methods to operate on them. This makes the API more structured as you do not get too much methods for
- * top-level types such as {@link net.sf.mmm.code.api.type.CodeType}. Further it supports reuse and avoids
- * redundant declaration of methods with their JavaDoc. So instead of {@link Class#getDeclaredMethods()} you
- * will do
+ * {@link CodeItem} containing {@link CodeItem}s of a particular type. It groups these items and all the methods to
+ * operate on them. This makes the API more structured as you do not get too much methods for top-level types such as
+ * {@link net.sf.mmm.code.api.type.CodeType}. Further it supports reuse and avoids redundant declaration of methods with
+ * their JavaDoc. So instead of {@link Class#getDeclaredMethods()} you will do
  * {@link net.sf.mmm.code.api.type.CodeType#getMethods()}.{@link net.sf.mmm.code.api.member.CodeMethods#getDeclared()
  * getDeclared()}.
  *
@@ -30,5 +30,8 @@ public abstract interface CodeNodeItemContainer<I extends CodeItem> extends Code
 
   @Override
   CodeNodeItemContainer<I> copy();
+
+  @Override
+  CodeNodeItemContainer<I> copy(CodeCopyMapper mapper);
 
 }

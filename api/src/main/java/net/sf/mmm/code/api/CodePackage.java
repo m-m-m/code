@@ -16,7 +16,8 @@ import net.sf.mmm.code.api.node.CodeNode;
 public interface CodePackage extends CodePathElement, CodeContainer, CodeNodeItemCopyable<CodeNode, CodePackage> {
 
   /**
-   * The {@link #getParentPackage() parent package} or the {@link #getSource() source} if this is a root package.
+   * The {@link #getParentPackage() parent package} or the {@link #getSource() source} if this is a {@link #isRoot()
+   * root} package.
    */
   @Override
   CodeContainer getParent();

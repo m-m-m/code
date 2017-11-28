@@ -6,9 +6,8 @@ import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
+import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.item.CodeItemWithDeclaringType;
-import net.sf.mmm.code.api.node.CodeNodeItem;
 import net.sf.mmm.code.api.type.CodeTypeWildcard;
 import net.sf.mmm.code.base.element.BaseElementWithTypeVariables;
 import net.sf.mmm.code.base.node.BaseNodeItemImpl;
@@ -95,13 +94,12 @@ public class BaseTypeWildcard extends BaseTypePlaceholder implements CodeTypeWil
    * The copy-constructor.
    *
    * @param template the {@link BaseTypeWildcard} to copy.
-   * @param parent the {@link #getParent() parent}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseTypeWildcard(BaseTypeWildcard template, BaseNodeItemImpl parent, CodeCopyMapper mapper) {
+  public BaseTypeWildcard(BaseTypeWildcard template, CodeCopyMapper mapper) {
 
     super(template, mapper);
-    this.parent = parent;
+    this.parent = mapper.map(template.parent, CodeCopyType.PARENT);
     this.reflectiveObject = null;
     this.superWildcard = template.superWildcard;
   }
@@ -187,19 +185,13 @@ public class BaseTypeWildcard extends BaseTypePlaceholder implements CodeTypeWil
   @Override
   public BaseTypeWildcard copy() {
 
-    return copy(this.parent);
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BaseTypeWildcard copy(CodeNodeItem newParent) {
+  public BaseTypeWildcard copy(CodeCopyMapper mapper) {
 
-    return copy(newParent, CodeCopyMapperNone.INSTANCE);
-  }
-
-  @Override
-  public BaseTypeWildcard copy(CodeNodeItem newParent, CodeCopyMapper mapper) {
-
-    return new BaseTypeWildcard(this, (BaseNodeItemImpl) newParent, mapper);
+    return new BaseTypeWildcard(this, mapper);
   }
 
 }

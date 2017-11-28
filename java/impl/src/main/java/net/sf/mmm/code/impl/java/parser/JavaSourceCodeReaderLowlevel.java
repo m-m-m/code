@@ -31,7 +31,7 @@ import net.sf.mmm.code.base.expression.BaseArrayInstatiation;
 import net.sf.mmm.code.base.expression.BaseFieldReferenceLazy;
 import net.sf.mmm.code.base.expression.BaseMethodInvocation;
 import net.sf.mmm.code.base.member.BaseMethod;
-import net.sf.mmm.code.base.operator.GenericOperator;
+import net.sf.mmm.code.base.operator.BaseOperator;
 import net.sf.mmm.code.impl.java.expression.JavaNAryOperatorExpression;
 import net.sf.mmm.code.impl.java.expression.literal.JavaLiteral;
 import net.sf.mmm.code.impl.java.expression.literal.JavaLiteralBoolean;
@@ -328,7 +328,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
       char c = forcePeek();
       if (CHAR_FILTER_OPERATOR.accept(c)) {
         String operatorName = readWhile(CHAR_FILTER_OPERATOR);
-        CodeOperator nextOperator = GenericOperator.of(operatorName);
+        CodeOperator nextOperator = BaseOperator.of(operatorName);
         if (operator == null) {
           operator = nextOperator;
           if (expressions == null) {

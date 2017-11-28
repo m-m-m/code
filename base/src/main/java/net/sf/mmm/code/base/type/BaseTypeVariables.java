@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
+import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.element.CodeElementWithTypeVariables;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeOperation;
@@ -75,14 +75,17 @@ public class BaseTypeVariables extends BaseGenericTypeParameters<CodeTypeVariabl
    * The copy-constructor.
    *
    * @param template the {@link BaseTypeVariables} to copy.
-   * @param declaringType the {@link #getDeclaringType() declaring type}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseTypeVariables(BaseTypeVariables template, BaseType declaringType, CodeCopyMapper mapper) {
+  public BaseTypeVariables(BaseTypeVariables template, CodeCopyMapper mapper) {
 
     super(template, mapper);
-    this.declaringType = declaringType;
-    this.declaringOperation = null;
+    this.declaringType = mapper.map(template.getDeclaringType(), CodeCopyType.PARENT);
+    if (template.getDeclaringOperation() == null) {
+      this.declaringOperation = null;
+    } else {
+      this.declaringOperation = mapper.map(template.declaringOperation, CodeCopyType.PARENT);
+    }
   }
 
   /**
@@ -195,6 +198,15 @@ public class BaseTypeVariables extends BaseGenericTypeParameters<CodeTypeVariabl
   }
 
   @Override
+  protected CodeTypeVariable ensureParent(CodeTypeVariable item) {
+
+    if (item.getParent() != this) {
+      return doCopyNode(item, this);
+    }
+    return item;
+  }
+
+  @Override
   public CodeTypeVariable getDeclared(String name) {
 
     return get(name, false, true);
@@ -242,7 +254,7 @@ public class BaseTypeVariables extends BaseGenericTypeParameters<CodeTypeVariabl
     if (strategy == CodeMergeStrategy.OVERRIDE) {
       clear();
       for (CodeTypeVariable otherTypeVariable : otherTypeVariables) {
-        add(otherTypeVariable.copy(this));
+        add(doCopyNode(otherTypeVariable, this));
       }
     } else {
       List<? extends CodeTypeVariable> myTypeVariables = getDeclared();
@@ -255,7 +267,7 @@ public class BaseTypeVariables extends BaseGenericTypeParameters<CodeTypeVariabl
           myTypeVariable = myTypeVariables.get(i++); // merging via index as by name could cause errors
         }
         if (myTypeVariable == null) {
-          add(otherTypeVariable.copy(this));
+          add(doCopyNode(otherTypeVariable, this));
         } else {
           // TODO myTypeVariable.doMerge(otherTypeVariable, strategy);
         }
@@ -267,25 +279,13 @@ public class BaseTypeVariables extends BaseGenericTypeParameters<CodeTypeVariabl
   @Override
   public BaseTypeVariables copy() {
 
-    return copy(getParent());
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BaseTypeVariables copy(CodeElementWithTypeVariables newParent) {
+  public BaseTypeVariables copy(CodeCopyMapper mapper) {
 
-    return copy(newParent, CodeCopyMapperNone.INSTANCE);
-  }
-
-  @Override
-  public BaseTypeVariables copy(CodeElementWithTypeVariables newParent, CodeCopyMapper mapper) {
-
-    if (newParent instanceof BaseType) {
-      return new BaseTypeVariables(this, (BaseType) newParent, mapper);
-    } else if (newParent instanceof BaseOperation) {
-      return new BaseTypeVariables(this, (BaseOperation) newParent, mapper);
-    } else {
-      throw new IllegalArgumentException("" + newParent);
-    }
+    return new BaseTypeVariables(this, mapper);
   }
 
   @Override

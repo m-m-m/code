@@ -11,11 +11,10 @@ import java.util.Collections;
 import java.util.List;
 
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
+import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeComposedType;
 import net.sf.mmm.code.api.type.CodeGenericType;
-import net.sf.mmm.code.api.type.CodeTypePlaceholder;
 import net.sf.mmm.code.base.BaseContext;
 
 /**
@@ -59,15 +58,14 @@ public class BaseComposedType extends BaseGenericType implements CodeComposedTyp
    * The copy-constructor.
    *
    * @param template the {@link BaseComposedType} to copy.
-   * @param parent the {@link #getParent() parent}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseComposedType(BaseComposedType template, BaseTypePlaceholder parent, CodeCopyMapper mapper) {
+  public BaseComposedType(BaseComposedType template, CodeCopyMapper mapper) {
 
     super(template, mapper);
-    this.parent = parent;
+    this.parent = mapper.map(template.parent, CodeCopyType.PARENT);
     this.bounds = null;
-    this.types = new ArrayList<>(template.types);
+    this.types = doMapList(template.types, mapper, CodeCopyType.REFERENCE);
   }
 
   @Override
@@ -178,19 +176,13 @@ public class BaseComposedType extends BaseGenericType implements CodeComposedTyp
   @Override
   public BaseComposedType copy() {
 
-    return copy(this.parent);
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BaseComposedType copy(CodeTypePlaceholder newParent) {
+  public BaseComposedType copy(CodeCopyMapper mapper) {
 
-    return copy(newParent, CodeCopyMapperNone.INSTANCE);
-  }
-
-  @Override
-  public BaseComposedType copy(CodeTypePlaceholder newParent, CodeCopyMapper mapper) {
-
-    return new BaseComposedType(this, (BaseTypePlaceholder) newParent, mapper);
+    return new BaseComposedType(this, mapper);
   }
 
   @Override

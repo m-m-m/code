@@ -6,7 +6,6 @@ import net.sf.mmm.code.api.annotation.CodeAnnotations;
 import net.sf.mmm.code.api.doc.CodeDoc;
 import net.sf.mmm.code.api.item.CodeMutableItemWithComment;
 import net.sf.mmm.code.api.item.CodeMutableItemWithType;
-import net.sf.mmm.code.api.node.CodeNode;
 import net.sf.mmm.code.api.node.CodeNodeItem;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
@@ -34,8 +33,7 @@ public abstract interface CodeElement extends CodeNodeItem, CodeMutableItemWithC
   /**
    * Destroys this node and disconnects it from its parent.
    *
-   * @throws ReadOnlyException if this {@link CodeNode} or its {@link #getParent() parent} is {@link #isImmutable()
-   *         immutable}.
+   * @throws ReadOnlyException if {@link #isImmutable() immutable}.
    */
   void removeFromParent();
 

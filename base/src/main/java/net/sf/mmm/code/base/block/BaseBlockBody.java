@@ -7,9 +7,8 @@ import java.util.List;
 
 import net.sf.mmm.code.api.block.CodeBlockBody;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
+import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.expression.CodeVariable;
-import net.sf.mmm.code.api.node.CodeFunction;
 import net.sf.mmm.code.api.statement.CodeStatement;
 import net.sf.mmm.code.base.node.BaseFunction;
 
@@ -61,13 +60,12 @@ public class BaseBlockBody extends BaseBlock implements CodeBlockBody {
    * The copy-constructor.
    *
    * @param template the {@link BaseBlock} to copy.
-   * @param parent the {@link #getParent() parent}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseBlockBody(BaseBlock template, BaseFunction parent, CodeCopyMapper mapper) {
+  public BaseBlockBody(BaseBlockBody template, CodeCopyMapper mapper) {
 
     super(template, mapper);
-    this.parent = parent;
+    this.parent = mapper.map(template.parent, CodeCopyType.PARENT);
   }
 
   @Override
@@ -94,19 +92,13 @@ public class BaseBlockBody extends BaseBlock implements CodeBlockBody {
   @Override
   public BaseBlockBody copy() {
 
-    return copy(this.parent);
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BaseBlockBody copy(CodeFunction newParent) {
+  public BaseBlockBody copy(CodeCopyMapper mapper) {
 
-    return copy(newParent, CodeCopyMapperNone.INSTANCE);
-  }
-
-  @Override
-  public BaseBlockBody copy(CodeFunction newParent, CodeCopyMapper mapper) {
-
-    return new BaseBlockBody(this, (BaseFunction) newParent, mapper);
+    return new BaseBlockBody(this, mapper);
   }
 
 }

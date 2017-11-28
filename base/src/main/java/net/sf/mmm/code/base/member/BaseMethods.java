@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.member.CodeMethods;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
@@ -38,12 +37,11 @@ public class BaseMethods extends BaseOperations<CodeMethod> implements CodeMetho
    * The copy-constructor.
    *
    * @param template the {@link BaseMethods} to copy.
-   * @param declaringType the {@link #getDeclaringType()}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseMethods(BaseMethods template, BaseType declaringType, CodeCopyMapper mapper) {
+  public BaseMethods(BaseMethods template, CodeCopyMapper mapper) {
 
-    super(template, declaringType, mapper);
+    super(template, mapper);
   }
 
   @Override
@@ -137,13 +135,13 @@ public class BaseMethods extends BaseOperations<CodeMethod> implements CodeMetho
     if (parentStrategy == CodeMergeStrategy.OVERRIDE) {
       clear();
       for (CodeMethod otherMethod : other.getDeclared()) {
-        add(otherMethod.copy(this));
+        add(doCopyNode(otherMethod, this));
       }
     } else {
       for (CodeMethod otherMethod : other.getDeclared()) {
         CodeMethod myMethod = get(otherMethod);
         if (myMethod == null) {
-          add(otherMethod.copy(this));
+          add(doCopyNode(otherMethod, this));
         } else {
           myMethod.merge(otherMethod, decider, parentStrategy);
         }
@@ -155,19 +153,13 @@ public class BaseMethods extends BaseOperations<CodeMethod> implements CodeMetho
   @Override
   public BaseMethods copy() {
 
-    return copy(getParent());
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BaseMethods copy(CodeType newParent) {
+  public BaseMethods copy(CodeCopyMapper mapper) {
 
-    return copy(newParent, CodeCopyMapperNone.INSTANCE);
-  }
-
-  @Override
-  public BaseMethods copy(CodeType newParent, CodeCopyMapper mapper) {
-
-    return new BaseMethods(this, (BaseType) newParent, mapper);
+    return new BaseMethods(this, mapper);
   }
 
 }

@@ -6,7 +6,6 @@ import java.util.List;
 
 import net.sf.mmm.code.api.block.CodeBlockStatement;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.statement.CodeStatement;
 
@@ -43,31 +42,24 @@ public class BaseBlockStatementPlain extends BaseBlockStatement implements CodeN
   /**
    * The copy-constructor.
    *
-   * @param parent the {@link #getParent() parent}.
    * @param template the {@link BaseBlockStatementPlain} to copy.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseBlockStatementPlain(BaseBlockStatementPlain template, BaseBlock parent, CodeCopyMapper mapper) {
+  public BaseBlockStatementPlain(BaseBlockStatementPlain template, CodeCopyMapper mapper) {
 
-    super(template, parent, mapper);
+    super(template, mapper);
   }
 
   @Override
   public BaseBlockStatementPlain copy() {
 
-    return copy(getParent());
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BaseBlockStatementPlain copy(BaseBlock newParent) {
+  public BaseBlockStatementPlain copy(CodeCopyMapper mapper) {
 
-    return new BaseBlockStatementPlain(this, newParent, CodeCopyMapperNone.INSTANCE);
-  }
-
-  @Override
-  public BaseBlockStatementPlain copy(BaseBlock newParent, CodeCopyMapper mapper) {
-
-    return new BaseBlockStatementPlain(this, newParent, mapper);
+    return new BaseBlockStatementPlain(this, mapper);
   }
 
 }

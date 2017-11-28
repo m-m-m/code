@@ -47,10 +47,24 @@ public interface CodePathElements<P extends CodePathElement> extends CodeNodeIte
   CodeFile getFile(CodeName path);
 
   /**
+   * <b>Attention:</b> This method is just a factory operation. It will <b>not</b> add the created {@link CodeFile}. Use
+   * {@link #getOrCreateFile(String)} instead to also add.
+   *
    * @param simpleName the {@link CodeFile#getSimpleName() simple name} of the new {@link CodeFile}.
    * @return a new {@link CodeFile} containing an empty top-level {@link CodeType} of the same name.
    */
   CodeFile createFile(String simpleName);
+
+  /**
+   * @see #getOrCreateFile(CodeName, boolean)
+   * @param path the simple name or a relative {@link CodeName path} to the requested {@link CodeFile}.
+   * @return the {@link #getFile(String) existing} or {@link #createFile(String) newly created} and added
+   *         {@link CodeFile}.
+   */
+  default CodeFile getOrCreateFile(String path) {
+
+    return getOrCreateFile(getContext().parseName(path), true);
+  }
 
   /**
    * @param path the {@link CodeName} leading to the requested child relative to the {@link #getParent() package of this
@@ -91,6 +105,18 @@ public interface CodePathElements<P extends CodePathElement> extends CodeNodeIte
   CodePackage getOrCreatePackage(CodeName path, boolean add);
 
   /**
+   * @param path the simple name or a relative {@link CodeName path} to the requested {@link CodePackage}.
+   * @return the traversed {@link CodePackage}. Has been created and added if it did not already exist.
+   */
+  default CodePackage getOrCreatePackage(String path) {
+
+    return getOrCreatePackage(getContext().parseName(path), true);
+  }
+
+  /**
+   * <b>Attention:</b> This method is just a factory operation. It will <b>not</b> add the created {@link CodePackage}.
+   * Use {@link #getOrCreatePackage(String)} instead to also add.
+   *
    * @param simpleName the {@link CodePackage#getSimpleName() simple name} of the new {@link CodePackage}.
    * @return a new empty {@link CodePackage}.
    */
@@ -103,6 +129,10 @@ public interface CodePathElements<P extends CodePathElement> extends CodeNodeIte
   CodeType getType(String simpleName);
 
   /**
+   * <b>Attention:</b> This method is just a factory operation. It will <b>not</b> add the {@link CodeFile} of the
+   * created {@link CodeType}. Use {@link #getOrCreateFile(String)} instead to also add and then call
+   * {@link CodeFile#getType()}.
+   *
    * @param simpleName the {@link CodeType#getSimpleName() simple name} of the requested {@link CodeType}.
    * @return the top-level {@link CodeType} that has been created together with its {@link CodeFile}.
    * @see #createFile(String)

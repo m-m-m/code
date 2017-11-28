@@ -9,6 +9,7 @@ import java.util.Objects;
 import net.sf.mmm.code.api.annotation.CodeAnnotation;
 import net.sf.mmm.code.api.annotation.CodeAnnotations;
 import net.sf.mmm.code.api.comment.CodeComment;
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.type.CodeTypePlaceholder;
 import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.BaseFile;
@@ -329,6 +330,16 @@ public class JavaGenericTypeFromSource extends BaseGenericTypeProxy {
     BaseGenericType delegate = getDelegate();
     if (delegate.isImmutable()) {
       delegate = delegate.copy();
+    }
+    return delegate;
+  }
+
+  @Override
+  public BaseGenericType copy(CodeCopyMapper mapper) {
+
+    BaseGenericType delegate = getDelegate();
+    if (delegate.isImmutable()) {
+      delegate = delegate.copy(mapper);
     }
     return delegate;
   }

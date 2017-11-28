@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.function.Consumer;
 
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
+import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeMember;
 import net.sf.mmm.code.api.member.CodeMembers;
@@ -39,13 +39,12 @@ public abstract class BaseMembers<M extends CodeMember> extends BaseNodeItemCont
    * The copy-constructor.
    *
    * @param template the {@link BaseMembers} to copy.
-   * @param parent the {@link #getParent() parent}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseMembers(BaseMembers<M> template, BaseType parent, CodeCopyMapper mapper) {
+  public BaseMembers(BaseMembers<M> template, CodeCopyMapper mapper) {
 
     super(template, mapper);
-    this.parent = parent;
+    this.parent = mapper.map(template.parent, CodeCopyType.PARENT);
   }
 
   @Override
@@ -61,15 +60,10 @@ public abstract class BaseMembers<M extends CodeMember> extends BaseNodeItemCont
     this.parent.getProperties().renameMember(member, oldName, newName);
   }
 
-  @SuppressWarnings({ "rawtypes", "unchecked" })
   @Override
   public void add(M member) {
 
-    M item = member;
-    if (item.getParent() != this) {
-      item = (M) ((CodeNodeItemCopyable) member).copy(this);
-    }
-    super.add(item);
+    super.add(member);
   }
 
   @Override
@@ -90,7 +84,6 @@ public abstract class BaseMembers<M extends CodeMember> extends BaseNodeItemCont
     for (M declaredMember : getDeclared()) {
       sink.append(newline);
       declaredMember.write(sink, newline, defaultIndent, currentIndent, language);
-      sink.append(newline);
     }
   }
 }

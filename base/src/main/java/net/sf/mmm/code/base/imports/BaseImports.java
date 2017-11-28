@@ -6,10 +6,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.TreeSet;
 
-import net.sf.mmm.code.api.CodeFile;
 import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
+import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.imports.CodeImport;
 import net.sf.mmm.code.api.imports.CodeImports;
 import net.sf.mmm.code.api.language.CodeLanguage;
@@ -44,13 +43,18 @@ public class BaseImports extends BaseNodeItemContainerFlat<CodeImport> implement
    * The copy-constructor.
    *
    * @param template the {@link BaseImports} to copy.
-   * @param parent the {@link #getParent() parent}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseImports(BaseImports template, BaseFile parent, CodeCopyMapper mapper) {
+  public BaseImports(BaseImports template, CodeCopyMapper mapper) {
 
     super(template, mapper);
-    this.parent = parent;
+    this.parent = mapper.map(template.parent, CodeCopyType.PARENT);
+  }
+
+  @Override
+  protected CodeCopyType getItemCopyType() {
+
+    return null;
   }
 
   @Override
@@ -98,19 +102,13 @@ public class BaseImports extends BaseNodeItemContainerFlat<CodeImport> implement
   @Override
   public BaseImports copy() {
 
-    return copy(this.parent);
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BaseImports copy(CodeFile newParent) {
+  public BaseImports copy(CodeCopyMapper mapper) {
 
-    return copy(newParent, CodeCopyMapperNone.INSTANCE);
-  }
-
-  @Override
-  public BaseImports copy(CodeFile newParent, CodeCopyMapper mapper) {
-
-    return new BaseImports(this, (BaseFile) newParent, mapper);
+    return new BaseImports(this, mapper);
   }
 
   @Override
@@ -138,7 +136,7 @@ public class BaseImports extends BaseNodeItemContainerFlat<CodeImport> implement
           currentSegmentPrefix = dummyPackagePrefix + dummyPackagePrefix;
         }
       }
-      imp.write(sink, defaultIndent, currentIndent);
+      imp.write(sink, newline, defaultIndent, currentIndent, language);
     }
     sink.append(newline);
   }

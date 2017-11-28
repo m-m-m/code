@@ -133,7 +133,7 @@ public class BaseTypeTest extends BaseContextTest {
         "     * @param value the value to convert.\n" + //
         "     * @return the converted value that rocks.\n" + //
         "     */\n" + //
-        "    public <V>V myMethod(V);\n" + //
+        "    <V> V myMethod(V value);\n" + //
         "\n" + //
         "    /** Doc for {@link ClassNested2_1}. */\n" + //
         "    public class ClassNested2_1 {\n" + //

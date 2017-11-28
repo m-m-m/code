@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
+import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeGenericType;
@@ -84,16 +84,15 @@ public class BaseParameterizedType extends BaseGenericType implements CodeParame
    * The copy-constructor.
    *
    * @param template the {@link BaseParameterizedType} to copy.
-   * @param parent the {@link #getParent() parent}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseParameterizedType(BaseParameterizedType template, BaseElementImpl parent, CodeCopyMapper mapper) {
+  public BaseParameterizedType(BaseParameterizedType template, CodeCopyMapper mapper) {
 
     super(template, mapper);
-    this.parent = parent;
-    this.typeVariables = template.typeVariables.copy(this);
+    this.parent = mapper.map(template.parent, CodeCopyType.PARENT);
+    this.typeVariables = template.typeVariables.copy(mapper);
     this.reflectiveObject = null;
-    this.type = template.type;
+    this.type = mapper.map(template.type, CodeCopyType.REFERENCE);
   }
 
   @Override
@@ -215,19 +214,13 @@ public class BaseParameterizedType extends BaseGenericType implements CodeParame
   @Override
   public BaseParameterizedType copy() {
 
-    return copy(this.parent);
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BaseParameterizedType copy(CodeElement newParent) {
+  public BaseParameterizedType copy(CodeCopyMapper mapper) {
 
-    return copy(newParent, CodeCopyMapperNone.INSTANCE);
-  }
-
-  @Override
-  public BaseParameterizedType copy(CodeElement newParent, CodeCopyMapper mapper) {
-
-    return new BaseParameterizedType(this, (BaseElementImpl) newParent, mapper);
+    return new BaseParameterizedType(this, mapper);
   }
 
   @Override

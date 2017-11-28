@@ -12,9 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.item.CodeItemWithName;
 import net.sf.mmm.code.api.item.CodeItemWithQualifiedName;
+import net.sf.mmm.code.api.node.CodeNodeItem;
 import net.sf.mmm.code.api.node.CodeNodeItemContainer;
 import net.sf.mmm.code.api.node.CodeNodeItemContainerWithName;
 import net.sf.mmm.util.exception.api.DuplicateObjectException;
@@ -61,7 +63,7 @@ public abstract class BaseNodeItemContainer<I extends CodeItem> extends BaseNode
   public BaseNodeItemContainer(BaseNodeItemContainer<I> template, CodeCopyMapper mapper) {
 
     super(template, mapper);
-    this.mutableList = doCopyList((List) template.list, this, mapper);
+    this.mutableList = doMapList((List) template.list, mapper, getItemCopyType());
     this.list = this.mutableList;
     if (template.map == null) {
       this.map = null;
@@ -71,6 +73,14 @@ public abstract class BaseNodeItemContainer<I extends CodeItem> extends BaseNode
         put(item);
       }
     }
+  }
+
+  /**
+   * @return the {@link CodeCopyType} for the items in this container.
+   */
+  protected CodeCopyType getItemCopyType() {
+
+    return CodeCopyType.CHILD;
   }
 
   @Override
@@ -91,8 +101,8 @@ public abstract class BaseNodeItemContainer<I extends CodeItem> extends BaseNode
   }
 
   /**
-   * @return {@code true} if the {@link List} should turn into an immutable view on the original mutable
-   *         {@link List}, {@code false} otherwise.
+   * @return {@code true} if the {@link List} should turn into an immutable view on the original mutable {@link List},
+   *         {@code false} otherwise.
    * @see #makeImmutable(List, boolean)
    */
   protected boolean isKeepListView() {
@@ -101,8 +111,7 @@ public abstract class BaseNodeItemContainer<I extends CodeItem> extends BaseNode
   }
 
   /**
-   * @return {@code true} if this is a named container that requires a {@link #getMap() map}, {@code false}
-   *         otherwise.
+   * @return {@code true} if this is a named container that requires a {@link #getMap() map}, {@code false} otherwise.
    */
   protected boolean isNamed() {
 
@@ -148,8 +157,8 @@ public abstract class BaseNodeItemContainer<I extends CodeItem> extends BaseNode
    * @param child the child to rename.
    * @param oldName the old {@link CodeItemWithName#getName() name}.
    * @param newName the new {@link CodeItemWithName#getName() name} to be set.
-   * @param renamer the {@link Consumer} to actually perform the renaming (that may change the
-   *        {@link #hashCode()} of the child).
+   * @param renamer the {@link Consumer} to actually perform the renaming (that may change the {@link #hashCode()} of
+   *        the child).
    */
   protected void rename(I child, String oldName, String newName, Consumer<String> renamer) {
 
@@ -190,7 +199,24 @@ public abstract class BaseNodeItemContainer<I extends CodeItem> extends BaseNode
 
     initialize();
     verifyMutalbe();
-    addInternal(item);
+    I child = ensureParent(item);
+    addInternal(child);
+  }
+
+  /**
+   * @param item the item to {@link #add(CodeItem) add}.
+   * @return the item itself or a {@link CodeNodeItem#copy(CodeCopyMapper) copy} with this container as parent.
+   */
+  @SuppressWarnings("unchecked")
+  protected I ensureParent(I item) {
+
+    if (item instanceof CodeNodeItem) {
+      CodeNodeItem codeNodeItem = (CodeNodeItem) item;
+      if (codeNodeItem.getParent() != this) {
+        return (I) doCopyNodeUnsafe(codeNodeItem, this);
+      }
+    }
+    return item;
   }
 
   /**

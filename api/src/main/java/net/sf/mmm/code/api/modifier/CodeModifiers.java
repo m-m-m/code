@@ -3,6 +3,7 @@
 package net.sf.mmm.code.api.modifier;
 
 import java.beans.Visibility;
+import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +15,8 @@ import java.util.Objects;
 import java.util.Set;
 
 import net.sf.mmm.code.api.member.CodeMethod;
+import net.sf.mmm.util.io.api.IoMode;
+import net.sf.mmm.util.io.api.RuntimeIoException;
 
 /**
  * Represents the visibility of a {@link CodeMethod}.
@@ -166,8 +169,8 @@ public class CodeModifiers {
 
   /**
    * @param modifier the {@link #getModifiers() modifier} to add.
-   * @return this {@link CodeModifiers} if the given {@code modifier} is already {@link #getModifiers()
-   *         contained} or a new instance of {@link CodeModifiers} with the given modifier.
+   * @return this {@link CodeModifiers} if the given {@code modifier} is already {@link #getModifiers() contained} or a
+   *         new instance of {@link CodeModifiers} with the given modifier.
    */
   public CodeModifiers addModifier(String modifier) {
 
@@ -182,8 +185,8 @@ public class CodeModifiers {
 
   /**
    * @param modifier the {@link #getModifiers() modifier} to remove.
-   * @return this {@link CodeModifiers} if the given {@code modifier} is not {@link #getModifiers() contained}
-   *         or a new instance of {@link CodeModifiers} without the given modifier.
+   * @return this {@link CodeModifiers} if the given {@code modifier} is not {@link #getModifiers() contained} or a new
+   *         instance of {@link CodeModifiers} without the given modifier.
    */
   public CodeModifiers removeModifier(String modifier) {
 
@@ -198,9 +201,8 @@ public class CodeModifiers {
 
   /**
    * @param newVisibility the new {@link #getVisibility() visibility}
-   * @return this {@link CodeModifiers} if it already {@link #getVisibility() has} the given
-   *         {@link CodeVisibility} or a new instance of {@link CodeModifiers} with the given
-   *         {@link CodeVisibility}.
+   * @return this {@link CodeModifiers} if it already {@link #getVisibility() has} the given {@link CodeVisibility} or a
+   *         new instance of {@link CodeModifiers} with the given {@link CodeVisibility}.
    */
   public CodeModifiers changeVisibility(CodeVisibility newVisibility) {
 
@@ -275,30 +277,42 @@ public class CodeModifiers {
     StringBuilder buffer = new StringBuilder(32);
     String visibilityString = this.visibility.toString();
     if (!visibilityString.isEmpty()) {
-      appendModifier(buffer, visibilityString);
+      buffer.append(visibilityString);
+      buffer.append(' ');
     }
-    if (isDefault()) {
-      appendModifier(buffer, KEY_DEFAULT);
-    }
-    if (isAbstract()) {
-      appendModifier(buffer, KEY_ABSTRACT);
-    }
-    if (isStatic()) {
-      appendModifier(buffer, KEY_STATIC);
-    }
-    if (isFinal()) {
-      appendModifier(buffer, KEY_FINAL);
-    }
-    for (String modifier : this.modifiers) {
-      if (!modifier.equals(visibilityString) && !KEY_DEFAULT.equals(modifier) && !KEY_ABSTRACT.equals(modifier) && !KEY_STATIC.equals(modifier)
-          && !KEY_FINAL.equals(modifier)) {
-        appendModifier(buffer, modifier);
-      }
-    }
+    formatModifiers(buffer);
     return buffer.toString();
   }
 
-  private static void appendModifier(StringBuilder buffer, String modifier) {
+  /**
+   * @param buffer the {@link Appendable} where to append the {@link Appendable}.
+   */
+  public void formatModifiers(Appendable buffer) {
+
+    try {
+      if (isDefault()) {
+        appendModifier(buffer, KEY_DEFAULT);
+      }
+      if (isAbstract()) {
+        appendModifier(buffer, KEY_ABSTRACT);
+      }
+      if (isStatic()) {
+        appendModifier(buffer, KEY_STATIC);
+      }
+      if (isFinal()) {
+        appendModifier(buffer, KEY_FINAL);
+      }
+      for (String modifier : this.modifiers) {
+        if (!KEY_DEFAULT.equals(modifier) && !KEY_ABSTRACT.equals(modifier) && !KEY_STATIC.equals(modifier) && !KEY_FINAL.equals(modifier)) {
+          appendModifier(buffer, modifier);
+        }
+      }
+    } catch (IOException e) {
+      throw new RuntimeIoException(e, IoMode.WRITE);
+    }
+  }
+
+  private static void appendModifier(Appendable buffer, String modifier) throws IOException {
 
     buffer.append(modifier);
     buffer.append(' ');
@@ -315,8 +329,8 @@ public class CodeModifiers {
 
   /**
    * @param javaModifiers the Java {@link Modifier} mask.
-   * @param defaultMethod - {@code true} for {@link java.lang.reflect.Method#isDefault() default method},
-   *        {@code false} otherwise.
+   * @param defaultMethod - {@code true} for {@link java.lang.reflect.Method#isDefault() default method}, {@code false}
+   *        otherwise.
    * @return the given {@link Modifier} mask as {@link CodeModifiers}.
    */
   public static CodeModifiers of(int javaModifiers, boolean defaultMethod) {

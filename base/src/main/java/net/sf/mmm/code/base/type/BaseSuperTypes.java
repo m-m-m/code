@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
+import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.type.CodeGenericType;
@@ -50,13 +50,12 @@ public class BaseSuperTypes extends BaseNodeItemContainerHierarchical<CodeGeneri
    * The copy-constructor.
    *
    * @param template the {@link BaseSuperTypes} to copy.
-   * @param parent the {@link #getParent() parent}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseSuperTypes(BaseSuperTypes template, BaseType parent, CodeCopyMapper mapper) {
+  public BaseSuperTypes(BaseSuperTypes template, CodeCopyMapper mapper) {
 
     super(template, mapper);
-    this.parent = parent;
+    this.parent = mapper.map(template.parent, CodeCopyType.PARENT);
   }
 
   @Override
@@ -78,6 +77,12 @@ public class BaseSuperTypes extends BaseNodeItemContainerHierarchical<CodeGeneri
   }
 
   @Override
+  protected CodeCopyType getItemCopyType() {
+
+    return CodeCopyType.REFERENCE;
+  }
+
+  @Override
   public BaseType getParent() {
 
     return this.parent;
@@ -96,6 +101,12 @@ public class BaseSuperTypes extends BaseNodeItemContainerHierarchical<CodeGeneri
       throw new IllegalStateException("Type " + this.parent.getQualifiedName() + " can not extend itself");
     }
     super.add(superType);
+  }
+
+  @Override
+  protected CodeGenericType ensureParent(CodeGenericType superType) {
+
+    return superType;
   }
 
   @Override
@@ -173,19 +184,13 @@ public class BaseSuperTypes extends BaseNodeItemContainerHierarchical<CodeGeneri
   @Override
   public BaseSuperTypes copy() {
 
-    return copy(this.parent);
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BaseSuperTypes copy(CodeType newParent) {
+  public BaseSuperTypes copy(CodeCopyMapper mapper) {
 
-    return copy(newParent, CodeCopyMapperNone.INSTANCE);
-  }
-
-  @Override
-  public BaseSuperTypes copy(CodeType newParent, CodeCopyMapper mapper) {
-
-    return new BaseSuperTypes(this, (BaseType) newParent, mapper);
+    return new BaseSuperTypes(this, mapper);
   }
 
   @Override

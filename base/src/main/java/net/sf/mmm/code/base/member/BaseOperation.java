@@ -8,6 +8,7 @@ import java.lang.reflect.Executable;
 import net.sf.mmm.code.api.arg.CodeParameter;
 import net.sf.mmm.code.api.block.CodeBlockBody;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.expression.CodeVariable;
 import net.sf.mmm.code.api.language.CodeLanguage;
@@ -78,9 +79,10 @@ public abstract class BaseOperation extends BaseMember implements CodeOperation,
   public BaseOperation(BaseOperation template, CodeCopyMapper mapper) {
 
     super(template, mapper);
-    this.typeVariables = template.typeVariables.copy(getDeclaringType(), mapper);
-    this.parameters = template.parameters.copy(this, mapper);
-    this.exceptions = template.exceptions.copy(this, mapper);
+    this.typeVariables = template.typeVariables.copy(mapper);
+    this.parameters = template.parameters.copy(mapper);
+    this.exceptions = template.exceptions.copy(mapper);
+    this.body = mapper.map(template.body, CodeCopyType.CHILD);
   }
 
   @Override
@@ -164,7 +166,7 @@ public abstract class BaseOperation extends BaseMember implements CodeOperation,
     getExceptions().merge(other.getExceptions(), strategy);
     if (strategy != CodeMergeStrategy.MERGE_KEEP_BODY) {
       BaseBlockBody otherBody = (BaseBlockBody) other.getBody();
-      this.body = otherBody.copy(this);
+      this.body = doCopyNode(otherBody, this);
     }
   }
 
@@ -175,17 +177,17 @@ public abstract class BaseOperation extends BaseMember implements CodeOperation,
   protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     super.doWrite(sink, newline, defaultIndent, currentIndent, language);
-    this.typeVariables.write(sink, newline, defaultIndent, currentIndent, language);
+    if (!getTypeParameters().getDeclared().isEmpty()) {
+      this.typeVariables.write(sink, newline, defaultIndent, currentIndent, language);
+      sink.append(' ');
+    }
     doWriteSignature(sink, newline, defaultIndent, currentIndent, language);
     if ((this.body == null) || (defaultIndent == null)) {
       sink.append(language.getStatementTerminator());
+      sink.append(newline);
     } else {
-      sink.append(" {");
-      sink.append(newline);
-      this.body.write(sink, defaultIndent, currentIndent + defaultIndent);
-      sink.append(currentIndent);
-      sink.append("}");
-      sink.append(newline);
+      sink.append(' ');
+      this.body.write(sink, newline, defaultIndent, currentIndent, language);
     }
   }
 

@@ -10,7 +10,7 @@ import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.CodePathElements;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
+import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.node.BaseNodeItemContainerFlat;
@@ -41,13 +41,12 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
    * The copy-constructor.
    *
    * @param template the {@link BasePathElements} to copy.
-   * @param parent the {@link #getParent() parent}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BasePathElements(BasePathElements template, BasePackage parent, CodeCopyMapper mapper) {
+  public BasePathElements(BasePathElements template, CodeCopyMapper mapper) {
 
     super(template, mapper);
-    this.parent = parent;
+    this.parent = mapper.map(template.parent, CodeCopyType.PARENT);
   }
 
   @Override
@@ -128,6 +127,15 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
   protected void addInternal(BasePathElement item) {
 
     super.addInternal(item);
+  }
+
+  @Override
+  protected BasePathElement ensureParent(BasePathElement item) {
+
+    if (item.getParent() != this.parent) {
+      return doCopyNodeUnsafe(item, this.parent);
+    }
+    return item;
   }
 
   @Override
@@ -370,19 +378,13 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
   @Override
   public BasePathElements copy() {
 
-    return copy(this.parent);
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BasePathElements copy(CodePackage newParent) {
+  public BasePathElements copy(CodeCopyMapper mapper) {
 
-    return copy(newParent, CodeCopyMapperNone.INSTANCE);
-  }
-
-  @Override
-  public BasePathElements copy(CodePackage newParent, CodeCopyMapper mapper) {
-
-    return new BasePathElements(this, (BasePackage) newParent, mapper);
+    return new BasePathElements(this, mapper);
   }
 
   @Override

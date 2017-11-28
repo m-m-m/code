@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
+import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.merge.CodeMergeStrategyDecider;
@@ -42,13 +42,12 @@ public class BaseNestedTypes extends BaseNodeItemContainerHierarchicalWithName<C
    * The copy-constructor.
    *
    * @param template the {@link BaseNestedTypes} to copy.
-   * @param parent the {@link #getParent() parent}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseNestedTypes(BaseNestedTypes template, BaseType parent, CodeCopyMapper mapper) {
+  public BaseNestedTypes(BaseNestedTypes template, CodeCopyMapper mapper) {
 
     super(template, mapper);
-    this.parent = parent;
+    this.parent = mapper.map(template.parent, CodeCopyType.PARENT);
   }
 
   @Override
@@ -112,6 +111,15 @@ public class BaseNestedTypes extends BaseNodeItemContainerHierarchicalWithName<C
   }
 
   @Override
+  protected CodeType ensureParent(CodeType item) {
+
+    if (item.getParent() != this.parent) {
+      return doCopyNode(item, this.parent);
+    }
+    return item;
+  }
+
+  @Override
   protected String getKey(CodeType item) {
 
     return item.getSimpleName();
@@ -149,14 +157,14 @@ public class BaseNestedTypes extends BaseNodeItemContainerHierarchicalWithName<C
     if (strategy == CodeMergeStrategy.OVERRIDE) {
       clear();
       for (CodeType otherNestedType : other) {
-        add(otherNestedType.copy(this.parent));
+        add(doCopyNode(otherNestedType, this.parent));
       }
     } else {
       for (CodeType otherNestedType : other) {
         String simpleName = otherNestedType.getSimpleName();
         CodeType myNestedType = get(simpleName);
         if (myNestedType == null) {
-          add(otherNestedType.copy(this.parent));
+          add(doCopyNode(otherNestedType, this.parent));
         } else {
           myNestedType.merge(otherNestedType, decider, strategy);
         }
@@ -168,19 +176,13 @@ public class BaseNestedTypes extends BaseNodeItemContainerHierarchicalWithName<C
   @Override
   public BaseNestedTypes copy() {
 
-    return copy(this.parent);
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BaseNestedTypes copy(CodeType newParent) {
+  public BaseNestedTypes copy(CodeCopyMapper mapper) {
 
-    return copy(newParent, CodeCopyMapperNone.INSTANCE);
-  }
-
-  @Override
-  public BaseNestedTypes copy(CodeType newParent, CodeCopyMapper mapper) {
-
-    return new BaseNestedTypes(this, (BaseType) newParent, mapper);
+    return new BaseNestedTypes(this, mapper);
   }
 
   @Override

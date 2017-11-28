@@ -8,9 +8,8 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import net.sf.mmm.code.api.CodeFile;
-import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
+import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.imports.BaseImports;
@@ -90,15 +89,14 @@ public final class BaseFile extends BasePathElement implements CodeFile {
    * The copy-constructor.
    *
    * @param template the {@link BaseFile} to copy.
-   * @param parentPackage the {@link #getParentPackage() parent package}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseFile(BaseFile template, BasePackage parentPackage, CodeCopyMapper mapper) {
+  public BaseFile(BaseFile template, CodeCopyMapper mapper) {
 
-    super(template, parentPackage, mapper);
-    this.imports = template.imports.copy(this);
+    super(template, mapper);
+    this.imports = template.imports.copy(mapper);
 
-    this.types = doCopyList(template.types, this, mapper);
+    this.types = doMapList(template.types, mapper, CodeCopyType.CHILD);
     this.reflectioveObject = null;
   }
 
@@ -226,19 +224,13 @@ public final class BaseFile extends BasePathElement implements CodeFile {
   @Override
   public BaseFile copy() {
 
-    return copy(getParent());
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BaseFile copy(CodePackage newParent) {
+  public BaseFile copy(CodeCopyMapper mapper) {
 
-    return copy(newParent, CodeCopyMapperNone.INSTANCE);
-  }
-
-  @Override
-  public BaseFile copy(CodePackage newParent, CodeCopyMapper mapper) {
-
-    return new BaseFile(this, (BasePackage) newParent, mapper);
+    return new BaseFile(this, mapper);
   }
 
   @Override
@@ -253,7 +245,7 @@ public final class BaseFile extends BasePathElement implements CodeFile {
       }
     } else {
       doWriteComment(sink, newline, defaultIndent, currentIndent, language);
-      getParentPackage().doWrite(sink, newline, defaultIndent, currentIndent, language);
+      getParentPackage().doWrite(sink, newline, null, currentIndent, language);
       getImports().write(sink, newline, defaultIndent, currentIndent, language);
       doWriteDoc(sink, newline, defaultIndent, currentIndent, language);
       doWriteAnnotations(sink, newline, defaultIndent, currentIndent, language);

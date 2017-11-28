@@ -5,6 +5,7 @@ package net.sf.mmm.code.base.arg;
 import net.sf.mmm.code.api.arg.CodeOperationArg;
 import net.sf.mmm.code.api.arg.CodeOperationArgs;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.base.member.BaseOperation;
 import net.sf.mmm.code.base.node.BaseNodeItemContainerFlat;
 import net.sf.mmm.code.base.type.BaseType;
@@ -35,13 +36,12 @@ public abstract class BaseOperationArgs<A extends CodeOperationArg> extends Base
    * The copy-constructor.
    *
    * @param template the {@link BaseOperationArgs} to copy.
-   * @param parent the {@link #getParent() parent}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseOperationArgs(BaseOperationArgs<A> template, BaseOperation parent, CodeCopyMapper mapper) {
+  public BaseOperationArgs(BaseOperationArgs<A> template, CodeCopyMapper mapper) {
 
     super(template, mapper);
-    this.parent = parent;
+    this.parent = mapper.map(template.parent, CodeCopyType.PARENT);
   }
 
   @Override

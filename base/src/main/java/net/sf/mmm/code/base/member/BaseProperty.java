@@ -9,11 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
+import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.member.CodeMethod;
-import net.sf.mmm.code.api.member.CodeProperties;
 import net.sf.mmm.code.api.member.CodeProperty;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.api.modifier.CodeVisibility;
@@ -56,13 +55,12 @@ public class BaseProperty extends BaseMember implements CodeProperty {
    * The copy-constructor.
    *
    * @param template the {@link BaseProperty} to copy.
-   * @param parent the {@link #getParent() parent}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseProperty(BaseProperty template, BaseProperties parent, CodeCopyMapper mapper) {
+  public BaseProperty(BaseProperty template, CodeCopyMapper mapper) {
 
     super(template, mapper);
-    this.parent = parent;
+    this.parent = mapper.map(template.parent, CodeCopyType.PARENT);
   }
 
   @Override
@@ -175,7 +173,7 @@ public class BaseProperty extends BaseMember implements CodeProperty {
     if (resolvedType == this.type) {
       return this;
     }
-    BaseProperty copy = copy(this.parent);
+    BaseProperty copy = copy();
     copy.type = resolvedType;
     return copy;
   }
@@ -250,19 +248,13 @@ public class BaseProperty extends BaseMember implements CodeProperty {
   @Override
   public BaseProperty copy() {
 
-    return copy(this.parent);
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BaseProperty copy(CodeProperties newParent) {
+  public BaseProperty copy(CodeCopyMapper mapper) {
 
-    return copy(newParent, CodeCopyMapperNone.INSTANCE);
-  }
-
-  @Override
-  public BaseProperty copy(CodeProperties newParent, CodeCopyMapper mapper) {
-
-    return new BaseProperty(this, (BaseProperties) newParent, mapper);
+    return new BaseProperty(this, mapper);
   }
 
   @Override

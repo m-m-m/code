@@ -5,19 +5,19 @@ package net.sf.mmm.code.base.operator;
 import net.sf.mmm.code.api.operator.CodeNAryOperator;
 
 /**
- * Generic implementation of {@link CodeNAryOperator}.
+ * Base implementation of {@link CodeNAryOperator}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class GenericNAryOperator extends GenericOperator implements CodeNAryOperator {
+public abstract class BaseNAryOperator extends BaseOperator implements CodeNAryOperator {
 
   /**
    * The constructor.
    *
    * @param name the {@link #getName() name}.
    */
-  public GenericNAryOperator(String name) {
+  public BaseNAryOperator(String name) {
 
     super(name);
   }
@@ -51,9 +51,9 @@ public abstract class GenericNAryOperator extends GenericOperator implements Cod
 
   static void init() {
 
-    GenericNAryArbitraryOperator.initialize();
-    GenericNAryBooleanOperator.initialize();
-    GenericNAryHybridOperator.initialize();
-    GenericNAryNumericOperator.initialize();
+    BaseNAryArbitraryOperator.initialize();
+    BaseNAryBooleanOperator.initialize();
+    BaseNAryHybridOperator.initialize();
+    BaseNAryNumericOperator.initialize();
   }
 }

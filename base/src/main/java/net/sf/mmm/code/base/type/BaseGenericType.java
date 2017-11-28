@@ -139,6 +139,9 @@ public abstract class BaseGenericType extends BaseElementWithDeclaringTypeImpl i
   public abstract BaseGenericType copy();
 
   @Override
+  public abstract BaseGenericType copy(CodeCopyMapper mapper);
+
+  @Override
   public abstract BaseType getDeclaringType();
 
 }

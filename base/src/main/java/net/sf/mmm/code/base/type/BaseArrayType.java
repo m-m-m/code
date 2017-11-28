@@ -8,8 +8,8 @@ import java.lang.reflect.Type;
 import java.util.Objects;
 
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
-import net.sf.mmm.code.api.element.CodeElementWithDeclaringType;
+import net.sf.mmm.code.api.copy.CodeCopyType;
+import net.sf.mmm.code.api.type.CodeArrayType;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.base.element.BaseElementWithDeclaringTypeImpl;
 import net.sf.mmm.util.exception.api.IllegalCaseException;
@@ -20,7 +20,7 @@ import net.sf.mmm.util.exception.api.IllegalCaseException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseArrayType extends BaseGenericType implements CodeNodeItemCopyable<CodeElementWithDeclaringType, BaseArrayType> {
+public class BaseArrayType extends BaseGenericType implements CodeArrayType {
 
   private final BaseElementWithDeclaringTypeImpl parent;
 
@@ -82,14 +82,13 @@ public class BaseArrayType extends BaseGenericType implements CodeNodeItemCopyab
    * The copy-constructor.
    *
    * @param template the {@link BaseArrayType} to copy.
-   * @param parent the {@link #getParent() parent}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseArrayType(BaseArrayType template, BaseElementWithDeclaringTypeImpl parent, CodeCopyMapper mapper) {
+  public BaseArrayType(BaseArrayType template, CodeCopyMapper mapper) {
 
     super(template, mapper);
-    this.parent = mapper.map(parent);
-    this.componentType = mapper.map(template.getComponentType());
+    this.parent = mapper.map(template.parent, CodeCopyType.PARENT);
+    this.componentType = mapper.map(template.getComponentType(), CodeCopyType.REFERENCE);
     this.reflectiveObject = null;
   }
 
@@ -182,13 +181,13 @@ public class BaseArrayType extends BaseGenericType implements CodeNodeItemCopyab
   @Override
   public BaseArrayType copy() {
 
-    return copy(this.parent);
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BaseArrayType copy(CodeElementWithDeclaringType newParent, CodeCopyMapper mapper) {
+  public BaseArrayType copy(CodeCopyMapper mapper) {
 
-    return new BaseArrayType(this, (BaseElementWithDeclaringTypeImpl) newParent, mapper);
+    return new BaseArrayType(this, mapper);
   }
 
 }

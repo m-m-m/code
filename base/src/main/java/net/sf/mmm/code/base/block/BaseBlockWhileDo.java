@@ -5,11 +5,9 @@ package net.sf.mmm.code.base.block;
 import java.io.IOException;
 import java.util.List;
 
-import net.sf.mmm.code.api.block.CodeBlock;
 import net.sf.mmm.code.api.block.CodeBlockDoWhile;
 import net.sf.mmm.code.api.block.CodeBlockWhileDo;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.expression.CodeCondition;
 import net.sf.mmm.code.api.statement.CodeStatement;
 
@@ -48,31 +46,24 @@ public class BaseBlockWhileDo extends BaseBlockStatementWithCondition implements
   /**
    * The copy-constructor.
    *
-   * @param parent the {@link #getParent() parent}.
    * @param template the {@link BaseBlockStatementWithCondition} to copy.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseBlockWhileDo(BaseBlockStatementWithCondition template, BaseBlock parent, CodeCopyMapper mapper) {
+  public BaseBlockWhileDo(BaseBlockStatementWithCondition template, CodeCopyMapper mapper) {
 
-    super(template, parent, mapper);
+    super(template, mapper);
   }
 
   @Override
   public BaseBlockWhileDo copy() {
 
-    return copy(getParent());
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BaseBlockWhileDo copy(CodeBlock newParent) {
+  public BaseBlockWhileDo copy(CodeCopyMapper mapper) {
 
-    return copy(newParent, CodeCopyMapperNone.INSTANCE);
-  }
-
-  @Override
-  public BaseBlockWhileDo copy(CodeBlock newParent, CodeCopyMapper mapper) {
-
-    return new BaseBlockWhileDo(this, (BaseBlock) newParent, mapper);
+    return new BaseBlockWhileDo(this, mapper);
   }
 
   @Override

@@ -23,7 +23,7 @@ import net.sf.mmm.code.api.arg.CodeException;
 import net.sf.mmm.code.api.arg.CodeParameter;
 import net.sf.mmm.code.api.arg.CodeReturn;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
+import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.doc.CodeDoc;
 import net.sf.mmm.code.api.doc.CodeDocFormat;
 import net.sf.mmm.code.api.doc.CodeDocLink;
@@ -82,13 +82,12 @@ public class BaseDoc extends BaseNodeItemImpl implements CodeDoc {
    * The copy-constructor.
    *
    * @param template the {@link BaseDoc} to copy.
-   * @param parent the new {@link #getParent() parent element}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseDoc(BaseDoc template, BaseElementImpl parent, CodeCopyMapper mapper) {
+  public BaseDoc(BaseDoc template, CodeCopyMapper mapper) {
 
     super();
-    this.parent = parent;
+    this.parent = mapper.map(template.parent, CodeCopyType.PARENT);
     this.lines = new ArrayList<>(template.lines);
   }
 
@@ -133,6 +132,16 @@ public class BaseDoc extends BaseNodeItemImpl implements CodeDoc {
 
     initialize();
     return this.lines;
+  }
+
+  @Override
+  public void add(String... textLines) {
+
+    verifyMutalbe();
+    initialize();
+    for (String line : textLines) {
+      this.lines.add(line);
+    }
   }
 
   @Override
@@ -451,19 +460,13 @@ public class BaseDoc extends BaseNodeItemImpl implements CodeDoc {
   @Override
   public BaseDoc copy() {
 
-    return copy(this.parent);
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BaseDoc copy(CodeElement newParent) {
+  public BaseDoc copy(CodeCopyMapper mapper) {
 
-    return copy(newParent, CodeCopyMapperNone.INSTANCE);
-  }
-
-  @Override
-  public BaseDoc copy(CodeElement newParent, CodeCopyMapper mapper) {
-
-    return new BaseDoc(this, (BaseElementImpl) newParent, mapper);
+    return new BaseDoc(this, mapper);
   }
 
   @Override

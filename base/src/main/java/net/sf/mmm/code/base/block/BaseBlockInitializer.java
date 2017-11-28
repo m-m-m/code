@@ -9,10 +9,9 @@ import java.util.List;
 import net.sf.mmm.code.api.block.CodeBlockBody;
 import net.sf.mmm.code.api.block.CodeBlockInitializer;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
+import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.expression.CodeVariable;
 import net.sf.mmm.code.api.statement.CodeStatement;
-import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.type.BaseType;
 
 /**
@@ -65,13 +64,12 @@ public class BaseBlockInitializer extends BaseBlock implements CodeBlockInitiali
    * The copy-constructor.
    *
    * @param template the {@link BaseBlock} to copy.
-   * @param parent the {@link #getParent() parent}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseBlockInitializer(BaseBlock template, BaseType parent, CodeCopyMapper mapper) {
+  public BaseBlockInitializer(BaseBlockInitializer template, CodeCopyMapper mapper) {
 
     super(template, mapper);
-    this.parent = parent;
+    this.parent = mapper.map(template.parent, CodeCopyType.PARENT);
   }
 
   @Override
@@ -111,19 +109,13 @@ public class BaseBlockInitializer extends BaseBlock implements CodeBlockInitiali
   @Override
   public BaseBlockInitializer copy() {
 
-    return copy(this.parent);
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BaseBlockInitializer copy(CodeType newParent) {
+  public BaseBlockInitializer copy(CodeCopyMapper mapper) {
 
-    return copy(newParent, CodeCopyMapperNone.INSTANCE);
-  }
-
-  @Override
-  public BaseBlockInitializer copy(CodeType newParent, CodeCopyMapper mapper) {
-
-    return new BaseBlockInitializer(this, (BaseType) newParent, mapper);
+    return new BaseBlockInitializer(this, mapper);
   }
 
   @Override

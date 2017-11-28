@@ -7,6 +7,7 @@ import java.lang.reflect.Type;
 
 import net.sf.mmm.code.api.arg.CodeOperationArg;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.type.CodeGenericType;
@@ -112,14 +113,20 @@ public abstract class BaseOperationArg extends BaseElementWithDeclaringTypeImpl 
   protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     doWriteAnnotations(sink, newline, null, "", language);
-    doWriteType(sink);
+    doWriteDeclaration(sink, newline, defaultIndent, currentIndent, language);
   }
 
   /**
-   * @param sink the {@link Appendable}.
+   * @param sink the {@link Appendable} where to {@link Appendable#append(CharSequence) append} the code from this
+   *        {@link CodeItem}.
+   * @param newline the newline {@link String}.
+   * @param defaultIndent the {@link String} used for indentation (e.g. a number of spaces to insert per indent level).
+   * @param currentIndent the current indent (number of spaces). Initially the empty string ({@code ""}). Before a
+   *        recursion the {@code defaultIndent} will be appended.
+   * @param language the {@link CodeLanguage} to use.
    * @throws IOException if thrown by {@link Appendable}.
    */
-  protected void doWriteType(Appendable sink) throws IOException {
+  protected void doWriteDeclaration(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     getType().writeReference(sink, false);
   }

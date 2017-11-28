@@ -5,28 +5,28 @@ package net.sf.mmm.code.base.operator;
 import net.sf.mmm.code.api.operator.CodeNAryHybridOperator;
 
 /**
- * Generic implementation of {@link CodeNAryHybridOperator}.
+ * Base implementation of {@link CodeNAryHybridOperator}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public final class GenericNAryHybridOperator extends GenericNAryOperator implements CodeNAryHybridOperator {
+public final class BaseNAryHybridOperator extends BaseNAryOperator implements CodeNAryHybridOperator {
 
   /** Instance for {@link #NAME_XOR}. */
-  public static final GenericNAryHybridOperator XOR = new GenericNAryHybridOperator(NAME_XOR);
+  public static final BaseNAryHybridOperator XOR = new BaseNAryHybridOperator(NAME_XOR);
 
   /** Instance for {@link #NAME_BIT_OR}. */
-  public static final GenericNAryHybridOperator BIT_OR = new GenericNAryHybridOperator(NAME_BIT_OR);
+  public static final BaseNAryHybridOperator BIT_OR = new BaseNAryHybridOperator(NAME_BIT_OR);
 
   /** Instance for {@link #NAME_BIT_AND}. */
-  public static final GenericNAryHybridOperator BIT_AND = new GenericNAryHybridOperator(NAME_BIT_AND);
+  public static final BaseNAryHybridOperator BIT_AND = new BaseNAryHybridOperator(NAME_BIT_AND);
 
   /**
    * The constructor.
    *
    * @param name the {@link #getName() name}.
    */
-  public GenericNAryHybridOperator(String name) {
+  public BaseNAryHybridOperator(String name) {
 
     super(name);
   }

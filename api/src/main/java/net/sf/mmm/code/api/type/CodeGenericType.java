@@ -4,9 +4,11 @@ package net.sf.mmm.code.api.type;
 
 import java.lang.reflect.Type;
 
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.item.CodeItemWithDeclaration;
+import net.sf.mmm.code.api.item.CodeItemWithQualifiedFlag;
 import net.sf.mmm.code.api.item.CodeItemWithQualifiedName;
 
 /**
@@ -15,7 +17,7 @@ import net.sf.mmm.code.api.item.CodeItemWithQualifiedName;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract interface CodeGenericType extends CodeElement, CodeItemWithDeclaration, CodeItemWithQualifiedName {
+public abstract interface CodeGenericType extends CodeElement, CodeItemWithDeclaration, CodeItemWithQualifiedName, CodeItemWithQualifiedFlag {
 
   /**
    * @return the raw {@link CodeType}. In case of an {@link #isArray() array} the
@@ -24,8 +26,8 @@ public abstract interface CodeGenericType extends CodeElement, CodeItemWithDecla
   CodeType asType();
 
   /**
-   * @return the {@link CodeGenericType} of the contained elements (e.g. if case of an {@link #isArray()
-   *         array}) or {@code null} if no container type.
+   * @return the {@link CodeGenericType} of the contained elements (e.g. if case of an {@link #isArray() array}) or
+   *         {@code null} if no container type.
    */
   CodeGenericType getComponentType();
 
@@ -55,15 +57,15 @@ public abstract interface CodeGenericType extends CodeElement, CodeItemWithDecla
   CodeComposedType asComposedType();
 
   /**
-   * @return the unqualified {@link CodeGenericType} corresponding to this type if {@link #isQualified()
-   *         qualified} or this type itself if already unqualified.
+   * @return the unqualified {@link CodeGenericType} corresponding to this type if {@link #isQualified() qualified} or
+   *         this type itself if already unqualified.
    */
   CodeGenericType asUnqualifiedType();
 
   /**
    * @return an {@link #isArray() array} of this type.
    */
-  CodeGenericType createArray();
+  CodeArrayType createArray();
 
   /**
    * @return the {@link CodeTypeVariables} containing the {@link CodeTypeVariable}s.
@@ -79,22 +81,21 @@ public abstract interface CodeGenericType extends CodeElement, CodeItemWithDecla
 
   /**
    * @param type the potential sub-type.
-   * @return {@code true} if this type is equal to or a {@link CodeType#getSuperTypes() super type} of the
-   *         given {@code type}, {@code false} otherwise.
+   * @return {@code true} if this type is equal to or a {@link CodeType#getSuperTypes() super type} of the given
+   *         {@code type}, {@code false} otherwise.
    * @see Class#isAssignableFrom(Class)
    */
   boolean isAssignableFrom(CodeGenericType type);
 
   /**
-   * Determines if this type can be assigned to the given {@link CodeGenericType}. Applies if instances of
-   * this type can be casted to the given {@link CodeGenericType}. This is the inverse operation of
-   * {@link #isAssignableFrom(CodeGenericType)} that was introduced as analogy to
-   * {@link Class#isAssignableFrom(Class)}. As however many people struggle with
-   * {@link #isAssignableFrom(CodeGenericType)} this method is more easy and natural to use and understand.
+   * Determines if this type can be assigned to the given {@link CodeGenericType}. Applies if instances of this type can
+   * be casted to the given {@link CodeGenericType}. This is the inverse operation of
+   * {@link #isAssignableFrom(CodeGenericType)} that was introduced as analogy to {@link Class#isAssignableFrom(Class)}.
+   * As however many people struggle with {@link #isAssignableFrom(CodeGenericType)} this method is more easy and
+   * natural to use and understand.
    *
    * @param type the potential super-type.
-   * @return {@code true} if this type is equal to or a sub type of the given {@code type}, {@code false}
-   *         otherwise.
+   * @return {@code true} if this type is equal to or a sub type of the given {@code type}, {@code false} otherwise.
    */
   default boolean isAssignableTo(CodeGenericType type) {
 
@@ -103,8 +104,8 @@ public abstract interface CodeGenericType extends CodeElement, CodeItemWithDecla
 
   /**
    * @param context the {@link CodeGenericType type} in which to resolve this type.
-   * @return the resolved type in case this is a {@link #asTypeVariable() type variable} that could be
-   *         resolved or refined or this type itself otherwise.
+   * @return the resolved type in case this is a {@link #asTypeVariable() type variable} that could be resolved or
+   *         refined or this type itself otherwise.
    */
   CodeGenericType resolve(CodeGenericType context);
 
@@ -129,8 +130,7 @@ public abstract interface CodeGenericType extends CodeElement, CodeItemWithDecla
   }
 
   /**
-   * @return {@code true} if this type has the {@link #getCategory() category} {@link CodeTypeCategory#CLASS
-   *         class}.
+   * @return {@code true} if this type has the {@link #getCategory() category} {@link CodeTypeCategory#CLASS class}.
    */
   default boolean isClass() {
 
@@ -138,8 +138,8 @@ public abstract interface CodeGenericType extends CodeElement, CodeItemWithDecla
   }
 
   /**
-   * @return {@code true} if this type has the {@link #getCategory() category}
-   *         {@link CodeTypeCategory#ENUMERAION enumeration}.
+   * @return {@code true} if this type has the {@link #getCategory() category} {@link CodeTypeCategory#ENUMERAION
+   *         enumeration}.
    */
   default boolean isEnumeration() {
 
@@ -147,8 +147,8 @@ public abstract interface CodeGenericType extends CodeElement, CodeItemWithDecla
   }
 
   /**
-   * @return {@code true} if this type has the {@link #getCategory() category}
-   *         {@link CodeTypeCategory#ANNOTATION annotation}.
+   * @return {@code true} if this type has the {@link #getCategory() category} {@link CodeTypeCategory#ANNOTATION
+   *         annotation}.
    */
   default boolean isAnnotation() {
 
@@ -160,5 +160,8 @@ public abstract interface CodeGenericType extends CodeElement, CodeItemWithDecla
 
   @Override
   CodeGenericType copy();
+
+  @Override
+  CodeGenericType copy(CodeCopyMapper mapper);
 
 }

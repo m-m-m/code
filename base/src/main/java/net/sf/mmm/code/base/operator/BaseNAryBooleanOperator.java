@@ -5,25 +5,25 @@ package net.sf.mmm.code.base.operator;
 import net.sf.mmm.code.api.operator.CodeNAryBooleanOperator;
 
 /**
- * Generic implementation of {@link CodeNAryBooleanOperator}.
+ * Base implementation of {@link CodeNAryBooleanOperator}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public final class GenericNAryBooleanOperator extends GenericNAryOperator implements CodeNAryBooleanOperator {
+public final class BaseNAryBooleanOperator extends BaseNAryOperator implements CodeNAryBooleanOperator {
 
   /** Instance for {@link #NAME_OR}. */
-  public static final GenericNAryBooleanOperator OR = new GenericNAryBooleanOperator(NAME_OR);
+  public static final BaseNAryBooleanOperator OR = new BaseNAryBooleanOperator(NAME_OR);
 
   /** Instance for {@link #NAME_AND}. */
-  public static final GenericNAryBooleanOperator AND = new GenericNAryBooleanOperator(NAME_AND);
+  public static final BaseNAryBooleanOperator AND = new BaseNAryBooleanOperator(NAME_AND);
 
   /**
    * The constructor.
    *
    * @param name the {@link #getName() name}.
    */
-  public GenericNAryBooleanOperator(String name) {
+  public BaseNAryBooleanOperator(String name) {
 
     super(name);
   }

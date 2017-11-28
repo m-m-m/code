@@ -5,7 +5,6 @@ package net.sf.mmm.code.base.member;
 import java.lang.reflect.Constructor;
 
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.member.CodeConstructor;
 import net.sf.mmm.code.api.member.CodeConstructors;
 import net.sf.mmm.code.api.member.CodeMethods;
@@ -37,12 +36,11 @@ public class BaseConstructors extends BaseOperations<CodeConstructor> implements
    * The copy-constructor.
    *
    * @param template the {@link BaseConstructors} to copy.
-   * @param parent the {@link #getParent() parent}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseConstructors(BaseConstructors template, BaseType parent, CodeCopyMapper mapper) {
+  public BaseConstructors(BaseConstructors template, CodeCopyMapper mapper) {
 
-    super(template, parent, mapper);
+    super(template, mapper);
   }
 
   @Override
@@ -108,13 +106,13 @@ public class BaseConstructors extends BaseOperations<CodeConstructor> implements
     if (parentStrategy == CodeMergeStrategy.OVERRIDE) {
       clear();
       for (CodeConstructor otherConstructor : other.getDeclared()) {
-        add(otherConstructor.copy(this));
+        add(doCopyNode(otherConstructor, this));
       }
     } else {
       for (CodeConstructor otherConstructor : other.getDeclared()) {
         CodeConstructor myConstructor = get(otherConstructor);
         if (myConstructor == null) {
-          add(otherConstructor.copy(this));
+          add(doCopyNode(otherConstructor, this));
         } else {
           myConstructor.merge(otherConstructor, decider, parentStrategy);
         }
@@ -126,19 +124,13 @@ public class BaseConstructors extends BaseOperations<CodeConstructor> implements
   @Override
   public BaseConstructors copy() {
 
-    return copy(getParent());
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BaseConstructors copy(CodeType newParent) {
+  public BaseConstructors copy(CodeCopyMapper mapper) {
 
-    return copy(newParent, CodeCopyMapperNone.INSTANCE);
-  }
-
-  @Override
-  public BaseConstructors copy(CodeType newParent, CodeCopyMapper mapper) {
-
-    return new BaseConstructors(this, (BaseType) newParent, mapper);
+    return new BaseConstructors(this, mapper);
   }
 
 }

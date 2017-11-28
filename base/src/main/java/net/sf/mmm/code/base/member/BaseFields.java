@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.function.Predicate;
 
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.member.CodeFields;
@@ -42,12 +41,11 @@ public class BaseFields extends BaseMembers<CodeField> implements CodeFields {
    * The copy-constructor.
    *
    * @param template the {@link BaseFields} to copy.
-   * @param parent the {@link #getParent() parent}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseFields(BaseFields template, BaseType parent, CodeCopyMapper mapper) {
+  public BaseFields(BaseFields template, CodeCopyMapper mapper) {
 
-    super(template, parent, mapper);
+    super(template, mapper);
   }
 
   @Override
@@ -127,13 +125,13 @@ public class BaseFields extends BaseMembers<CodeField> implements CodeFields {
     if (parentStrategy == CodeMergeStrategy.OVERRIDE) {
       clear();
       for (CodeField otherField : other.getDeclared()) {
-        add(otherField.copy(this));
+        add(doCopyNode(otherField, this));
       }
     } else {
       for (CodeField otherField : other.getDeclared()) {
         CodeField myField = get(otherField.getName());
         if (myField == null) {
-          add(otherField.copy(this));
+          add(doCopyNode(otherField, this));
         } else {
           myField.merge(otherField, decider, parentStrategy);
         }
@@ -145,34 +143,29 @@ public class BaseFields extends BaseMembers<CodeField> implements CodeFields {
   @Override
   public BaseFields copy() {
 
-    return copy(getParent());
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BaseFields copy(CodeType newParent) {
+  public BaseFields copy(CodeCopyMapper mapper) {
 
-    return copy(newParent, CodeCopyMapperNone.INSTANCE);
-  }
-
-  @Override
-  public BaseFields copy(CodeType newParent, CodeCopyMapper mapper) {
-
-    return new BaseFields(this, (BaseType) newParent, mapper);
+    return new BaseFields(this, mapper);
   }
 
   @Override
   protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
-    doWriteFields(sink, newline, defaultIndent, currentIndent, f -> f.getModifiers().isStatic());
-    doWriteFields(sink, newline, defaultIndent, currentIndent, f -> !f.getModifiers().isStatic());
+    doWriteFields(sink, newline, defaultIndent, currentIndent, language, f -> f.getModifiers().isStatic());
+    doWriteFields(sink, newline, defaultIndent, currentIndent, language, f -> !f.getModifiers().isStatic());
   }
 
-  private void doWriteFields(Appendable sink, String newline, String defaultIndent, String currentIndent, Predicate<CodeField> filter) throws IOException {
+  private void doWriteFields(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language, Predicate<CodeField> filter)
+      throws IOException {
 
     for (CodeField field : getDeclared()) {
       if (filter.test(field)) {
         sink.append(newline);
-        field.write(sink, defaultIndent, currentIndent);
+        field.write(sink, newline, defaultIndent, currentIndent, language);
       }
     }
   }

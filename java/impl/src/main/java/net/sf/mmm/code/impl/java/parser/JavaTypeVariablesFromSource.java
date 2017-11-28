@@ -7,9 +7,7 @@ import java.lang.reflect.GenericDeclaration;
 import net.sf.mmm.code.api.annotation.CodeAnnotations;
 import net.sf.mmm.code.api.comment.CodeComment;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.doc.CodeDoc;
-import net.sf.mmm.code.api.element.CodeElementWithTypeVariables;
 import net.sf.mmm.code.base.element.BaseElementWithTypeVariables;
 import net.sf.mmm.code.base.member.BaseOperation;
 import net.sf.mmm.code.base.type.BaseType;
@@ -35,24 +33,11 @@ public class JavaTypeVariablesFromSource extends BaseTypeVariables implements Ba
    * The copy-constructor.
    *
    * @param template the {@link BaseTypeVariables} to copy.
-   * @param declaringOperation the {@link #getDeclaringOperation() declaring operation}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public JavaTypeVariablesFromSource(JavaTypeVariablesFromSource template, BaseOperation declaringOperation, CodeCopyMapper mapper) {
+  public JavaTypeVariablesFromSource(JavaTypeVariablesFromSource template, CodeCopyMapper mapper) {
 
-    super(template, declaringOperation, mapper);
-  }
-
-  /**
-   * The copy-constructor.
-   *
-   * @param template the {@link BaseTypeVariables} to copy.
-   * @param declaringType the {@link #getDeclaringType() declaring type}.
-   * @param mapper the {@link CodeCopyMapper}.
-   */
-  public JavaTypeVariablesFromSource(JavaTypeVariablesFromSource template, BaseType declaringType, CodeCopyMapper mapper) {
-
-    super(template, declaringType, mapper);
+    super(template, mapper);
   }
 
   @Override
@@ -76,25 +61,13 @@ public class JavaTypeVariablesFromSource extends BaseTypeVariables implements Ba
   @Override
   public JavaTypeVariablesFromSource copy() {
 
-    return copy(getParent());
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public JavaTypeVariablesFromSource copy(CodeElementWithTypeVariables newParent) {
+  public JavaTypeVariablesFromSource copy(CodeCopyMapper mapper) {
 
-    return copy(newParent, CodeCopyMapperNone.INSTANCE);
-  }
-
-  @Override
-  public JavaTypeVariablesFromSource copy(CodeElementWithTypeVariables newParent, CodeCopyMapper mapper) {
-
-    if (newParent instanceof BaseType) {
-      return new JavaTypeVariablesFromSource(this, (BaseType) newParent, mapper);
-    } else if (newParent instanceof BaseOperation) {
-      return new JavaTypeVariablesFromSource(this, (BaseOperation) newParent, mapper);
-    } else {
-      throw new IllegalArgumentException("" + newParent);
-    }
+    return new JavaTypeVariablesFromSource(this, mapper);
   }
 
   // sick stuff from here...

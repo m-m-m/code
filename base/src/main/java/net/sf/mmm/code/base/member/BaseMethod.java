@@ -7,13 +7,15 @@ import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.Method;
 
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
+import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.member.CodeMethods;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.merge.CodeMergeStrategyDecider;
+import net.sf.mmm.code.api.modifier.CodeModifiers;
+import net.sf.mmm.code.api.modifier.CodeVisibility;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeSuperTypes;
 import net.sf.mmm.code.api.type.CodeType;
@@ -93,14 +95,15 @@ public class BaseMethod extends BaseOperation implements CodeMethod {
    * The copy-constructor.
    *
    * @param template the {@link BaseMethod} to copy.
-   * @param parent the {@link #getParent() parent}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseMethod(BaseMethod template, BaseMethods parent, CodeCopyMapper mapper) {
+  public BaseMethod(BaseMethod template, CodeCopyMapper mapper) {
 
     super(template, mapper);
-    this.parent = parent;
+    this.parent = mapper.map(template.parent, CodeCopyType.PARENT);
+    this.returns = mapper.map(template.returns, CodeCopyType.CHILD);
     this.reflectiveObject = null;
+    this.defaultValue = template.defaultValue;
   }
 
   @Override
@@ -252,19 +255,13 @@ public class BaseMethod extends BaseOperation implements CodeMethod {
   @Override
   public BaseMethod copy() {
 
-    return copy(this.parent);
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BaseMethod copy(CodeMethods newParent) {
+  public BaseMethod copy(CodeCopyMapper mapper) {
 
-    return copy(newParent, CodeCopyMapperNone.INSTANCE);
-  }
-
-  @Override
-  public BaseMethod copy(CodeMethods newParent, CodeCopyMapper mapper) {
-
-    return new BaseMethod(this, (BaseMethods) newParent, mapper);
+    return new BaseMethod(this, mapper);
   }
 
   @Override
@@ -288,6 +285,17 @@ public class BaseMethod extends BaseOperation implements CodeMethod {
     if (end != null) {
       sink.append(end);
       getReturns().write(sink, newline, defaultIndent, currentIndent, language);
+    }
+  }
+
+  @Override
+  protected void doWriteModifiers(Appendable sink) throws IOException {
+
+    CodeModifiers modifiers = getModifiers();
+    if (getDeclaringType().isInterface() && CodeVisibility.PUBLIC.equals(modifiers.getVisibility())) {
+      modifiers.formatModifiers(sink);
+    } else {
+      sink.append(modifiers.toString());
     }
   }
 

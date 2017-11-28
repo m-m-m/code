@@ -48,9 +48,9 @@ public abstract class BaseElementImpl extends BaseNodeItemImpl implements BaseEl
   public BaseElementImpl(BaseElementImpl template, CodeCopyMapper mapper) {
 
     super(template, mapper);
-    this.doc = template.getDoc().copy(this);
+    this.doc = template.getDoc().copy(mapper);
     this.comment = template.getComment();
-    this.annotations = doCopy(template.getAnnotations(), this);
+    this.annotations = template.getAnnotations().copy(mapper);
   }
 
   @Override

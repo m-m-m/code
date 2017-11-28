@@ -6,13 +6,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
 import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.member.CodeMember;
 import net.sf.mmm.code.api.member.CodeProperties;
 import net.sf.mmm.code.api.member.CodeProperty;
 import net.sf.mmm.code.api.type.CodeGenericType;
-import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.type.BaseType;
 
 /**
@@ -37,12 +35,11 @@ public class BaseProperties extends BaseMembers<CodeProperty> implements CodePro
    * The copy-constructor.
    *
    * @param template the {@link BaseProperties} to copy.
-   * @param parent the {@link #getParent() parent}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseProperties(BaseProperties template, BaseType parent, CodeCopyMapper mapper) {
+  public BaseProperties(BaseProperties template, CodeCopyMapper mapper) {
 
-    super(template, parent, mapper);
+    super(template, mapper);
   }
 
   @Override
@@ -152,7 +149,7 @@ public class BaseProperties extends BaseMembers<CodeProperty> implements CodePro
    */
   @Deprecated
   @Override
-  public BaseProperties getSourceCodeObject() {
+  public CodeProperties getSourceCodeObject() {
 
     return null;
   }
@@ -160,19 +157,13 @@ public class BaseProperties extends BaseMembers<CodeProperty> implements CodePro
   @Override
   public BaseProperties copy() {
 
-    return copy(getParent());
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BaseProperties copy(CodeType newParent) {
+  public BaseProperties copy(CodeCopyMapper mapper) {
 
-    return copy(newParent, CodeCopyMapperNone.INSTANCE);
-  }
-
-  @Override
-  public BaseProperties copy(CodeType newParent, CodeCopyMapper mapper) {
-
-    return new BaseProperties(this, (BaseType) newParent, mapper);
+    return new BaseProperties(this, mapper);
   }
 
 }

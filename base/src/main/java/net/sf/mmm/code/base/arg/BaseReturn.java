@@ -7,7 +7,7 @@ import java.lang.reflect.Type;
 
 import net.sf.mmm.code.api.arg.CodeReturn;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
+import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.base.member.BaseMethod;
@@ -45,13 +45,12 @@ public class BaseReturn extends BaseOperationArg implements CodeReturn {
    * The copy-constructor.
    *
    * @param template the {@link BaseReturn} to copy.
-   * @param parent the {@link #getParent() parent}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseReturn(BaseReturn template, BaseMethod parent, CodeCopyMapper mapper) {
+  public BaseReturn(BaseReturn template, CodeCopyMapper mapper) {
 
     super(template, mapper);
-    this.parent = parent;
+    this.parent = mapper.map(template.parent, CodeCopyType.PARENT);
     this.reflectiveObject = null;
   }
 
@@ -116,19 +115,13 @@ public class BaseReturn extends BaseOperationArg implements CodeReturn {
   @Override
   public BaseReturn copy() {
 
-    return copy(this.parent);
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BaseReturn copy(CodeMethod newParent) {
+  public BaseReturn copy(CodeCopyMapper mapper) {
 
-    return copy(newParent, CodeCopyMapperNone.INSTANCE);
-  }
-
-  @Override
-  public BaseReturn copy(CodeMethod newParent, CodeCopyMapper mapper) {
-
-    return new BaseReturn(this, (BaseMethod) newParent, mapper);
+    return new BaseReturn(this, mapper);
   }
 
 }

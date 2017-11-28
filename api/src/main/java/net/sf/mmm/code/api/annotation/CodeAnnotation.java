@@ -25,8 +25,8 @@ public interface CodeAnnotation extends CodeChildItem, CodeMutableItemWithType, 
   String PREFIX = "@";
 
   /**
-   * @return the {@link Map} with the parameters of this annotation. May be {@link Map#isEmpty() empty} but is
-   *         never <code>null</code>. The {@link CodeExpression}s are most likely a
+   * @return the {@link Map} with the parameters of this annotation. May be {@link Map#isEmpty() empty} but is never
+   *         <code>null</code>. The {@link CodeExpression}s are most likely a
    *         {@link net.sf.mmm.code.api.expression.CodeConstant}.
    */
   Map<String, CodeExpression> getParameters();

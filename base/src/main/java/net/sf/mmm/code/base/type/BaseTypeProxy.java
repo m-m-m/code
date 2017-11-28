@@ -7,7 +7,7 @@ import java.util.Objects;
 
 import net.sf.mmm.code.api.comment.CodeComment;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
+import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeGenericType;
@@ -70,13 +70,12 @@ public class BaseTypeProxy extends BaseGenericTypeProxy implements CodeNodeItemC
    * The copy-constructor.
    *
    * @param template the {@link BaseTypeProxy} to copy.
-   * @param parent the {@link #getParent() parent}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseTypeProxy(BaseTypeProxy template, BaseElementImpl parent, CodeCopyMapper mapper) {
+  public BaseTypeProxy(BaseTypeProxy template, CodeCopyMapper mapper) {
 
     super(template, mapper);
-    this.parent = parent;
+    this.parent = mapper.map(template.parent, CodeCopyType.PARENT);
     this.type = template.type;
   }
 
@@ -169,19 +168,13 @@ public class BaseTypeProxy extends BaseGenericTypeProxy implements CodeNodeItemC
   @Override
   public BaseTypeProxy copy() {
 
-    return copy(this.parent);
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BaseTypeProxy copy(BaseElementImpl newParent) {
+  public BaseTypeProxy copy(CodeCopyMapper mapper) {
 
-    return copy(newParent, CodeCopyMapperNone.INSTANCE);
-  }
-
-  @Override
-  public BaseTypeProxy copy(BaseElementImpl newParent, CodeCopyMapper mapper) {
-
-    return new BaseTypeProxy(this, newParent, mapper);
+    return new BaseTypeProxy(this, mapper);
   }
 
   /**

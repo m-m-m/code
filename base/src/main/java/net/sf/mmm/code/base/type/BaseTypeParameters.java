@@ -6,9 +6,8 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
+import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.type.CodeGenericType;
-import net.sf.mmm.code.api.type.CodeParameterizedType;
 import net.sf.mmm.code.api.type.CodeTypeParameters;
 import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.member.BaseOperation;
@@ -52,13 +51,12 @@ public class BaseTypeParameters extends BaseGenericTypeParameters<CodeGenericTyp
    * The copy-constructor.
    *
    * @param template the {@link BaseTypeParameters} to copy.
-   * @param parent the {@link #getParent() parent}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseTypeParameters(BaseTypeParameters template, BaseParameterizedType parent, CodeCopyMapper mapper) {
+  public BaseTypeParameters(BaseTypeParameters template, CodeCopyMapper mapper) {
 
     super(template, mapper);
-    this.parent = parent;
+    this.parent = mapper.map(template.parent, CodeCopyType.PARENT);
   }
 
   @Override
@@ -106,21 +104,24 @@ public class BaseTypeParameters extends BaseGenericTypeParameters<CodeGenericTyp
   }
 
   @Override
+  protected CodeGenericType ensureParent(CodeGenericType item) {
+
+    if (item.getParent() != this) {
+      return doCopyNodeUnsafe(item, this);
+    }
+    return item;
+  }
+
+  @Override
   public BaseTypeParameters copy() {
 
-    return copy(this.parent);
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BaseTypeParameters copy(CodeParameterizedType newParent) {
+  public BaseTypeParameters copy(CodeCopyMapper mapper) {
 
-    return copy(newParent, CodeCopyMapperNone.INSTANCE);
-  }
-
-  @Override
-  public BaseTypeParameters copy(CodeParameterizedType newParent, CodeCopyMapper mapper) {
-
-    return new BaseTypeParameters(this, (BaseParameterizedType) newParent, mapper);
+    return new BaseTypeParameters(this, mapper);
   }
 
 }

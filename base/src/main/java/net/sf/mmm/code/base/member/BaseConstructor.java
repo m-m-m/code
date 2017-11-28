@@ -5,7 +5,7 @@ package net.sf.mmm.code.base.member;
 import java.lang.reflect.Constructor;
 
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
+import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.member.CodeConstructor;
 import net.sf.mmm.code.api.member.CodeConstructors;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
@@ -69,13 +69,12 @@ public class BaseConstructor extends BaseOperation implements CodeConstructor {
    * The copy-constructor.
    *
    * @param template the {@link BaseConstructor} to copy.
-   * @param parent the {@link #getParent() parent}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseConstructor(BaseConstructor template, BaseConstructors parent, CodeCopyMapper mapper) {
+  public BaseConstructor(BaseConstructor template, CodeCopyMapper mapper) {
 
     super(template, mapper);
-    this.parent = parent;
+    this.parent = mapper.map(template.parent, CodeCopyType.PARENT);
     this.reflectiveObject = null;
   }
 
@@ -130,19 +129,13 @@ public class BaseConstructor extends BaseOperation implements CodeConstructor {
   @Override
   public BaseConstructor copy() {
 
-    return copy(this.parent);
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BaseConstructor copy(CodeConstructors newParent) {
+  public BaseConstructor copy(CodeCopyMapper mapper) {
 
-    return copy(newParent, CodeCopyMapperNone.INSTANCE);
-  }
-
-  @Override
-  public BaseConstructor copy(CodeConstructors newParent, CodeCopyMapper mapper) {
-
-    return new BaseConstructor(this, (BaseConstructors) newParent, mapper);
+    return new BaseConstructor(this, mapper);
   }
 
 }

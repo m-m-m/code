@@ -4,6 +4,7 @@ package net.sf.mmm.code.api;
 
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.item.CodeItemWithQualifiedNameAndParentPackage;
+import net.sf.mmm.code.api.node.CodeContainer;
 
 /**
  * Abstract top-level interface for any item of code as defined by this API. It reflects code structure.
@@ -12,5 +13,8 @@ import net.sf.mmm.code.api.item.CodeItemWithQualifiedNameAndParentPackage;
  * @since 1.0.0
  */
 public abstract interface CodePathElement extends CodeElement, CodeItemWithQualifiedNameAndParentPackage {
+
+  @Override
+  CodeContainer getParent();
 
 }

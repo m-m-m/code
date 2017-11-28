@@ -3,8 +3,8 @@
 package net.sf.mmm.code.base.block;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import net.sf.mmm.code.api.block.CodeBlock;
@@ -15,6 +15,7 @@ import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.statement.CodeReturnStatement;
 import net.sf.mmm.code.api.statement.CodeStatement;
 import net.sf.mmm.code.base.node.BaseNodeItemImpl;
+import net.sf.mmm.code.base.statement.BaseTextStatement;
 
 /**
  * Base implementation of {@link CodeBlock}.
@@ -44,7 +45,7 @@ public abstract class BaseBlock extends BaseNodeItemImpl implements CodeBlock {
   public BaseBlock(List<CodeStatement> statements) {
 
     super();
-    this.statements = Collections.unmodifiableList(statements);
+    this.statements = statements;
   }
 
   /**
@@ -56,6 +57,7 @@ public abstract class BaseBlock extends BaseNodeItemImpl implements CodeBlock {
   public BaseBlock(BaseBlock template, CodeCopyMapper mapper) {
 
     super(template, mapper);
+    this.statements = new ArrayList<>(template.statements);
   }
 
   @Override
@@ -102,6 +104,24 @@ public abstract class BaseBlock extends BaseNodeItemImpl implements CodeBlock {
   }
 
   @Override
+  public void add(CodeStatement... codeStatements) {
+
+    verifyMutalbe();
+    for (CodeStatement statement : codeStatements) {
+      this.statements.add(statement);
+    }
+  }
+
+  @Override
+  public void addText(String... textStatements) {
+
+    verifyMutalbe();
+    for (String statement : textStatements) {
+      this.statements.add(new BaseTextStatement(statement));
+    }
+  }
+
+  @Override
   protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     if (this.statements.size() == 1) {
@@ -125,7 +145,6 @@ public abstract class BaseBlock extends BaseNodeItemImpl implements CodeBlock {
       }
       for (CodeStatement statement : this.statements) {
         statement.write(sink, newline, defaultIndent, newIndent);
-        sink.append(newline);
       }
       sink.append(currentIndent);
       sink.append('}');

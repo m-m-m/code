@@ -31,12 +31,11 @@ public abstract class BaseOperations<O extends CodeOperation> extends BaseMember
    * The copy-constructor.
    *
    * @param template the {@link BaseOperations} to copy.
-   * @param parent the {@link #getParent() parent}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseOperations(BaseOperations<O> template, BaseType parent, CodeCopyMapper mapper) {
+  public BaseOperations(BaseOperations<O> template, CodeCopyMapper mapper) {
 
-    super(template, parent, mapper);
+    super(template, mapper);
   }
 
   @Override

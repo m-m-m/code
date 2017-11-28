@@ -2,6 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.node;
 
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.item.CodeMutableItem;
 
@@ -14,10 +15,16 @@ import net.sf.mmm.code.api.item.CodeMutableItem;
 public abstract interface CodeNodeItem extends CodeNode, CodeMutableItem {
 
   /**
-   * @return a new {@link #isMutable() mutable} copy of this {@link CodeNodeItem}. Will be a deep-copy with
-   *         copies of all child {@link CodeNodeItem}s.
+   * @return a new {@link #isMutable() mutable} copy of this {@link CodeNodeItem}. Will be a deep-copy with copies of
+   *         all child {@link CodeNodeItem}s.
    */
   @Override
   CodeNodeItem copy();
+
+  /**
+   * @param mapper the {@link CodeCopyMapper} used to map involved nodes during copy.
+   * @return a {@link #copy()} with the related objects mapped using the given {@link CodeCopyMapper}.
+   */
+  CodeNodeItem copy(CodeCopyMapper mapper);
 
 }

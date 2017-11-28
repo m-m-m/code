@@ -5,25 +5,25 @@ package net.sf.mmm.code.base.operator;
 import net.sf.mmm.code.api.operator.CodeUnaryOperator;
 
 /**
- * Generic implementation of {@link CodeUnaryOperator}.
+ * Base implementation of {@link CodeUnaryOperator}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public final class GenericUnaryOperator extends GenericOperator implements CodeUnaryOperator {
+public final class BaseUnaryOperator extends BaseOperator implements CodeUnaryOperator {
 
   /** Instance for {@link #NAME_NOT}. */
-  public static final GenericUnaryOperator NOT = new GenericUnaryOperator(NAME_NOT);
+  public static final BaseUnaryOperator NOT = new BaseUnaryOperator(NAME_NOT);
 
   /** Instance for {@link #NAME_BIT_NOT}. */
-  public static final GenericUnaryOperator BIT_NOT = new GenericUnaryOperator(NAME_BIT_NOT);
+  public static final BaseUnaryOperator BIT_NOT = new BaseUnaryOperator(NAME_BIT_NOT);
 
   /**
    * The constructor.
    *
    * @param name the {@link #getName() name}.
    */
-  public GenericUnaryOperator(String name) {
+  public BaseUnaryOperator(String name) {
 
     super(name);
   }
@@ -47,12 +47,12 @@ public final class GenericUnaryOperator extends GenericOperator implements CodeU
   }
 
   /**
-   * @param name the {@link #getName() name} of the requested {@link GenericUnaryOperator}.
-   * @return the {@link GenericUnaryOperator} or {@code null} if not found.
+   * @param name the {@link #getName() name} of the requested {@link BaseUnaryOperator}.
+   * @return the {@link BaseUnaryOperator} or {@code null} if not found.
    */
-  public static GenericUnaryOperator of(String name) {
+  public static BaseUnaryOperator of(String name) {
 
-    return of(name, GenericUnaryOperator.class);
+    return of(name, BaseUnaryOperator.class);
   }
 
   static void init() {

@@ -64,7 +64,7 @@ public class CodeLanguageJava extends AbstractCodeLanguage {
   @Override
   public void writeDeclaration(CodeVariable variable, Appendable sink) throws IOException {
 
-    variable.getType().writeReference(sink, false);
+    variable.writeReference(sink, false);
     sink.append(' ');
     sink.append(variable.getName());
   }

@@ -8,7 +8,7 @@ import java.util.Objects;
 import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.block.CodeBlockInitializer;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
+import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
@@ -71,14 +71,6 @@ public class BaseType extends BaseGenericType implements CodeType, BaseElementWi
   private CodeBlockInitializer nonStaticInitializer;
 
   private CodeType sourceCodeObject;
-
-  /**
-   * The constructor.
-   */
-  public BaseType() {
-
-    this(null, null);
-  }
 
   /**
    * The constructor for a nested type.
@@ -144,28 +136,30 @@ public class BaseType extends BaseGenericType implements CodeType, BaseElementWi
    * The copy-constructor.
    *
    * @param template the {@link BaseType} to copy.
-   * @param file the {@link #getFile() file}.
-   * @param declaringType the {@link #getDeclaringType() declaringType}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseType(BaseType template, BaseFile file, BaseType declaringType, CodeCopyMapper mapper) {
+  public BaseType(BaseType template, CodeCopyMapper mapper) {
 
     super(template, mapper);
-    this.file = file;
-    this.declaringType = declaringType;
+    this.file = mapper.map(template.file, CodeCopyType.PARENT);
+    if (template.declaringType == null) {
+      this.declaringType = null;
+    } else {
+      this.declaringType = mapper.map(template.declaringType, CodeCopyType.PARENT);
+    }
     this.simpleName = template.simpleName;
     this.reflectiveObject = null;
     this.category = template.category;
     this.staticInitializer = template.staticInitializer;
     this.nonStaticInitializer = template.nonStaticInitializer;
     this.modifiers = template.modifiers;
-    this.nestedTypes = template.nestedTypes.copy(this);
-    this.superTypes = template.superTypes.copy(this);
-    this.typeVariables = template.typeVariables.copy(this);
-    this.constructors = template.constructors.copy(this);
-    this.fields = template.fields.copy(this);
-    this.methods = template.methods.copy(this);
-    this.properties = template.properties.copy(this);
+    this.nestedTypes = template.nestedTypes.copy(mapper);
+    this.superTypes = template.superTypes.copy(mapper);
+    this.typeVariables = template.typeVariables.copy(mapper);
+    this.constructors = template.constructors.copy(mapper);
+    this.fields = template.fields.copy(mapper);
+    this.methods = template.methods.copy(mapper);
+    this.properties = template.properties.copy(mapper);
   }
 
   @Override
@@ -470,27 +464,13 @@ public class BaseType extends BaseGenericType implements CodeType, BaseElementWi
   @Override
   public BaseType copy() {
 
-    return copy(getParent());
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BaseType copy(CodeElement newParent) {
+  public BaseType copy(CodeCopyMapper mapper) {
 
-    return copy(newParent, CodeCopyMapperNone.INSTANCE);
-  }
-
-  @Override
-  public BaseType copy(CodeElement newParent, CodeCopyMapper mapper) {
-
-    if (newParent instanceof BaseFile) {
-      assert (this.declaringType == null);
-      return new BaseType(this, (BaseFile) newParent, null, mapper);
-    } else if (newParent instanceof BaseType) {
-      BaseType parentType = (BaseType) newParent;
-      return new BaseType(this, parentType.file, parentType, mapper);
-    } else {
-      throw new IllegalArgumentException("" + newParent);
-    }
+    return new BaseType(this, mapper);
   }
 
   @Override

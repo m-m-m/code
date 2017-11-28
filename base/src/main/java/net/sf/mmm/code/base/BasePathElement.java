@@ -30,12 +30,11 @@ public abstract class BasePathElement extends BaseElementWithQualifiedName imple
    * The copy-constructor.
    *
    * @param template the {@link BasePathElement} to copy.
-   * @param parentPackage the {@link #getParentPackage() parent package}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BasePathElement(BasePathElement template, BasePackage parentPackage, CodeCopyMapper mapper) {
+  public BasePathElement(BasePathElement template, CodeCopyMapper mapper) {
 
-    super(template, parentPackage, mapper);
+    super(template, mapper);
   }
 
   @Override

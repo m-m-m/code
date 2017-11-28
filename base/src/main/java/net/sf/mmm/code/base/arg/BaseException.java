@@ -8,7 +8,7 @@ import java.lang.reflect.Type;
 import net.sf.mmm.code.api.arg.CodeException;
 import net.sf.mmm.code.api.arg.CodeExceptions;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
+import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.base.member.BaseOperation;
 import net.sf.mmm.code.base.type.BaseType;
@@ -44,13 +44,12 @@ public class BaseException extends BaseOperationArg implements CodeException {
    * The copy-constructor.
    *
    * @param template the {@link BaseException} to copy.
-   * @param parent the {@link #getParent() parent}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseException(BaseException template, BaseExceptions parent, CodeCopyMapper mapper) {
+  public BaseException(BaseException template, CodeCopyMapper mapper) {
 
     super(template, mapper);
-    this.parent = parent;
+    this.parent = mapper.map(template.parent, CodeCopyType.PARENT);
     this.reflectiveObject = null;
   }
 
@@ -115,19 +114,13 @@ public class BaseException extends BaseOperationArg implements CodeException {
   @Override
   public BaseException copy() {
 
-    return copy(this.parent);
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BaseException copy(CodeExceptions newParent) {
+  public BaseException copy(CodeCopyMapper mapper) {
 
-    return copy(newParent, CodeCopyMapperNone.INSTANCE);
-  }
-
-  @Override
-  public BaseException copy(CodeExceptions newParent, CodeCopyMapper mapper) {
-
-    return new BaseException(this, (BaseExceptions) newParent, mapper);
+    return new BaseException(this, mapper);
   }
 
 }

@@ -6,7 +6,7 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
+import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.type.CodeTypeVariable;
 import net.sf.mmm.code.api.type.CodeTypeVariables;
@@ -73,13 +73,12 @@ public class BaseTypeVariable extends BaseTypePlaceholder implements CodeTypeVar
    * The copy-constructor.
    *
    * @param template the {@link BaseTypeVariable} to copy.
-   * @param parent the {@link #getParent() parent}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseTypeVariable(BaseTypeVariable template, BaseTypeVariables parent, CodeCopyMapper mapper) {
+  public BaseTypeVariable(BaseTypeVariable template, CodeCopyMapper mapper) {
 
     super(template, mapper);
-    this.parent = parent;
+    this.parent = mapper.map(template.parent, CodeCopyType.PARENT);
     this.reflectiveObject = null;
     this.name = template.name;
   }
@@ -186,19 +185,13 @@ public class BaseTypeVariable extends BaseTypePlaceholder implements CodeTypeVar
   @Override
   public BaseTypeVariable copy() {
 
-    return copy(this.parent);
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BaseTypeVariable copy(CodeTypeVariables newParent) {
+  public BaseTypeVariable copy(CodeCopyMapper mapper) {
 
-    return copy(newParent, CodeCopyMapperNone.INSTANCE);
-  }
-
-  @Override
-  public BaseTypeVariable copy(CodeTypeVariables newParent, CodeCopyMapper mapper) {
-
-    return new BaseTypeVariable(this, (BaseTypeVariables) newParent, mapper);
+    return new BaseTypeVariable(this, mapper);
   }
 
 }

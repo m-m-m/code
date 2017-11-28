@@ -4,6 +4,7 @@ package net.sf.mmm.code.api;
 
 import java.util.List;
 
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.imports.CodeImport;
 import net.sf.mmm.code.api.imports.CodeImports;
@@ -51,5 +52,8 @@ public abstract interface CodeFile extends CodePathElement, CodeNodeItemCopyable
 
   @Override
   CodeFile copy();
+
+  @Override
+  CodeFile copy(CodeCopyMapper mapper);
 
 }

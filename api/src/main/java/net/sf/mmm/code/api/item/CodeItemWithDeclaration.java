@@ -10,17 +10,16 @@ import java.io.IOException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeItemWithDeclaration extends CodeItemWithQualifiedFlag {
+public interface CodeItemWithDeclaration extends CodeItem {
 
   /**
    * Internal variant of {@link #write(Appendable)} to write a reference for the usage of this item.
    *
-   * @param sink the {@link Appendable} where to {@link Appendable#append(CharSequence) append} the code from
-   *        this {@link CodeItem}.
-   * @param declaration {@code true} if used as a declaration, {@code false} otherwise (for usage as
-   *        reference).
-   * @param qualified {@code true} for {@link CodeItemWithQualifiedFlag#isQualified() fully qualified} type
-   *        names, {@code false} otherwise.
+   * @param sink the {@link Appendable} where to {@link Appendable#append(CharSequence) append} the code from this
+   *        {@link CodeItem}.
+   * @param declaration {@code true} if used as a declaration, {@code false} otherwise (for usage as reference).
+   * @param qualified {@code true} for {@link CodeItemWithQualifiedFlag#isQualified() fully qualified} type names,
+   *        {@code false} otherwise.
    * @throws IOException if thrown by {@link Appendable}.
    */
   default void writeReference(Appendable sink, boolean declaration) throws IOException {
@@ -31,14 +30,12 @@ public interface CodeItemWithDeclaration extends CodeItemWithQualifiedFlag {
   /**
    * Internal variant of {@link #write(Appendable)} to write a reference for the usage of this item.
    *
-   * @param sink the {@link Appendable} where to {@link Appendable#append(CharSequence) append} the code from
-   *        this {@link CodeItem}.
-   * @param declaration {@code true} if used as a declaration, {@code false} otherwise (for usage as
-   *        reference).
-   * @param qualified {@code Boolean#TRUE} to use {@link CodeItemWithQualifiedName#getQualifiedName()
-   *        qualified name} for type names, {@code Boolean#FALSE} to use
-   *        {@link CodeItemWithQualifiedName#getSimpleName() simple name}s, or {@code null} to use
-   *        {@link #isQualified() qualified flag}.
+   * @param sink the {@link Appendable} where to {@link Appendable#append(CharSequence) append} the code from this
+   *        {@link CodeItem}.
+   * @param declaration {@code true} if used as a declaration, {@code false} otherwise (for usage as reference).
+   * @param qualified {@code Boolean#TRUE} to use {@link CodeItemWithQualifiedName#getQualifiedName() qualified name}
+   *        for type names, {@code Boolean#FALSE} to use {@link CodeItemWithQualifiedName#getSimpleName() simple name}s,
+   *        or {@code null} to use {@link CodeItemWithQualifiedFlag#isQualified() qualified flag}.
    * @throws IOException if thrown by {@link Appendable}.
    */
   void writeReference(Appendable sink, boolean declaration, Boolean qualified) throws IOException;

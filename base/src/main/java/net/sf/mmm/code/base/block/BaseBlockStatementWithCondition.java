@@ -47,13 +47,13 @@ public abstract class BaseBlockStatementWithCondition extends BaseBlockStatement
   /**
    * The copy-constructor.
    *
-   * @param parent the {@link #getParent() parent}.
    * @param template the {@link BaseBlockStatementWithCondition} to copy.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseBlockStatementWithCondition(BaseBlockStatementWithCondition template, BaseBlock parent, CodeCopyMapper mapper) {
+  public BaseBlockStatementWithCondition(BaseBlockStatementWithCondition template, CodeCopyMapper mapper) {
 
-    super(template, parent, mapper);
+    super(template, mapper);
+    this.condition = template.condition;
   }
 
   @Override

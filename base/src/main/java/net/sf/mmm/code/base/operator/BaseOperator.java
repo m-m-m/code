@@ -7,29 +7,29 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import net.sf.mmm.code.api.operator.CodeOperator;
 import net.sf.mmm.code.api.language.CodeLanguage;
+import net.sf.mmm.code.api.operator.CodeOperator;
 import net.sf.mmm.code.base.item.BaseItem;
 import net.sf.mmm.util.exception.api.DuplicateObjectException;
 import net.sf.mmm.util.exception.api.WrongValueTypeException;
 
 /**
- * Generic implementation of {@link CodeOperator}.
+ * Base implementation of {@link CodeOperator}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class GenericOperator extends BaseItem implements CodeOperator {
+public abstract class BaseOperator extends BaseItem implements CodeOperator {
 
-  private static final Map<String, GenericOperator> MAP = new HashMap<>();
+  private static final Map<String, BaseOperator> MAP = new HashMap<>();
 
   private final String name;
 
   static {
 
-    GenericComparisonOperator.init();
-    GenericUnaryOperator.init();
-    GenericNAryOperator.init();
+    BaseComparisonOperator.init();
+    BaseUnaryOperator.init();
+    BaseNAryOperator.init();
   }
 
   /**
@@ -37,13 +37,13 @@ public abstract class GenericOperator extends BaseItem implements CodeOperator {
    *
    * @param name the {@link #getName() name}.
    */
-  protected GenericOperator(String name) {
+  protected BaseOperator(String name) {
 
     super();
     Objects.requireNonNull(name, "name");
     assert (!name.contains(" "));
     this.name = name;
-    GenericOperator existing = MAP.get(name);
+    BaseOperator existing = MAP.get(name);
     if (existing != null) {
       throw new DuplicateObjectException(this, name, existing);
     }
@@ -85,7 +85,7 @@ public abstract class GenericOperator extends BaseItem implements CodeOperator {
    */
   protected static <T extends CodeOperator> T of(String name, Class<T> type) {
 
-    GenericOperator operator = MAP.get(name);
+    BaseOperator operator = MAP.get(name);
     if (operator == null) {
       return null;
     }

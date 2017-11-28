@@ -7,8 +7,9 @@ import java.util.List;
 import net.sf.mmm.code.api.expression.CodeVariable;
 import net.sf.mmm.code.api.item.CodeItemWithVariables;
 import net.sf.mmm.code.api.node.CodeNodeItem;
-import net.sf.mmm.code.api.statement.CodeStatement;
 import net.sf.mmm.code.api.statement.CodeLocalVariable;
+import net.sf.mmm.code.api.statement.CodeStatement;
+import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
  * {@link CodeStatement} for a block that groups multiple {@link #getStatements() statements}.
@@ -26,19 +27,30 @@ public abstract interface CodeBlock extends CodeNodeItem, CodeItemWithVariables 
 
   /**
    * @param name the {@link CodeVariable#getName() name} of the requested {@link CodeVariable}.
-   * @param statementMaxIndex the maximum index in the {@link #getStatements() statements} where to resolve
-   *        the {@link CodeVariable}. Therefore a {@link CodeLocalVariable} defined by a
-   *        {@link #getStatements() statement} after the given index will not be considered.
-   * @return the {@link CodeVariable} with the given {@link CodeVariable#getName() name} or {@code null} if
-   *         not found.
+   * @param statementMaxIndex the maximum index in the {@link #getStatements() statements} where to resolve the
+   *        {@link CodeVariable}. Therefore a {@link CodeLocalVariable} defined by a {@link #getStatements() statement}
+   *        after the given index will not be considered.
+   * @return the {@link CodeVariable} with the given {@link CodeVariable#getName() name} or {@code null} if not found.
    */
   CodeVariable getVariable(String name, int statementMaxIndex);
 
   /**
-   * @return the {@link List} of {@link CodeStatement} contained inside the block (typically within curly
-   *         braces). May be {@link List#isEmpty() empty} but never {@code null}.
+   * @return the {@link List} of {@link CodeStatement} contained inside the block (typically within curly braces). May
+   *         be {@link List#isEmpty() empty} but never {@code null}.
    */
   List<CodeStatement> getStatements();
+
+  /**
+   * @param statements the {@link CodeStatement}s to add.
+   * @throws ReadOnlyException if {@link #isImmutable() immutable}.
+   */
+  void add(CodeStatement... statements);
+
+  /**
+   * @param statements the plain textual statements to add as {@link CodeStatement}s.
+   * @throws ReadOnlyException if {@link #isImmutable() immutable}.
+   */
+  void addText(String... statements);
 
   @Override
   CodeBlock copy();

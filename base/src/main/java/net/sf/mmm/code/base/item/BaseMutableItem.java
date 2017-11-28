@@ -70,8 +70,8 @@ public abstract class BaseMutableItem extends BaseItem implements CodeMutableIte
   }
 
   /**
-   * @return {@code true} if the {@link #initialize() initialization} of this item has been completed,
-   *         {@code false} otherwise.
+   * @return {@code true} if the {@link #initialize() initialization} of this item has been completed, {@code false}
+   *         otherwise.
    */
   protected final boolean isInitialized() {
 
@@ -79,8 +79,7 @@ public abstract class BaseMutableItem extends BaseItem implements CodeMutableIte
   }
 
   /**
-   * Called from {@link #initialize()} on first invocation. May be overridden but never be called from
-   * anywhere else.
+   * Called from {@link #initialize()} on first invocation. May be overridden but never be called from anywhere else.
    */
   protected void doInitialize() {
 
@@ -90,8 +89,8 @@ public abstract class BaseMutableItem extends BaseItem implements CodeMutableIte
   }
 
   /**
-   * Called from {@link #initialize()} on first invocation after {@link #doInitialize()} is complete. May be
-   * overridden but never be called from anywhere else.
+   * Called from {@link #initialize()} on first invocation after {@link #doInitialize()} is complete. May be overridden
+   * but never be called from anywhere else.
    */
   protected void doneInitialize() {
 
@@ -129,8 +128,8 @@ public abstract class BaseMutableItem extends BaseItem implements CodeMutableIte
   }
 
   /**
-   * @return the optional internal {@link CodeItem} representing the source-code (to merge). Otherwise
-   *         {@code null}. This is an internal API. Do not use or rely on it from outside.
+   * @return the optional internal {@link CodeItem} representing the source-code (to merge). Otherwise {@code null}.
+   *         This is an internal API. Do not use or rely on it from outside.
    */
   public CodeItem getSourceCodeObject() {
 
@@ -138,9 +137,9 @@ public abstract class BaseMutableItem extends BaseItem implements CodeMutableIte
   }
 
   /**
-   * @return {@code true} if this is a system internal node item that is considered to be
-   *         {@link #isImmutable() immutable} but is technically {@link #setImmutable() set to immutable}
-   *         during (lazy) {@link #initialize() initialization}. Otherwise {@code false}.
+   * @return {@code true} if this is a system internal node item that is considered to be {@link #isImmutable()
+   *         immutable} but is technically {@link #setImmutable() set to immutable} during (lazy) {@link #initialize()
+   *         initialization}. Otherwise {@code false}.
    */
   protected boolean isSystemImmutable() {
 
@@ -163,9 +162,9 @@ public abstract class BaseMutableItem extends BaseItem implements CodeMutableIte
   }
 
   /**
-   * Calls {@link #setImmutable()} but only if not {@link #isSystemImmutable() system immutable}. Use this
-   * method for implementations of {@link #doSetImmutable()} to propagate immutable-flag to children in order
-   * to prevent eager initialization.
+   * Calls {@link #setImmutable()} but only if not {@link #isSystemImmutable() system immutable}. Use this method for
+   * implementations of {@link #doSetImmutable()} to propagate immutable-flag to children in order to prevent eager
+   * initialization.
    */
   public void setImmutableIfNotSystemImmutable() {
 
@@ -189,8 +188,8 @@ public abstract class BaseMutableItem extends BaseItem implements CodeMutableIte
   }
 
   /**
-   * Called on the first call of {@link #setImmutable()}. Has to be overridden to update
-   * {@link java.util.Collection}s, make child items immutable, etc.
+   * Called on the first call of {@link #setImmutable()}. Has to be overridden to update {@link java.util.Collection}s,
+   * make child items immutable, etc.
    */
   protected void doSetImmutable() {
 
@@ -198,8 +197,8 @@ public abstract class BaseMutableItem extends BaseItem implements CodeMutableIte
   }
 
   /**
-   * Verifies that this item is not {@link #isImmutable() immutable}. Call this method from any edit-method
-   * (setter, etc.).
+   * Verifies that this item is not {@link #isImmutable() immutable}. Call this method from any edit-method (setter,
+   * etc.).
    *
    * @throws ReadOnlyException if this item is immutable.
    */
@@ -228,8 +227,8 @@ public abstract class BaseMutableItem extends BaseItem implements CodeMutableIte
   /**
    * @param <T> the type of the {@link List} elements.
    * @param list the {@link List} to make immutable.
-   * @param disconnect - {@code true} to disconnect the returned, immutable {@link List} from the given
-   *        {@link List}, {@code false} otherwise (to make it an immutable view on it).
+   * @param disconnect - {@code true} to disconnect the returned, immutable {@link List} from the given {@link List},
+   *        {@code false} otherwise (to make it an immutable view on it).
    * @return an immutable copy of the {@link List}.
    */
   @SuppressWarnings("unchecked")

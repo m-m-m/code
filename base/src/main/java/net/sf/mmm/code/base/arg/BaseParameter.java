@@ -10,11 +10,11 @@ import java.util.function.Consumer;
 import net.sf.mmm.code.api.arg.CodeParameter;
 import net.sf.mmm.code.api.arg.CodeParameters;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperNone;
+import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.expression.CodeLiteral;
+import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.base.member.BaseOperation;
-import net.sf.mmm.code.base.type.BaseGenericType;
 import net.sf.mmm.code.base.type.BaseType;
 
 /**
@@ -76,13 +76,12 @@ public class BaseParameter extends BaseOperationArg implements CodeParameter {
    * The copy-constructor.
    *
    * @param template the {@link BaseParameter} to copy.
-   * @param parent the {@link #getParent() parent}.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseParameter(BaseParameter template, BaseParameters parent, CodeCopyMapper mapper) {
+  public BaseParameter(BaseParameter template, CodeCopyMapper mapper) {
 
     super(template, mapper);
-    this.parent = parent;
+    this.parent = mapper.map(template.parent, CodeCopyType.PARENT);
     this.name = template.name;
     this.reflectiveObject = null;
   }
@@ -190,33 +189,34 @@ public class BaseParameter extends BaseOperationArg implements CodeParameter {
   @Override
   public BaseParameter copy() {
 
-    return copy(this.parent);
+    return copy(getDefaultCopyMapper());
   }
 
   @Override
-  public BaseParameter copy(CodeParameters newParent) {
+  public BaseParameter copy(CodeCopyMapper mapper) {
 
-    return copy(newParent, CodeCopyMapperNone.INSTANCE);
+    return new BaseParameter(this, mapper);
   }
 
   @Override
-  public BaseParameter copy(CodeParameters newParent, CodeCopyMapper mapper) {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
-    return new BaseParameter(this, (BaseParameters) newParent, mapper);
+    super.doWrite(sink, newline, defaultIndent, currentIndent, language);
   }
 
   @Override
-  protected void doWriteType(Appendable sink) throws IOException {
+  public void writeReference(Appendable sink, boolean declaration, Boolean qualified) throws IOException {
 
-    if (this.varArgs) {
-      BaseGenericType type = getType();
-      BaseGenericType componentType = type.getComponentType();
-      if (componentType != null) {
-        componentType.writeReference(sink, false);
-        sink.append("...");
-      }
+    CodeParameter.super.writeReference(sink, declaration, qualified);
+    if (isVarArgs()) {
+      sink.append("...");
     }
-    super.doWriteType(sink);
+  }
+
+  @Override
+  protected void doWriteDeclaration(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
+
+    language.writeDeclaration(this, sink);
   }
 
 }

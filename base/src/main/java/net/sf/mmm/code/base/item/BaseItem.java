@@ -50,13 +50,12 @@ public abstract class BaseItem implements CodeItem {
 
   /**
    * @see #write(Appendable, String, String)
-   * @param sink the {@link Appendable} where to {@link Appendable#append(CharSequence) append} the code from
-   *        this {@link CodeItem}.
+   * @param sink the {@link Appendable} where to {@link Appendable#append(CharSequence) append} the code from this
+   *        {@link CodeItem}.
    * @param newline the newline {@link String}.
-   * @param defaultIndent the {@link String} used for indentation (e.g. a number of spaces to insert per
-   *        indent level).
-   * @param currentIndent the current indent (number of spaces). Initially the empty string ({@code ""}).
-   *        Before a recursion the {@code indent} will be appended.
+   * @param defaultIndent the {@link String} used for indentation (e.g. a number of spaces to insert per indent level).
+   * @param currentIndent the current indent (number of spaces). Initially the empty string ({@code ""}). Before a
+   *        recursion the {@code defaultIndent} will be appended.
    * @param language the {@link CodeLanguage} to use.
    * @throws IOException if thrown by {@link Appendable}.
    */
