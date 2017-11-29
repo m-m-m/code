@@ -7,6 +7,7 @@ import java.lang.reflect.Type;
 
 import net.sf.mmm.code.api.arg.CodeOperationArg;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
@@ -44,7 +45,7 @@ public abstract class BaseOperationArg extends BaseElementWithDeclaringTypeImpl 
   public BaseOperationArg(BaseOperationArg template, CodeCopyMapper mapper) {
 
     super(template, mapper);
-    this.type = template.type;
+    this.type = mapper.map(template.type, CodeCopyType.REFERENCE);
   }
 
   @Override

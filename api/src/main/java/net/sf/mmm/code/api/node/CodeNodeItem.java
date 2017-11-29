@@ -14,17 +14,10 @@ import net.sf.mmm.code.api.item.CodeMutableItem;
  */
 public abstract interface CodeNodeItem extends CodeNode, CodeMutableItem {
 
-  /**
-   * @return a new {@link #isMutable() mutable} copy of this {@link CodeNodeItem}. Will be a deep-copy with copies of
-   *         all child {@link CodeNodeItem}s.
-   */
   @Override
   CodeNodeItem copy();
 
-  /**
-   * @param mapper the {@link CodeCopyMapper} used to map involved nodes during copy.
-   * @return a {@link #copy()} with the related objects mapped using the given {@link CodeCopyMapper}.
-   */
+  @Override
   CodeNodeItem copy(CodeCopyMapper mapper);
 
 }

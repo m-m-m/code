@@ -142,12 +142,8 @@ public class BaseType extends BaseGenericType implements CodeType, BaseElementWi
 
     super(template, mapper);
     this.file = mapper.map(template.file, CodeCopyType.PARENT);
-    if (template.declaringType == null) {
-      this.declaringType = null;
-    } else {
-      this.declaringType = mapper.map(template.declaringType, CodeCopyType.PARENT);
-    }
-    this.simpleName = template.simpleName;
+    this.declaringType = mapper.map(template.declaringType, CodeCopyType.PARENT);
+    this.simpleName = mapper.mapName(template.simpleName, template);
     this.reflectiveObject = null;
     this.category = template.category;
     this.staticInitializer = template.staticInitializer;

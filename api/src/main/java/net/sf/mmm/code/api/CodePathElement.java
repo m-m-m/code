@@ -17,4 +17,9 @@ public abstract interface CodePathElement extends CodeElement, CodeItemWithQuali
   @Override
   CodeContainer getParent();
 
+  /**
+   * @return {@code true} if this is a {@link CodeFile}, {@code false} otherwise (if a {@link CodePackage}).
+   */
+  boolean isFile();
+
 }

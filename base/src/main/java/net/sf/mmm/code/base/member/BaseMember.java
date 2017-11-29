@@ -44,7 +44,7 @@ public abstract class BaseMember extends BaseElementWithModifiers implements Cod
   public BaseMember(BaseMember template, CodeCopyMapper mapper) {
 
     super(template, mapper);
-    this.name = template.name;
+    this.name = mapper.mapName(template.name, template);
   }
 
   @Override

@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.annotation.CodeAnnotation;
 import net.sf.mmm.code.api.comment.CodeComment;
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeGenericType;
@@ -92,12 +94,13 @@ public class BaseAnnotation extends BaseChildItem implements CodeAnnotation {
    * The copy-constructor.
    *
    * @param template the {@link BaseAnnotation} to copy.
+   * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseAnnotation(BaseAnnotation template) {
+  public BaseAnnotation(BaseAnnotation template, CodeCopyMapper mapper) {
 
     super(template);
     this.reflectiveObject = null;
-    this.type = template.type;
+    this.type = mapper.map(template.type, CodeCopyType.REFERENCE);
     this.parameters = new HashMap<>(template.parameters);
   }
 
@@ -231,7 +234,13 @@ public class BaseAnnotation extends BaseChildItem implements CodeAnnotation {
   @Override
   public BaseAnnotation copy() {
 
-    return new BaseAnnotation(this);
+    return copy(getDefaultCopyMapper());
+  }
+
+  @Override
+  public BaseAnnotation copy(CodeCopyMapper mapper) {
+
+    return new BaseAnnotation(this, mapper);
   }
 
 }

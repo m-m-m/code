@@ -8,6 +8,7 @@ import java.util.function.BiFunction;
 import net.sf.mmm.code.api.CodeFile;
 import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.api.CodePackage;
+import net.sf.mmm.code.api.CodePathElement;
 import net.sf.mmm.code.api.CodePathElements;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.copy.CodeCopyType;
@@ -22,7 +23,7 @@ import net.sf.mmm.code.base.type.BaseType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement> implements CodePathElements<BasePathElement> {
+public class BasePathElements extends BaseNodeItemContainerFlat<CodePathElement> implements CodePathElements {
 
   private final BasePackage parent;
 
@@ -68,12 +69,12 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
   }
 
   @Override
-  public BasePathElement get(String simpleName) {
+  public CodePathElement get(String simpleName) {
 
     return get(simpleName, true);
   }
 
-  BasePathElement get(String simpleName, boolean init) {
+  CodePathElement get(String simpleName, boolean init) {
 
     if (init) {
       initialize();
@@ -94,7 +95,7 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
    */
   public BaseFile getFile(String simpleName, boolean init) {
 
-    BasePathElement child = get(simpleName, init);
+    CodePathElement child = get(simpleName, init);
     if ((child != null) && child.isFile()) {
       return (BaseFile) child;
     }
@@ -118,19 +119,19 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
   }
 
   @Override
-  protected void add(BasePathElement item) {
+  public void add(CodePathElement item) {
 
     super.add(item);
   }
 
   @Override
-  protected void addInternal(BasePathElement item) {
+  protected void addInternal(CodePathElement item) {
 
     super.addInternal(item);
   }
 
   @Override
-  protected BasePathElement ensureParent(BasePathElement item) {
+  protected CodePathElement ensureParent(CodePathElement item) {
 
     if (item.getParent() != this.parent) {
       return doCopyNodeUnsafe(item, this.parent);
@@ -151,7 +152,7 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
    */
   public BasePackage getPackage(String simpleName, boolean init) {
 
-    BasePathElement child = get(simpleName, init);
+    CodePathElement child = get(simpleName, init);
     if ((child != null) && !child.isFile()) {
       return (BasePackage) child;
     }
@@ -178,7 +179,7 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
    * @param path the {@link CodeName} leading to the requested child. See {@link #getPackage(CodeName, boolean)}.
    * @param init - {@code true} to {@link #initialize() initialize}, {@code false} otherwise.
    * @param factory the {@link BiFunction} used as factory to create missing packages.
-   * @param add - {@code true} to {@link #add(BasePathElement) add} new packages created by the given {@code factory},
+   * @param add - {@code true} to {@link #add(CodePathElement) add} new packages created by the given {@code factory},
    *        {@code false} otherwise.
    * @return the traversed {@link BasePackage}. Has been created if it did not already exist and was produced by the
    *         given {@code factory}.
@@ -195,7 +196,7 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
    * @param path the {@link CodeName} to traverse.
    * @param init - {@code true} to {@link #initialize() initialize}, {@code false} otherwise.
    * @param factory the {@link BiFunction} used as factory to create missing packages.
-   * @param add - {@code true} to {@link #add(BasePathElement) add} new packages created by the given {@code factory},
+   * @param add - {@code true} to {@link #add(CodePathElement) add} new packages created by the given {@code factory},
    *        {@code false} otherwise.
    * @param forceAdd - {@code true} to force adding (if {@code add} is {@code true} but {@link #isImmutable() is
    *        immutable}), {@code false} otherwise.
@@ -248,7 +249,7 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
   /**
    * @param path the {@link CodeName} leading to the requested child. See
    *        {@link #getOrCreatePackage(CodeName, boolean)}.
-   * @param add - {@code true} to {@link #add(BasePathElement) add} newly created packages, {@code false} otherwise.
+   * @param add - {@code true} to {@link #add(CodePathElement) add} newly created packages, {@code false} otherwise.
    * @param init - {@code true} to {@link #initialize() initialize}, {@code false} otherwise.
    * @return the traversed {@link BasePackage}. Has been created if it did not already exist.
    */
@@ -260,7 +261,7 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
   /**
    * @param path the {@link CodeName} leading to the requested child. See
    *        {@link #getOrCreatePackage(CodeName, boolean)}.
-   * @param add - {@code true} to {@link #add(BasePathElement) add} newly created packages, {@code false} otherwise.
+   * @param add - {@code true} to {@link #add(CodePathElement) add} newly created packages, {@code false} otherwise.
    * @param init - {@code true} to {@link #initialize() initialize}, {@code false} otherwise.
    * @param forceAdd - {@code true} to force adding (if {@code add} is {@code true} but {@link #isImmutable() is
    *        immutable}), {@code false} otherwise.
@@ -358,7 +359,7 @@ public class BasePathElements extends BaseNodeItemContainerFlat<BasePathElement>
     if (init) {
       initialize();
     }
-    for (BasePathElement child : getList()) {
+    for (CodePathElement child : getList()) {
       if (child.isFile()) {
         CodeType type = ((BaseFile) child).getType(simpleName, init);
         if (type != null) {

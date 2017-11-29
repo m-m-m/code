@@ -22,4 +22,14 @@ public interface CodeCopyMapper {
    */
   <N extends CodeNode> N map(N node, CodeCopyType type);
 
+  /**
+   * @param name the original name of the {@link CodeNode} to map.
+   * @param node the original {@link CodeNode} to copy and map.
+   * @return the given {@code name} or a resolved name.
+   */
+  default String mapName(String name, CodeNode node) {
+
+    return name;
+  }
+
 }

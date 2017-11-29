@@ -6,8 +6,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeCopyMapperDefault;
+import net.sf.mmm.code.api.copy.CodeCopyType;
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.item.CodeMutableItem;
+import net.sf.mmm.code.api.node.CodeNode;
 import net.sf.mmm.code.api.node.CodeNodeItem;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
@@ -18,6 +26,8 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @since 1.0.0
  */
 public abstract class BaseMutableItem extends BaseItem implements CodeMutableItem {
+
+  private static final Logger LOG = LoggerFactory.getLogger(BaseMutableItem.class);
 
   private boolean immutable;
 
@@ -41,6 +51,7 @@ public abstract class BaseMutableItem extends BaseItem implements CodeMutableIte
     super();
     template.initialize();
     // immutable flag is not copied on purpose
+    LOG.trace("Copying item {}", template);
   }
 
   /**
@@ -251,6 +262,62 @@ public abstract class BaseMutableItem extends BaseItem implements CodeMutableIte
       delegate = new ArrayList<>(list);
     }
     return Collections.unmodifiableList(delegate);
+  }
+
+  /**
+   * @return the default implementation of {@link CodeCopyMapper}.
+   */
+  protected CodeCopyMapper getDefaultCopyMapper() {
+
+    return new CodeCopyMapperDefault();
+  }
+
+  /**
+   * @param <N> type of the {@link CodeNodeItemCopyable}.
+   * @param list the {@link List} to {@link CodeNodeItem#copy(CodeCopyMapper) copy}.
+   * @param mapper the {@link CodeCopyMapper}.
+   * @param type the {@link CodeCopyType}.
+   * @return an mutable deep-copy of the {@link List}.
+   */
+  protected <N extends CodeNode> List<N> doMapList(List<N> list, CodeCopyMapper mapper, CodeCopyType type) {
+
+    if (type == null) {
+      return new ArrayList<>(list);
+    }
+    List<N> copy = new ArrayList<>(list.size());
+    for (N node : list) {
+      N mappedNode = mapper.map(node, type);
+      if (mappedNode != null) {
+        copy.add(mappedNode);
+      }
+    }
+    return copy;
+  }
+
+  /**
+   * @param <N> type of the {@link CodeNodeItem} to copy.
+   * @param node the {@link CodeNodeItem} to copy.
+   * @param parent the new {@link CodeNodeItemCopyable#getParent() parent}.
+   * @return the copy.
+   */
+  @SuppressWarnings({ "unchecked", "rawtypes" })
+  protected <N extends CodeNodeItem> N doCopyNodeUnsafe(N node, CodeNodeItem parent) {
+
+    return (N) doCopyNode((CodeNodeItemCopyable) node, parent);
+  }
+
+  /**
+   * @param <P> type of the {@link CodeNodeItemCopyable#getParent() parent}.
+   * @param <N> type of the {@link CodeNodeItem} to copy.
+   * @param node the {@link CodeNodeItem} to copy.
+   * @param parent the new {@link CodeNodeItemCopyable#getParent() parent}.
+   * @return the copy.
+   */
+  protected <P extends CodeNodeItem, N extends CodeNodeItemCopyable<P, N>> N doCopyNode(N node, P parent) {
+
+    CodeCopyMapperDefault mapper = new CodeCopyMapperDefault();
+    mapper.registerMapping(node.getParent(), parent);
+    return node.copy(mapper);
   }
 
 }

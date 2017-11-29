@@ -16,9 +16,11 @@ import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.item.CodeItemWithName;
 import net.sf.mmm.code.api.item.CodeItemWithQualifiedName;
+import net.sf.mmm.code.api.node.CodeNode;
 import net.sf.mmm.code.api.node.CodeNodeItem;
 import net.sf.mmm.code.api.node.CodeNodeItemContainer;
 import net.sf.mmm.code.api.node.CodeNodeItemContainerWithName;
+import net.sf.mmm.code.base.item.BaseMutableItem;
 import net.sf.mmm.util.exception.api.DuplicateObjectException;
 
 /**
@@ -37,6 +39,8 @@ public abstract class BaseNodeItemContainer<I extends CodeItem> extends BaseNode
   private final List<I> mutableList;
 
   private List<I> list;
+
+  private Runnable listLazyInit;
 
   /**
    * The constructor.
@@ -59,18 +63,33 @@ public abstract class BaseNodeItemContainer<I extends CodeItem> extends BaseNode
    * @param template the {@link BaseNodeItemContainer} to copy.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  @SuppressWarnings({ "rawtypes", "unchecked" })
   public BaseNodeItemContainer(BaseNodeItemContainer<I> template, CodeCopyMapper mapper) {
 
     super(template, mapper);
-    this.mutableList = doMapList((List) template.list, mapper, getItemCopyType());
-    this.list = this.mutableList;
+    CodeCopyType itemCopyType = getItemCopyType();
+    if (itemCopyType == null) {
+      this.mutableList = new ArrayList<>(template.list);
+      this.list = this.mutableList;
+    } else {
+      this.mutableList = new ArrayList<>(template.list.size());
+      this.list = this.mutableList;
+      // lazy-init: deferred copy
+      this.listLazyInit = () -> doLazyInitList(template.list, mapper, itemCopyType);
+    }
     if (template.map == null) {
       this.map = null;
     } else {
       this.map = new HashMap<>();
-      for (I item : this.list) {
-        put(item);
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  private void doLazyInitList(List<I> templateList, CodeCopyMapper mapper, CodeCopyType type) {
+
+    for (I node : templateList) {
+      CodeNode mappedNode = mapper.map((CodeNode) node, type);
+      if (mappedNode != null) {
+        addInternal((I) mappedNode);
       }
     }
   }
@@ -95,7 +114,7 @@ public abstract class BaseNodeItemContainer<I extends CodeItem> extends BaseNode
 
     boolean systemImmutable = super.isSystemImmutable();
     if (!systemImmutable) {
-      systemImmutable = isSystemImmutable((BaseNodeItemImpl) getParent());
+      systemImmutable = isSystemImmutable((BaseMutableItem) getParent());
     }
     return systemImmutable;
   }
@@ -130,6 +149,10 @@ public abstract class BaseNodeItemContainer<I extends CodeItem> extends BaseNode
    */
   protected List<I> getList() {
 
+    if (this.listLazyInit != null) {
+      this.listLazyInit.run();
+      this.listLazyInit = null;
+    }
     return this.list;
   }
 

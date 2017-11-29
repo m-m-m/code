@@ -34,11 +34,23 @@ public abstract class AbstractCodeCopyMapper implements CodeCopyMapper {
     if (node == null) {
       return null;
     }
-    CodeNode result = this.mapping.get(node);
-    if (result == null) {
+    CodeNode result = getMapping(node);
+    if ((result == null) && !this.mapping.containsKey(node)) {
       result = doMap(node, type);
     }
     return (N) result;
+  }
+
+  /**
+   * @param <N> type of the given {@link CodeNode}.
+   * @param node the {@link CodeNode} to get from the existing mapping.
+   * @return the mapped {@link CodeNode} or {@code null} if no mapping is {@link #registerMapping(CodeNode, CodeNode)
+   *         registered}.
+   */
+  @SuppressWarnings("unchecked")
+  protected <N extends CodeNode> N getMapping(N node) {
+
+    return (N) this.mapping.get(node);
   }
 
   /**

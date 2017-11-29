@@ -2,22 +2,15 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.base.node;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.copy.AbstractCodeCopyMapper;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
-import net.sf.mmm.code.api.copy.CodeCopyMapperDefault;
-import net.sf.mmm.code.api.copy.CodeCopyType;
-import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.language.CodeLanguageJava;
 import net.sf.mmm.code.api.node.CodeNode;
-import net.sf.mmm.code.api.node.CodeNodeItem;
 import net.sf.mmm.code.api.source.CodeSource;
 import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.item.BaseMutableItem;
@@ -65,59 +58,6 @@ public abstract class BaseNodeItemImpl extends BaseMutableItem implements BaseNo
       LOG.trace("Initializing {}", toPathString());
     }
     super.doInitialize();
-  }
-
-  /**
-   * @return the default implementation of {@link CodeCopyMapper}.
-   */
-  protected CodeCopyMapper getDefaultCopyMapper() {
-
-    return new CodeCopyMapperDefault();
-  }
-
-  /**
-   * @param <N> type of the {@link CodeNodeItemCopyable}.
-   * @param list the {@link List} to {@link CodeNodeItem#copy(CodeCopyMapper) copy}.
-   * @param mapper the {@link CodeCopyMapper}.
-   * @param type the {@link CodeCopyType}.
-   * @return an mutable deep-copy of the {@link List}.
-   */
-  protected <N extends CodeNodeItem> List<N> doMapList(List<N> list, CodeCopyMapper mapper, CodeCopyType type) {
-
-    if (type == null) {
-      return new ArrayList<>(list);
-    }
-    List<N> copy = new ArrayList<>(list.size());
-    for (N node : list) {
-      copy.add(mapper.map(node, type));
-    }
-    return copy;
-  }
-
-  /**
-   * @param <N> type of the {@link CodeNodeItem} to copy.
-   * @param node the {@link CodeNodeItem} to copy.
-   * @param parent the new {@link CodeNodeItemCopyable#getParent() parent}.
-   * @return the copy.
-   */
-  @SuppressWarnings({ "unchecked", "rawtypes" })
-  protected <N extends CodeNodeItem> N doCopyNodeUnsafe(N node, CodeNode parent) {
-
-    return (N) doCopyNode((CodeNodeItemCopyable) node, parent);
-  }
-
-  /**
-   * @param <P> type of the {@link CodeNodeItemCopyable#getParent() parent}.
-   * @param <N> type of the {@link CodeNodeItem} to copy.
-   * @param node the {@link CodeNodeItem} to copy.
-   * @param parent the new {@link CodeNodeItemCopyable#getParent() parent}.
-   * @return the copy.
-   */
-  protected <P extends CodeNode, N extends CodeNodeItemCopyable<P, N>> N doCopyNode(N node, P parent) {
-
-    CodeCopyMapperDefault mapper = new CodeCopyMapperDefault();
-    mapper.registerMapping(node.getParent(), parent);
-    return node.copy(mapper);
   }
 
   @Override

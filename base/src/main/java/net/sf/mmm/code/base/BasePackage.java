@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.CodePackage;
+import net.sf.mmm.code.api.CodePathElement;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.language.CodeLanguage;
@@ -113,8 +114,14 @@ public final class BasePackage extends BasePathElement implements CodePackage, B
     super(template, mapper);
     this.source = mapper.map(template.source, CodeCopyType.REFERENCE);
     this.reflectiveObject = null;
-    this.children = template.children.copy(mapper);
+    this.children = new BasePathElements(this);
     this.systemImmutable = false;
+    for (CodePathElement child : template.children) {
+      CodePathElement childCopy = mapper.map(child, CodeCopyType.CHILD);
+      if (childCopy != null) {
+        this.children.add(childCopy);
+      }
+    }
   }
 
   @Override

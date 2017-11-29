@@ -51,7 +51,7 @@ public abstract class BaseElementWithQualifiedName extends BaseElementImpl imple
   public BaseElementWithQualifiedName(BaseElementWithQualifiedName template, CodeCopyMapper mapper) {
 
     super(template, mapper);
-    this.simpleName = template.simpleName;
+    this.simpleName = mapper.mapName(template.simpleName, template);
     this.parentPackage = mapper.map(template.parentPackage, CodeCopyType.PARENT);
   }
 

@@ -4,7 +4,6 @@ package net.sf.mmm.code.api.copy;
 
 import net.sf.mmm.code.api.item.CodeMutableItem;
 import net.sf.mmm.code.api.node.CodeNode;
-import net.sf.mmm.code.api.node.CodeNodeItem;
 
 /**
  * Implementation of {@link CodeCopyMapper} for default mapping (copy only children).
@@ -27,10 +26,8 @@ public class CodeCopyMapperDefault extends AbstractCodeCopyMapper {
   protected <N extends CodeNode> N doMap(N node, CodeCopyType type) {
 
     if (type == CodeCopyType.CHILD) {
-      if (node instanceof CodeNodeItem) {
-        return (N) ((CodeNodeItem) node).copy(this);
-      } else if (node instanceof CodeMutableItem) {
-        return (N) ((CodeMutableItem) node).copy();
+      if (node instanceof CodeMutableItem) {
+        return (N) ((CodeMutableItem) node).copy(this);
       }
     }
     return node;

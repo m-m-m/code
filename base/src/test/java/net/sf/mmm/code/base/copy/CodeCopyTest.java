@@ -2,11 +2,15 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.base.copy;
 
+import java.util.Locale;
+
 import org.junit.Test;
 
 import net.sf.mmm.code.api.CodeContext;
+import net.sf.mmm.code.api.CodeFile;
 import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.arg.CodeParameter;
+import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.member.CodeConstructor;
 import net.sf.mmm.code.api.member.CodeField;
@@ -21,8 +25,24 @@ import net.sf.mmm.code.base.BaseContextTest;
  */
 public class CodeCopyTest extends BaseContextTest {
 
+  private static final String PKG_DETAIL = "x_detail_x";
+
+  private static final String PKG_COMPONENT = "x_component_x";
+
+  private static final String PKG_ROOT = "x_rootpackage_x";
+
+  private static final String PKG_COMMON = "common";
+
+  private static final String PKG_LOGIC = "logic";
+
+  private static final String PKG_DATAACCESS = "dataaccess";
+
+  private static final String PKG_API = "api";
+
+  private static final String PKG_TO = "to";
+
   /**
-   * Test of {@link CodeNodeItemCopyable#copy(net.sf.mmm.code.api.copy.CodeCopyMapper)}.
+   * Test of {@link CodeNodeItemCopyable#copy()}.
    */
   @Test
   public void testCopy() {
@@ -213,6 +233,75 @@ public class CodeCopyTest extends BaseContextTest {
         "  public Result getSomething(String value) {\n" + //
         "    return new ApiImplBar().getSomething(value);\n" + //
         "  }\n" + //
+        "}\n");
+  }
+
+  /**
+   * Test of {@link CodeNodeItemCopyable#copy(net.sf.mmm.code.api.copy.CodeCopyMapper)}.
+   */
+  @Test
+  public void testCopyWithCustomMapper() {
+
+    // given
+    CodeContext context = createContext();
+
+    CodeGenericType longType = context.getType(Long.class);
+
+    verifyCopyWithResolve(context, "net.sf.mmm.example", "MyComponent", "order.position", "OrderPosition", longType);
+    verifyCopyWithResolve(context, "net.sf.mmm.example", "Component", "", "MyObject", longType);
+  }
+
+  private void verifyCopyWithResolve(CodeContext context, String rootPackage, String component, String detail, String entityName, CodeGenericType longType) {
+
+    CodeCopyMapperWithVariableResolution mapper = new CodeCopyMapperWithVariableResolution();
+    mapper.setVariable("rootpackage", rootPackage);
+    mapper.setVariable("component", component);
+    mapper.setVariable("detail", detail);
+    mapper.setVariable("entityname", entityName);
+
+    CodePackage pkgRoot = context.getSource().getRootPackage().getChildren().createPackage(PKG_ROOT);
+    CodePackage pkgComponent = pkgRoot.getChildren().getOrCreatePackage(PKG_COMPONENT);
+    CodePackage pkgCommon = pkgComponent.getChildren().getOrCreatePackage(PKG_COMMON);
+    CodePackage pkgCommonApi = pkgCommon.getChildren().getOrCreatePackage(PKG_API);
+    CodePackage pkgCommonApiDetail = pkgCommonApi.getChildren().getOrCreatePackage(PKG_DETAIL);
+    CodePackage pkgCommonApiDetailTo = pkgCommonApiDetail.getChildren().getOrCreatePackage(PKG_TO);
+    CodePackage pkgLogic = pkgComponent.getChildren().getOrCreatePackage(PKG_LOGIC);
+    CodePackage pkgLogicApi = pkgLogic.getChildren().getOrCreatePackage(PKG_API);
+    CodePackage pkgLogicApiDetail = pkgLogicApi.getChildren().getOrCreatePackage(PKG_DETAIL);
+    CodePackage pkgDataaccess = pkgComponent.getChildren().getOrCreatePackage(PKG_DATAACCESS);
+    CodePackage pkgDataaccessApi = pkgDataaccess.getChildren().getOrCreatePackage(PKG_API);
+    CodePackage pkgDataaccessApiDetail = pkgDataaccessApi.getChildren().getOrCreatePackage(PKG_DETAIL);
+
+    CodeType entityInterface = pkgCommonApiDetail.getChildren().getOrCreateFile("X_EntityName_X").getType();
+    entityInterface.setCategory(CodeTypeCategory.INTERFACE);
+    CodeType entityEto = pkgCommonApiDetailTo.getChildren().getOrCreateFile("X_EntityName_XEto").getType();
+    entityEto.getSuperTypes().add(entityInterface);
+    CodeType entityEntity = pkgDataaccessApiDetail.getChildren().getOrCreateFile("X_EntityName_XEntity").getType();
+    entityEntity.getSuperTypes().add(entityInterface);
+    CodeType ucFindEntity = pkgLogicApiDetail.getChildren().getOrCreateFile("UcFindX_EntityName_X").getType();
+    ucFindEntity.setCategory(CodeTypeCategory.INTERFACE);
+    CodeMethod find = ucFindEntity.getMethods().add("findX_EntityName_X");
+    find.getReturns().setType(entityEto);
+    find.getParameters().add("id").setType(longType);
+
+    // when
+    CodePackage pkgRootCopy = mapper.map(pkgRoot, CodeCopyType.CHILD);
+
+    // then
+    assertThat(pkgRootCopy).isNotNull().isNotSameAs(pkgRoot);
+    assertThat(pkgRootCopy.getQualifiedName()).isEqualTo(rootPackage);
+    assertThat(pkgRootCopy.getChildren()).hasSize(1);
+
+    String pkgUcPath = component.toLowerCase(Locale.US) + ".logic.api";
+    if (!detail.isEmpty()) {
+      pkgUcPath = pkgUcPath + "." + detail;
+    }
+    CodeFile pkgComponentCopy = pkgRootCopy.getChildren().getFile(context.parseName(pkgUcPath + ".UcFind" + entityName));
+    assertThat(pkgComponentCopy.getSourceCode()).isEqualTo("package " + rootPackage + "." + pkgUcPath + ";\n" + //
+        "\n" + //
+        "public interface UcFind" + entityName + " {\n" + //
+        "\n" + //
+        "  " + entityName + "Eto find" + entityName + "(Long id);\n" + //
         "}\n");
   }
 

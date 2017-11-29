@@ -4,6 +4,7 @@ package net.sf.mmm.code.api;
 
 import java.util.List;
 
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.node.CodeNodeItemContainerFlat;
 import net.sf.mmm.code.api.type.CodeType;
@@ -12,10 +13,9 @@ import net.sf.mmm.code.api.type.CodeType;
  * {@link CodeNodeItemContainerFlat} containing the {@link CodePathElement}s of a {@link CodePackage}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
- * @param <P> the type of the contained {@link CodePathElement}s.
  * @since 1.0.0
  */
-public interface CodePathElements<P extends CodePathElement> extends CodeNodeItemContainerFlat<P>, CodeNodeItemCopyable<CodePackage, CodePathElements<P>> {
+public interface CodePathElements extends CodeNodeItemContainerFlat<CodePathElement>, CodeNodeItemCopyable<CodePackage, CodePathElements> {
 
   @Override
   CodePackage getParent();
@@ -25,14 +25,14 @@ public interface CodePathElements<P extends CodePathElement> extends CodeNodeIte
    * This method can trigger expensive classpath scanning (or filesystem traversal) on its first call.
    */
   @Override
-  List<? extends P> getDeclared();
+  List<? extends CodePathElement> getDeclared();
 
   /**
    * @param simpleName the {@link CodePathElement#getSimpleName() simple name} of the requested {@link CodePathElement}.
    * @return the {@link CodePathElement} from {@link #getDeclared() all items} with the given {@code name} or
    *         {@code null} if not found.
    */
-  P get(String simpleName);
+  CodePathElement get(String simpleName);
 
   /**
    * @param simpleName the {@link CodeFile#getSimpleName() simple name} of the requested {@link CodeFile}.
@@ -139,7 +139,18 @@ public interface CodePathElements<P extends CodePathElement> extends CodeNodeIte
    */
   CodeType createType(String simpleName);
 
+  /**
+   * <b>Attention:</b> This method is only for advanced usage. Whenever suitable prefer to use methods such as
+   * {@link #getOrCreatePackage(CodeName, boolean)} or {@link #getOrCreateFile(CodeName, boolean)} instead.
+   *
+   * @param child the {@link CodePathElement} to add as child.
+   */
+  void add(CodePathElement child);
+
   @Override
-  CodePathElements<P> copy();
+  CodePathElements copy();
+
+  @Override
+  CodePathElements copy(CodeCopyMapper mapper);
 
 }

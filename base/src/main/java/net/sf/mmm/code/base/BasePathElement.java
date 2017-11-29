@@ -57,8 +57,4 @@ public abstract class BasePathElement extends BaseElementWithQualifiedName imple
     super.removeFromParent();
   }
 
-  /**
-   * @return {@code true} if this is a {@link BaseFile}, {@code false} otherwise (if a {@link BasePackage}).
-   */
-  public abstract boolean isFile();
 }
