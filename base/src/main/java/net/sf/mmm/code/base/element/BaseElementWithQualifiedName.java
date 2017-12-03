@@ -9,12 +9,12 @@ import net.sf.mmm.code.api.item.CodeMutableItemWithQualifiedName;
 import net.sf.mmm.code.base.BasePackage;
 
 /**
- * Base implementation of {@link CodeMutableItemWithQualifiedName} as {@link BaseElementImpl}.
+ * Base implementation of {@link CodeMutableItemWithQualifiedName} as {@link BaseElement}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class BaseElementWithQualifiedName extends BaseElementImpl implements CodeMutableItemWithQualifiedName {
+public abstract class BaseElementWithQualifiedName extends BaseElement implements CodeMutableItemWithQualifiedName {
 
   private String simpleName;
 

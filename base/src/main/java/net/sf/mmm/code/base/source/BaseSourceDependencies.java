@@ -8,7 +8,6 @@ import java.util.function.Supplier;
 
 import net.sf.mmm.code.api.source.CodeSourceDependencies;
 import net.sf.mmm.code.base.BaseContext;
-import net.sf.mmm.code.base.node.BaseNode;
 
 /**
  * Implementation of {@link CodeSourceDependencies} for Java.
@@ -16,7 +15,7 @@ import net.sf.mmm.code.base.node.BaseNode;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseSourceDependencies implements CodeSourceDependencies<BaseSource>, BaseNode {
+public class BaseSourceDependencies implements CodeSourceDependencies<BaseSource> {
 
   private final BaseSource parent;
 

@@ -15,7 +15,7 @@ import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeParameterizedType;
 import net.sf.mmm.code.base.arg.BaseOperationArg;
-import net.sf.mmm.code.base.element.BaseElementImpl;
+import net.sf.mmm.code.base.element.BaseElement;
 import net.sf.mmm.code.base.member.BaseOperation;
 
 /**
@@ -28,7 +28,7 @@ public class BaseParameterizedType extends BaseGenericType implements CodeParame
 
   private static final Logger LOG = LoggerFactory.getLogger(BaseParameterizedType.class);
 
-  private final BaseElementImpl parent;
+  private final BaseElement parent;
 
   private final BaseTypeParameters typeVariables;
 
@@ -46,7 +46,7 @@ public class BaseParameterizedType extends BaseGenericType implements CodeParame
    *        {@link BaseType#getTypeParameters() type variables} as the {@link #getTypeParameters() type parameters of
    *        this type} when initialized.
    */
-  public BaseParameterizedType(BaseElementImpl parent, BaseType type) {
+  public BaseParameterizedType(BaseElement parent, BaseType type) {
 
     this(parent, null, type);
   }
@@ -57,7 +57,7 @@ public class BaseParameterizedType extends BaseGenericType implements CodeParame
    * @param parent the {@link #getParent() parent}.
    * @param reflectiveObject the {@link #getReflectiveObject() reflective object}. May be {@code null}.
    */
-  public BaseParameterizedType(BaseElementImpl parent, ParameterizedType reflectiveObject) {
+  public BaseParameterizedType(BaseElement parent, ParameterizedType reflectiveObject) {
 
     this(parent, reflectiveObject, null);
   }
@@ -71,7 +71,7 @@ public class BaseParameterizedType extends BaseGenericType implements CodeParame
    *        {@link BaseType#getTypeParameters() type variables} as the {@link #getTypeParameters() type parameters of
    *        this type} when initialized.
    */
-  public BaseParameterizedType(BaseElementImpl parent, ParameterizedType reflectiveObject, BaseType type) {
+  public BaseParameterizedType(BaseElement parent, ParameterizedType reflectiveObject, BaseType type) {
 
     super();
     this.parent = parent;
@@ -103,7 +103,7 @@ public class BaseParameterizedType extends BaseGenericType implements CodeParame
   }
 
   @Override
-  public BaseElementImpl getParent() {
+  public BaseElement getParent() {
 
     return this.parent;
   }

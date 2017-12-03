@@ -22,7 +22,7 @@ import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
-import net.sf.mmm.code.base.node.BaseNodeItemImpl;
+import net.sf.mmm.code.base.node.BaseNodeItem;
 
 /**
  * Base implementation of {@link CodeAnnotation}.
@@ -30,7 +30,7 @@ import net.sf.mmm.code.base.node.BaseNodeItemImpl;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseAnnotation extends BaseNodeItemImpl implements CodeAnnotation {
+public class BaseAnnotation extends BaseNodeItem implements CodeAnnotation {
 
   private static final Logger LOG = LoggerFactory.getLogger(BaseAnnotation.class);
 

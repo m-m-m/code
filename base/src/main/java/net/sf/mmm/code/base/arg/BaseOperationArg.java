@@ -12,9 +12,8 @@ import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.type.CodeGenericType;
-import net.sf.mmm.code.base.element.BaseElementWithDeclaringTypeImpl;
+import net.sf.mmm.code.base.element.BaseElementWithDeclaringType;
 import net.sf.mmm.code.base.member.BaseOperation;
-import net.sf.mmm.code.base.node.BaseNode;
 import net.sf.mmm.code.base.type.BaseGenericType;
 import net.sf.mmm.code.base.type.BaseType;
 
@@ -24,7 +23,7 @@ import net.sf.mmm.code.base.type.BaseType;
  * @author hohwille
  * @since 1.0.0
  */
-public abstract class BaseOperationArg extends BaseElementWithDeclaringTypeImpl implements CodeOperationArg {
+public abstract class BaseOperationArg extends BaseElementWithDeclaringType implements CodeOperationArg {
 
   private BaseGenericType type;
 
@@ -54,9 +53,6 @@ public abstract class BaseOperationArg extends BaseElementWithDeclaringTypeImpl 
     super.doInitialize();
     getType();
   }
-
-  @Override
-  public abstract BaseNode getParent();
 
   @Override
   public abstract BaseOperation getDeclaringOperation();

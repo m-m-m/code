@@ -23,14 +23,14 @@ import net.sf.mmm.code.base.source.BaseSource;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class BaseNodeItemImpl extends BaseMutableItem implements BaseNode, CodeNodeItem {
+public abstract class BaseNodeItem extends BaseMutableItem implements CodeNodeItem {
 
-  private static final Logger LOG = LoggerFactory.getLogger(BaseNodeItemImpl.class);
+  private static final Logger LOG = LoggerFactory.getLogger(BaseNodeItem.class);
 
   /**
    * The constructor.
    */
-  public BaseNodeItemImpl() {
+  public BaseNodeItem() {
 
     super();
   }
@@ -38,10 +38,10 @@ public abstract class BaseNodeItemImpl extends BaseMutableItem implements BaseNo
   /**
    * The copy-constructor.
    *
-   * @param template the {@link BaseNodeItemImpl} to copy.
+   * @param template the {@link BaseNodeItem} to copy.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseNodeItemImpl(BaseNodeItemImpl template, CodeCopyMapper mapper) {
+  public BaseNodeItem(BaseNodeItem template, CodeCopyMapper mapper) {
 
     super(template);
     if (mapper instanceof AbstractCodeCopyMapper) {
@@ -108,8 +108,8 @@ public abstract class BaseNodeItemImpl extends BaseMutableItem implements BaseNo
       LOG.debug("Node item {} without parent.", this);
     } else if (parent instanceof CodeSource) {
       buffer.append(parent.toString());
-    } else if (parent instanceof BaseNodeItemImpl) {
-      ((BaseNodeItemImpl) parent).toPathString(buffer);
+    } else if (parent instanceof BaseNodeItem) {
+      ((BaseNodeItem) parent).toPathString(buffer);
     } else {
       buffer.append(parent.toString());
     }

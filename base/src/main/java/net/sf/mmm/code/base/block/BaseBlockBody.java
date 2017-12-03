@@ -9,8 +9,8 @@ import net.sf.mmm.code.api.block.CodeBlockBody;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.expression.CodeVariable;
+import net.sf.mmm.code.api.node.CodeFunction;
 import net.sf.mmm.code.api.statement.CodeStatement;
-import net.sf.mmm.code.base.node.BaseFunction;
 
 /**
  * Base implementation of {@link CodeBlockBody}.
@@ -20,14 +20,14 @@ import net.sf.mmm.code.base.node.BaseFunction;
  */
 public class BaseBlockBody extends BaseBlock implements CodeBlockBody {
 
-  private BaseFunction parent;
+  private CodeFunction parent;
 
   /**
    * The constructor.
    *
    * @param parent the {@link #getParent() parent}.
    */
-  public BaseBlockBody(BaseFunction parent) {
+  public BaseBlockBody(CodeFunction parent) {
 
     this(parent, new ArrayList<>());
   }
@@ -38,7 +38,7 @@ public class BaseBlockBody extends BaseBlock implements CodeBlockBody {
    * @param parent the {@link #getParent() parent}.
    * @param statements the {@link #getStatements() statements}.
    */
-  public BaseBlockBody(BaseFunction parent, CodeStatement... statements) {
+  public BaseBlockBody(CodeFunction parent, CodeStatement... statements) {
 
     super(statements);
     this.parent = parent;
@@ -50,7 +50,7 @@ public class BaseBlockBody extends BaseBlock implements CodeBlockBody {
    * @param parent the {@link #getParent() parent}.
    * @param statements the {@link #getStatements() statements}.
    */
-  public BaseBlockBody(BaseFunction parent, List<CodeStatement> statements) {
+  public BaseBlockBody(CodeFunction parent, List<CodeStatement> statements) {
 
     super(statements);
     this.parent = parent;
@@ -69,7 +69,7 @@ public class BaseBlockBody extends BaseBlock implements CodeBlockBody {
   }
 
   @Override
-  public BaseFunction getParent() {
+  public CodeFunction getParent() {
 
     return this.parent;
   }
@@ -77,7 +77,7 @@ public class BaseBlockBody extends BaseBlock implements CodeBlockBody {
   /**
    * @param parent the new value of {@link #getParent()}.
    */
-  public void setParent(BaseFunction parent) {
+  public void setParent(CodeFunction parent) {
 
     verifyMutalbe();
     this.parent = parent;

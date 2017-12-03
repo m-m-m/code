@@ -7,7 +7,6 @@ import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.BasePackage;
 import net.sf.mmm.code.base.BaseProvider;
 import net.sf.mmm.code.base.loader.BaseSourceLoader;
-import net.sf.mmm.code.base.node.BaseContainer;
 import net.sf.mmm.code.base.type.BaseType;
 
 /**
@@ -16,7 +15,7 @@ import net.sf.mmm.code.base.type.BaseType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface BaseSource extends CodeSource, BaseProvider, BaseContainer {
+public interface BaseSource extends CodeSource, BaseProvider {
 
   @Override
   BaseSource getParent();

@@ -14,7 +14,7 @@ import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.language.CodeLanguageJava;
-import net.sf.mmm.code.base.node.BaseContainer;
+import net.sf.mmm.code.api.node.CodeContainer;
 import net.sf.mmm.code.base.source.BaseSource;
 
 /**
@@ -23,7 +23,7 @@ import net.sf.mmm.code.base.source.BaseSource;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public final class BasePackage extends BasePathElement implements CodePackage, BaseContainer {
+public final class BasePackage extends BasePathElement implements CodePackage {
 
   /** {@link #getSimpleName() Simple name} of the default (root) package. */
   public static final String NAME_DEFAULT = "";
@@ -132,7 +132,7 @@ public final class BasePackage extends BasePathElement implements CodePackage, B
   }
 
   @Override
-  public BaseContainer getParent() {
+  public CodeContainer getParent() {
 
     BasePackage parent = getParentPackage();
     if (parent != null) {

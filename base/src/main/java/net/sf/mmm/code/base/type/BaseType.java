@@ -21,7 +21,7 @@ import net.sf.mmm.code.api.type.CodeTypeVariable;
 import net.sf.mmm.code.base.BaseFile;
 import net.sf.mmm.code.base.BasePackage;
 import net.sf.mmm.code.base.block.BaseBlockInitializer;
-import net.sf.mmm.code.base.element.BaseElementImpl;
+import net.sf.mmm.code.base.element.BaseElement;
 import net.sf.mmm.code.base.member.BaseConstructors;
 import net.sf.mmm.code.base.member.BaseFields;
 import net.sf.mmm.code.base.member.BaseMethods;
@@ -338,7 +338,7 @@ public class BaseType extends BaseGenericType implements CodeType {
   }
 
   @Override
-  public BaseElementImpl getParent() {
+  public BaseElement getParent() {
 
     if (this.declaringType != null) {
       return this.declaringType;
@@ -421,7 +421,7 @@ public class BaseType extends BaseGenericType implements CodeType {
   @Override
   public BaseParameterizedType createParameterizedType(CodeElement parent) {
 
-    return new BaseParameterizedType((BaseElementImpl) parent, this);
+    return new BaseParameterizedType((BaseElement) parent, this);
   }
 
   @Override

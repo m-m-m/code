@@ -14,7 +14,7 @@ import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.statement.CodeReturnStatement;
 import net.sf.mmm.code.api.statement.CodeStatement;
-import net.sf.mmm.code.base.node.BaseNodeItemImpl;
+import net.sf.mmm.code.base.node.BaseNodeItem;
 import net.sf.mmm.code.base.statement.BaseTextStatement;
 
 /**
@@ -23,7 +23,7 @@ import net.sf.mmm.code.base.statement.BaseTextStatement;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class BaseBlock extends BaseNodeItemImpl implements CodeBlock {
+public abstract class BaseBlock extends BaseNodeItem implements CodeBlock {
 
   private List<CodeStatement> statements;
 

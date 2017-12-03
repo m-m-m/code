@@ -30,7 +30,7 @@ import net.sf.mmm.util.exception.api.DuplicateObjectException;
  * @param <I> the type of the contained {@link CodeItem}.
  * @since 1.0.0
  */
-public abstract class BaseNodeItemContainer<I extends CodeItem> extends BaseNodeItemImpl implements CodeNodeItemContainer<I> {
+public abstract class BaseNodeItemContainer<I extends CodeItem> extends BaseNodeItem implements CodeNodeItemContainer<I> {
 
   private static final Logger LOG = LoggerFactory.getLogger(BaseNodeItemContainer.class);
 

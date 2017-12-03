@@ -40,9 +40,9 @@ import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.api.type.CodeTypeVariable;
-import net.sf.mmm.code.base.element.BaseElementImpl;
+import net.sf.mmm.code.base.element.BaseElement;
 import net.sf.mmm.code.base.member.BaseOperation;
-import net.sf.mmm.code.base.node.BaseNodeItemImpl;
+import net.sf.mmm.code.base.node.BaseNodeItem;
 import net.sf.mmm.code.base.type.BaseType;
 
 /**
@@ -51,7 +51,7 @@ import net.sf.mmm.code.base.type.BaseType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseDoc extends BaseNodeItemImpl implements CodeDoc {
+public class BaseDoc extends BaseNodeItem implements CodeDoc {
 
   private static final Logger LOG = LoggerFactory.getLogger(BaseDoc.class);
 
@@ -62,7 +62,7 @@ public class BaseDoc extends BaseNodeItemImpl implements CodeDoc {
   private static final Set<String> HTML_SELF_CLOSING_TAGS = new HashSet<>(
       Arrays.asList("area", "base", "br", "col", "command", "embed", "hr", "img", "input", "keygen", "link", "meta", "param", "source", "track", "wbr"));
 
-  private final BaseElementImpl parent;
+  private final BaseElement parent;
 
   private List<String> lines;
 
@@ -71,7 +71,7 @@ public class BaseDoc extends BaseNodeItemImpl implements CodeDoc {
    *
    * @param parent the {@link #getParent() parent element}.
    */
-  public BaseDoc(BaseElementImpl parent) {
+  public BaseDoc(BaseElement parent) {
 
     super();
     this.parent = parent;
@@ -92,7 +92,7 @@ public class BaseDoc extends BaseNodeItemImpl implements CodeDoc {
   }
 
   @Override
-  public BaseElementImpl getParent() {
+  public BaseElement getParent() {
 
     return this.parent;
   }

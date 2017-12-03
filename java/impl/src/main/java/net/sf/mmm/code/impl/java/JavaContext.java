@@ -20,11 +20,11 @@ import net.sf.mmm.code.api.type.CodeTypeVariable;
 import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.BaseContextImplWithCache;
 import net.sf.mmm.code.base.arg.BaseOperationArg;
-import net.sf.mmm.code.base.element.BaseElementImpl;
-import net.sf.mmm.code.base.element.BaseElementWithDeclaringTypeImpl;
+import net.sf.mmm.code.base.element.BaseElement;
+import net.sf.mmm.code.base.element.BaseElementWithDeclaringType;
 import net.sf.mmm.code.base.loader.BaseLoader;
 import net.sf.mmm.code.base.member.BaseOperation;
-import net.sf.mmm.code.base.node.BaseNodeItemImpl;
+import net.sf.mmm.code.base.node.BaseNodeItem;
 import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.source.BaseSourceImpl;
 import net.sf.mmm.code.base.source.BaseSourceProvider;
@@ -87,7 +87,7 @@ public abstract class JavaContext extends BaseContextImplWithCache {
       return getType((Class<?>) type);
     } else if (type instanceof ParameterizedType) {
       ParameterizedType parameterizedType = (ParameterizedType) type;
-      return new BaseParameterizedType((BaseElementImpl) declaringElement, parameterizedType);
+      return new BaseParameterizedType((BaseElement) declaringElement, parameterizedType);
     } else if (type instanceof TypeVariable) {
       TypeVariable<?> typeVar = (TypeVariable<?>) type;
       if (declaringElement instanceof BaseType) {
@@ -108,15 +108,15 @@ public abstract class JavaContext extends BaseContextImplWithCache {
       return new BaseTypeVariable((BaseTypeVariables) declaringElement.getDeclaringType().getTypeParameters(), typeVar);
     } else if (type instanceof WildcardType) {
       WildcardType wildcard = (WildcardType) type;
-      BaseNodeItemImpl parent;
+      BaseNodeItem parent;
       if (declaringElement instanceof BaseParameterizedType) {
         parent = ((BaseParameterizedType) declaringElement).getTypeParameters();
       } else {
-        parent = (BaseNodeItemImpl) declaringElement;
+        parent = (BaseNodeItem) declaringElement;
       }
       return new BaseTypeWildcard(parent, wildcard);
     } else if (type instanceof GenericArrayType) {
-      return new BaseArrayType((BaseElementWithDeclaringTypeImpl) declaringElement, type);
+      return new BaseArrayType((BaseElementWithDeclaringType) declaringElement, type);
     } else {
       throw new IllegalCaseException(type.getClass().getSimpleName());
     }

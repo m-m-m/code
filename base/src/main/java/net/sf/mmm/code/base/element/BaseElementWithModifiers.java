@@ -16,7 +16,7 @@ import net.sf.mmm.code.api.modifier.CodeModifiers;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class BaseElementWithModifiers extends BaseElementWithDeclaringTypeImpl implements CodeElementWithModifiers {
+public abstract class BaseElementWithModifiers extends BaseElementWithDeclaringType implements CodeElementWithModifiers {
 
   private CodeModifiers modifiers;
 

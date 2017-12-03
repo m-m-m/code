@@ -11,7 +11,7 @@ import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.type.CodeArrayType;
 import net.sf.mmm.code.api.type.CodeGenericType;
-import net.sf.mmm.code.base.element.BaseElementWithDeclaringTypeImpl;
+import net.sf.mmm.code.base.element.BaseElementWithDeclaringType;
 import net.sf.mmm.util.exception.api.IllegalCaseException;
 
 /**
@@ -22,7 +22,7 @@ import net.sf.mmm.util.exception.api.IllegalCaseException;
  */
 public class BaseArrayType extends BaseGenericType implements CodeArrayType {
 
-  private final BaseElementWithDeclaringTypeImpl parent;
+  private final BaseElementWithDeclaringType parent;
 
   private final Type reflectiveObject;
 
@@ -45,7 +45,7 @@ public class BaseArrayType extends BaseGenericType implements CodeArrayType {
    * @param parent the {@link #getParent() parent}.
    * @param reflectiveObject the {@link #getReflectiveObject() reflective object}. May be {@code null}.
    */
-  public BaseArrayType(BaseElementWithDeclaringTypeImpl parent, Type reflectiveObject) {
+  public BaseArrayType(BaseElementWithDeclaringType parent, Type reflectiveObject) {
 
     this(parent, reflectiveObject, null);
     Objects.requireNonNull(reflectiveObject, "reflectiveObject");
@@ -57,7 +57,7 @@ public class BaseArrayType extends BaseGenericType implements CodeArrayType {
    * @param parent the {@link #getParent() parent}.
    * @param componentType the {@link #getComponentType() component type}.
    */
-  public BaseArrayType(BaseElementWithDeclaringTypeImpl parent, BaseGenericType componentType) {
+  public BaseArrayType(BaseElementWithDeclaringType parent, BaseGenericType componentType) {
 
     this(parent, null, componentType);
     Objects.requireNonNull(componentType, "componentType");
@@ -70,7 +70,7 @@ public class BaseArrayType extends BaseGenericType implements CodeArrayType {
    * @param reflectiveObject the {@link #getReflectiveObject() reflective object}. May be {@code null}.
    * @param componentType the {@link #getComponentType() component type}.
    */
-  private BaseArrayType(BaseElementWithDeclaringTypeImpl parent, Type reflectiveObject, BaseGenericType componentType) {
+  private BaseArrayType(BaseElementWithDeclaringType parent, Type reflectiveObject, BaseGenericType componentType) {
 
     super();
     this.parent = parent;
@@ -93,7 +93,7 @@ public class BaseArrayType extends BaseGenericType implements CodeArrayType {
   }
 
   @Override
-  public BaseElementWithDeclaringTypeImpl getParent() {
+  public BaseElementWithDeclaringType getParent() {
 
     return this.parent;
   }

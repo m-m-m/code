@@ -21,7 +21,7 @@ import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.type.CodeType;
-import net.sf.mmm.code.base.element.BaseElementImpl;
+import net.sf.mmm.code.base.element.BaseElement;
 import net.sf.mmm.code.base.node.BaseNodeItemContainerHierarchical;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.base.type.InternalSuperTypeIterator;
@@ -35,7 +35,7 @@ import net.sf.mmm.util.collection.base.AbstractIterator;
  */
 public class BaseAnnotations extends BaseNodeItemContainerHierarchical<CodeAnnotation> implements CodeAnnotations {
 
-  private final BaseElementImpl parent;
+  private final BaseElement parent;
 
   private CodeAnnotations sourceCodeObject;
 
@@ -44,7 +44,7 @@ public class BaseAnnotations extends BaseNodeItemContainerHierarchical<CodeAnnot
    *
    * @param parent the {@link #getParent() parent}.
    */
-  public BaseAnnotations(BaseElementImpl parent) {
+  public BaseAnnotations(BaseElement parent) {
 
     super();
     this.parent = parent;
@@ -63,7 +63,7 @@ public class BaseAnnotations extends BaseNodeItemContainerHierarchical<CodeAnnot
   }
 
   @Override
-  public BaseElementImpl getParent() {
+  public BaseElement getParent() {
 
     return this.parent;
   }

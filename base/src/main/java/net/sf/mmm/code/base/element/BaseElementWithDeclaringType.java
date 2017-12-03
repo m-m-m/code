@@ -6,17 +6,17 @@ import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.element.CodeElementWithDeclaringType;
 
 /**
- * Base implementation of {@link BaseElement}.
+ * Base implementation of {@link CodeElementWithDeclaringType}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class BaseElementWithDeclaringTypeImpl extends BaseElementImpl implements CodeElementWithDeclaringType {
+public abstract class BaseElementWithDeclaringType extends BaseElement implements CodeElementWithDeclaringType {
 
   /**
    * The constructor.
    */
-  public BaseElementWithDeclaringTypeImpl() {
+  public BaseElementWithDeclaringType() {
 
     super();
   }
@@ -24,10 +24,10 @@ public abstract class BaseElementWithDeclaringTypeImpl extends BaseElementImpl i
   /**
    * The copy-constructor.
    *
-   * @param template the {@link BaseElementWithDeclaringTypeImpl} to copy.
+   * @param template the {@link BaseElementWithDeclaringType} to copy.
    * @param mapper the {@link CodeCopyMapper}.
    */
-  public BaseElementWithDeclaringTypeImpl(BaseElementWithDeclaringTypeImpl template, CodeCopyMapper mapper) {
+  public BaseElementWithDeclaringType(BaseElementWithDeclaringType template, CodeCopyMapper mapper) {
 
     super(template, mapper);
   }
