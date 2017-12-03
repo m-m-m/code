@@ -253,7 +253,12 @@ public class CodeCopyTest extends BaseContextTest {
 
   private void verifyCopyWithResolve(CodeContext context, String rootPackage, String component, String detail, String entityName, CodeGenericType longType) {
 
-    CodeCopyMapperWithVariableResolution mapper = new CodeCopyMapperWithVariableResolution();
+    CodePackage pkgCom = context.getSource().getRootPackage().getChildren().createPackage("com");
+    CodePackage pkgInternal = pkgCom.getChildren().getOrCreatePackage("company.tools.internal");
+    CodeType templateAnnotation = pkgInternal.getChildren().getOrCreateFile("Template").getType();
+    templateAnnotation.setCategory(CodeTypeCategory.ANNOTATION);
+
+    CodeCopyMapperWithVariableResolution mapper = new CodeCopyMapperWithVariableResolution(pkgInternal);
     mapper.setVariable("rootpackage", rootPackage);
     mapper.setVariable("component", component);
     mapper.setVariable("detail", detail);
@@ -274,12 +279,16 @@ public class CodeCopyTest extends BaseContextTest {
 
     CodeType entityInterface = pkgCommonApiDetail.getChildren().getOrCreateFile("X_EntityName_X").getType();
     entityInterface.setCategory(CodeTypeCategory.INTERFACE);
+    entityInterface.getAnnotations().add(templateAnnotation);
     CodeType entityEto = pkgCommonApiDetailTo.getChildren().getOrCreateFile("X_EntityName_XEto").getType();
+    entityEto.getAnnotations().add(templateAnnotation);
     entityEto.getSuperTypes().add(entityInterface);
     CodeType entityEntity = pkgDataaccessApiDetail.getChildren().getOrCreateFile("X_EntityName_XEntity").getType();
+    entityEntity.getAnnotations().add(templateAnnotation);
     entityEntity.getSuperTypes().add(entityInterface);
     CodeType ucFindEntity = pkgLogicApiDetail.getChildren().getOrCreateFile("UcFindX_EntityName_X").getType();
     ucFindEntity.setCategory(CodeTypeCategory.INTERFACE);
+    ucFindEntity.getAnnotations().add(templateAnnotation);
     CodeMethod find = ucFindEntity.getMethods().add("findX_EntityName_X");
     find.getReturns().setType(entityEto);
     find.getParameters().add("id").setType(longType);

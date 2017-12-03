@@ -147,6 +147,22 @@ public interface CodePathElements extends CodeNodeItemContainerFlat<CodePathElem
    */
   void add(CodePathElement child);
 
+  /**
+   * @param child the potential sub-{@link CodePackage package}.
+   * @return {@code true} if the given {@link CodePackage} is equal to the {@link #getParent() owning package} or is a
+   *         {@link #getDeclared() direct} or {@link CodePackage#getParentPackage() indirect} sub-{@link CodePackage
+   *         package} of this {@link CodePackage}, {@code false} otherwise.
+   */
+  boolean containsPackage(CodePackage child);
+
+  /**
+   * @param child the potential sub-{@link CodePackage package}.
+   * @return {@code true} if the given {@link CodePackage} is a {@link #getDeclared() direct} or
+   *         {@link CodePackage#getParentPackage() indirect} sub-{@link CodePackage package} of this
+   *         {@link CodePackage}, {@code false} otherwise.
+   */
+  boolean containsSubPackage(CodePackage child);
+
   @Override
   CodePathElements copy();
 

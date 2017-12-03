@@ -23,6 +23,4 @@ public abstract interface CodeImports extends CodeNodeItemContainerFlat<CodeImpo
    */
   CodeImport add(CodeType type);
 
-  @Override
-  CodeImports copy();
 }

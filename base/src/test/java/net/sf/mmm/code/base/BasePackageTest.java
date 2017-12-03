@@ -163,7 +163,7 @@ public class BasePackageTest extends BaseContextTest {
     assertThat(pkg.getSimpleName()).isEqualTo("some");
     assertThat(pkg.getComment()).isSameAs(TEST_COMMENT);
     assertThat(pkg.getDoc().getLines()).containsExactly(TEST_TEXT1, TEST_TEXT2);
-    assertThat((List<BaseAnnotation>) pkg.getAnnotations().getDeclared()).containsExactly(getTestAnnotation(null));
+    assertThat((List<BaseAnnotation>) pkg.getAnnotations().getDeclared()).hasSize(1).allMatch(x -> x.getType() == getTestAnnotationType(null));
     assertThat(pkg.isImmutable()).isTrue();
     BasePackage pkgFromRoot = rootPackage.getChildren().getPackage(pkgQName);
     if (add) {
@@ -186,7 +186,7 @@ public class BasePackageTest extends BaseContextTest {
     }
     BasePackage basePackage = new BasePackage(pkg, simpleName, null, sourceSupplier, !source);
     if (source) {
-      basePackage.getAnnotations().add(getTestAnnotation(pkg.getContext().getSource()));
+      getTestAnnotation(basePackage.getAnnotations());
       basePackage.setComment(TEST_COMMENT);
       basePackage.getDoc().getLines().add(TEST_TEXT1);
       basePackage.getDoc().getLines().add(TEST_TEXT2);

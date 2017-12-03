@@ -5,8 +5,9 @@ package net.sf.mmm.code.api.annotation;
 import java.lang.annotation.Annotation;
 import java.util.Map;
 
+import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.expression.CodeExpression;
-import net.sf.mmm.code.api.item.CodeChildItem;
 import net.sf.mmm.code.api.item.CodeMutableItemWithComment;
 import net.sf.mmm.code.api.item.CodeMutableItemWithType;
 
@@ -16,7 +17,7 @@ import net.sf.mmm.code.api.item.CodeMutableItemWithType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeAnnotation extends CodeChildItem, CodeMutableItemWithType, CodeMutableItemWithComment {
+public interface CodeAnnotation extends CodeMutableItemWithType, CodeMutableItemWithComment, CodeNodeItemCopyable<CodeAnnotations, CodeAnnotation> {
 
   /** The character used as prefix for an annotation. */
   char PREFIX_CHAR = '@';
@@ -35,6 +36,12 @@ public interface CodeAnnotation extends CodeChildItem, CodeMutableItemWithType, 
   Annotation getReflectiveObject();
 
   @Override
+  CodeAnnotations getParent();
+
+  @Override
   CodeAnnotation copy();
+
+  @Override
+  CodeAnnotation copy(CodeCopyMapper mapper);
 
 }

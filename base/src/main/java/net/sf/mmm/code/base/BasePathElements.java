@@ -377,6 +377,31 @@ public class BasePathElements extends BaseNodeItemContainerFlat<CodePathElement>
   }
 
   @Override
+  public boolean containsPackage(CodePackage child) {
+
+    if (child == null) {
+      return false;
+    }
+    CodePackage anchestor = child;
+    while (anchestor != null) {
+      if (anchestor == this.parent) {
+        return true;
+      }
+      anchestor = anchestor.getParentPackage();
+    }
+    return false;
+  }
+
+  @Override
+  public boolean containsSubPackage(CodePackage child) {
+
+    if (child == null) {
+      return false;
+    }
+    return containsPackage(child.getParentPackage());
+  }
+
+  @Override
   public BasePathElements copy() {
 
     return copy(getDefaultCopyMapper());

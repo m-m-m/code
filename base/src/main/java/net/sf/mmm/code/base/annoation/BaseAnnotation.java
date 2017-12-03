@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.annotation.CodeAnnotation;
+import net.sf.mmm.code.api.annotation.CodeAnnotations;
 import net.sf.mmm.code.api.comment.CodeComment;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.copy.CodeCopyType;
@@ -21,8 +22,7 @@ import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
-import net.sf.mmm.code.base.item.BaseChildItem;
-import net.sf.mmm.code.base.source.BaseSource;
+import net.sf.mmm.code.base.node.BaseNodeItemImpl;
 
 /**
  * Base implementation of {@link CodeAnnotation}.
@@ -30,11 +30,13 @@ import net.sf.mmm.code.base.source.BaseSource;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseAnnotation extends BaseChildItem implements CodeAnnotation {
+public class BaseAnnotation extends BaseNodeItemImpl implements CodeAnnotation {
 
   private static final Logger LOG = LoggerFactory.getLogger(BaseAnnotation.class);
 
   private final Annotation reflectiveObject;
+
+  private CodeAnnotations parent;
 
   private CodeComment comment;
 
@@ -49,24 +51,26 @@ public class BaseAnnotation extends BaseChildItem implements CodeAnnotation {
   /**
    * The constructor.
    *
-   * @param source the {@link #getSource() source}.
+   * @param parent the {@link #getParent() parent}.
    * @param reflectiveObject the {@link #getReflectiveObject() reflective object}.
    */
-  public BaseAnnotation(BaseSource source, Annotation reflectiveObject) {
+  public BaseAnnotation(CodeAnnotations parent, Annotation reflectiveObject) {
 
-    super(source);
+    super();
+    this.parent = parent;
     this.reflectiveObject = reflectiveObject;
   }
 
   /**
    * The constructor.
    *
-   * @param source the {@link #getSource() source}.
+   * @param parent the {@link #getParent() parent}.
    * @param type the {@link #getType() type}.
    */
-  public BaseAnnotation(BaseSource source, CodeType type) {
+  public BaseAnnotation(CodeAnnotations parent, CodeType type) {
 
-    super(source);
+    super();
+    this.parent = parent;
     this.type = type;
     this.reflectiveObject = null;
   }
@@ -74,13 +78,14 @@ public class BaseAnnotation extends BaseChildItem implements CodeAnnotation {
   /**
    * The constructor.
    *
-   * @param source the {@link #getSource() source}.
+   * @param parent the {@link #getParent() parent}.
    * @param typeName the name of the {@link #getType() type} from the source-code.
    * @param qualifiedTypeName the qualified {@link #getType() type}.
    */
-  public BaseAnnotation(BaseSource source, String typeName, String qualifiedTypeName) {
+  public BaseAnnotation(CodeAnnotations parent, String typeName, String qualifiedTypeName) {
 
-    super(source);
+    super();
+    this.parent = parent;
     if ((typeName != qualifiedTypeName) && !qualifiedTypeName.endsWith("." + typeName)) {
       throw new IllegalArgumentException(typeName + "::" + qualifiedTypeName);
     }
@@ -98,7 +103,8 @@ public class BaseAnnotation extends BaseChildItem implements CodeAnnotation {
    */
   public BaseAnnotation(BaseAnnotation template, CodeCopyMapper mapper) {
 
-    super(template);
+    super(template, mapper);
+    this.parent = mapper.map(template.parent, CodeCopyType.PARENT);
     this.reflectiveObject = null;
     this.type = mapper.map(template.type, CodeCopyType.REFERENCE);
     this.parameters = new HashMap<>(template.parameters);
@@ -117,6 +123,20 @@ public class BaseAnnotation extends BaseChildItem implements CodeAnnotation {
 
     super.doSetImmutable();
     this.parameters = Collections.unmodifiableMap(this.parameters);
+  }
+
+  @Override
+  public CodeAnnotations getParent() {
+
+    return this.parent;
+  }
+
+  void setParent(CodeAnnotations parent) {
+
+    if (this.parent != null) {
+      verifyMutalbe();
+    }
+    this.parent = parent;
   }
 
   @Override

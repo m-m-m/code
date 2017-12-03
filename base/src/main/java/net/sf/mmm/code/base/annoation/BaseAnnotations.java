@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import net.sf.mmm.code.api.CodeFile;
 import net.sf.mmm.code.api.annotation.CodeAnnotation;
 import net.sf.mmm.code.api.annotation.CodeAnnotations;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
@@ -22,7 +23,6 @@ import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.element.BaseElementImpl;
 import net.sf.mmm.code.base.node.BaseNodeItemContainerHierarchical;
-import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.base.type.InternalSuperTypeIterator;
 import net.sf.mmm.util.collection.base.AbstractIterator;
@@ -63,15 +63,22 @@ public class BaseAnnotations extends BaseNodeItemContainerHierarchical<CodeAnnot
   }
 
   @Override
-  protected CodeCopyType getItemCopyType() {
-
-    return null;
-  }
-
-  @Override
   public BaseElementImpl getParent() {
 
     return this.parent;
+  }
+
+  @Override
+  protected CodeAnnotation ensureParent(CodeAnnotation item) {
+
+    if (item.getParent() != this) {
+      if (item.isMutable() && item.getParent().getParent() instanceof CodeFile) {
+        ((BaseAnnotation) item).setParent(this);
+      } else {
+        return doCopyNode(item, this);
+      }
+    }
+    return item;
   }
 
   @Override
@@ -103,9 +110,8 @@ public class BaseAnnotations extends BaseNodeItemContainerHierarchical<CodeAnnot
       if (annotations.length == 0) {
         return;
       }
-      BaseSource source = getSource();
       for (Annotation annotation : annotations) {
-        addInternal(new BaseAnnotation(source, annotation));
+        addInternal(new BaseAnnotation(this, annotation));
       }
     }
   }
@@ -170,7 +176,7 @@ public class BaseAnnotations extends BaseNodeItemContainerHierarchical<CodeAnnot
    */
   protected BaseAnnotation createAnnoation(CodeType type) {
 
-    return new BaseAnnotation(getSource(), type);
+    return new BaseAnnotation(this, type);
   }
 
   @Override

@@ -4,10 +4,10 @@ package net.sf.mmm.code.base;
 
 import org.assertj.core.api.Assertions;
 
-import net.sf.mmm.code.base.annoation.BaseAnnotation;
+import net.sf.mmm.code.api.annotation.CodeAnnotation;
+import net.sf.mmm.code.api.annotation.CodeAnnotations;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.comment.BaseSingleLineComment;
-import net.sf.mmm.code.base.source.BaseSource;
-import net.sf.mmm.code.base.type.BaseType;
 
 /**
  * Abstract super-class for {@link BaseContextImpl}.
@@ -21,7 +21,7 @@ public abstract class BaseContextTest extends Assertions {
 
   protected static final BaseSingleLineComment TEST_COMMENT = new BaseSingleLineComment(TEST_TEXT1);
 
-  private BaseAnnotation annotation;
+  private CodeType overrideType;
 
   /**
    * @return the {@link BaseContext} to test.
@@ -31,13 +31,17 @@ public abstract class BaseContextTest extends Assertions {
     return new TestContext();
   }
 
-  protected BaseAnnotation getTestAnnotation(BaseSource source) {
+  protected CodeAnnotation getTestAnnotation(CodeAnnotations annotations) {
 
-    if (this.annotation == null) {
-      BaseType type = (BaseType) source.getContext().getType(Override.class);
-      this.annotation = new BaseAnnotation(source, type);
+    return annotations.add(getTestAnnotationType(annotations));
+  }
+
+  protected CodeType getTestAnnotationType(CodeAnnotations annotations) {
+
+    if (this.overrideType == null) {
+      this.overrideType = annotations.getContext().getType(Override.class).asType();
     }
-    return this.annotation;
+    return this.overrideType;
   }
 
 }

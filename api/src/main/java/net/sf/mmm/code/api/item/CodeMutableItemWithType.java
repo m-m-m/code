@@ -6,7 +6,7 @@ import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
- * {@link CodeItem} that has a {@link #getType() generic type}.
+ * {@link CodeMutableItem} that has a {@link #getType() generic type}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0

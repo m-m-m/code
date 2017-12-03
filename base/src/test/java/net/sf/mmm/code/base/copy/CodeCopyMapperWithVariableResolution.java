@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.CodePathElement;
+import net.sf.mmm.code.api.annotation.CodeAnnotation;
 import net.sf.mmm.code.api.copy.AbstractCodeCopyMapper;
 import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.item.CodeMutableItem;
@@ -35,12 +36,17 @@ public class CodeCopyMapperWithVariableResolution extends AbstractCodeCopyMapper
 
   private final Map<String, String> resolutions;
 
+  private final CodePackage internalPackage;
+
   /**
    * The constructor.
+   * 
+   * @param internalPackage the {@link CodePackage} with the code to filter and omit during copy.
    */
-  public CodeCopyMapperWithVariableResolution() {
+  public CodeCopyMapperWithVariableResolution(CodePackage internalPackage) {
 
     super();
+    this.internalPackage = internalPackage;
     this.variables = new HashMap<>();
     this.resolutions = new HashMap<>();
   }
@@ -104,6 +110,12 @@ public class CodeCopyMapperWithVariableResolution extends AbstractCodeCopyMapper
       if (node instanceof CodePackage) {
         result = doMapPackage((CodePackage) node);
       } else if (node instanceof CodeMutableItem) {
+        if (node instanceof CodeAnnotation) {
+          CodeType annotationType = ((CodeAnnotation) node).getType().asType();
+          if (this.internalPackage.getChildren().containsPackage(annotationType.getParentPackage())) {
+            return null;
+          }
+        }
         result = (CodeNode) ((CodeMutableItem) node).copy(this);
       }
     } else if (node instanceof CodeGenericType) {
