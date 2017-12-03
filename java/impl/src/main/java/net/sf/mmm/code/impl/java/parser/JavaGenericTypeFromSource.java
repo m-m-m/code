@@ -10,17 +10,18 @@ import net.sf.mmm.code.api.annotation.CodeAnnotation;
 import net.sf.mmm.code.api.annotation.CodeAnnotations;
 import net.sf.mmm.code.api.comment.CodeComment;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.element.CodeElementWithTypeVariables;
+import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeTypePlaceholder;
+import net.sf.mmm.code.api.type.CodeTypeWildcard;
 import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.BaseFile;
-import net.sf.mmm.code.base.element.BaseElementWithTypeVariables;
 import net.sf.mmm.code.base.type.BaseComposedType;
 import net.sf.mmm.code.base.type.BaseGenericType;
 import net.sf.mmm.code.base.type.BaseGenericTypeProxy;
 import net.sf.mmm.code.base.type.BaseParameterizedType;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.base.type.BaseTypeParameters;
-import net.sf.mmm.code.base.type.BaseTypePlaceholder;
 import net.sf.mmm.code.base.type.BaseTypeProxy;
 import net.sf.mmm.code.base.type.BaseTypeVariable;
 import net.sf.mmm.code.base.type.BaseTypeWildcard;
@@ -36,7 +37,7 @@ import net.sf.mmm.code.base.type.BaseTypeWildcard;
  */
 public class JavaGenericTypeFromSource extends BaseGenericTypeProxy {
 
-  private final BaseElementWithTypeVariables parent;
+  private final CodeElementWithTypeVariables parent;
 
   private final String name;
 
@@ -65,7 +66,7 @@ public class JavaGenericTypeFromSource extends BaseGenericTypeProxy {
    * @param name the name of the type from the source code.
    * @param file the declaring {@link BaseFile}.
    */
-  public JavaGenericTypeFromSource(BaseElementWithTypeVariables parent, String name, BaseFile file) {
+  public JavaGenericTypeFromSource(CodeElementWithTypeVariables parent, String name, BaseFile file) {
 
     super();
     Objects.requireNonNull(parent, "parent");
@@ -80,7 +81,7 @@ public class JavaGenericTypeFromSource extends BaseGenericTypeProxy {
   public BaseGenericType getDelegate() {
 
     if (this.type == null) {
-      this.type = toGenericType(null);
+      this.type = (BaseGenericType) toGenericType(null);
     }
     return this.type;
   }
@@ -93,12 +94,12 @@ public class JavaGenericTypeFromSource extends BaseGenericTypeProxy {
     return this.name;
   }
 
-  private BaseGenericType toGenericType(BaseTypePlaceholder placeholder) {
+  private CodeGenericType toGenericType(CodeTypePlaceholder placeholder) {
 
     if (CodeTypePlaceholder.NAME_WILDCARD.equals(this.name)) {
       return toWildcardType();
     }
-    BaseGenericType genericType = toGenericTypeByName(this.name);
+    CodeGenericType genericType = toGenericTypeByName(this.name);
     if (this.composedTypes != null) {
       BaseComposedType composedType = new BaseComposedType(placeholder);
       composedType.add(genericType);
@@ -129,13 +130,13 @@ public class JavaGenericTypeFromSource extends BaseGenericTypeProxy {
     return genericType;
   }
 
-  private BaseGenericType toGenericTypeByName(String typeName) {
+  private CodeGenericType toGenericTypeByName(String typeName) {
 
     BaseTypeVariable typeVariable = (BaseTypeVariable) this.parent.getTypeParameters().get(typeName, true);
     if (typeVariable != null) {
       return typeVariable;
     }
-    BaseContext context = this.parent.getContext();
+    BaseContext context = (BaseContext) this.parent.getContext();
     String qualifiedName = typeName;
     boolean qualified = typeName.indexOf('.') > 0;
     if (!qualified) {
@@ -152,12 +153,12 @@ public class JavaGenericTypeFromSource extends BaseGenericTypeProxy {
     return baseType;
   }
 
-  private BaseGenericType applyCommentAndAnnotations(BaseGenericType genericType) {
+  private CodeGenericType applyCommentAndAnnotations(CodeGenericType genericType) {
 
     if (this.commentAndAnnotationsApplied) {
       return genericType;
     }
-    BaseGenericType result = genericType;
+    CodeGenericType result = genericType;
     CodeAnnotations annotations = getAnnotations(false);
     if (annotations != null) {
       if (result instanceof BaseType) {
@@ -180,7 +181,7 @@ public class JavaGenericTypeFromSource extends BaseGenericTypeProxy {
     return result;
   }
 
-  private static BaseGenericType resolve(BaseGenericType type, BaseTypePlaceholder placeholder) {
+  private static CodeGenericType resolve(CodeGenericType type, CodeTypePlaceholder placeholder) {
 
     if (type instanceof JavaGenericTypeFromSource) {
       return ((JavaGenericTypeFromSource) type).toGenericType(placeholder);
@@ -188,10 +189,10 @@ public class JavaGenericTypeFromSource extends BaseGenericTypeProxy {
     return type;
   }
 
-  private BaseGenericType toWildcardType() {
+  private CodeGenericType toWildcardType() {
 
-    BaseTypeWildcard wildcard;
-    BaseGenericType bound = null;
+    CodeTypeWildcard wildcard;
+    CodeGenericType bound = null;
     if (this.extendsBound != null) {
       wildcard = new BaseTypeWildcard(this.parent, null, false);
       bound = resolve(this.extendsBound, wildcard);

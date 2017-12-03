@@ -10,6 +10,7 @@ import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.item.CodeItemWithDeclaration;
 import net.sf.mmm.code.api.item.CodeItemWithQualifiedFlag;
 import net.sf.mmm.code.api.item.CodeItemWithQualifiedName;
+import net.sf.mmm.code.api.node.CodeNodeItem;
 
 /**
  * {@link CodeItem} that represents a (potentially generic) type (similar to {@link java.lang.reflect.Type}).
@@ -18,6 +19,9 @@ import net.sf.mmm.code.api.item.CodeItemWithQualifiedName;
  * @since 1.0.0
  */
 public abstract interface CodeGenericType extends CodeElement, CodeItemWithDeclaration, CodeItemWithQualifiedName, CodeItemWithQualifiedFlag {
+
+  @Override
+  CodeNodeItem getParent();
 
   /**
    * @return the raw {@link CodeType}. In case of an {@link #isArray() array} the

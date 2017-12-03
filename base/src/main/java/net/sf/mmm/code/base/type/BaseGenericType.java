@@ -5,13 +5,13 @@ package net.sf.mmm.code.base.type;
 import java.lang.reflect.Type;
 
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.node.CodeNodeItem;
 import net.sf.mmm.code.api.type.CodeComposedType;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeTypePlaceholder;
 import net.sf.mmm.code.api.type.CodeTypeVariable;
 import net.sf.mmm.code.api.type.CodeTypeWildcard;
 import net.sf.mmm.code.base.element.BaseElementWithDeclaringTypeImpl;
-import net.sf.mmm.code.base.node.BaseNodeItemImpl;
 
 /**
  * Base implementation of {@link CodeGenericType}.
@@ -43,7 +43,7 @@ public abstract class BaseGenericType extends BaseElementWithDeclaringTypeImpl i
   }
 
   @Override
-  public abstract BaseNodeItemImpl getParent();
+  public abstract CodeNodeItem getParent();
 
   @Override
   public boolean isAssignableFrom(CodeGenericType type) {

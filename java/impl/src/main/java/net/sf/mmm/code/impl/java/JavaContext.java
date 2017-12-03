@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.CodeName;
+import net.sf.mmm.code.api.element.CodeElementWithDeclaringType;
 import net.sf.mmm.code.api.element.CodeElementWithTypeVariables;
 import net.sf.mmm.code.api.node.CodeNode;
 import net.sf.mmm.code.api.type.CodeTypeVariable;
@@ -20,12 +21,9 @@ import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.BaseContextImplWithCache;
 import net.sf.mmm.code.base.arg.BaseOperationArg;
 import net.sf.mmm.code.base.element.BaseElementImpl;
-import net.sf.mmm.code.base.element.BaseElementWithDeclaringType;
 import net.sf.mmm.code.base.element.BaseElementWithDeclaringTypeImpl;
-import net.sf.mmm.code.base.element.BaseElementWithTypeVariables;
 import net.sf.mmm.code.base.loader.BaseLoader;
 import net.sf.mmm.code.base.member.BaseOperation;
-import net.sf.mmm.code.base.node.BaseNode;
 import net.sf.mmm.code.base.node.BaseNodeItemImpl;
 import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.source.BaseSourceImpl;
@@ -83,7 +81,7 @@ public abstract class JavaContext extends BaseContextImplWithCache {
   }
 
   @Override
-  public BaseGenericType getType(Type type, BaseElementWithDeclaringType declaringElement) {
+  public BaseGenericType getType(Type type, CodeElementWithDeclaringType declaringElement) {
 
     if (type instanceof Class) {
       return getType((Class<?>) type);
@@ -107,7 +105,7 @@ public abstract class JavaContext extends BaseContextImplWithCache {
         return typeVariable;
       }
       LOG.warn("Could not find type variable {} in {}", typeVar, declaringElement);
-      return new BaseTypeVariable(declaringElement.getDeclaringType().getTypeParameters(), typeVar);
+      return new BaseTypeVariable((BaseTypeVariables) declaringElement.getDeclaringType().getTypeParameters(), typeVar);
     } else if (type instanceof WildcardType) {
       WildcardType wildcard = (WildcardType) type;
       BaseNodeItemImpl parent;
@@ -124,7 +122,7 @@ public abstract class JavaContext extends BaseContextImplWithCache {
     }
   }
 
-  private static CodeTypeVariable findTypeVariable(BaseNode node, String name) {
+  private static CodeTypeVariable findTypeVariable(CodeNode node, String name) {
 
     CodeElementWithTypeVariables elementWithTypeVariables = findElementWithTypeVariables(node);
     if (elementWithTypeVariables != null) {
@@ -135,8 +133,8 @@ public abstract class JavaContext extends BaseContextImplWithCache {
 
   private static CodeElementWithTypeVariables findElementWithTypeVariables(CodeNode node) {
 
-    if (node instanceof BaseElementWithTypeVariables) {
-      return (BaseElementWithTypeVariables) node;
+    if (node instanceof CodeElementWithTypeVariables) {
+      return (CodeElementWithTypeVariables) node;
     } else if (node instanceof BaseOperationArg) {
       BaseOperationArg arg = (BaseOperationArg) node;
       BaseOperation operation = arg.getDeclaringOperation();

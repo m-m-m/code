@@ -3,7 +3,7 @@
 package net.sf.mmm.code.base.element;
 
 import net.sf.mmm.code.api.element.CodeElement;
-import net.sf.mmm.code.base.node.BaseNodeItem;
+import net.sf.mmm.code.base.node.BaseNode;
 
 /**
  * Base interface for {@link CodeElement}.
@@ -11,6 +11,6 @@ import net.sf.mmm.code.base.node.BaseNodeItem;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface BaseElement extends CodeElement, BaseNodeItem {
+public interface BaseElement extends CodeElement, BaseNode {
 
 }

@@ -22,7 +22,6 @@ import net.sf.mmm.code.base.BaseFile;
 import net.sf.mmm.code.base.BasePackage;
 import net.sf.mmm.code.base.block.BaseBlockInitializer;
 import net.sf.mmm.code.base.element.BaseElementImpl;
-import net.sf.mmm.code.base.element.BaseElementWithTypeVariables;
 import net.sf.mmm.code.base.member.BaseConstructors;
 import net.sf.mmm.code.base.member.BaseFields;
 import net.sf.mmm.code.base.member.BaseMethods;
@@ -34,7 +33,7 @@ import net.sf.mmm.code.base.member.BaseProperties;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseType extends BaseGenericType implements CodeType, BaseElementWithTypeVariables {
+public class BaseType extends BaseGenericType implements CodeType {
 
   private final BaseFile file;
 

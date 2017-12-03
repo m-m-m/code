@@ -8,10 +8,10 @@ import java.lang.reflect.Type;
 import java.util.function.BiFunction;
 
 import net.sf.mmm.code.api.CodeName;
+import net.sf.mmm.code.api.element.CodeElementWithDeclaringType;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.language.CodeLanguageJava;
-import net.sf.mmm.code.base.element.BaseElementWithDeclaringType;
 import net.sf.mmm.code.base.loader.BaseLoader;
 import net.sf.mmm.code.base.loader.BaseSourceLoader;
 import net.sf.mmm.code.base.loader.BaseSourceLoaderImpl;
@@ -72,7 +72,7 @@ public class TestContext extends BaseContextImplWithCache {
   }
 
   @Override
-  public BaseGenericType getType(Type type, BaseElementWithDeclaringType declaringElement) {
+  public BaseGenericType getType(Type type, CodeElementWithDeclaringType declaringElement) {
 
     if (type instanceof Class) {
       return getType((Class<?>) type);

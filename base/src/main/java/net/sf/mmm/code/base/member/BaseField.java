@@ -16,7 +16,6 @@ import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.merge.CodeMergeStrategyDecider;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.api.type.CodeGenericType;
-import net.sf.mmm.code.base.type.BaseGenericType;
 
 /**
  * Base implementation of {@link CodeField}.
@@ -30,7 +29,7 @@ public class BaseField extends BaseMember implements CodeField {
 
   private final Field reflectiveObject;
 
-  private BaseGenericType type;
+  private CodeGenericType type;
 
   private CodeExpression initializer;
 
@@ -101,7 +100,7 @@ public class BaseField extends BaseMember implements CodeField {
   }
 
   @Override
-  public BaseGenericType getType() {
+  public CodeGenericType getType() {
 
     if (this.type == null) {
       if (this.reflectiveObject != null) {
@@ -117,7 +116,7 @@ public class BaseField extends BaseMember implements CodeField {
   public void setType(CodeGenericType type) {
 
     verifyMutalbe();
-    this.type = (BaseGenericType) type;
+    this.type = type;
   }
 
   @Override
@@ -174,7 +173,7 @@ public class BaseField extends BaseMember implements CodeField {
     doMerge(other, strategy);
     boolean override = (strategy == CodeMergeStrategy.OVERRIDE);
     if (override) {
-      this.type = (BaseGenericType) other.getType();
+      this.type = other.getType();
       setName(other.getName());
     }
     if (override || (strategy == CodeMergeStrategy.MERGE_OVERRIDE_BODY)) {

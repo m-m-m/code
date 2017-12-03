@@ -19,7 +19,6 @@ import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.base.arg.BaseExceptions;
 import net.sf.mmm.code.base.arg.BaseParameters;
 import net.sf.mmm.code.base.block.BaseBlockBody;
-import net.sf.mmm.code.base.element.BaseElementWithTypeVariables;
 import net.sf.mmm.code.base.node.BaseFunction;
 import net.sf.mmm.code.base.type.BaseTypeVariables;
 
@@ -29,7 +28,7 @@ import net.sf.mmm.code.base.type.BaseTypeVariables;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class BaseOperation extends BaseMember implements CodeOperation, BaseElementWithTypeVariables, BaseFunction {
+public abstract class BaseOperation extends BaseMember implements CodeOperation, BaseFunction {
 
   private final BaseTypeVariables typeVariables;
 

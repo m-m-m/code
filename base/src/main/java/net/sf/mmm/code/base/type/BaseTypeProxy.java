@@ -9,11 +9,10 @@ import net.sf.mmm.code.api.comment.CodeComment;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
+import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.base.annoation.BaseAnnotations;
-import net.sf.mmm.code.base.element.BaseElementImpl;
-import net.sf.mmm.code.base.element.BaseElementWithTypeVariables;
 
 /**
  * {@link BaseGenericTypeProxy} {@link #getDelegate() delegating} to a {@link BaseType} in order to change attributes.
@@ -23,9 +22,9 @@ import net.sf.mmm.code.base.element.BaseElementWithTypeVariables;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseTypeProxy extends BaseGenericTypeProxy implements CodeNodeItemCopyable<BaseElementImpl, BaseTypeProxy> {
+public class BaseTypeProxy extends BaseGenericTypeProxy implements CodeNodeItemCopyable<CodeElement, BaseTypeProxy> {
 
-  private final BaseElementImpl parent;
+  private final CodeElement parent;
 
   private BaseType type;
 
@@ -38,7 +37,7 @@ public class BaseTypeProxy extends BaseGenericTypeProxy implements CodeNodeItemC
    */
   public BaseTypeProxy(BaseType type) {
 
-    this((BaseElementImpl) type, type);
+    this(type, type);
   }
 
   /**
@@ -47,23 +46,12 @@ public class BaseTypeProxy extends BaseGenericTypeProxy implements CodeNodeItemC
    * @param parent the {@link #getParent() parent}.
    * @param type the {@link #asType() raw type}.
    */
-  public BaseTypeProxy(BaseElementImpl parent, BaseType type) {
+  public BaseTypeProxy(CodeElement parent, BaseType type) {
 
     super();
     Objects.requireNonNull(type, "type");
     this.parent = parent;
     this.type = type;
-  }
-
-  /**
-   * The constructor.
-   *
-   * @param parent the {@link #getParent() parent}.
-   * @param type the {@link #asType() raw type}.
-   */
-  public BaseTypeProxy(BaseElementWithTypeVariables parent, BaseType type) {
-
-    this((BaseElementImpl) parent, type);
   }
 
   /**
@@ -80,7 +68,7 @@ public class BaseTypeProxy extends BaseGenericTypeProxy implements CodeNodeItemC
   }
 
   @Override
-  public BaseElementImpl getParent() {
+  public CodeElement getParent() {
 
     return this.parent;
   }

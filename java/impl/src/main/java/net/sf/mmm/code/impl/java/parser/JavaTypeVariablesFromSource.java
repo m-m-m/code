@@ -8,7 +8,7 @@ import net.sf.mmm.code.api.annotation.CodeAnnotations;
 import net.sf.mmm.code.api.comment.CodeComment;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.doc.CodeDoc;
-import net.sf.mmm.code.base.element.BaseElementWithTypeVariables;
+import net.sf.mmm.code.api.element.CodeElementWithTypeVariables;
 import net.sf.mmm.code.base.member.BaseOperation;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.base.type.BaseTypeVariables;
@@ -19,7 +19,7 @@ import net.sf.mmm.code.base.type.BaseTypeVariables;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaTypeVariablesFromSource extends BaseTypeVariables implements BaseElementWithTypeVariables {
+public class JavaTypeVariablesFromSource extends BaseTypeVariables implements CodeElementWithTypeVariables {
 
   /**
    * The constructor.

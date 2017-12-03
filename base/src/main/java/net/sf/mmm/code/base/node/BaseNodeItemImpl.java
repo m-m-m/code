@@ -11,18 +11,19 @@ import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.language.CodeLanguageJava;
 import net.sf.mmm.code.api.node.CodeNode;
+import net.sf.mmm.code.api.node.CodeNodeItem;
 import net.sf.mmm.code.api.source.CodeSource;
 import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.item.BaseMutableItem;
 import net.sf.mmm.code.base.source.BaseSource;
 
 /**
- * Base implementation of {@link BaseNodeItem}.
+ * Base implementation of {@link CodeNodeItem}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class BaseNodeItemImpl extends BaseMutableItem implements BaseNodeItem {
+public abstract class BaseNodeItemImpl extends BaseMutableItem implements BaseNode, CodeNodeItem {
 
   private static final Logger LOG = LoggerFactory.getLogger(BaseNodeItemImpl.class);
 

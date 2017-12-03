@@ -84,7 +84,7 @@ public class BaseTypeVariable extends BaseTypePlaceholder implements CodeTypeVar
   }
 
   @Override
-  public BaseTypeVariables getParent() {
+  public CodeTypeVariables getParent() {
 
     return this.parent;
   }

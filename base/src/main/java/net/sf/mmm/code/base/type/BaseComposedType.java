@@ -15,6 +15,7 @@ import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeComposedType;
 import net.sf.mmm.code.api.type.CodeGenericType;
+import net.sf.mmm.code.api.type.CodeTypePlaceholder;
 import net.sf.mmm.code.base.BaseContext;
 
 /**
@@ -25,7 +26,7 @@ import net.sf.mmm.code.base.BaseContext;
  */
 public class BaseComposedType extends BaseGenericType implements CodeComposedType {
 
-  private final BaseTypePlaceholder parent;
+  private final CodeTypePlaceholder parent;
 
   private Type[] bounds;
 
@@ -36,7 +37,7 @@ public class BaseComposedType extends BaseGenericType implements CodeComposedTyp
    *
    * @param parent the {@link #getParent() parent}.
    */
-  public BaseComposedType(BaseTypePlaceholder parent) {
+  public BaseComposedType(CodeTypePlaceholder parent) {
 
     this(parent, null);
   }
@@ -47,7 +48,7 @@ public class BaseComposedType extends BaseGenericType implements CodeComposedTyp
    * @param parent the {@link #getParent() parent}.
    * @param bounds the optional bounds if created from reflective object, otherwise {@code null}.
    */
-  public BaseComposedType(BaseTypePlaceholder parent, Type[] bounds) {
+  public BaseComposedType(CodeTypePlaceholder parent, Type[] bounds) {
 
     super();
     this.parent = parent;
@@ -83,7 +84,7 @@ public class BaseComposedType extends BaseGenericType implements CodeComposedTyp
   }
 
   @Override
-  public BaseTypePlaceholder getParent() {
+  public CodeTypePlaceholder getParent() {
 
     return this.parent;
   }

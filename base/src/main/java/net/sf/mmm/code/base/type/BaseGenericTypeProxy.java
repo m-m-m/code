@@ -9,10 +9,10 @@ import net.sf.mmm.code.api.comment.CodeComment;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.language.CodeLanguage;
+import net.sf.mmm.code.api.node.CodeNodeItem;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.base.annoation.BaseAnnotations;
 import net.sf.mmm.code.base.doc.BaseDoc;
-import net.sf.mmm.code.base.node.BaseNodeItemImpl;
 
 /**
  * Base implementation of {@link BaseGenericType} for a proxy-type to a {@link #getDelegate() delegate}.
@@ -47,7 +47,7 @@ public abstract class BaseGenericTypeProxy extends BaseGenericType {
   public abstract BaseGenericType getDelegate();
 
   @Override
-  public BaseNodeItemImpl getParent() {
+  public CodeNodeItem getParent() {
 
     return getDelegate().getParent();
   }

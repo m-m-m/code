@@ -3,6 +3,7 @@
 package net.sf.mmm.code.base.element;
 
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
+import net.sf.mmm.code.api.element.CodeElementWithDeclaringType;
 
 /**
  * Base implementation of {@link BaseElement}.
@@ -10,7 +11,7 @@ import net.sf.mmm.code.api.copy.CodeCopyMapper;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class BaseElementWithDeclaringTypeImpl extends BaseElementImpl implements BaseElementWithDeclaringType {
+public abstract class BaseElementWithDeclaringTypeImpl extends BaseElementImpl implements CodeElementWithDeclaringType {
 
   /**
    * The constructor.

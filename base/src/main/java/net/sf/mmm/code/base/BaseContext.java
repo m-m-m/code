@@ -5,8 +5,8 @@ package net.sf.mmm.code.base;
 import java.lang.reflect.Type;
 
 import net.sf.mmm.code.api.CodeContext;
+import net.sf.mmm.code.api.element.CodeElementWithDeclaringType;
 import net.sf.mmm.code.api.type.CodeGenericType;
-import net.sf.mmm.code.base.element.BaseElementWithDeclaringType;
 import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.type.BaseGenericType;
 import net.sf.mmm.code.base.type.BaseType;
@@ -24,8 +24,7 @@ public interface BaseContext extends CodeContext, BaseProvider {
   BaseContext getParent();
 
   /**
-   * @return the root {@link BaseContext context} responsible for the fundamental code (from the SDK like JDK
-   *         for Java).
+   * @return the root {@link BaseContext context} responsible for the fundamental code (from the SDK like JDK for Java).
    */
   default BaseContext getRootContext() {
 
@@ -34,8 +33,7 @@ public interface BaseContext extends CodeContext, BaseProvider {
 
   /**
    * @param id the {@link BaseSource#getId() ID} of the requested source.
-   * @return the existing {@link BaseSource} for the given {@link BaseSource#getId() ID} or {@code null} if
-   *         not found.
+   * @return the existing {@link BaseSource} for the given {@link BaseSource#getId() ID} or {@code null} if not found.
    */
   BaseSource getSource(String id);
 
@@ -56,10 +54,10 @@ public interface BaseContext extends CodeContext, BaseProvider {
 
   /**
    * @param type the {@link Type} to get as {@link CodeGenericType}.
-   * @param declaringElement the owning {@link BaseElementWithDeclaringType} declaring the {@link Type}.
+   * @param declaringElement the owning {@link CodeElementWithDeclaringType} declaring the {@link Type}.
    * @return the existing or otherwise newly created {@link CodeGenericType}.
    */
-  BaseGenericType getType(Type type, BaseElementWithDeclaringType declaringElement);
+  BaseGenericType getType(Type type, CodeElementWithDeclaringType declaringElement);
 
   /**
    * @param javaType the {@link BaseType} that might be {@link BaseType#isPrimitive() primitive}.

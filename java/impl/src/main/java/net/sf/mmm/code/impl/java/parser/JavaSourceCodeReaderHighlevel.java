@@ -14,11 +14,14 @@ import net.sf.mmm.code.api.annotation.CodeAnnotations;
 import net.sf.mmm.code.api.arg.CodeParameter;
 import net.sf.mmm.code.api.block.CodeBlockInitializer;
 import net.sf.mmm.code.api.comment.CodeComment;
+import net.sf.mmm.code.api.element.CodeElement;
+import net.sf.mmm.code.api.element.CodeElementWithTypeVariables;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.api.statement.CodeStatement;
+import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeTypeCategory;
 import net.sf.mmm.code.api.type.CodeTypePlaceholder;
 import net.sf.mmm.code.base.BaseFile;
@@ -28,7 +31,6 @@ import net.sf.mmm.code.base.block.BaseBlockBody;
 import net.sf.mmm.code.base.block.BaseBlockInitializer;
 import net.sf.mmm.code.base.doc.BaseDocParser;
 import net.sf.mmm.code.base.element.BaseElement;
-import net.sf.mmm.code.base.element.BaseElementWithTypeVariables;
 import net.sf.mmm.code.base.member.BaseConstructor;
 import net.sf.mmm.code.base.member.BaseConstructors;
 import net.sf.mmm.code.base.member.BaseField;
@@ -255,11 +257,11 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
       constructors.add(constructor);
       member = constructor;
     } else { // field or method
-      BaseElementWithTypeVariables element = type;
+      CodeElementWithTypeVariables element = type;
       if (typeVariables != null) {
         element = typeVariables;
       }
-      BaseGenericType memberType = parseGenericType(name, element, true, true, false);
+      CodeGenericType memberType = parseGenericType(name, element, true, true, false);
       consume();
       name = parseIdentifier();
       if (name == null) {
@@ -424,7 +426,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     return count;
   }
 
-  private JavaTypeVariablesFromSource parseTypeVariables(BaseElementWithTypeVariables element, BaseElement owner) {
+  private JavaTypeVariablesFromSource parseTypeVariables(CodeElementWithTypeVariables element, BaseElement owner) {
 
     JavaTypeVariablesFromSource result = null;
     if (expect('<')) {
@@ -433,7 +435,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
         result = new JavaTypeVariablesFromSource();
         typeVariables = result;
       } else {
-        typeVariables = element.getTypeParameters();
+        typeVariables = (BaseTypeVariables) element.getTypeParameters();
       }
       boolean todo = true;
       while (todo) {
@@ -464,7 +466,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     return result;
   }
 
-  private void parseTypeParameters(JavaGenericTypeFromSource type, BaseElementWithTypeVariables element, boolean withTypeParams) {
+  private void parseTypeParameters(JavaGenericTypeFromSource type, CodeElementWithTypeVariables element, boolean withTypeParams) {
 
     if (expect('<')) {
       type.ensureTypeParameters();
@@ -524,7 +526,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     }
   }
 
-  private BaseGenericType parseGenericType(BaseElementWithTypeVariables element, boolean withTypeParams, boolean withArray, boolean withComposedTypes) {
+  private BaseGenericType parseGenericType(CodeElementWithTypeVariables element, boolean withTypeParams, boolean withArray, boolean withComposedTypes) {
 
     String typeName = parseQName();
     if (typeName == null) {
@@ -537,7 +539,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     return parseGenericType(typeName, element, withTypeParams, withArray, withComposedTypes);
   }
 
-  private BaseGenericType parseGenericType(String typeName, BaseElementWithTypeVariables element, boolean withTypeParams, boolean withArray,
+  private BaseGenericType parseGenericType(String typeName, CodeElementWithTypeVariables element, boolean withTypeParams, boolean withArray,
       boolean withComposedTypes) {
 
     JavaGenericTypeFromSource type = new JavaGenericTypeFromSource(element, typeName, this.file);
@@ -580,7 +582,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     return type;
   }
 
-  private boolean parseBound(BaseTypeVariable typeVariable, BaseElementWithTypeVariables element) {
+  private boolean parseBound(BaseTypeVariable typeVariable, CodeElementWithTypeVariables element) {
 
     String keyword = "extends";
     if (expectStrict(keyword)) {
@@ -597,7 +599,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     return false;
   }
 
-  private void requireWhitespace(BaseElement element, String keyword, Object context) {
+  private void requireWhitespace(CodeElement element, String keyword, Object context) {
 
     int count = skipWhile(CharFilter.WHITESPACE_FILTER);
     if (count == 0) {
@@ -607,7 +609,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     }
   }
 
-  private boolean parseBound(JavaGenericTypeFromSource type, boolean superBound, BaseElementWithTypeVariables element, boolean withComposedTypes) {
+  private boolean parseBound(JavaGenericTypeFromSource type, boolean superBound, CodeElementWithTypeVariables element, boolean withComposedTypes) {
 
     String keyword;
     if (superBound) {
