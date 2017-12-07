@@ -3,6 +3,7 @@
 package net.sf.mmm.code.base.source;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -63,8 +64,8 @@ public class BaseSourceImpl extends BaseProviderImpl implements BaseSource {
   /**
    * The constructor.
    *
-   * @param reflectiveObject the {@link #getReflectiveObject() reflective object}. May not be {@code null}
-   *        otherwise use different constructor.
+   * @param reflectiveObject the {@link #getReflectiveObject() reflective object}. May not be {@code null} otherwise use
+   *        different constructor.
    * @param descriptor the {@link #getDescriptor() descriptor}.
    * @param loader the {@link #getLoader() loader}.
    */
@@ -77,8 +78,8 @@ public class BaseSourceImpl extends BaseProviderImpl implements BaseSource {
   /**
    * The constructor.
    *
-   * @param reflectiveObject the {@link #getReflectiveObject() reflective object}. May not be {@code null}
-   *        otherwise use different constructor.
+   * @param reflectiveObject the {@link #getReflectiveObject() reflective object}. May not be {@code null} otherwise use
+   *        different constructor.
    * @param byteCodeLocation the {@link #getByteCodeLocation() byte code location}.
    * @param sourceCodeLocation the {@link #getSourceCodeLocation() source code location}.
    * @param id the {@link #getId() ID}.
@@ -124,8 +125,7 @@ public class BaseSourceImpl extends BaseProviderImpl implements BaseSource {
   }
 
   /**
-   * @param location the {@link File} pointing to the location of the code that shall be used as
-   *        {@link #getId() ID}.
+   * @param location the {@link File} pointing to the location of the code that shall be used as {@link #getId() ID}.
    * @return the normalized {@link #getId() ID}.
    */
   public static String getNormalizedId(File location) {
@@ -134,8 +134,7 @@ public class BaseSourceImpl extends BaseProviderImpl implements BaseSource {
   }
 
   /**
-   * @param source the {@link CodeSource} with to the location of the code that shall be used as
-   *        {@link #getId() ID}.
+   * @param source the {@link CodeSource} with to the location of the code that shall be used as {@link #getId() ID}.
    * @return the normalized {@link #getId() ID}.
    */
   public static String getNormalizedId(CodeSource source) {
@@ -251,8 +250,7 @@ public class BaseSourceImpl extends BaseProviderImpl implements BaseSource {
   }
 
   /**
-   * @return the lazily created {@link #getSourceCodeLocation() source code location}. Method will be called
-   *         only once.
+   * @return the lazily created {@link #getSourceCodeLocation() source code location}. Method will be called only once.
    */
   protected File createSourceCodeLocation() {
 
@@ -311,6 +309,12 @@ public class BaseSourceImpl extends BaseProviderImpl implements BaseSource {
   public String toString() {
 
     return getId();
+  }
+
+  @Override
+  public void write(Path targetFolder) {
+
+    getRootPackage().write(targetFolder);
   }
 
 }

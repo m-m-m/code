@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import net.sf.mmm.code.api.CodeFile;
+import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.expression.CodeVariable;
 import net.sf.mmm.code.api.expression.CodeVariableThis;
 import net.sf.mmm.code.api.item.CodeItem;
@@ -25,6 +27,12 @@ public class CodeLanguageJava extends AbstractCodeLanguage {
 
   /** The {@link #getLanguageName() language name}. */
   public static final String LANGUAGE_NAME_JAVA = "Java";
+
+  /** {@link #getFileFilename(CodeFile) Type extension} for Java. */
+  public static final String TYPE_EXTENSION_JAVA = ".java";
+
+  /** @see #getPackageFilename(CodePackage) */
+  public static final String PACKAGE_INFO_JAVA = "package-info.java";
 
   static final Pattern NAME_PATTERN = Pattern.compile("[\\$_\\w]+");
 
@@ -109,6 +117,18 @@ public class CodeLanguageJava extends AbstractCodeLanguage {
   protected boolean isRevervedKeyword(String name, CodeItem item) {
 
     return REVERVED_NAMES.contains(name);
+  }
+
+  @Override
+  public String getPackageFilename(CodePackage pkg) {
+
+    return PACKAGE_INFO_JAVA;
+  }
+
+  @Override
+  public String getFileFilename(CodeFile file) {
+
+    return file.getSimpleName() + TYPE_EXTENSION_JAVA;
   }
 
 }

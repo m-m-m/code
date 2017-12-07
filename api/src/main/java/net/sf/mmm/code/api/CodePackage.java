@@ -5,6 +5,7 @@ package net.sf.mmm.code.api;
 import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.element.CodeElement;
 import net.sf.mmm.code.api.node.CodeContainer;
+import net.sf.mmm.code.api.node.CodeNodeWithFileWriting;
 import net.sf.mmm.code.api.node.CodeNode;
 
 /**
@@ -13,7 +14,7 @@ import net.sf.mmm.code.api.node.CodeNode;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodePackage extends CodePathElement, CodeContainer, CodeNodeItemCopyable<CodeNode, CodePackage> {
+public interface CodePackage extends CodePathElement, CodeContainer, CodeNodeWithFileWriting, CodeNodeItemCopyable<CodeNode, CodePackage> {
 
   /**
    * The {@link #getParentPackage() parent package} or the {@link #getSource() source} if this is a {@link #isRoot()

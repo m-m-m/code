@@ -65,4 +65,13 @@ public interface BaseContext extends CodeContext, BaseProvider {
    */
   BaseType getNonPrimitiveType(BaseType javaType);
 
+  /**
+   * @return the file encoding used to {@link net.sf.mmm.code.api.node.CodeNodeWithFileWriting#write(java.nio.file.Path)
+   *         write files}.
+   */
+  default String getFileEncoding() {
+
+    return "UTF-8";
+  }
+
 }

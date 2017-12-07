@@ -10,7 +10,7 @@ import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.comment.BaseSingleLineComment;
 
 /**
- * Abstract super-class for {@link BaseContextImpl}.
+ * Abstract super-class for tests based on {@link TestContext}.
  */
 @SuppressWarnings("javadoc")
 public abstract class BaseContextTest extends Assertions {

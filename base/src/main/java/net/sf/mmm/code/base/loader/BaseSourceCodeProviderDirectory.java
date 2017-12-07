@@ -6,6 +6,8 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import net.sf.mmm.code.api.language.CodeLanguageJava;
+
 /**
  * Base implementation of {@link BaseSourceCodeProvider} for a source-code directory in the filesystem.
  *
@@ -19,19 +21,19 @@ public class BaseSourceCodeProviderDirectory extends BaseSourceCodeProvider {
   /**
    * The constructor.
    *
-   * @param sourceFolder the {@link File} pointing to the top-level source-code folder (where the root/default
-   *        package is located).
+   * @param sourceFolder the {@link File} pointing to the top-level source-code folder (where the root/default package
+   *        is located).
    */
   public BaseSourceCodeProviderDirectory(File sourceFolder) {
 
-    this(sourceFolder, TYPE_EXTENSION_JAVA);
+    this(sourceFolder, CodeLanguageJava.TYPE_EXTENSION_JAVA);
   }
 
   /**
    * The constructor.
    *
-   * @param sourceFolder the {@link File} pointing to the top-level source-code folder (where the root/default
-   *        package is located).
+   * @param sourceFolder the {@link File} pointing to the top-level source-code folder (where the root/default package
+   *        is located).
    * @param typeExtension the {@link #getTypeExtension() type extension}.
    */
   public BaseSourceCodeProviderDirectory(File sourceFolder, String typeExtension) {

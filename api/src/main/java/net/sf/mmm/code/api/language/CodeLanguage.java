@@ -4,10 +4,13 @@ package net.sf.mmm.code.api.language;
 
 import java.io.IOException;
 
+import net.sf.mmm.code.api.CodeFile;
+import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.expression.CodeVariable;
 import net.sf.mmm.code.api.item.CodeItemWithName;
 import net.sf.mmm.code.api.item.CodeItemWithQualifiedName;
 import net.sf.mmm.code.api.statement.CodeLocalVariable;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.api.type.CodeTypeCategory;
 
 /**
@@ -58,9 +61,9 @@ public interface CodeLanguage {
 
   /**
    * @return the {@link String} to add followed by the {@link net.sf.mmm.code.api.arg.CodeReturn} after the
-   *         {@link net.sf.mmm.code.api.member.CodeMethod#getParameters() method parameters} or {@code null}
-   *         if the {@link net.sf.mmm.code.api.arg.CodeReturn} shall be written with
-   *         {@link #getMethodReturnStart()}. E.g. ": " for TypeScript or Kotlin.
+   *         {@link net.sf.mmm.code.api.member.CodeMethod#getParameters() method parameters} or {@code null} if the
+   *         {@link net.sf.mmm.code.api.arg.CodeReturn} shall be written with {@link #getMethodReturnStart()}. E.g. ": "
+   *         for TypeScript or Kotlin.
    */
   default String getMethodReturnEnd() {
 
@@ -98,14 +101,13 @@ public interface CodeLanguage {
   }
 
   /**
-   * @return the {@link String} used as suffix to terminate a
-   *         {@link net.sf.mmm.code.api.statement.CodeAtomicStatement}. E.g. ";".
+   * @return the {@link String} used as suffix to terminate a {@link net.sf.mmm.code.api.statement.CodeAtomicStatement}.
+   *         E.g. ";".
    */
   String getStatementTerminator();
 
   /**
-   * @return the {@link String} to signal the start of an
-   *         {@link net.sf.mmm.code.api.annotation.CodeAnnotation}.
+   * @return the {@link String} to signal the start of an {@link net.sf.mmm.code.api.annotation.CodeAnnotation}.
    */
   default String getAnnotationStart() {
 
@@ -113,10 +115,9 @@ public interface CodeLanguage {
   }
 
   /**
-   * @return the {@link String} to signal the end of an empty
-   *         {@link net.sf.mmm.code.api.annotation.CodeAnnotation}. Here empty means that the
-   *         {@link net.sf.mmm.code.api.annotation.CodeAnnotation#getParameters() parameters} are
-   *         {@link java.util.Map#isEmpty() empty}. E.g. for TypeScript even an empty annotation has to be
+   * @return the {@link String} to signal the end of an empty {@link net.sf.mmm.code.api.annotation.CodeAnnotation}.
+   *         Here empty means that the {@link net.sf.mmm.code.api.annotation.CodeAnnotation#getParameters() parameters}
+   *         are {@link java.util.Map#isEmpty() empty}. E.g. for TypeScript even an empty annotation has to be
    *         terminated with "()".
    */
   default String getAnnotationEndIfEmpty() {
@@ -147,4 +148,16 @@ public interface CodeLanguage {
    * @throws RuntimeException if the name is invalid.
    */
   String verifySimpleName(CodeItemWithQualifiedName item, String simpleName);
+
+  /**
+   * @param pkg the {@link CodePackage} to be read or write.
+   * @return the filename for the given {@link CodePackage}.
+   */
+  String getPackageFilename(CodePackage pkg);
+
+  /**
+   * @param file the {@link CodeType} to be read or write.
+   * @return the filename for the given {@link CodeType}.
+   */
+  String getFileFilename(CodeFile file);
 }

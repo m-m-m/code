@@ -31,37 +31,36 @@ public interface CodeContext extends CodeProvider {
   CodeType getRootType();
 
   /**
-   * @return the unbounded instance of {@link CodeTypeWildcard} (that has no
-   *         {@link CodeTypeWildcard#getBound() bound}). This is typically represented by the type "{@code ?}"
-   *         (e.g. in {@code List<?>}).
+   * @return the unbounded instance of {@link CodeTypeWildcard} (that has no {@link CodeTypeWildcard#getBound() bound}).
+   *         This is typically represented by the type "{@code ?}" (e.g. in {@code List<?>}).
    */
   CodeTypeWildcard getUnboundedWildcard();
 
   /**
-   * @return the root {@link CodeType#isEnumeration() enumeration} type (for Java it represents {@link Enum}
-   *         for TypeScript {@code any}).
+   * @return the root {@link CodeType#isEnumeration() enumeration} type (for Java it represents {@link Enum} for
+   *         TypeScript {@code any}).
    */
   CodeType getRootEnumerationType();
 
   /**
-   * @return the {@link CodeType#isVoid() void} {@link CodeType} for a default
-   *         {@link net.sf.mmm.code.api.arg.CodeReturn return}.
+   * @return the {@link CodeType#isVoid() void} {@link CodeType} for a default {@link net.sf.mmm.code.api.arg.CodeReturn
+   *         return}.
    */
   CodeType getVoidType();
 
   /**
-   * @return the top-level {@link CodeType#isException() exception} {@link CodeType}. All sub-types are
-   *         considered as {@link CodeType#isException() exceptions}. For Java this is {@link Throwable}.
+   * @return the top-level {@link CodeType#isException() exception} {@link CodeType}. All sub-types are considered as
+   *         {@link CodeType#isException() exceptions}. For Java this is {@link Throwable}.
    */
   CodeType getRootExceptionType();
 
   /**
    * @param simpleName the {@link CodeType#getSimpleName() simple name} of the {@link CodeType} to resolve.
-   * @param owningType the owning {@link CodeType} where the {@code simpleName} origins from. It is used as
-   *        context for the resolution.
+   * @param owningType the owning {@link CodeType} where the {@code simpleName} origins from. It is used as context for
+   *        the resolution.
    * @param omitStandardPackages {@code true} to omit standard package(s) (for
-   *        {@link #getQualifiedNameForStandardType(String, boolean) standard types}), {@code false} otherwise
-   *        (to enforce {@link CodeType#getQualifiedName() qualified name} also for standard types).
+   *        {@link #getQualifiedNameForStandardType(String, boolean) standard types}), {@code false} otherwise (to
+   *        enforce {@link CodeType#getQualifiedName() qualified name} also for standard types).
    * @return the resolved {@link CodeType#getQualifiedName() qualified name} corresponding to the given
    *         {@code simpleName}.
    */
@@ -76,11 +75,11 @@ public interface CodeContext extends CodeProvider {
 
   /**
    * @param simpleName the {@link CodeType#getSimpleName() simple name} of the {@link CodeType} to resolve.
-   * @param file the owning {@link CodeFile} where the {@code simpleName} origins from. It is used as context
-   *        for the resolution.
+   * @param file the owning {@link CodeFile} where the {@code simpleName} origins from. It is used as context for the
+   *        resolution.
    * @param omitStandardPackages {@code true} to omit standard package(s) (for
-   *        {@link #getQualifiedNameForStandardType(String, boolean) standard types}), {@code false} otherwise
-   *        (to enforce {@link CodeType#getQualifiedName() qualified name} also for standard types).
+   *        {@link #getQualifiedNameForStandardType(String, boolean) standard types}), {@code false} otherwise (to
+   *        enforce {@link CodeType#getQualifiedName() qualified name} also for standard types).
    * @return the resolved {@link CodeType#getQualifiedName() qualified name} corresponding to the given
    *         {@code simpleName}.
    */
@@ -110,10 +109,10 @@ public interface CodeContext extends CodeProvider {
   /**
    * @param simpleName the {@link CodeType#getSimpleName() simple name} of the {@link CodeType}.
    * @param omitStandardPackages {@code true} to omit standard package(s) (for
-   *        {@link #getQualifiedNameForStandardType(String, boolean) standard types}), {@code false} otherwise
-   *        (to enforce {@link CodeType#getQualifiedName() qualified name} also for standard types).
-   * @return the corresponding {@link CodeType#getQualifiedName() qualified name} or {@code null} if no
-   *         standard type (import is required).
+   *        {@link #getQualifiedNameForStandardType(String, boolean) standard types}), {@code false} otherwise (to
+   *        enforce {@link CodeType#getQualifiedName() qualified name} also for standard types).
+   * @return the corresponding {@link CodeType#getQualifiedName() qualified name} or {@code null} if no standard type
+   *         (import is required).
    */
   public String getQualifiedNameForStandardType(String simpleName, boolean omitStandardPackages);
 

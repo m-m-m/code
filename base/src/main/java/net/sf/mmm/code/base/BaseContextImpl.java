@@ -2,6 +2,9 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.base;
 
+import java.nio.file.Path;
+
+import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.source.BaseSourceImpl;
 
@@ -44,6 +47,14 @@ public abstract class BaseContextImpl extends BaseProviderImpl implements BaseCo
 
     this.source.close();
     this.source = null;
+  }
+
+  /**
+   * @return the encoding used by {@link #write(CodePackage, Path)}.
+   */
+  protected String getEncoding() {
+
+    return "UTF-8";
   }
 
 }

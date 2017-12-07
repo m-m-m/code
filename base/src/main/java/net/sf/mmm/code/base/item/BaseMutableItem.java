@@ -2,6 +2,13 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.base.item;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,6 +25,8 @@ import net.sf.mmm.code.api.item.CodeMutableItem;
 import net.sf.mmm.code.api.node.CodeNode;
 import net.sf.mmm.code.api.node.CodeNodeItem;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
+import net.sf.mmm.util.io.api.IoMode;
+import net.sf.mmm.util.io.api.RuntimeIoException;
 
 /**
  * Base implementation of {@link CodeMutableItem}.
@@ -318,6 +327,28 @@ public abstract class BaseMutableItem extends BaseItem implements CodeMutableIte
     CodeCopyMapperDefault mapper = new CodeCopyMapperDefault();
     mapper.registerMapping(node.getParent(), parent);
     return node.copy(mapper);
+  }
+
+  /**
+   * @see net.sf.mmm.code.api.node.CodeNodeWithFileWriting#write(Path)
+   *
+   * @param item the {@link CodeItem} to {@link CodeItem#write(Appendable) write} to a new or existing file.
+   * @param targetFolder the {@link Path} pointing to the existing folder where to write to.
+   * @param filename the name of the file to write.
+   * @param encoding the encoding to use (typically UTF-8).
+   */
+  protected void writeItem(CodeItem item, Path targetFolder, String filename, String encoding) {
+
+    try {
+      Path itemPath = targetFolder.resolve(filename);
+      try (OutputStream out = Files.newOutputStream(itemPath, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
+        Writer writer = new OutputStreamWriter(out, encoding);
+        item.write(writer);
+        writer.close();
+      }
+    } catch (IOException e) {
+      throw new RuntimeIoException(e, IoMode.WRITE);
+    }
   }
 
 }

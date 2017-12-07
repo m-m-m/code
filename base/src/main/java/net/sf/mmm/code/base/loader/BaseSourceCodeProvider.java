@@ -17,6 +17,8 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.mmm.code.api.language.CodeLanguageJava;
+
 /**
  * Abstract base implementation of {@link SourceCodeProvider}.
  *
@@ -27,11 +29,6 @@ public abstract class BaseSourceCodeProvider implements SourceCodeProvider {
 
   private static final Logger LOG = LoggerFactory.getLogger(BaseSourceCodeProvider.class);
 
-  /** {@link #getTypeExtension() Type extension} for Java. */
-  protected static final String TYPE_EXTENSION_JAVA = ".java";
-
-  private static final String PACKAGE_INFO_JAVA = "package-info.java";
-
   private final String typeExtension;
 
   /**
@@ -39,7 +36,7 @@ public abstract class BaseSourceCodeProvider implements SourceCodeProvider {
    */
   public BaseSourceCodeProvider() {
 
-    this(TYPE_EXTENSION_JAVA);
+    this(CodeLanguageJava.TYPE_EXTENSION_JAVA);
   }
 
   /**
@@ -55,8 +52,8 @@ public abstract class BaseSourceCodeProvider implements SourceCodeProvider {
   }
 
   /**
-   * @return the extension of a file containing the source-code of a
-   *         {@link net.sf.mmm.code.api.type.CodeType}. Examples are ".java", ".ts", ".kt", ".cs", etc.
+   * @return the extension of a file containing the source-code of a {@link net.sf.mmm.code.api.type.CodeType}. Examples
+   *         are ".java", ".ts", ".kt", ".cs", etc.
    */
   public String getTypeExtension() {
 
@@ -155,10 +152,9 @@ public abstract class BaseSourceCodeProvider implements SourceCodeProvider {
   }
 
   /**
-   * @param qualifiedName the {@link net.sf.mmm.code.api.item.CodeItemWithQualifiedName#getQualifiedName()
-   *        qualified name}.
-   * @return the filesystem path of the {@link net.sf.mmm.code.api.type.CodeType} for the given
-   *         {@code qualifiedName}.
+   * @param qualifiedName the {@link net.sf.mmm.code.api.item.CodeItemWithQualifiedName#getQualifiedName() qualified
+   *        name}.
+   * @return the filesystem path of the {@link net.sf.mmm.code.api.type.CodeType} for the given {@code qualifiedName}.
    */
   protected String qualifiedName2TypePath(String qualifiedName) {
 
@@ -173,7 +169,7 @@ public abstract class BaseSourceCodeProvider implements SourceCodeProvider {
    */
   protected String filename2TypeSimpleName(String filename) {
 
-    if (PACKAGE_INFO_JAVA.equals(filename)) {
+    if (CodeLanguageJava.PACKAGE_INFO_JAVA.equals(filename)) {
       return null;
     }
     if (filename.endsWith(this.typeExtension)) {
@@ -183,19 +179,18 @@ public abstract class BaseSourceCodeProvider implements SourceCodeProvider {
   }
 
   /**
-   * @param qualifiedName the {@link net.sf.mmm.code.api.item.CodeItemWithQualifiedName#getQualifiedName()
-   *        qualified name}.
-   * @return the filesystem path of the {@link net.sf.mmm.code.api.type.CodeType} for the given
-   *         {@code qualifiedName}.
+   * @param qualifiedName the {@link net.sf.mmm.code.api.item.CodeItemWithQualifiedName#getQualifiedName() qualified
+   *        name}.
+   * @return the filesystem path of the {@link net.sf.mmm.code.api.type.CodeType} for the given {@code qualifiedName}.
    */
   protected String qualifiedName2PackagePath(String qualifiedName) {
 
-    return qualifiedName2Path(qualifiedName) + "/" + PACKAGE_INFO_JAVA;
+    return qualifiedName2Path(qualifiedName) + "/" + CodeLanguageJava.PACKAGE_INFO_JAVA;
   }
 
   /**
-   * @param qualifiedName the {@link net.sf.mmm.code.api.item.CodeItemWithQualifiedName#getQualifiedName()
-   *        qualified name}.
+   * @param qualifiedName the {@link net.sf.mmm.code.api.item.CodeItemWithQualifiedName#getQualifiedName() qualified
+   *        name}.
    * @return the filesystem path for the given {@code qualifiedName}.
    */
   protected String qualifiedName2Path(String qualifiedName) {
@@ -206,20 +201,20 @@ public abstract class BaseSourceCodeProvider implements SourceCodeProvider {
   /**
    * @param sourceCodeLocation the {@link File} pointing to the location of the source code. See
    *        {@link net.sf.mmm.code.api.source.CodeSource#getSourceCodeLocation()}.
-   * @return the {@link BaseSourceCodeProvider} or {@code null} if the give {@link File} is {@code null} or
-   *         does not {@link File#exists() exist}.
+   * @return the {@link BaseSourceCodeProvider} or {@code null} if the give {@link File} is {@code null} or does not
+   *         {@link File#exists() exist}.
    */
   public static BaseSourceCodeProvider of(File sourceCodeLocation) {
 
-    return of(sourceCodeLocation, TYPE_EXTENSION_JAVA);
+    return of(sourceCodeLocation, CodeLanguageJava.TYPE_EXTENSION_JAVA);
   }
 
   /**
    * @param sourceCodeLocation the {@link File} pointing to the location of the source code. See
    *        {@link net.sf.mmm.code.api.source.CodeSource#getSourceCodeLocation()}.
    * @param typeExtension the {@link #getTypeExtension() type extension}.
-   * @return the {@link BaseSourceCodeProvider} or {@code null} if the give {@link File} is {@code null} or
-   *         does not {@link File#exists() exist}.
+   * @return the {@link BaseSourceCodeProvider} or {@code null} if the give {@link File} is {@code null} or does not
+   *         {@link File#exists() exist}.
    */
   public static BaseSourceCodeProvider of(File sourceCodeLocation, String typeExtension) {
 

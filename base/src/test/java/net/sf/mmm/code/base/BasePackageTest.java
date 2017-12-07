@@ -102,7 +102,7 @@ public class BasePackageTest extends BaseContextTest {
     assertThat(pkg.getContext()).isSameAs(context);
     assertThat(pkg.isImmutable()).isFalse();
     verifyPackageEmpty(pkg, true);
-    assertThat(pkg.getSourceCode()).isEqualTo("package mydomain;\n\n");
+    assertThat(pkg.getSourceCode()).isEqualTo("package mydomain;\n");
     assertThat(pkg.toString()).isEqualTo("package mydomain;");
   }
 

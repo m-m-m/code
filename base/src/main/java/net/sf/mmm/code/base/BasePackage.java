@@ -3,11 +3,14 @@
 package net.sf.mmm.code.base;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.mmm.code.api.CodeFile;
 import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.CodePathElement;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
@@ -16,6 +19,8 @@ import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.language.CodeLanguageJava;
 import net.sf.mmm.code.api.node.CodeContainer;
 import net.sf.mmm.code.base.source.BaseSource;
+import net.sf.mmm.util.io.api.IoMode;
+import net.sf.mmm.util.io.api.RuntimeIoException;
 
 /**
  * Base implementation of {@link CodePackage}.
@@ -259,15 +264,46 @@ public final class BasePackage extends BasePathElement implements CodePackage {
     if (isRoot()) {
       return;
     }
-    super.doWrite(sink, newline, defaultIndent, currentIndent, language);
-    if (currentIndent != null) {
-      sink.append(currentIndent);
+    if (defaultIndent != null) {
+      super.doWrite(sink, newline, defaultIndent, currentIndent, language);
     }
+    sink.append(currentIndent);
     sink.append("package ");
     sink.append(getQualifiedName());
     sink.append(language.getStatementTerminator());
     sink.append(newline);
-    sink.append(newline);
+    if (defaultIndent == null) {
+      sink.append(newline);
+    }
+  }
+
+  @Override
+  public void write(Path targetFolder) {
+
+    try {
+      Files.createDirectories(targetFolder);
+      CodeLanguage language = getLanguage();
+      String encoding = getContext().getFileEncoding();
+
+      if (!getAnnotations().isEmpty() || !getDoc().isEmpty()) {
+        String filename = language.getPackageFilename(this);
+        writeItem(this, targetFolder, filename, encoding);
+      }
+
+      for (CodePathElement child : getChildren().getDeclared()) {
+        if (child.isFile()) {
+          CodeFile file = (CodeFile) child;
+          String filename = language.getFileFilename(file);
+          writeItem(file, targetFolder, filename, encoding);
+        } else {
+          CodePackage childPkg = (CodePackage) child;
+          childPkg.write(targetFolder.resolve(childPkg.getSimpleName()));
+        }
+      }
+
+    } catch (IOException e) {
+      throw new RuntimeIoException(e, IoMode.WRITE);
+    }
   }
 
 }
