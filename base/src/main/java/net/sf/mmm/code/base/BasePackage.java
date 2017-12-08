@@ -3,6 +3,7 @@
 package net.sf.mmm.code.base;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.Supplier;
@@ -280,10 +281,15 @@ public final class BasePackage extends BasePathElement implements CodePackage {
   @Override
   public void write(Path targetFolder) {
 
+    write(targetFolder, getDefaultEncoding());
+  }
+
+  @Override
+  public void write(Path targetFolder, Charset encoding) {
+
     try {
       Files.createDirectories(targetFolder);
       CodeLanguage language = getLanguage();
-      String encoding = getContext().getFileEncoding();
 
       if (!getAnnotations().isEmpty() || !getDoc().isEmpty()) {
         String filename = language.getPackageFilename(this);
@@ -293,14 +299,12 @@ public final class BasePackage extends BasePathElement implements CodePackage {
       for (CodePathElement child : getChildren().getDeclared()) {
         if (child.isFile()) {
           CodeFile file = (CodeFile) child;
-          String filename = language.getFileFilename(file);
-          writeItem(file, targetFolder, filename, encoding);
+          file.write(targetFolder, encoding);
         } else {
           CodePackage childPkg = (CodePackage) child;
-          childPkg.write(targetFolder.resolve(childPkg.getSimpleName()));
+          childPkg.write(targetFolder.resolve(childPkg.getSimpleName()), encoding);
         }
       }
-
     } catch (IOException e) {
       throw new RuntimeIoException(e, IoMode.WRITE);
     }

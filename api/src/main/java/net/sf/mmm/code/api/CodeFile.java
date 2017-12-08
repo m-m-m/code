@@ -8,6 +8,7 @@ import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.imports.CodeImport;
 import net.sf.mmm.code.api.imports.CodeImports;
+import net.sf.mmm.code.api.node.CodeNodeWithFileWriting;
 import net.sf.mmm.code.api.type.CodeType;
 
 /**
@@ -16,7 +17,7 @@ import net.sf.mmm.code.api.type.CodeType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract interface CodeFile extends CodePathElement, CodeNodeItemCopyable<CodePackage, CodeFile> {
+public abstract interface CodeFile extends CodePathElement, CodeNodeWithFileWriting, CodeNodeItemCopyable<CodePackage, CodeFile> {
 
   /**
    * @return the file extension including the dot (e.g. ".java").

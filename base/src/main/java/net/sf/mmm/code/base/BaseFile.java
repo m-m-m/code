@@ -3,6 +3,8 @@
 package net.sf.mmm.code.base;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -253,6 +255,20 @@ public final class BaseFile extends BasePathElement implements CodeFile {
         type.write(sink, newline, defaultIndent, currentIndent);
       }
     }
+  }
+
+  @Override
+  public void write(Path targetFolder) {
+
+    write(targetFolder, getDefaultEncoding());
+  }
+
+  @Override
+  public void write(Path targetFolder, Charset encoding) {
+
+    CodeLanguage language = getLanguage();
+    String filename = language.getFileFilename(this);
+    writeItem(this, targetFolder, filename, encoding);
   }
 
 }

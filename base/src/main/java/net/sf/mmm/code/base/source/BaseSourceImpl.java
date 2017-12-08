@@ -3,6 +3,7 @@
 package net.sf.mmm.code.base.source;
 
 import java.io.File;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.security.CodeSource;
 import java.util.ArrayList;
@@ -315,6 +316,12 @@ public class BaseSourceImpl extends BaseProviderImpl implements BaseSource {
   public void write(Path targetFolder) {
 
     getRootPackage().write(targetFolder);
+  }
+
+  @Override
+  public void write(Path targetFolder, Charset encoding) {
+
+    getRootPackage().write(targetFolder, encoding);
   }
 
 }

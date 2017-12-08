@@ -7,8 +7,8 @@ import net.sf.mmm.code.api.node.CodeNodeItem;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
- * {@link CodeGenericType} representing a placeholder for a {@link CodeGenericType generic} {@link CodeType
- * type}. It will either be a {@link CodeTypeVariable} or a {@link CodeTypeWildcard}.
+ * {@link CodeGenericType} representing a placeholder for a {@link CodeGenericType generic} {@link CodeType type}. It
+ * will either be a {@link CodeTypeVariable} or a {@link CodeTypeWildcard}.
  *
  * @see #isWildcard()
  * @see CodeTypeVariable
@@ -32,10 +32,9 @@ public abstract interface CodeTypePlaceholder extends CodeGenericType, CodeEleme
   boolean isExtends();
 
   /**
-   * @return {@code true} if this type placeholder represents the given {@link #getBound() bound} itself or is
-   *         a super-type of it (e.g. "{@code ? super String}"), {@code false} otherwise (if
-   *         {@link #isExtends() extends}). So far only {@link #isWildcard() wildcards} can return
-   *         {@code true} here.
+   * @return {@code true} if this type placeholder represents the given {@link #getBound() bound} itself or is a
+   *         super-type of it (e.g. "{@code ? super String}"), {@code false} otherwise (if {@link #isExtends()
+   *         extends}). So far only {@link #isWildcard() wildcards} can return {@code true} here.
    */
   default boolean isSuper() {
 
@@ -43,14 +42,14 @@ public abstract interface CodeTypePlaceholder extends CodeGenericType, CodeEleme
   }
 
   /**
-   * @return {@code true} if this is a {@link CodeTypeWildcard} (e.g. "{@code ? super String}"), {@code false}
-   *         if a {@link CodeTypeVariable} (e.g. "{@code T extends Number}").
+   * @return {@code true} if this is a {@link CodeTypeWildcard} (e.g. "{@code ? super String}"), {@code false} if a
+   *         {@link CodeTypeVariable} (e.g. "{@code T extends Number}").
    */
   boolean isWildcard();
 
   /**
-   * @return the {@link CodeGenericType} representing the {@link java.lang.reflect.TypeVariable#getBounds()
-   *         bound(s)} of this type placeholder. May be a {@link CodeComposedType} to specify multiple bounds.
+   * @return the {@link CodeGenericType} representing the {@link java.lang.reflect.TypeVariable#getBounds() bound(s)} of
+   *         this type placeholder. May be a {@link CodeComposedType} to specify multiple bounds.
    */
   CodeGenericType getBound();
 
@@ -73,8 +72,8 @@ public abstract interface CodeTypePlaceholder extends CodeGenericType, CodeEleme
   }
 
   /**
-   * @deprecated a {@link CodeTypePlaceholder} can not have {@link CodeTypeVariables}. The result will always
-   *             be empty and {@link #isImmutable() immutable}.
+   * @deprecated a {@link CodeTypePlaceholder} can not have {@link CodeTypeVariables}. The result will always be empty
+   *             and {@link #isImmutable() immutable}.
    */
   @Deprecated
   @Override

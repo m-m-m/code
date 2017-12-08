@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -37,6 +38,8 @@ import net.sf.mmm.util.io.api.RuntimeIoException;
 public abstract class BaseMutableItem extends BaseItem implements CodeMutableItem {
 
   private static final Logger LOG = LoggerFactory.getLogger(BaseMutableItem.class);
+
+  private static Charset defaultEncoding;
 
   private boolean immutable;
 
@@ -335,9 +338,9 @@ public abstract class BaseMutableItem extends BaseItem implements CodeMutableIte
    * @param item the {@link CodeItem} to {@link CodeItem#write(Appendable) write} to a new or existing file.
    * @param targetFolder the {@link Path} pointing to the existing folder where to write to.
    * @param filename the name of the file to write.
-   * @param encoding the encoding to use (typically UTF-8).
+   * @param encoding the {@link Charset} to use (typically UTF-8).
    */
-  protected void writeItem(CodeItem item, Path targetFolder, String filename, String encoding) {
+  protected void writeItem(CodeItem item, Path targetFolder, String filename, Charset encoding) {
 
     try {
       Path itemPath = targetFolder.resolve(filename);
@@ -349,6 +352,21 @@ public abstract class BaseMutableItem extends BaseItem implements CodeMutableIte
     } catch (IOException e) {
       throw new RuntimeIoException(e, IoMode.WRITE);
     }
+  }
+
+  /**
+   * @return the default {@link Charset} used by {@link net.sf.mmm.code.api.node.CodeNodeWithFileWriting#write(Path)}
+   */
+  protected static Charset getDefaultEncoding() {
+
+    if (defaultEncoding == null) {
+      try {
+        defaultEncoding = Charset.forName("UTF-8");
+      } catch (Exception e) {
+        defaultEncoding = Charset.defaultCharset();
+      }
+    }
+    return defaultEncoding;
   }
 
 }

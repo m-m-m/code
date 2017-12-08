@@ -2,6 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.node;
 
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 
 import net.sf.mmm.code.api.CodePackage;
@@ -23,5 +24,15 @@ public interface CodeNodeWithFileWriting extends CodeNode {
    *        {@link CodePackage}.
    */
   void write(Path targetFolder);
+
+  /**
+   * Recursively writes the {@link net.sf.mmm.code.api.item.CodeItem#getSourceCode() source code} of this item
+   * recursively with all its children to the folder identified by the given {@link Path}.
+   *
+   * @param targetFolder the {@link Path} pointing to the folder where to write the content of the given
+   *        {@link CodePackage}.
+   * @param encoding the {@link Charset} used to encode the characters in the file.
+   */
+  void write(Path targetFolder, Charset encoding);
 
 }
