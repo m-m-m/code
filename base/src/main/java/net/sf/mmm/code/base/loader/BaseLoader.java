@@ -19,24 +19,31 @@ import net.sf.mmm.code.base.type.BaseType;
  */
 public interface BaseLoader extends CodeLoader {
 
-  @Override
-  BaseContext getContext();
+    @Override
+    BaseContext getContext();
 
-  @Override
-  BaseSource getSource();
+    @Override
+    BaseSource getSource();
 
-  @Override
-  BaseType getType(String qualifiedName);
+    @Override
+    BaseType getType(String qualifiedName);
 
-  @Override
-  BaseType getType(CodeName qualifiedName);
+    @Override
+    BaseType getType(CodeName qualifiedName);
 
-  /**
-   * @param clazz the {@link Class} to get as {@link CodeGenericType}.
-   * @return the existing or otherwise newly created {@link CodeGenericType}. Typically a {@link CodeType} but
-   *         may also be a {@link CodeType#createArray() array type} in case an {@link Class#isArray() array}
-   *         was given.
-   */
-  BaseGenericType getType(Class<?> clazz);
+    /**
+     * @param clazz
+     *            the {@link Class} to get as {@link CodeGenericType}.
+     * @return the existing or otherwise newly created {@link CodeGenericType}. Typically a {@link CodeType}
+     *         but may also be a {@link CodeType#createArray() array type} in case an {@link Class#isArray()
+     *         array} was given.
+     */
+    @Override
+    BaseGenericType getType(Class<?> clazz);
+
+    /**
+     * @return current class loader
+     */
+    ClassLoader getClassLoader();
 
 }

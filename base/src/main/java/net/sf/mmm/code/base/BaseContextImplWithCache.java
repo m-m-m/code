@@ -9,9 +9,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.loader.BaseLoader;
@@ -23,6 +20,9 @@ import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.util.exception.api.DuplicateObjectException;
 import net.sf.mmm.util.exception.api.ObjectMismatchException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Extends {@link BaseContextImpl} with caching to speed up lookups.
  *
@@ -31,239 +31,256 @@ import net.sf.mmm.util.exception.api.ObjectMismatchException;
  */
 public abstract class BaseContextImplWithCache extends BaseContextImpl {
 
-  private static final Logger LOG = LoggerFactory.getLogger(BaseContextImplWithCache.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BaseContextImplWithCache.class);
 
-  private Map<String, BaseType> typeCache;
+    private Map<String, BaseType> typeCache;
 
-  private Map<String, BaseSource> sourceMap;
+    private Map<String, BaseSource> sourceMap;
 
-  private BaseSourceProvider sourceProvider;
+    private BaseSourceProvider sourceProvider;
 
-  /**
-   * The constructor.
-   *
-   * @param source the top-level {@link #getSource() source}.
-   */
-  public BaseContextImplWithCache(BaseSourceImpl source) {
+    /**
+     * The constructor.
+     *
+     * @param source
+     *            the top-level {@link #getSource() source}.
+     */
+    public BaseContextImplWithCache(BaseSourceImpl source) {
 
-    this(source, null);
-  }
-
-  /**
-   * The constructor.
-   *
-   * @param source the top-level {@link #getSource() source}.
-   * @param sourceProvider the {@link BaseSourceProvider}.
-   */
-  public BaseContextImplWithCache(BaseSourceImpl source, BaseSourceProvider sourceProvider) {
-
-    super(source);
-    this.typeCache = createCache();
-    this.sourceProvider = sourceProvider;
-    if (this.sourceProvider != null) {
-      this.sourceProvider.setContext(this);
+        this(source, null);
     }
-    this.sourceMap = new HashMap<>();
-    registerSource(source);
-  }
 
-  /**
-   * @param <K> key type.
-   * @param <V> value type.
-   * @return a new empty {@link Map} instance to use as cache. May be a regular {@link HashMap} but can also
-   *         be a full blown cache implementation that will automatically evict old items if a specific size
-   *         is reached.
-   */
-  protected <K, V> Map<K, V> createCache() {
+    /**
+     * The constructor.
+     *
+     * @param source
+     *            the top-level {@link #getSource() source}.
+     * @param sourceProvider
+     *            the {@link BaseSourceProvider}.
+     */
+    public BaseContextImplWithCache(BaseSourceImpl source, BaseSourceProvider sourceProvider) {
 
-    return new HashMap<>();
-  }
-
-  /**
-   * @return the {@link BaseLoader} to load {@link BaseType}s.
-   */
-  protected abstract BaseLoader getLoader();
-
-  @Override
-  public BaseType getType(String qualifiedName) {
-
-    BaseType type = getTypeFromCache(qualifiedName);
-    if (type != null) {
-      return type;
+        super(source);
+        typeCache = createCache();
+        this.sourceProvider = sourceProvider;
+        if (this.sourceProvider != null) {
+            this.sourceProvider.setContext(this);
+        }
+        sourceMap = new HashMap<>();
+        registerSource(source);
     }
-    type = getLoader().getType(qualifiedName);
-    return getTypeAndPutInCache(qualifiedName, type);
-  }
 
-  @Override
-  public BaseType getType(CodeName qName) {
+    /**
+     * @param <K>
+     *            key type.
+     * @param <V>
+     *            value type.
+     * @return a new empty {@link Map} instance to use as cache. May be a regular {@link HashMap} but can also
+     *         be a full blown cache implementation that will automatically evict old items if a specific size
+     *         is reached.
+     */
+    protected <K, V> Map<K, V> createCache() {
 
-    String qualifiedName = qName.getFullName();
-    BaseType type = getTypeFromCache(qualifiedName);
-    if (type != null) {
-      return type;
+        return new HashMap<>();
     }
-    type = getLoader().getType(qName);
-    return getTypeAndPutInCache(qualifiedName, type);
-  }
 
-  @Override
-  public BaseGenericType getType(Class<?> clazz) {
+    /**
+     * @return the {@link BaseLoader} to load {@link BaseType}s.
+     */
+    protected abstract BaseLoader getLoader();
 
-    if (clazz.isArray()) {
-      BaseGenericType componentType = getType(clazz.getComponentType());
-      return componentType.createArray();
+    @Override
+    public BaseType getType(String qualifiedName) {
+
+        BaseType type = getTypeFromCache(qualifiedName);
+        if (type != null) {
+            return type;
+        }
+        type = getLoader().getType(qualifiedName);
+        return getTypeAndPutInCache(qualifiedName, type);
     }
-    String qualifiedName = clazz.getName();
-    BaseType type = getTypeFromCache(qualifiedName);
-    if (type != null) {
-      return type;
+
+    @Override
+    public BaseType getType(CodeName qName) {
+
+        String qualifiedName = qName.getFullName();
+        BaseType type = getTypeFromCache(qualifiedName);
+        if (type != null) {
+            return type;
+        }
+        type = getLoader().getType(qName);
+        return getTypeAndPutInCache(qualifiedName, type);
     }
-    type = (BaseType) getLoader().getType(clazz);
-    return getTypeAndPutInCache(qualifiedName, type);
-  }
 
-  private BaseType getTypeAndPutInCache(String qualifiedName, BaseType type) {
+    @Override
+    public BaseGenericType getType(Class<?> clazz) {
 
-    if (type != null) {
-      this.typeCache.put(qualifiedName, type);
-    } else {
-      LOG.debug("Failed to get type {}", qualifiedName);
+        if (clazz.isArray()) {
+            BaseGenericType componentType = getType(clazz.getComponentType());
+            return componentType.createArray();
+        }
+        String qualifiedName = clazz.getName();
+        BaseType type = getTypeFromCache(qualifiedName);
+        if (type != null) {
+            return type;
+        }
+        type = (BaseType) getLoader().getType(clazz);
+        return getTypeAndPutInCache(qualifiedName, type);
     }
-    return type;
-  }
 
-  /**
-   * @param qualifiedName the {@link CodeType#getQualifiedName() qualified name} of the requested
-   *        {@link CodeType}.
-   * @return the requested {@link CodeType} from the cache or {@code null} if not in cache.
-   */
-  protected BaseType getTypeFromCache(String qualifiedName) {
+    private BaseType getTypeAndPutInCache(String qualifiedName, BaseType type) {
 
-    return this.typeCache.get(qualifiedName);
-  }
-
-  /**
-   * This is an internal method that should only be used from implementations of {@link BaseSourceProvider}.
-   *
-   * @param byteCodeLocation the {@link BaseSource#getByteCodeLocation() byte code location}.
-   * @param sourceCodeLocation the {@link BaseSource#getSourceCodeLocation() source code location}.
-   * @return the existing or otherwise created {@link BaseSource}.
-   */
-  public BaseSource getOrCreateSource(File byteCodeLocation, File sourceCodeLocation) {
-
-    File location;
-    if (byteCodeLocation != null) {
-      location = byteCodeLocation;
-    } else {
-      location = sourceCodeLocation;
+        if (type != null) {
+            typeCache.put(qualifiedName, type);
+        } else {
+            LOG.debug("Failed to get type {}", qualifiedName);
+        }
+        return type;
     }
-    String id = BaseSourceImpl.getNormalizedId(location);
-    BaseSource source = getSource(id);
-    if (source == null) {
-      verifyCreateSource(id);
-      source = this.sourceProvider.create(byteCodeLocation, sourceCodeLocation);
-      registerSource(source);
+
+    /**
+     * @param qualifiedName
+     *            the {@link CodeType#getQualifiedName() qualified name} of the requested {@link CodeType}.
+     * @return the requested {@link CodeType} from the cache or {@code null} if not in cache.
+     */
+    protected BaseType getTypeFromCache(String qualifiedName) {
+
+        return typeCache.get(qualifiedName);
     }
-    return source;
-  }
 
-  /**
-   * @param codeSource the {@link CodeSource}.
-   * @return the existing or otherwise created {@link BaseSource}.
-   */
-  protected BaseSource getOrCreateSource(CodeSource codeSource) {
+    /**
+     * This is an internal method that should only be used from implementations of {@link BaseSourceProvider}.
+     *
+     * @param byteCodeLocation
+     *            the {@link BaseSource#getByteCodeLocation() byte code location}.
+     * @param sourceCodeLocation
+     *            the {@link BaseSource#getSourceCodeLocation() source code location}.
+     * @return the existing or otherwise created {@link BaseSource}.
+     */
+    public BaseSource getOrCreateSource(File byteCodeLocation, File sourceCodeLocation) {
 
-    if (codeSource == null) {
-      return getRootContext().getSource();
+        File location;
+        if (byteCodeLocation != null) {
+            location = byteCodeLocation;
+        } else {
+            location = sourceCodeLocation;
+        }
+        String id = BaseSourceImpl.getNormalizedId(location);
+        BaseSource source = getSource(id);
+        if (source == null) {
+            verifyCreateSource(id);
+            source = sourceProvider.create(byteCodeLocation, sourceCodeLocation);
+            registerSource(source);
+        }
+        return source;
     }
-    String id = BaseSourceImpl.getNormalizedId(codeSource);
-    BaseSource source = getSource(id);
-    if (source == null) {
-      verifyCreateSource(id);
-      source = this.sourceProvider.create(codeSource);
-      registerSource(source);
+
+    /**
+     * @param codeSource
+     *            the {@link CodeSource}.
+     * @return the existing or otherwise created {@link BaseSource}.
+     */
+    protected BaseSource getOrCreateSource(CodeSource codeSource) {
+
+        if (codeSource == null) {
+            return getRootContext().getSource();
+        }
+        BaseSource source = null;
+        String id = null;
+        if (codeSource.getLocation() == null) {
+            source = getSource();
+        } else {
+            id = BaseSourceImpl.getNormalizedId(codeSource);
+            source = getSource(id);
+        }
+        if (source == null) {
+            verifyCreateSource(id);
+            source = sourceProvider.create(codeSource);
+            registerSource(source);
+        }
+        return source;
     }
-    return source;
-  }
 
-  /**
-   * <b>Attention:</b> This is an internal method that shall not be used from outside. Use
-   * {@link #getSource(String)} instead.
-   *
-   * @param id the {@link BaseSource#getId() ID} of the requested source.
-   * @param sourceSupplier the {@link Supplier} used as factory to {@link Supplier#get() create} the source if
-   *        it does not already exist.
-   * @return the existing {@link BaseSource} for the given {@link BaseSource#getId() ID}.
-   */
-  public BaseSource getOrCreateSource(String id, Supplier<BaseSource> sourceSupplier) {
+    /**
+     * <b>Attention:</b> This is an internal method that shall not be used from outside. Use
+     * {@link #getSource(String)} instead.
+     *
+     * @param id
+     *            the {@link BaseSource#getId() ID} of the requested source.
+     * @param sourceSupplier
+     *            the {@link Supplier} used as factory to {@link Supplier#get() create} the source if it does
+     *            not already exist.
+     * @return the existing {@link BaseSource} for the given {@link BaseSource#getId() ID}.
+     */
+    public BaseSource getOrCreateSource(String id, Supplier<BaseSource> sourceSupplier) {
 
-    BaseSource source = getSource(id);
-    if (source == null) {
-      if (isPreventRegisterSource()) {
-        verifyCreateSource(id);
-      }
-      source = sourceSupplier.get();
-      Objects.requireNonNull(source, "source");
-      if (!source.getId().equals(id)) {
-        throw new ObjectMismatchException(source.getId(), id, BaseSource.class);
-      }
-      registerSource(source);
+        BaseSource source = getSource(id);
+        if (source == null) {
+            if (isPreventRegisterSource()) {
+                verifyCreateSource(id);
+            }
+            source = sourceSupplier.get();
+            Objects.requireNonNull(source, "source");
+            if (!source.getId().equals(id)) {
+                throw new ObjectMismatchException(source.getId(), id, BaseSource.class);
+            }
+            registerSource(source);
+        }
+        return source;
     }
-    return source;
-  }
 
-  /**
-   * @return {@code true} if {@link #getOrCreateSource(String, Supplier)} may not be called to register a new
-   *         source, {@code false} otherwise.
-   */
-  protected boolean isPreventRegisterSource() {
+    /**
+     * @return {@code true} if {@link #getOrCreateSource(String, Supplier)} may not be called to register a
+     *         new source, {@code false} otherwise.
+     */
+    protected boolean isPreventRegisterSource() {
 
-    if ((this.sourceProvider == null) && (getParent() == null)) {
-      return true;
+        if ((sourceProvider == null) && (getParent() == null)) {
+            return true;
+        }
+        return false;
     }
-    return false;
-  }
 
-  private void verifyCreateSource(Object arg) {
+    private void verifyCreateSource(Object arg) {
 
-    if (this.sourceProvider == null) {
-      throw new IllegalStateException("Can not create source for external code in " + getClass().getSimpleName() + ": " + arg);
+        if (sourceProvider == null) {
+            throw new IllegalStateException(
+                "Can not create source for external code in " + getClass().getSimpleName() + ": " + arg);
+        }
     }
-  }
 
-  private void registerSource(BaseSource source) {
+    private void registerSource(BaseSource source) {
 
-    BaseSource duplicate = this.sourceMap.put(source.getId(), source);
-    if (duplicate != null) {
-      throw new DuplicateObjectException(source, source.getId(), duplicate);
+        BaseSource duplicate = sourceMap.put(source.getId(), source);
+        if (duplicate != null) {
+            throw new DuplicateObjectException(source, source.getId(), duplicate);
+        }
     }
-  }
 
-  @Override
-  public BaseSource getSource(String id) {
+    @Override
+    public BaseSource getSource(String id) {
 
-    BaseSource javaSource = this.sourceMap.get(id);
-    if (javaSource != null) {
-      return javaSource;
+        BaseSource javaSource = sourceMap.get(id);
+        if (javaSource != null) {
+            return javaSource;
+        }
+        BaseContext parent = getParent();
+        if (parent != null) {
+            javaSource = parent.getSource(id);
+        }
+        return javaSource;
     }
-    BaseContext parent = getParent();
-    if (parent != null) {
-      javaSource = parent.getSource(id);
-    }
-    return javaSource;
-  }
 
-  @Override
-  public void close() throws Exception {
+    @Override
+    public void close() throws Exception {
 
-    super.close();
-    this.typeCache = null;
-    for (BaseSource src : this.sourceMap.values()) {
-      src.close();
+        super.close();
+        typeCache = null;
+        for (BaseSource src : sourceMap.values()) {
+            src.close();
+        }
+        sourceMap = null;
+        sourceProvider = null;
     }
-    this.sourceMap = null;
-    this.sourceProvider = null;
-  }
 
 }
