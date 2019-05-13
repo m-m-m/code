@@ -43,7 +43,7 @@ public class BaseField extends BaseMember implements CodeField {
    */
   public BaseField(BaseFields parent, String name) {
 
-    this(parent, name, null);
+    this(parent, name, CodeModifiers.MODIFIERS_PRIVATE, null);
   }
 
   /**
@@ -54,7 +54,7 @@ public class BaseField extends BaseMember implements CodeField {
    */
   public BaseField(BaseFields parent, Field reflectiveObject) {
 
-    this(parent, reflectiveObject.getName(), reflectiveObject);
+    this(parent, reflectiveObject.getName(), CodeModifiers.of(reflectiveObject.getModifiers()), reflectiveObject);
   }
 
   /**
@@ -64,9 +64,9 @@ public class BaseField extends BaseMember implements CodeField {
    * @param name the {@link #getName() name}.
    * @param reflectiveObject the {@link #getReflectiveObject() reflective object}. May be {@code null}.
    */
-  private BaseField(BaseFields parent, String name, Field reflectiveObject) {
+  private BaseField(BaseFields parent, String name, CodeModifiers modifiers, Field reflectiveObject) {
 
-    super(parent, CodeModifiers.MODIFIERS_PRIVATE, name);
+    super(parent, modifiers, name);
     this.parent = parent;
     this.reflectiveObject = reflectiveObject;
   }
@@ -195,7 +195,8 @@ public class BaseField extends BaseMember implements CodeField {
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent,
+      CodeLanguage language) throws IOException {
 
     super.doWrite(sink, newline, defaultIndent, currentIndent, language);
     language.writeDeclaration(this, sink);
