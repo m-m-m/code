@@ -8,6 +8,7 @@ import java.util.Map;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.member.CodeMember;
+import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.member.CodeProperties;
 import net.sf.mmm.code.api.member.CodeProperty;
 import net.sf.mmm.code.api.type.CodeGenericType;
@@ -40,6 +41,35 @@ public class BaseProperties extends BaseMembers<CodeProperty> implements CodePro
   public BaseProperties(BaseProperties template, CodeCopyMapper mapper) {
 
     super(template, mapper);
+  }
+
+  @Override
+  protected void doInitialize() {
+
+    super.doInitialize();
+    BaseType parent = getParent();
+    if (parent != null) {
+      for (CodeField field : parent.getFields().getDeclared()) {
+        if (!field.getModifiers().isStatic()) {
+          BaseProperty property = new BaseProperty(this, field.getName());
+          property.join(field);
+          addInternal(property);
+        }
+      }
+      for (CodeMethod method : parent.getMethods().getDeclared()) {
+        String propertyName = BaseProperty.getPropertyName(method, true);
+        if (propertyName != null) {
+          BaseProperty property = (BaseProperty) getByName(propertyName);
+          if (property == null) {
+            property = new BaseProperty(this, propertyName);
+            property.join(method);
+            addInternal(property);
+          } else {
+            property.join(method);
+          }
+        }
+      }
+    }
   }
 
   @Override

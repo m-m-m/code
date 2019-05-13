@@ -5,9 +5,10 @@ package net.sf.mmm.code.impl.java;
 import java.io.Serializable;
 import java.util.List;
 
-import org.junit.Test;
-
 import net.sf.mmm.code.api.language.CodeLanguage;
+import net.sf.mmm.code.api.member.CodeField;
+import net.sf.mmm.code.api.member.CodeProperties;
+import net.sf.mmm.code.api.member.CodeProperty;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeGenericTypeParameters;
 import net.sf.mmm.code.api.type.CodeSuperTypes;
@@ -20,6 +21,8 @@ import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.statement.BaseLocalVariable;
 import net.sf.mmm.code.base.type.BaseGenericType;
 import net.sf.mmm.code.base.type.BaseParameterizedType;
+
+import org.junit.Test;
 
 /**
  * Test of {@link JavaRootContext}.
@@ -81,8 +84,10 @@ public class JavaRootContextTest extends AbstractBaseTypeTest {
     assertThat(language.getKeywordForCategory(CodeTypeCategory.INTERFACE)).isEqualTo("interface");
     assertThat(language.getKeywordForCategory(CodeTypeCategory.ENUMERAION)).isEqualTo("enum");
     assertThat(language.getKeywordForCategory(CodeTypeCategory.ANNOTATION)).isEqualTo("@interface");
-    assertThat(language.getKeywordForVariable(new BaseLocalVariable(source, "foo", context.getRootType(), null, false))).isEmpty();
-    assertThat(language.getKeywordForVariable(new BaseLocalVariable(source, "foo", context.getRootType(), null, true))).isEqualTo("final ");
+    assertThat(language.getKeywordForVariable(new BaseLocalVariable(source, "foo", context.getRootType(), null, false)))
+        .isEmpty();
+    assertThat(language.getKeywordForVariable(new BaseLocalVariable(source, "foo", context.getRootType(), null, true)))
+        .isEqualTo("final ");
   }
 
   /**
@@ -162,6 +167,33 @@ public class JavaRootContextTest extends AbstractBaseTypeTest {
     assertThat(typeParameterList).hasSize(1);
     CodeGenericType boundTypeVariable = typeParameterList.get(0);
     assertThat(boundTypeVariable).isSameAs(typeVariable);
+  }
+
+  @Test
+  public void testProperties() {
+
+    // given
+    JavaContext context = getContext();
+
+    // when
+    CodeType yearMonth = context.getType("java.time.YearMonth");
+
+    // then
+    CodeProperties properties = yearMonth.getProperties();
+    assertThat(properties.getDeclared().size()).isGreaterThanOrEqualTo(2);
+    checkProperty(properties, "year", int.class);
+    checkProperty(properties, "month", int.class);
+  }
+
+  private void checkProperty(CodeProperties properties, String name, Class<?> type) {
+
+    CodeProperty property = properties.get(name);
+    assertThat(property.isImmutable()).isTrue();
+    assertThat(property).as(name).isNotNull();
+    assertThat(property.getName()).isEqualTo(name);
+    CodeField field = property.getField();
+    assertThat(field).isNotNull();
+    assertThat(field.getType().getQualifiedName()).isEqualTo(type.getName());
   }
 
 }
