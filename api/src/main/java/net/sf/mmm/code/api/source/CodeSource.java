@@ -5,11 +5,14 @@ package net.sf.mmm.code.api.source;
 import java.io.File;
 
 import net.sf.mmm.code.api.CodeFile;
+import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.CodePathElements;
 import net.sf.mmm.code.api.CodeProvider;
 import net.sf.mmm.code.api.node.CodeContainer;
 import net.sf.mmm.code.api.node.CodeNodeWithFileWriting;
+import net.sf.mmm.code.api.type.CodeGenericType;
+import net.sf.mmm.code.api.type.CodeType;
 
 /**
  * A {@link CodeSource} represents a {@link #getId() physical location} where {@link CodePackage}s and {@link CodeFile}s
@@ -69,5 +72,41 @@ public interface CodeSource extends CodeProvider, CodeContainer, CodeNodeWithFil
    * @return see {@link net.sf.mmm.code.api.item.CodeMutableItem#getReflectiveObject()}.
    */
   java.security.CodeSource getReflectiveObject();
+
+  /**
+   * <b>ATTENTION:</b><br>
+   * When calling {@code getType} methods on {@link CodeSource} you will only be able to retrieve {@link CodeType}s from
+   * exactly this source. This should only be used in very specific situations (e.g. if you only want to retrieve code
+   * from main or test locations of a maven project). In most cases you want to use
+   * {@link net.sf.mmm.code.api.CodeContext#getType(String)} instead.
+   *
+   * {@inheritDoc}
+   */
+  @Override
+  CodeType getType(String qualifiedName);
+
+  /**
+   * <b>ATTENTION:</b><br>
+   * When calling {@code getType} methods on {@link CodeSource} you will only be able to retrieve {@link CodeType}s from
+   * exactly this source. This should only be used in very specific situations (e.g. if you only want to retrieve code
+   * from main or test locations of a maven project). In most cases you want to use
+   * {@link net.sf.mmm.code.api.CodeContext#getType(Class)} instead.
+   *
+   * {@inheritDoc}
+   */
+  @Override
+  CodeGenericType getType(Class<?> clazz);
+
+  /**
+   * <b>ATTENTION:</b><br>
+   * When calling {@code getType} methods on {@link CodeSource} you will only be able to retrieve {@link CodeType}s from
+   * exactly this source. This should only be used in very specific situations (e.g. if you only want to retrieve code
+   * from main or test locations of a maven project). In most cases you want to use
+   * {@link net.sf.mmm.code.api.CodeContext#getType(CodeName)} instead.
+   *
+   * {@inheritDoc}
+   */
+  @Override
+  CodeType getType(CodeName qualifiedName);
 
 }
