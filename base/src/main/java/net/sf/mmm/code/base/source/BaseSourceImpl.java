@@ -22,6 +22,9 @@ import net.sf.mmm.code.base.type.BaseGenericType;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.util.component.api.ResourceMissingException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Implementation of {@link net.sf.mmm.code.api.source.CodeSource} for Java.
  *
@@ -29,6 +32,8 @@ import net.sf.mmm.util.component.api.ResourceMissingException;
  * @since 1.0.0
  */
 public class BaseSourceImpl extends BaseProviderImpl implements BaseSource {
+
+  private static final Logger LOG = LoggerFactory.getLogger(BaseSourceImpl.class);
 
   private final CodeSource reflectiveObject;
 
@@ -57,7 +62,8 @@ public class BaseSourceImpl extends BaseProviderImpl implements BaseSource {
    * @param descriptor the {@link #getDescriptor() descriptor}.
    * @param loader the {@link #getLoader() loader}.
    */
-  public BaseSourceImpl(File byteCodeLocation, File sourceCodeLocation, String id, CodeSourceDescriptor descriptor, BaseSourceLoader loader) {
+  public BaseSourceImpl(File byteCodeLocation, File sourceCodeLocation, String id, CodeSourceDescriptor descriptor,
+      BaseSourceLoader loader) {
 
     this(null, byteCodeLocation, sourceCodeLocation, id, descriptor, null, loader);
   }
@@ -88,8 +94,8 @@ public class BaseSourceImpl extends BaseProviderImpl implements BaseSource {
    * @param dependencies the {@link #getDependencies()} dependencies.
    * @param loader the {@link #getLoader() loader}.
    */
-  public BaseSourceImpl(CodeSource reflectiveObject, File byteCodeLocation, File sourceCodeLocation, String id, CodeSourceDescriptor descriptor,
-      List<BaseSource> dependencies, BaseSourceLoader loader) {
+  public BaseSourceImpl(CodeSource reflectiveObject, File byteCodeLocation, File sourceCodeLocation, String id,
+      CodeSourceDescriptor descriptor, List<BaseSource> dependencies, BaseSourceLoader loader) {
 
     super();
     if ((byteCodeLocation != null) && (id != null)) {
@@ -291,9 +297,11 @@ public class BaseSourceImpl extends BaseProviderImpl implements BaseSource {
 
   private <T extends BaseGenericType> T getType(T type) {
 
-    if ((type != null) && (type.getSource() == this)) {
+    BaseSource source = type.getSource();
+    if ((type != null) && (source == this)) {
       return type;
     }
+    LOG.debug("Ignoring type {} from different source {} in source {}.", type, source, this);
     return null;
   }
 
