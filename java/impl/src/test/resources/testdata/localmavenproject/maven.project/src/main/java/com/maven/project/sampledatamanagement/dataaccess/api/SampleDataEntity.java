@@ -3,6 +3,9 @@ package com.maven.project.sampledatamanagement.dataaccess.api;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 
+/**
+ * This is the JavaDoc of {@link SampleDataEntity}.
+ */
 @Entity
 @javax.persistence.Table(name = "SAMPLEDATA")
 public class SampleDataEntity {

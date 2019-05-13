@@ -24,167 +24,166 @@ import org.slf4j.LoggerFactory;
  */
 public class JavaExtendedContext extends JavaContext {
 
-    private final JavaContext parent;
+  private final JavaContext parent;
 
-    private final JavaClassLoader loader;
+  private final JavaClassLoader loader;
 
-    private static final Logger LOG = LoggerFactory.getLogger(JavaExtendedContext.class);
+  private static final Logger LOG = LoggerFactory.getLogger(JavaExtendedContext.class);
 
-    /**
-     * The constructor.
-     *
-     * @param source
-     *            the {@link #getSource() source}.
-     * @param sourceProvider
-     *            the {@link BaseSourceProvider}.
-     * @param isExternal
-     */
-    public JavaExtendedContext(BaseSourceImpl source, BaseSourceProvider sourceProvider, Boolean isExternal) {
+  /**
+   * The constructor.
+   *
+   * @param source the {@link #getSource() source}.
+   * @param sourceProvider the {@link BaseSourceProvider}.
+   * @param isExternal
+   */
+  public JavaExtendedContext(BaseSourceImpl source, BaseSourceProvider sourceProvider, boolean isExternal) {
 
-        this(JavaRootContext.get(), source, sourceProvider, isExternal);
+    this(JavaRootContext.get(), source, sourceProvider, isExternal);
+  }
+
+  /**
+   * The constructor.
+   *
+   * @param parent the {@link #getParent() parent context}.
+   * @param source the {@link #getSource() source}.
+   * @param sourceProvider the {@link BaseSourceProvider}.
+   * @param isExternal
+   */
+  public JavaExtendedContext(JavaContext parent, BaseSourceImpl source, BaseSourceProvider sourceProvider,
+      boolean isExternal) {
+
+    super(source, sourceProvider);
+
+    this.parent = parent;
+
+    if (isExternal) {
+      // Create a File object on the root directory of the classes
+      File byteCodeLocation = null;
+      String byteCodeLocationString = source.getByteCodeLocation().toString();
+      if (byteCodeLocationString.substring(byteCodeLocationString.lastIndexOf(File.separator) + 1)
+          .equals("test-classes")) {
+        byteCodeLocation = source.getByteCodeLocation().getParentFile().toPath().resolve("classes" + File.separator)
+            .toFile();
+      } else {
+        byteCodeLocation = source.getByteCodeLocation();
+      }
+
+      try {
+        MavenClassLoader mvnClassLoader = new MavenClassLoader(Thread.currentThread().getContextClassLoader(),
+            byteCodeLocation.toURI().toURL());
+
+        this.loader = new JavaClassLoader(mvnClassLoader);
+      } catch (Exception e) {
+        throw new IllegalStateException(e);
+      }
+    } else {
+      this.loader = new JavaClassLoader();
     }
 
-    /**
-     * The constructor.
-     *
-     * @param parent
-     *            the {@link #getParent() parent context}.
-     * @param source
-     *            the {@link #getSource() source}.
-     * @param sourceProvider
-     *            the {@link BaseSourceProvider}.
-     * @param isExternal
-     */
-    public JavaExtendedContext(JavaContext parent, BaseSourceImpl source, BaseSourceProvider sourceProvider,
-        Boolean isExternal) {
+  }
 
-        super(source, sourceProvider);
+  /**
+   * The constructor.
+   *
+   * @param parent the {@link #getParent() parent context}.
+   * @param source the {@link #getSource() source}.
+   * @param sourceProvider the {@link BaseSourceProvider}.
+   */
+  public JavaExtendedContext(JavaContext parent, BaseSourceImpl source, BaseSourceProvider sourceProvider,
+      File mavenProjectLocation) {
 
-        this.parent = parent;
+    super(source, sourceProvider);
+    this.parent = parent;
+    this.loader = new JavaClassLoader();
+  }
 
-        if (isExternal) {
-            // Create a File object on the root directory of the classes
-            File byteCodeLocation = null;
-            String byteCodeLocationString = source.getByteCodeLocation().toString();
-            if (byteCodeLocationString.substring(byteCodeLocationString.lastIndexOf(File.separator) + 1)
-                .equals("test-classes")) {
-                byteCodeLocation =
-                    source.getByteCodeLocation().getParentFile().toPath().resolve("classes" + File.separator).toFile();
-            } else {
-                byteCodeLocation = source.getByteCodeLocation();
-            }
-            MavenClassLoader mvnClassLoader = new MavenClassLoader(byteCodeLocation);
+  @Override
+  public BaseLoader getLoader() {
 
-            loader = new JavaClassLoader(mvnClassLoader);
-        } else {
-            loader = new JavaClassLoader();
-        }
+    return this.loader;
+  }
 
+  @Override
+  protected BaseType getTypeFromCache(String qualifiedName) {
+
+    BaseType type = super.getTypeFromCache(qualifiedName);
+    if (type == null) {
+      return this.parent.getTypeFromCache(qualifiedName);
     }
+    return type;
+  }
 
-    /**
-     * The constructor.
-     *
-     * @param parent
-     *            the {@link #getParent() parent context}.
-     * @param source
-     *            the {@link #getSource() source}.
-     * @param sourceProvider
-     *            the {@link BaseSourceProvider}.
-     */
-    public JavaExtendedContext(JavaContext parent, BaseSourceImpl source, BaseSourceProvider sourceProvider,
-        File mavenProjectLocation) {
+  @Override
+  public JavaContext getParent() {
 
-        super(source, sourceProvider);
-        this.parent = parent;
-        loader = new JavaClassLoader();
-    }
+    return this.parent;
+  }
 
-    @Override
-    public BaseLoader getLoader() {
+  @Override
+  public JavaRootContext getRootContext() {
 
-        return loader;
-    }
+    return this.parent.getRootContext();
+  }
 
-    @Override
-    protected BaseType getTypeFromCache(String qualifiedName) {
+  @Override
+  public CodeExpression createExpression(Object value, boolean primitive) {
 
-        BaseType type = super.getTypeFromCache(qualifiedName);
-        if (type == null) {
-            return parent.getTypeFromCache(qualifiedName);
-        }
-        return type;
-    }
+    return this.parent.createExpression(value, primitive);
+  }
 
-    @Override
-    public JavaContext getParent() {
+  @Override
+  public BaseTypeWildcard getUnboundedWildcard() {
 
-        return parent;
-    }
+    return this.parent.getUnboundedWildcard();
+  }
 
-    @Override
-    public JavaRootContext getRootContext() {
+  @Override
+  public CodeLanguage getLanguage() {
 
-        return parent.getRootContext();
-    }
+    return this.parent.getLanguage();
+  }
 
-    @Override
-    public CodeExpression createExpression(Object value, boolean primitive) {
+  @Override
+  public BaseType getRootType() {
 
-        return parent.createExpression(value, primitive);
-    }
+    return this.parent.getRootType();
+  }
 
-    @Override
-    public BaseTypeWildcard getUnboundedWildcard() {
+  @Override
+  public BaseType getRootEnumerationType() {
 
-        return parent.getUnboundedWildcard();
-    }
+    return this.parent.getRootEnumerationType();
+  }
 
-    @Override
-    public CodeLanguage getLanguage() {
+  @Override
+  public BaseType getVoidType() {
 
-        return parent.getLanguage();
-    }
+    return this.parent.getVoidType();
+  }
 
-    @Override
-    public BaseType getRootType() {
+  @Override
+  public BaseType getRootExceptionType() {
 
-        return parent.getRootType();
-    }
+    return this.parent.getRootExceptionType();
+  }
 
-    @Override
-    public BaseType getRootEnumerationType() {
+  @Override
+  public BaseType getNonPrimitiveType(BaseType javaType) {
 
-        return parent.getRootEnumerationType();
-    }
+    return this.parent.getNonPrimitiveType(javaType);
+  }
 
-    @Override
-    public BaseType getVoidType() {
+  @Override
+  public String getQualifiedNameForStandardType(String simpleName, boolean omitStandardPackages) {
 
-        return parent.getVoidType();
-    }
+    return this.parent.getQualifiedNameForStandardType(simpleName, omitStandardPackages);
+  }
 
-    @Override
-    public BaseType getRootExceptionType() {
+  @Override
+  public ClassLoader getClassLoader() {
 
-        return parent.getRootExceptionType();
-    }
-
-    @Override
-    public BaseType getNonPrimitiveType(BaseType javaType) {
-
-        return parent.getNonPrimitiveType(javaType);
-    }
-
-    @Override
-    public String getQualifiedNameForStandardType(String simpleName, boolean omitStandardPackages) {
-
-        return parent.getQualifiedNameForStandardType(simpleName, omitStandardPackages);
-    }
-
-    @Override
-    public ClassLoader getClassLoader() {
-        return loader.getClassLoader();
-    }
+    return this.loader.getClassLoader();
+  }
 
 }
