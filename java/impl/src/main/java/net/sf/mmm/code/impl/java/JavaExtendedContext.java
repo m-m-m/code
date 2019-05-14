@@ -11,7 +11,6 @@ import net.sf.mmm.code.base.source.BaseSourceImpl;
 import net.sf.mmm.code.base.source.BaseSourceProvider;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.base.type.BaseTypeWildcard;
-import net.sf.mmm.code.impl.java.source.maven.MavenClassLoader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,166 +23,156 @@ import org.slf4j.LoggerFactory;
  */
 public class JavaExtendedContext extends JavaContext {
 
-  private final JavaContext parent;
+    private final JavaContext parent;
 
-  private final JavaClassLoader loader;
+    private final JavaClassLoader loader;
 
-  private static final Logger LOG = LoggerFactory.getLogger(JavaExtendedContext.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JavaExtendedContext.class);
 
-  /**
-   * The constructor.
-   *
-   * @param source the {@link #getSource() source}.
-   * @param sourceProvider the {@link BaseSourceProvider}.
-   * @param isExternal
-   */
-  public JavaExtendedContext(BaseSourceImpl source, BaseSourceProvider sourceProvider, boolean isExternal) {
+    /**
+     * The constructor.
+     *
+     * @param source
+     *            the {@link #getSource() source}.
+     * @param sourceProvider
+     *            the {@link BaseSourceProvider}.
+     * @param mvnClassLoader
+     */
+    public JavaExtendedContext(BaseSourceImpl source, BaseSourceProvider sourceProvider, ClassLoader mvnClassLoader) {
 
-    this(JavaRootContext.get(), source, sourceProvider, isExternal);
-  }
-
-  /**
-   * The constructor.
-   *
-   * @param parent the {@link #getParent() parent context}.
-   * @param source the {@link #getSource() source}.
-   * @param sourceProvider the {@link BaseSourceProvider}.
-   * @param isExternal
-   */
-  public JavaExtendedContext(JavaContext parent, BaseSourceImpl source, BaseSourceProvider sourceProvider,
-      boolean isExternal) {
-
-    super(source, sourceProvider);
-
-    this.parent = parent;
-
-    if (isExternal) {
-      // Create a File object on the root directory of the classes
-      File byteCodeLocation = null;
-      String byteCodeLocationString = source.getByteCodeLocation().toString();
-      if (byteCodeLocationString.substring(byteCodeLocationString.lastIndexOf(File.separator) + 1)
-          .equals("test-classes")) {
-        byteCodeLocation = source.getByteCodeLocation().getParentFile().toPath().resolve("classes" + File.separator)
-            .toFile();
-      } else {
-        byteCodeLocation = source.getByteCodeLocation();
-      }
-
-      try {
-        MavenClassLoader mvnClassLoader = new MavenClassLoader(Thread.currentThread().getContextClassLoader(),
-            byteCodeLocation.toURI().toURL());
-
-        this.loader = new JavaClassLoader(mvnClassLoader);
-      } catch (Exception e) {
-        throw new IllegalStateException(e);
-      }
-    } else {
-      this.loader = new JavaClassLoader();
+        this(JavaRootContext.get(), source, sourceProvider, mvnClassLoader);
     }
 
-  }
+    /**
+     * The constructor.
+     *
+     * @param parent
+     *            the {@link #getParent() parent context}.
+     * @param source
+     *            the {@link #getSource() source}.
+     * @param sourceProvider
+     *            the {@link BaseSourceProvider}.
+     * @param mvnClassLoader
+     */
+    public JavaExtendedContext(JavaContext parent, BaseSourceImpl source, BaseSourceProvider sourceProvider,
+        ClassLoader mvnClassLoader) {
 
-  /**
-   * The constructor.
-   *
-   * @param parent the {@link #getParent() parent context}.
-   * @param source the {@link #getSource() source}.
-   * @param sourceProvider the {@link BaseSourceProvider}.
-   */
-  public JavaExtendedContext(JavaContext parent, BaseSourceImpl source, BaseSourceProvider sourceProvider,
-      File mavenProjectLocation) {
+        super(source, sourceProvider);
 
-    super(source, sourceProvider);
-    this.parent = parent;
-    this.loader = new JavaClassLoader();
-  }
+        this.parent = parent;
 
-  @Override
-  public BaseLoader getLoader() {
+        if (mvnClassLoader == null) {
+            loader = new JavaClassLoader();
+        } else {
+            loader = new JavaClassLoader(mvnClassLoader);
+        }
 
-    return this.loader;
-  }
-
-  @Override
-  protected BaseType getTypeFromCache(String qualifiedName) {
-
-    BaseType type = super.getTypeFromCache(qualifiedName);
-    if (type == null) {
-      return this.parent.getTypeFromCache(qualifiedName);
     }
-    return type;
-  }
 
-  @Override
-  public JavaContext getParent() {
+    /**
+     * The constructor.
+     *
+     * @param parent
+     *            the {@link #getParent() parent context}.
+     * @param source
+     *            the {@link #getSource() source}.
+     * @param sourceProvider
+     *            the {@link BaseSourceProvider}.
+     */
+    public JavaExtendedContext(JavaContext parent, BaseSourceImpl source, BaseSourceProvider sourceProvider,
+        File mavenProjectLocation) {
 
-    return this.parent;
-  }
+        super(source, sourceProvider);
+        this.parent = parent;
+        loader = new JavaClassLoader();
+    }
 
-  @Override
-  public JavaRootContext getRootContext() {
+    @Override
+    public BaseLoader getLoader() {
 
-    return this.parent.getRootContext();
-  }
+        return loader;
+    }
 
-  @Override
-  public CodeExpression createExpression(Object value, boolean primitive) {
+    @Override
+    protected BaseType getTypeFromCache(String qualifiedName) {
 
-    return this.parent.createExpression(value, primitive);
-  }
+        BaseType type = super.getTypeFromCache(qualifiedName);
+        if (type == null) {
+            return parent.getTypeFromCache(qualifiedName);
+        }
+        return type;
+    }
 
-  @Override
-  public BaseTypeWildcard getUnboundedWildcard() {
+    @Override
+    public JavaContext getParent() {
 
-    return this.parent.getUnboundedWildcard();
-  }
+        return parent;
+    }
 
-  @Override
-  public CodeLanguage getLanguage() {
+    @Override
+    public JavaRootContext getRootContext() {
 
-    return this.parent.getLanguage();
-  }
+        return parent.getRootContext();
+    }
 
-  @Override
-  public BaseType getRootType() {
+    @Override
+    public CodeExpression createExpression(Object value, boolean primitive) {
 
-    return this.parent.getRootType();
-  }
+        return parent.createExpression(value, primitive);
+    }
 
-  @Override
-  public BaseType getRootEnumerationType() {
+    @Override
+    public BaseTypeWildcard getUnboundedWildcard() {
 
-    return this.parent.getRootEnumerationType();
-  }
+        return parent.getUnboundedWildcard();
+    }
 
-  @Override
-  public BaseType getVoidType() {
+    @Override
+    public CodeLanguage getLanguage() {
 
-    return this.parent.getVoidType();
-  }
+        return parent.getLanguage();
+    }
 
-  @Override
-  public BaseType getRootExceptionType() {
+    @Override
+    public BaseType getRootType() {
 
-    return this.parent.getRootExceptionType();
-  }
+        return parent.getRootType();
+    }
 
-  @Override
-  public BaseType getNonPrimitiveType(BaseType javaType) {
+    @Override
+    public BaseType getRootEnumerationType() {
 
-    return this.parent.getNonPrimitiveType(javaType);
-  }
+        return parent.getRootEnumerationType();
+    }
 
-  @Override
-  public String getQualifiedNameForStandardType(String simpleName, boolean omitStandardPackages) {
+    @Override
+    public BaseType getVoidType() {
 
-    return this.parent.getQualifiedNameForStandardType(simpleName, omitStandardPackages);
-  }
+        return parent.getVoidType();
+    }
 
-  @Override
-  public ClassLoader getClassLoader() {
+    @Override
+    public BaseType getRootExceptionType() {
 
-    return this.loader.getClassLoader();
-  }
+        return parent.getRootExceptionType();
+    }
+
+    @Override
+    public BaseType getNonPrimitiveType(BaseType javaType) {
+
+        return parent.getNonPrimitiveType(javaType);
+    }
+
+    @Override
+    public String getQualifiedNameForStandardType(String simpleName, boolean omitStandardPackages) {
+
+        return parent.getQualifiedNameForStandardType(simpleName, omitStandardPackages);
+    }
+
+    @Override
+    public ClassLoader getClassLoader() {
+
+        return loader.getClassLoader();
+    }
 
 }

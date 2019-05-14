@@ -3,7 +3,11 @@
 package net.sf.mmm.code.impl.java.source.maven;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.CodeSource;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -29,6 +33,8 @@ import net.sf.mmm.code.java.maven.impl.MavenBridgeImpl;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of {@link BaseSourceProvider} using maven to read and extract metadata from POMs.
@@ -39,6 +45,8 @@ import org.apache.maven.model.Model;
 public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl implements MavenConstants {
 
     private final MavenBridge mavenBridge;
+
+    private static final Logger LOG = LoggerFactory.getLogger(JavaSourceProviderUsingMaven.class);
 
     /**
      * The constructor.
@@ -159,7 +167,7 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
      *            the {@link File} pointing to the Maven project.
      * @return the {@link BaseSourceImpl source} for the Maven project at the given {@link File} location.
      */
-    public BaseSourceImpl createFromLocalMavenProject(JavaContext parentContext, File location) {
+    public JavaSourceUsingMaven createFromLocalMavenProject(JavaContext parentContext, File location) {
 
         final Model model = parseModel(location);
         if (model == null) {
@@ -181,7 +189,7 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
     /**
      * @return the {@link JavaContext} for the local Maven project in the current working directory.
      */
-    public static JavaContext createFromLocalMavenProject() {
+    public JavaContext createFromLocalMavenProject() {
 
         return createFromLocalMavenProject(getCwd(), false);
     }
@@ -191,7 +199,7 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
      *            the {@link File} pointing to the Maven project.
      * @return the {@link JavaContext} for the Maven project at the given {@code location}.
      */
-    public static JavaContext createFromLocalMavenProject(File location) {
+    public JavaContext createFromLocalMavenProject(File location) {
 
         return createFromLocalMavenProject(location, true);
     }
@@ -201,11 +209,76 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
      *            the {@link File} pointing to the Maven project.
      * @return the {@link JavaContext} for the Maven project at the given {@code location}.
      */
-    private static JavaContext createFromLocalMavenProject(File location, Boolean isExternal) {
+    private JavaContext createFromLocalMavenProject(File location, Boolean isExternal) {
 
         JavaSourceProviderUsingMaven provider = new JavaSourceProviderUsingMaven();
-        BaseSourceImpl source = provider.createFromLocalMavenProject(JavaRootContext.get(), location);
-        return new JavaExtendedContext(source, provider, isExternal);
+        JavaSourceUsingMaven source = provider.createFromLocalMavenProject(JavaRootContext.get(), location);
+
+        if (isExternal) {
+            File byteCodeLocation = getByteCodeLocation(source);
+            List<URL> dependenciesURLs = new ArrayList<>();
+
+            // Iterate over all dependencies, get URLS and construct MavenClassLoader
+            try {
+                dependenciesURLs.add(byteCodeLocation.toURI().toURL());
+            } catch (MalformedURLException e1) {
+                LOG.debug("Not able to get the URL of " + byteCodeLocation.getName() + ".");
+                return new JavaExtendedContext(source, provider, null);
+            }
+            dependenciesURLs.addAll(getDependenciesURLS(source.getModel()));
+
+            try {
+                URL[] dependencies = new URL[dependenciesURLs.size()];
+                dependencies = dependenciesURLs.toArray(dependencies);
+
+                MavenClassLoader mvnClassLoader =
+                    new MavenClassLoader(Thread.currentThread().getContextClassLoader(), dependencies);
+
+                return new JavaExtendedContext(source, provider, mvnClassLoader);
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
+            }
+        } else {
+            return new JavaExtendedContext(source, provider, null);
+        }
+    }
+
+    /**
+     * @param source
+     * @return
+     */
+    private File getByteCodeLocation(JavaSourceUsingMaven source) {
+        // Create a File object on the root directory of the classes
+        File byteCodeLocation = null;
+        String byteCodeLocationString = source.getByteCodeLocation().toString();
+        if (byteCodeLocationString.substring(byteCodeLocationString.lastIndexOf(File.separator) + 1)
+            .equals("test-classes")) {
+            byteCodeLocation =
+                source.getByteCodeLocation().getParentFile().toPath().resolve("classes" + File.separator).toFile();
+        } else {
+            byteCodeLocation = source.getByteCodeLocation();
+        }
+        return byteCodeLocation;
+    }
+
+    private ArrayList<URL> getDependenciesURLS(Model model) {
+        List<Dependency> dependencies = model.getDependencies();
+        ArrayList<URL> dependenciesURLS = new ArrayList<>();
+
+        for (Dependency dependency : dependencies) {
+            try {
+                File artifact = mavenBridge.findArtifact(dependency);
+                URL jarUrl = new URL(artifact.toURI().toString());
+
+                dependenciesURLS.add(jarUrl);
+            } catch (MalformedURLException e) {
+                LOG.debug(
+                    "Problem when getting dependency URL " + dependency.getArtifactId() + " from the current project",
+                    e);
+                continue;
+            }
+        }
+        return dependenciesURLS;
     }
 
     private static File getCwd() {
