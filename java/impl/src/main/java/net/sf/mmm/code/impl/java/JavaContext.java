@@ -9,9 +9,6 @@ import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.security.CodeSource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.api.element.CodeElementWithDeclaringType;
 import net.sf.mmm.code.api.element.CodeElementWithTypeVariables;
@@ -37,8 +34,11 @@ import net.sf.mmm.code.base.type.BaseTypeVariables;
 import net.sf.mmm.code.base.type.BaseTypeWildcard;
 import net.sf.mmm.util.exception.api.IllegalCaseException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- * Implementation of {@link JavaContext} for the {@link #getParent() root} context.
+ * Implementation of {@link net.sf.mmm.code.api.CodeContext} for Java.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0

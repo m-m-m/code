@@ -169,6 +169,9 @@ public class JavaRootContextTest extends AbstractBaseTypeTest {
     assertThat(boundTypeVariable).isSameAs(typeVariable);
   }
 
+  /**
+   * Test of {@link CodeType#getProperties() properties}.
+   */
   @Test
   public void testProperties() {
 

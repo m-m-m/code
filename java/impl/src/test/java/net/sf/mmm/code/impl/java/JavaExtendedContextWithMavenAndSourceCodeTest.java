@@ -8,13 +8,13 @@ import java.util.regex.Pattern;
 
 import javax.inject.Named;
 
-import org.junit.Test;
-
 import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.source.CodeSource;
 import net.sf.mmm.code.api.source.CodeSourceDescriptor;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.impl.java.source.maven.JavaSourceProviderUsingMaven;
+
+import org.junit.Test;
 
 /**
  * Test of {@link JavaExtendedContext} using {@link JavaSourceProviderUsingMaven}.
@@ -102,7 +102,7 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
     // then
     verifyHeader(type.getFile());
     verifyClass(type, clazz, context);
-    assertThat(type.getDoc().getLines()).containsExactly("Implementation of {@link JavaContext} for the {@link #getParent() root} context.", "",
+    assertThat(type.getDoc().getLines()).containsExactly("Implementation of {@link net.sf.mmm.code.api.CodeContext} for Java.", "",
         "@author Joerg Hohwiller (hohwille at users.sourceforge.net)", "@since 1.0.0");
     assertThat(type.getMethods().getDeclared("getRootContext").getReturns().getDoc().getLines())
         .containsExactly("the root {@link JavaContext context} responsible for the fundamental code (from JDK).");
@@ -124,14 +124,15 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
 
     // then
     assertThat(type.getFile().getComment().getCommentLines()).containsExactly("Copyright (C) 2009 The JSR-330 Expert Group", "",
-        "Licensed under the Apache License, Version 2.0 (the \"License\");", "you may not use this file except in compliance with the License.",
-        "You may obtain a copy of the License at", "", "     http://www.apache.org/licenses/LICENSE-2.0", "",
-        "Unless required by applicable law or agreed to in writing, software", "distributed under the License is distributed on an \"AS IS\" BASIS,",
-        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.", "See the License for the specific language governing permissions and",
-        "limitations under the License.");
+        "Licensed under the Apache License, Version 2.0 (the \"License\");",
+        "you may not use this file except in compliance with the License.", "You may obtain a copy of the License at", "",
+        "     http://www.apache.org/licenses/LICENSE-2.0", "", "Unless required by applicable law or agreed to in writing, software",
+        "distributed under the License is distributed on an \"AS IS\" BASIS,",
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        "See the License for the specific language governing permissions and", "limitations under the License.");
 
-    assertThat(type.getDoc().getLines()).containsExactly("String-based {@linkplain Qualifier qualifier}.", "", "<p>Example usage:", "", "<pre>",
-        "  public class Car {", "    &#064;Inject <b>@Named(\"driver\")</b> Seat driverSeat;",
+    assertThat(type.getDoc().getLines()).containsExactly("String-based {@linkplain Qualifier qualifier}.", "", "<p>Example usage:", "",
+        "<pre>", "  public class Car {", "    &#064;Inject <b>@Named(\"driver\")</b> Seat driverSeat;",
         "    &#064;Inject <b>@Named(\"passenger\")</b> Seat passengerSeat;", "    ...", "  }</pre>");
 
     List<? extends CodeMethod> methods = type.getMethods().getDeclared();

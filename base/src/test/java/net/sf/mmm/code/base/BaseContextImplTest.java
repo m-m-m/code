@@ -6,12 +6,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
 
-import org.junit.Test;
-
 import net.sf.mmm.code.api.CodeContext;
 import net.sf.mmm.code.api.CodeFile;
 import net.sf.mmm.code.api.CodePackage;
+import net.sf.mmm.code.api.node.CodeNodeWithFileWriting;
 import net.sf.mmm.code.api.type.CodeType;
+
+import org.junit.Test;
 
 /**
  * Test of {@link BaseContextImpl} via {@link TestContext}.
@@ -19,7 +20,7 @@ import net.sf.mmm.code.api.type.CodeType;
 public class BaseContextImplTest extends BaseContextTest {
 
   /**
-   * Test of {@link CodeContext#write(net.sf.mmm.code.api.CodePackage, java.nio.file.Path)}.
+   * Test of {@link CodeNodeWithFileWriting#write(Path)}.
    *
    * @throws Exception on error.
    */

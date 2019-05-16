@@ -40,10 +40,12 @@ public class CodeLanguageJava extends AbstractCodeLanguage {
 
   static final Pattern NAME_PATTERN_TYPE = NAME_PATTERN;
 
-  private static final Set<String> REVERVED_NAMES = new HashSet<>(Arrays.asList("abstract", "continue", "for", "new", "switch", "assert", "default", "goto",
-      "package", "synchronized", "boolean", "do", "if", "private", "this", "break", "double", "implements", "protected", "throw", "byte", "else", "import",
-      "public", "throws", "case", "enum", "instanceof", "return", "transient", "catch", "extends", "int", "short", "try", "char", "final", "interface",
-      "static", "void", "class", "finally", "long", "strictfp", "volatile", "const", "float", "native", "super", "while"));
+  private static final Set<String> REVERVED_NAMES = new HashSet<>(
+      Arrays.asList("abstract", "continue", "for", "new", "switch", "assert", "default", "goto", "package",
+          "synchronized", "boolean", "do", "if", "private", "this", "break", "double", "implements", "protected",
+          "throw", "byte", "else", "import", "public", "throws", "case", "enum", "instanceof", "return", "transient",
+          "catch", "extends", "int", "short", "try", "char", "final", "interface", "static", "void", "class", "finally",
+          "long", "strictfp", "volatile", "const", "float", "native", "super", "while"));
 
   /** The singleton instance. */
   public static final CodeLanguageJava INSTANCE = new CodeLanguageJava();
@@ -63,10 +65,14 @@ public class CodeLanguageJava extends AbstractCodeLanguage {
   @Override
   public String getKeywordForVariable(CodeLocalVariable variable) {
 
+    String keyword = "";
     if (variable.isFinal()) {
-      return "final ";
+      keyword = "final ";
     }
-    return "";
+    if (variable.getType() == null) {
+      keyword = keyword + "var "; // Java 10+
+    }
+    return keyword;
   }
 
   @Override

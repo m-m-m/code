@@ -2,8 +2,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.impl.java;
 
-import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.language.CodeLanguage;
+import net.sf.mmm.code.base.BaseFactory;
 import net.sf.mmm.code.base.loader.BaseLoader;
 import net.sf.mmm.code.base.source.BaseSourceImpl;
 import net.sf.mmm.code.base.source.BaseSourceProvider;
@@ -76,9 +76,9 @@ public class JavaExtendedContext extends JavaContext {
   }
 
   @Override
-  public CodeExpression createExpression(Object value, boolean primitive) {
+  public BaseFactory getFactory() {
 
-    return this.parent.createExpression(value, primitive);
+    return this.parent.getFactory();
   }
 
   @Override
@@ -115,6 +115,12 @@ public class JavaExtendedContext extends JavaContext {
   public BaseType getRootExceptionType() {
 
     return this.parent.getRootExceptionType();
+  }
+
+  @Override
+  public BaseType getBooleanType(boolean primitive) {
+
+    return this.parent.getBooleanType(primitive);
   }
 
   @Override

@@ -9,7 +9,6 @@ import java.util.function.BiFunction;
 
 import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.api.element.CodeElementWithDeclaringType;
-import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.language.CodeLanguageJava;
 import net.sf.mmm.code.base.loader.BaseLoader;
@@ -66,6 +65,16 @@ public class TestContext extends BaseContextImplWithCache {
   }
 
   @Override
+  public BaseType getBooleanType(boolean primitive) {
+
+    if (primitive) {
+      return (BaseType) getType(boolean.class);
+    } else {
+      return (BaseType) getType(Boolean.class);
+    }
+  }
+
+  @Override
   public BaseTypeWildcard getUnboundedWildcard() {
 
     throw new UnsupportedOperationException();
@@ -101,9 +110,9 @@ public class TestContext extends BaseContextImplWithCache {
   }
 
   @Override
-  public CodeExpression createExpression(Object value, boolean primitive) {
+  public BaseFactory getFactory() {
 
-    throw new UnsupportedOperationException();
+    return new TestFactory();
   }
 
   @Override

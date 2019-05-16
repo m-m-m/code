@@ -4,7 +4,6 @@ package net.sf.mmm.code.impl.java;
 
 import java.io.File;
 
-import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.language.CodeLanguageJava;
 import net.sf.mmm.code.api.source.CodeSourceDescriptor;
@@ -14,7 +13,6 @@ import net.sf.mmm.code.base.source.BaseSourceDescriptorType;
 import net.sf.mmm.code.base.source.BaseSourceImpl;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.base.type.BaseTypeWildcard;
-import net.sf.mmm.code.impl.java.expression.constant.JavaConstant;
 import net.sf.mmm.code.impl.java.loader.JavaSourceLoader;
 
 /**
@@ -29,6 +27,8 @@ public class JavaRootContext extends JavaContext {
 
   private final JavaClassLoader loader;
 
+  private final JavaFactory factory;
+
   private BaseTypeWildcard unboundedWildcard;
 
   /**
@@ -40,6 +40,7 @@ public class JavaRootContext extends JavaContext {
 
     super(source);
     this.loader = new JavaClassLoader(ClassLoader.getSystemClassLoader());
+    this.factory = new JavaFactory();
     for (Class<?> primitive : JavaConstants.PRIMITIVE_TYPES) {
       getType(primitive);
     }
@@ -70,12 +71,6 @@ public class JavaRootContext extends JavaContext {
   }
 
   @Override
-  public CodeExpression createExpression(Object value, boolean primitive) {
-
-    return JavaConstant.of(value, primitive);
-  }
-
-  @Override
   public BaseType getRootType() {
 
     return (BaseType) getType(Object.class);
@@ -97,6 +92,16 @@ public class JavaRootContext extends JavaContext {
   public BaseType getVoidType() {
 
     return (BaseType) getType(void.class);
+  }
+
+  @Override
+  public BaseType getBooleanType(boolean primitive) {
+
+    if (primitive) {
+      return (BaseType) getType(boolean.class);
+    } else {
+      return (BaseType) getType(Boolean.class);
+    }
   }
 
   @Override
@@ -157,6 +162,12 @@ public class JavaRootContext extends JavaContext {
     }
     CodeSourceDescriptor descriptor = new BaseSourceDescriptorType(groupId, artifactId, version, null, docUrl);
     return new BaseSourceImpl(byteCodeLocation, sourceCodeLocation, null, descriptor, loader);
+  }
+
+  @Override
+  public JavaFactory getFactory() {
+
+    return this.factory;
   }
 
   private static String getJavaMajorVersion(String version) {
