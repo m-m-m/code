@@ -236,7 +236,8 @@ public final class BaseFile extends BasePathElement implements CodeFile {
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language)
+      throws IOException {
 
     if (defaultIndent == null) {
       BaseType type = getType();
@@ -246,6 +247,9 @@ public final class BaseFile extends BasePathElement implements CodeFile {
         type.writeReference(sink, true);
       }
     } else {
+      if (isMutable()) {
+        createImports();
+      }
       doWriteComment(sink, newline, defaultIndent, currentIndent, language);
       getParentPackage().doWrite(sink, newline, null, currentIndent, language);
       getImports().write(sink, newline, defaultIndent, currentIndent, language);

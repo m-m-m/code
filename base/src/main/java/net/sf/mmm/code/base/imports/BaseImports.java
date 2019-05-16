@@ -67,6 +67,9 @@ public class BaseImports extends BaseNodeItemContainerFlat<CodeImport> implement
   public CodeImport add(CodeType type) {
 
     verifyMutalbe();
+    if (type.isQualified()) {
+      return null;
+    }
     CodePackage pkg = type.getParentPackage();
     if (!pkg.isRequireImport()) {
       return null;
@@ -112,7 +115,8 @@ public class BaseImports extends BaseNodeItemContainerFlat<CodeImport> implement
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language)
+      throws IOException {
 
     List<CodeImport> imports = getList();
     if (imports.isEmpty()) {
