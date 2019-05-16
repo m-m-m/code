@@ -10,9 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.sf.mmm.code.api.annotation.CodeAnnotation;
 import net.sf.mmm.code.api.annotation.CodeAnnotations;
 import net.sf.mmm.code.api.comment.CodeComment;
@@ -23,6 +20,9 @@ import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.node.BaseNodeItem;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base implementation of {@link CodeAnnotation}.
@@ -184,7 +184,7 @@ public class BaseAnnotation extends BaseNodeItem implements CodeAnnotation {
           try {
             Object value = method.invoke(this.reflectiveObject, (Object[]) null);
             Class<?> returnType = method.getReturnType();
-            this.parameters.put(key, getContext().createExpression(value, returnType.isPrimitive()));
+            this.parameters.put(key, getContext().getFactory().createExpression(value, returnType.isPrimitive()));
           } catch (Exception e) {
             LOG.warn("Failed to read attribute {} of annotation {}.", key, this.reflectiveObject, e);
           }
@@ -215,7 +215,8 @@ public class BaseAnnotation extends BaseNodeItem implements CodeAnnotation {
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent,
+      CodeLanguage language) throws IOException {
 
     sink.append(currentIndent);
     if (this.comment != null) {

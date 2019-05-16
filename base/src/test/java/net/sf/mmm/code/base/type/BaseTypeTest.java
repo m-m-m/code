@@ -2,10 +2,9 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.base.type;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.junit.Test;
 
 import net.sf.mmm.code.api.arg.CodeParameter;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
@@ -16,7 +15,11 @@ import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.BaseContextTest;
 import net.sf.mmm.code.base.BasePackage;
 import net.sf.mmm.code.base.BasePathElements;
+import net.sf.mmm.code.base.expression.BaseConstant;
+import net.sf.mmm.code.base.member.BaseField;
 import net.sf.mmm.code.base.member.BaseMethod;
+
+import org.junit.Test;
 
 /**
  * Test of {@link BaseType}.
@@ -190,7 +193,8 @@ public class BaseTypeTest extends BaseContextTest {
     class2Foo.getSuperTypes().add(interface4Foo);
 
     // then
-    assertThat(getAllSuperTypesAsList(class2Foo)).containsExactly(class1Other, interface1Other, interface2Bar, interface4Foo, interface3Some);
+    assertThat(getAllSuperTypesAsList(class2Foo)).containsExactly(class1Other, interface1Other, interface2Bar, interface4Foo,
+        interface3Some);
   }
 
   private List<CodeGenericType> getAllSuperTypesAsList(BaseType class2Foo) {
@@ -200,6 +204,81 @@ public class BaseTypeTest extends BaseContextTest {
       superTypeList.add(superType);
     }
     return superTypeList;
+  }
+
+  /**
+   * Test of {@link BaseType#createGettersAndSetters()}, etc.
+   */
+  @Test
+  public void testBean() {
+
+    // given
+    BaseContext context = createContext();
+    BasePackage rootPackage = context.getSource().getRootPackage();
+    BasePackage pkg = rootPackage.getChildren().createPackage("mydomain");
+
+    BaseType myBean = pkg.getChildren().createType("MyBean");
+    myBean.getSuperTypes().add(context.getType(Serializable.class));
+    BaseField serialVersionUID = myBean.getFields().add("serialVersionUID");
+    serialVersionUID.setModifiers(CodeModifiers.MODIFIERS_PRIVATE_STATIC_FINAL);
+    serialVersionUID.setType(context.getType(long.class));
+    serialVersionUID.setInitializer(new BaseConstant("1L"));
+    BaseField name = myBean.getFields().add("name");
+    name.setType(context.getType(String.class));
+    name.getDoc().add("the name used to identify this bean.");
+    BaseField age = myBean.getFields().add("age");
+    age.setType(context.getType(int.class));
+    BaseField human = myBean.getFields().add("human");
+    human.setType(context.getType(boolean.class));
+    // when
+    myBean.createGettersAndSetters();
+
+    // then
+    assertThat(myBean.getFile().getSourceCode()).isEqualTo("package mydomain;\n" + //
+        "\n" + //
+        "import java.io.Serializable;\n" + //
+        "\n" + //
+        "public class MyBean implements Serializable {\n" + //
+        "\n" + //
+        "  private static final long serialVersionUID = 1L;\n" + //
+        "\n" + //
+        "  /** the name used to identify this bean. */\n" + //
+        "  private String name;\n" + //
+        "\n" + //
+        "  private int age;\n" + //
+        "\n" + //
+        "  private boolean human;\n" + //
+        "\n" + //
+        "  /**\n" + //
+        "   * @return the name used to identify this bean.\n" + //
+        "   */\n" + //
+        "  public String getName() {\n" + //
+        "    return this.name;\n" + //
+        "  }\n" + //
+        "\n" + //
+        "  /**\n" + //
+        "   * @param name the name used to identify this bean.\n" + //
+        "   */\n" + //
+        "  public void setName(String name) {\n" + //
+        "    this.name = name;\n" + //
+        "  }\n" + //
+        "\n" + //
+        "  public int getAge() {\n" + //
+        "    return this.age;\n" + //
+        "  }\n" + //
+        "\n" + //
+        "  public void setAge(int age) {\n" + //
+        "    this.age = age;\n" + //
+        "  }\n" + //
+        "\n" + //
+        "  public boolean isHuman() {\n" + //
+        "    return this.human;\n" + //
+        "  }\n" + //
+        "\n" + //
+        "  public void setHuman(boolean human) {\n" + //
+        "    this.human = human;\n" + //
+        "  }\n" + //
+        "}\n");
   }
 
 }

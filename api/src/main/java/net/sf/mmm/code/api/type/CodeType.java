@@ -12,11 +12,13 @@ import net.sf.mmm.code.api.element.CodeElementWithModifiers;
 import net.sf.mmm.code.api.element.CodeElementWithTypeVariables;
 import net.sf.mmm.code.api.item.CodeMutableItemWithQualifiedName;
 import net.sf.mmm.code.api.member.CodeConstructors;
+import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.member.CodeFields;
 import net.sf.mmm.code.api.member.CodeMethods;
 import net.sf.mmm.code.api.member.CodeProperties;
 import net.sf.mmm.code.api.member.CodeProperty;
 import net.sf.mmm.code.api.merge.CodeAdvancedMergeableItem;
+import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.util.exception.api.ReadOnlyException;
 
 /**
@@ -203,4 +205,46 @@ public interface CodeType extends CodeGenericType, CodeElementWithModifiers, Cod
 
   @Override
   CodeType copy();
+
+  /**
+   * Creates getters for all non-static fields in this type.
+   */
+  default void createGetters() {
+
+    for (CodeField field : getFields().getDeclared()) {
+      if (!field.getModifiers().isStatic()) {
+        field.getOrCreateGetter();
+      }
+    }
+  }
+
+  /**
+   * Creates setters for all non-static and non-final fields in this type.
+   */
+  default void createSetters() {
+
+    for (CodeField field : getFields().getDeclared()) {
+      CodeModifiers modifiers = field.getModifiers();
+      if (!modifiers.isStatic() && !modifiers.isFinal()) {
+        field.getOrCreateSetter();
+      }
+    }
+  }
+
+  /**
+   * Creates all {@link #createGetters() getters} and {@link #createSetters() setters}.
+   */
+  default void createGettersAndSetters() {
+
+    for (CodeField field : getFields().getDeclared()) {
+      CodeModifiers modifiers = field.getModifiers();
+      if (!modifiers.isStatic()) {
+        field.getOrCreateGetter();
+        if (!modifiers.isFinal()) {
+          field.getOrCreateSetter();
+        }
+      }
+    }
+  }
+
 }

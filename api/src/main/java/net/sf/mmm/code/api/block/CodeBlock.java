@@ -41,6 +41,14 @@ public abstract interface CodeBlock extends CodeNodeItem, CodeItemWithVariables 
   List<CodeStatement> getStatements();
 
   /**
+   * @return {@code true} if empty, {@code false} otherwise.
+   */
+  default boolean isEmpty() {
+
+    return getStatements().isEmpty();
+  }
+
+  /**
    * @param statements the {@link CodeStatement}s to add.
    * @throws ReadOnlyException if {@link #isImmutable() immutable}.
    */

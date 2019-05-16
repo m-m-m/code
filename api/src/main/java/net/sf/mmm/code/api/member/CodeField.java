@@ -21,8 +21,8 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract interface CodeField
-    extends CodeMember, CodeMutableItemWithType, CodeVariable, CodeAdvancedMergeableItem<CodeField>, CodeNodeItemCopyable<CodeFields, CodeField> {
+public abstract interface CodeField extends CodeMember, CodeMutableItemWithType, CodeVariable,
+    CodeAdvancedMergeableItem<CodeField>, CodeNodeItemCopyable<CodeFields, CodeField> {
 
   /**
    * @return the {@link CodeExpression} assigned to this field on initialization or {@code null} for none.
@@ -37,6 +37,28 @@ public abstract interface CodeField
 
   @Override
   Field getReflectiveObject();
+
+  /**
+   * @return the {@link CodeMethod} that acts as getter to read this field or {@code null} if there is no such method.
+   */
+  CodeMethod getGetter();
+
+  /**
+   * @return the {@link CodeMethod} that acts as getter to read this field. If it does not yet exist, it will be
+   *         created.
+   */
+  CodeMethod getOrCreateGetter();
+
+  /**
+   * @return the {@link CodeMethod} that acts as setter to write this field or {@code null} if there is no such method.
+   */
+  CodeMethod getSetter();
+
+  /**
+   * @return the {@link CodeMethod} that acts as setter to write this field. If it does not yet exist, it will be
+   *         created.
+   */
+  CodeMethod getOrCreateSetter();
 
   @Override
   CodeField copy();

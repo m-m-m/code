@@ -2,6 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.doc;
 
+import java.util.Collection;
 import java.util.List;
 
 import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
@@ -61,6 +62,11 @@ public interface CodeDoc extends CodeSimpleMergeableItem<CodeDoc>, CodeNodeItemC
   String TAG_VALUE = "value";
 
   /**
+   * Empty {@link #getLinesAsArray() lines}.
+   */
+  String[] NO_LINES = new String[0];
+
+  /**
    * @param format the requested {@link CodeDocFormat}.
    * @return this documentation as {@link String} in the given {@link CodeDocFormat}. Will be the
    *         {@link String#isEmpty() empty} {@link String} if not available and therefore never <code>null</code>.
@@ -92,12 +98,33 @@ public interface CodeDoc extends CodeSimpleMergeableItem<CodeDoc>, CodeNodeItemC
   List<String> getLines();
 
   /**
+   * @return the {@link #getLines() documentation lines} as array.
+   * @see #getLines()
+   */
+  default String[] getLinesAsArray() {
+
+    List<String> lines = getLines();
+    if (lines.isEmpty()) {
+      return CodeDoc.NO_LINES;
+    }
+    return lines.toArray(new String[lines.size()]);
+  }
+
+  /**
    * Please read documentation of {@link #getLines()} before using.
    *
-   * @param textLines the textual documentation lines to add to {@link #getLines()}.
+   * @param lines the textual documentation lines to add to {@link #getLines()}.
    * @throws ReadOnlyException if {@link #isImmutable() immutable}.
    */
-  void add(String... textLines);
+  void add(Collection<String> lines);
+
+  /**
+   * Please read documentation of {@link #getLines()} before using.
+   *
+   * @param lines the textual documentation lines to add to {@link #getLines()}.
+   * @throws ReadOnlyException if {@link #isImmutable() immutable}.
+   */
+  void add(String... lines);
 
   /**
    * @return {@code true} if this documentation is empty.

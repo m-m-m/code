@@ -7,6 +7,7 @@ import java.util.List;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.copy.CodeNodeItemCopyable;
 import net.sf.mmm.code.api.imports.CodeImport;
+import net.sf.mmm.code.api.imports.CodeImportHelper;
 import net.sf.mmm.code.api.imports.CodeImports;
 import net.sf.mmm.code.api.node.CodeNodeWithFileWriting;
 import net.sf.mmm.code.api.type.CodeType;
@@ -47,6 +48,14 @@ public abstract interface CodeFile extends CodePathElement, CodeNodeWithFileWrit
    *         never {@code null}.
    */
   CodeImports getImports();
+
+  /**
+   * Creates {@link #getImports() imports} for all required types.
+   */
+  default void createImports() {
+
+    CodeImportHelper.get().createImports(this);
+  }
 
   @Override
   Class<?> getReflectiveObject();

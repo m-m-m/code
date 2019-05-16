@@ -16,10 +16,16 @@ import net.sf.mmm.util.exception.api.ReadOnlyException;
 public interface CodeFunction extends CodeNodeItem, CodeItemWithVariables {
 
   /**
-   * @return the {@link CodeBlockBody} of this function. May be empty (have no
-   *         {@link CodeBlockBody#getStatements() statements}) but never {@code null}.
+   * @return the {@link CodeBlockBody} of this function. May be empty (have no {@link CodeBlockBody#getStatements()
+   *         statements}) but never {@code null}.
    */
   CodeBlockBody getBody();
+
+  /**
+   * @return {@code true} if this function can and should have a {@link #getBody() body}, {@code false} otherwise (e.g.
+   *         if {@link net.sf.mmm.code.api.modifier.CodeModifiers#isAbstract() abstract}).
+   */
+  boolean canHaveBody();
 
   /**
    * @param body the new value of {@link #getBody()}.

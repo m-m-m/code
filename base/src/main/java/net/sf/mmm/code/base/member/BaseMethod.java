@@ -10,6 +10,7 @@ import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.language.CodeLanguage;
+import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.member.CodeMethods;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
@@ -147,7 +148,7 @@ public class BaseMethod extends BaseOperation implements CodeMethod {
         Object value = this.reflectiveObject.getDefaultValue();
         if (value != null) {
           boolean primitive = getReturns().getType().asType().isPrimitive();
-          this.defaultValue = getContext().createExpression(value, primitive);
+          this.defaultValue = getContext().getFactory().createExpression(value, primitive);
         }
       }
       if ((this.defaultValue == null) && (getSourceCodeObject() != null)) {
@@ -168,6 +169,19 @@ public class BaseMethod extends BaseOperation implements CodeMethod {
   public Method getReflectiveObject() {
 
     return this.reflectiveObject;
+  }
+
+  @Override
+  public boolean canHaveBody() {
+
+    CodeModifiers modifiers = getModifiers();
+    if (modifiers.isAbstract()) {
+      return false;
+    }
+    if (this.parent.getParent().getCategory().isInterface()) {
+      return false;
+    }
+    return true;
   }
 
   @Override
@@ -234,6 +248,13 @@ public class BaseMethod extends BaseOperation implements CodeMethod {
   }
 
   @Override
+  public CodeField getAccessorField() {
+
+    // not supported by default. Languages like C# have to extend this class and override this method
+    return null;
+  }
+
+  @Override
   public CodeMethod merge(CodeMethod other, CodeMergeStrategyDecider decider, CodeMergeStrategy parentStrategy) {
 
     CodeMergeStrategy strategy = decider.decide(this, other, parentStrategy);
@@ -265,7 +286,8 @@ public class BaseMethod extends BaseOperation implements CodeMethod {
   }
 
   @Override
-  protected void doWriteSignature(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
+  protected void doWriteSignature(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language)
+      throws IOException {
 
     sink.append(language.getMethodKeyword());
     String start = language.getMethodReturnStart();
@@ -278,7 +300,8 @@ public class BaseMethod extends BaseOperation implements CodeMethod {
   }
 
   @Override
-  protected void doWriteParameters(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
+  protected void doWriteParameters(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language)
+      throws IOException {
 
     super.doWriteParameters(sink, newline, defaultIndent, currentIndent, language);
     String end = language.getMethodReturnEnd();
