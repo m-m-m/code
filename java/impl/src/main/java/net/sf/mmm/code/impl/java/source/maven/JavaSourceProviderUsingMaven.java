@@ -262,23 +262,57 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
     }
 
     private ArrayList<URL> getDependenciesURLS(Model model) {
-        List<Dependency> dependencies = model.getDependencies();
         ArrayList<URL> dependenciesURLS = new ArrayList<>();
+        int recursiveness = 0; // We only want to recursively get 4 levels of dependency
+
+        dependenciesURLS = getDependenciesURLS(model, dependenciesURLS, recursiveness);
+        return dependenciesURLS;
+    }
+
+    /**
+     * @param model
+     * @param previousURLs
+     * @param recursiveness
+     * @return
+     */
+    private ArrayList<URL> getDependenciesURLS(Model model, ArrayList<URL> previousURLs, int recursiveness) {
+
+        if (recursiveness >= 4) {
+            return previousURLs;
+        }
+        recursiveness++;
+
+        List<Dependency> dependencies = model.getDependencies();
 
         for (Dependency dependency : dependencies) {
             try {
                 File artifact = mavenBridge.findArtifact(dependency);
                 URL jarUrl = new URL(artifact.toURI().toString());
+                boolean isAlreadyContained = previousURLs.parallelStream().anyMatch(url -> jarUrl.equals(url));
 
-                dependenciesURLS.add(jarUrl);
+                if (isAlreadyContained) {
+                    return previousURLs;
+                }
+
+                previousURLs.add(jarUrl);
+
+                File artifactPom = mavenBridge.findPom(dependency);
+                Model artifactModel = mavenBridge.readEffectiveModel(artifactPom);
+
+                previousURLs = getDependenciesURLS(artifactModel, previousURLs, recursiveness);
+
             } catch (MalformedURLException e) {
                 LOG.debug(
                     "Problem when getting dependency URL " + dependency.getArtifactId() + " from the current project",
                     e);
                 continue;
+            } catch (IllegalStateException e) {
+                LOG.debug("Problem when reading pom of dependency " + dependency.getArtifactId()
+                    + ". Not adding it to the classpath.");
+                continue;
             }
         }
-        return dependenciesURLS;
+        return previousURLs;
     }
 
     private static File getCwd() {

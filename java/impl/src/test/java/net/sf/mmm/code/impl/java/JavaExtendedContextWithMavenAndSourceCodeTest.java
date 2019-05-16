@@ -93,7 +93,7 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
         String entityClass = "com.maven.project.sampledatamanagement.dataaccess.api.SampleDataEntity";
 
         // Local Maven project we want to test
-        File mavenProjectDirectory = rootTestPath.resolve("localmavenproject/maven.project").toFile();
+        File mavenProjectDirectory = rootTestPath.resolve("localmavenproject/maven.project/core").toFile();
         JavaContext context = getContextFromLocalMavenProject(mavenProjectDirectory);
 
         CodeType type = context.getType(entityClass);
@@ -111,22 +111,14 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
         assertThat(fields.getDeclared("surname")).isNotNull();
         assertThat(fields.getDeclared("age")).isNotNull();
 
-        // CodeProperties properties = type.getProperties();
-        // CodeProperty property = properties.getDeclared("mail");
-        //
-        // assertThat(property.getField()).isSameAs(fields.getDeclared("mail"));
-        // assertThat(property.getGetter().getName()).isEqualTo("getMail");
-        // assertThat(property.getSetter().getName()).isEqualTo("setMail");
-        // assertThat(property.getDoc().getLines()).containsExactly("/** */");
-        // assertThat(property.getSetter().getDoc().getLines()).isEqualTo("/** */");
-
-        Class<?> classFile = context.getClassLoader().loadClass("javax.persistence.Entity");
+        Class<?> classFile =
+            context.getClassLoader().loadClass("com.devonfw.module.basic.common.api.entity.GenericEntity");
         assertThat(classFile).isNotNull();
 
         MavenClassLoader classLoader = (MavenClassLoader) context.getClassLoader();
 
         List<? extends CodeSource> dependencies = source.getDependencies().getDeclared();
-        assertThat(dependencies).hasSize(1);
+        assertThat(dependencies).hasSize(2);
 
         type = context.getType("javax.persistence.Entity");
         assertThat(type.getMethods().toString()).isEqualTo("String name();");
