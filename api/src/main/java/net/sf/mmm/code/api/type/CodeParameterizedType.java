@@ -20,8 +20,8 @@ import net.sf.mmm.code.api.node.CodeNodeItemWithDeclaringOperation;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeParameterizedType
-    extends CodeGenericType, CodeMutableItemWithType, CodeNodeItemWithDeclaringOperation, CodeNodeItemCopyable<CodeElement, CodeParameterizedType> {
+public interface CodeParameterizedType extends CodeGenericType, CodeMutableItemWithType, CodeNodeItemWithDeclaringOperation,
+    CodeNodeItemCopyable<CodeElement, CodeParameterizedType> {
 
   @Override
   CodeElement getParent();
@@ -36,6 +36,9 @@ public interface CodeParameterizedType
 
   @Override
   ParameterizedType getReflectiveObject();
+
+  @Override
+  CodeTypeParameters getTypeParameters();
 
   @Override
   CodeParameterizedType copy();
