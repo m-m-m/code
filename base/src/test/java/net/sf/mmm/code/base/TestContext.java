@@ -27,16 +27,18 @@ public class TestContext extends BaseContextImplWithCache {
 
   /**
    * The constructor.
+   *
+   * @param immutable - {@code true} if immutable, {@code false} otherwise.
    */
-  public TestContext() {
+  public TestContext(boolean immutable) {
 
-    super(createSource());
+    super(createSource(immutable));
   }
 
-  private static BaseSourceImpl createSource() {
+  private static BaseSourceImpl createSource(boolean immutable) {
 
     BaseSourceLoader loader = new TestSoureLoader();
-    BaseSourceImpl source = new BaseSourceImpl(new File(""), null, null, null, loader);
+    BaseSourceImpl source = new BaseSourceImpl(null, new File(""), null, null, null, null, loader, immutable);
     return source;
   }
 
@@ -137,6 +139,14 @@ public class TestContext extends BaseContextImplWithCache {
         return (BaseType) getType(clazz);
       } catch (ClassNotFoundException e) {
         // fail(e.getMessage(), e);
+        BaseSource source = getSource();
+        if (source.isMutable()) {
+          CodeName path = getContext().parseName(qualifiedName);
+          BaseFile file = source.getRootPackage().getChildren().getFile(path);
+          if (file != null) {
+            return file.getType();
+          }
+        }
         return null;
       }
     }

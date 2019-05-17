@@ -53,6 +53,8 @@ public class BaseSourceImpl extends BaseProviderImpl implements BaseSource {
 
   private String id;
 
+  private boolean immutable;
+
   /**
    * The constructor.
    *
@@ -65,7 +67,7 @@ public class BaseSourceImpl extends BaseProviderImpl implements BaseSource {
   public BaseSourceImpl(File byteCodeLocation, File sourceCodeLocation, String id, CodeSourceDescriptor descriptor,
       BaseSourceLoader loader) {
 
-    this(null, byteCodeLocation, sourceCodeLocation, id, descriptor, null, loader);
+    this(null, byteCodeLocation, sourceCodeLocation, id, descriptor, null, loader, true);
   }
 
   /**
@@ -78,7 +80,7 @@ public class BaseSourceImpl extends BaseProviderImpl implements BaseSource {
    */
   public BaseSourceImpl(CodeSource reflectiveObject, CodeSourceDescriptor descriptor, BaseSourceLoader loader) {
 
-    this(reflectiveObject, null, null, null, descriptor, null, loader);
+    this(reflectiveObject, null, null, null, descriptor, null, loader, true);
     Objects.requireNonNull(reflectiveObject, "reflectiveObject");
   }
 
@@ -93,9 +95,10 @@ public class BaseSourceImpl extends BaseProviderImpl implements BaseSource {
    * @param descriptor the {@link #getDescriptor() descriptor}.
    * @param dependencies the {@link #getDependencies()} dependencies.
    * @param loader the {@link #getLoader() loader}.
+   * @param immutable the {@link #isImmutable() immutable} flag.
    */
   public BaseSourceImpl(CodeSource reflectiveObject, File byteCodeLocation, File sourceCodeLocation, String id,
-      CodeSourceDescriptor descriptor, List<BaseSource> dependencies, BaseSourceLoader loader) {
+      CodeSourceDescriptor descriptor, List<BaseSource> dependencies, BaseSourceLoader loader, boolean immutable) {
 
     super();
     if ((byteCodeLocation != null) && (id != null)) {
@@ -110,8 +113,11 @@ public class BaseSourceImpl extends BaseProviderImpl implements BaseSource {
       this.id = normalizeId(id);
     }
     this.reflectiveObject = reflectiveObject;
+    this.immutable = immutable;
     this.rootPackage = new BasePackage(this);
-    this.rootPackage.setImmutable();
+    if (immutable) {
+      this.rootPackage.setImmutable();
+    }
     if (dependencies != null) {
       this.dependencies = new BaseSourceDependencies(this, dependencies);
     }
@@ -120,6 +126,12 @@ public class BaseSourceImpl extends BaseProviderImpl implements BaseSource {
       ((BaseSourceLoaderImpl) loader).setSource(this);
     }
     this.loader = loader;
+  }
+
+  @Override
+  public boolean isImmutable() {
+
+    return this.immutable;
   }
 
   /**

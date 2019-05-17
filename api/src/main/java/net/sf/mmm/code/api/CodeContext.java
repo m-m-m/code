@@ -126,4 +126,21 @@ public interface CodeContext extends CodeProvider {
    */
   CodeFactory getFactory();
 
+  /**
+   * @param qualifiedName the {@link CodeType#getQualifiedName() qualified name} of the requested {@link CodeType}.
+   * @param add - {@code true} to also add newly created code elements (requires mutable access), {@code false}
+   *        otherwise.
+   * @return the requested existing or newly created {@link CodeType}.
+   */
+  default CodeType getOrCreateType(String qualifiedName, boolean add) {
+
+    CodeType type = getType(qualifiedName);
+    if (type == null) {
+      CodeName path = new CodeName(qualifiedName, getLanguage().getPackageSeparator());
+      CodeFile file = getSource().getRootPackage().getChildren().getOrCreateFile(path, add);
+      type = file.getType();
+    }
+    return type;
+  }
+
 }

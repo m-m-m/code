@@ -71,4 +71,10 @@ public interface BaseContext extends CodeContext, BaseProvider {
   @Override
   BaseFactory getFactory();
 
+  @Override
+  default BaseType getOrCreateType(String qualifiedName, boolean add) {
+
+    return (BaseType) CodeContext.super.getOrCreateType(qualifiedName, add);
+  }
+
 }

@@ -8,9 +8,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.Supplier;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.sf.mmm.code.api.CodeFile;
 import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.CodePathElement;
@@ -22,6 +19,9 @@ import net.sf.mmm.code.api.node.CodeContainer;
 import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.util.io.api.IoMode;
 import net.sf.mmm.util.io.api.RuntimeIoException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base implementation of {@link CodePackage}.
@@ -68,7 +68,7 @@ public final class BasePackage extends BasePathElement implements CodePackage {
     this.source = source;
     this.children = new BasePathElements(this);
     this.reflectiveObject = null;
-    this.systemImmutable = true; // depend on source?
+    this.systemImmutable = source.isImmutable();
   }
 
   /**
@@ -91,7 +91,8 @@ public final class BasePackage extends BasePathElement implements CodePackage {
    * @param sourceSupplier the optional {@link Supplier} for lazy-loading of source-code.
    * @param systemImmutable the {@link #isSystemImmutable() system immutable flag}.
    */
-  public BasePackage(BasePackage parentPackage, String simpleName, Package reflectiveObject, Supplier<BasePackage> sourceSupplier, boolean systemImmutable) {
+  public BasePackage(BasePackage parentPackage, String simpleName, Package reflectiveObject, Supplier<BasePackage> sourceSupplier,
+      boolean systemImmutable) {
 
     super(parentPackage, simpleName);
     this.source = parentPackage.getSource();
@@ -260,7 +261,8 @@ public final class BasePackage extends BasePathElement implements CodePackage {
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language)
+      throws IOException {
 
     if (isRoot()) {
       return;

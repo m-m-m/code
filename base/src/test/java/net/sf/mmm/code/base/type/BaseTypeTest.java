@@ -281,4 +281,33 @@ public class BaseTypeTest extends BaseContextTest {
         "}\n");
   }
 
+  /**
+   * Test of {@link BaseContext#getOrCreateType(String, boolean)}.
+   */
+  @Test
+  public void testGetOrCreateType() {
+
+    // given
+    BaseContext context = createContext(false);
+    BasePackage rootPackage = context.getSource().getRootPackage();
+    String pkgName = "mydomain";
+    BasePackage pkg = rootPackage.getChildren().getOrCreatePackage(context.parseName(pkgName), true);
+    String simpleName = "MyClass";
+
+    // when
+    BaseType type = pkg.getChildren().getOrCreateFile(context.parseName(simpleName), true).getType();
+
+    // then
+    assertThat(context.getType("mydomain.MyClass")).isSameAs(type);
+    assertThat(context.getOrCreateType("mydomain.MyClass", false)).isSameAs(type);
+    String qualifiedName = "mydomain.subpkg.MyClass";
+    BaseType type2 = context.getOrCreateType(qualifiedName, false);
+    assertThat(type2).isNotNull().isNotSameAs(type);
+    assertThat(type2.getQualifiedName()).isEqualTo(qualifiedName);
+    assertThat(context.getType(qualifiedName)).isNull();
+    type2 = context.getOrCreateType(qualifiedName, true);
+    assertThat(type2.getQualifiedName()).isEqualTo(qualifiedName);
+    assertThat(context.getType(qualifiedName)).isSameAs(type2);
+  }
+
 }

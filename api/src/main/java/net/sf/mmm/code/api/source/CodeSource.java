@@ -11,6 +11,7 @@ import net.sf.mmm.code.api.CodePathElements;
 import net.sf.mmm.code.api.CodeProvider;
 import net.sf.mmm.code.api.node.CodeContainer;
 import net.sf.mmm.code.api.node.CodeNodeWithFileWriting;
+import net.sf.mmm.code.api.object.CodeMutable;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
 
@@ -21,7 +22,7 @@ import net.sf.mmm.code.api.type.CodeType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeSource extends CodeProvider, CodeContainer, CodeNodeWithFileWriting {
+public interface CodeSource extends CodeProvider, CodeContainer, CodeNodeWithFileWriting, CodeMutable {
 
   /**
    * @return the root {@link CodePackage package} of this source. Will typically be lazy initialized and
