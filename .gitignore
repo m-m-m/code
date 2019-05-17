@@ -5,6 +5,8 @@
 *.patch
 *.iml
 target
+!/java/impl/src/test/resources/testdata/localmavenproject/maven.project/core/target
+!/java/impl/src/test/resources/testdata/localmavenproject/maven.project/api/target
 eclipse-target
 gwt-unitCache
 war
