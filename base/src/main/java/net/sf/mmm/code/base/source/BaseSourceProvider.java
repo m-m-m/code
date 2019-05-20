@@ -5,7 +5,7 @@ package net.sf.mmm.code.base.source;
 import java.io.File;
 import java.security.CodeSource;
 
-import net.sf.mmm.code.base.BaseContextImpl;
+import net.sf.mmm.code.base.AbstractBaseContext;
 
 /**
  * Factory for {@link BaseSource} to decouple from specific implementations such as maven or eclipse
@@ -30,7 +30,7 @@ public interface BaseSourceProvider {
   BaseSource create(File byteCodeLocation, File sourceCodeLocation);
 
   /**
-   * @param context the {@link BaseContextImpl}.
+   * @param context the {@link AbstractBaseContext}.
    */
-  void setContext(BaseContextImpl context);
+  void setContext(AbstractBaseContext context);
 }

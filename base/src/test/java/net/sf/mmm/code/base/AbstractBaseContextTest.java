@@ -15,9 +15,9 @@ import net.sf.mmm.code.api.type.CodeType;
 import org.junit.Test;
 
 /**
- * Test of {@link BaseContextImpl} via {@link TestContext}.
+ * Test of {@link AbstractBaseContext} via {@link TestContext}.
  */
-public class BaseContextImplTest extends BaseContextTest {
+public class AbstractBaseContextTest extends BaseContextTest {
 
   /**
    * Test of {@link CodeNodeWithFileWriting#write(Path)}.

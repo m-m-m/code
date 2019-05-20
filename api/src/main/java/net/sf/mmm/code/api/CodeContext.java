@@ -131,6 +131,7 @@ public interface CodeContext extends CodeProvider {
    * @param add - {@code true} to also add newly created code elements (requires mutable access), {@code false}
    *        otherwise.
    * @return the requested existing or newly created {@link CodeType}.
+   * @see #createChildContext()
    */
   default CodeType getOrCreateType(String qualifiedName, boolean add) {
 
@@ -142,5 +143,13 @@ public interface CodeContext extends CodeProvider {
     }
     return type;
   }
+
+  /**
+   * @return a new mutable child context. It will inherit from this context but have its own virtual {@link #getSource()
+   *         source} that is {@link net.sf.mmm.code.api.source.CodeSource#isMutable() mutable} so you can add your own
+   *         {@link CodePathElement code}.
+   * @see #getOrCreateType(String, boolean)
+   */
+  CodeContext createChildContext();
 
 }

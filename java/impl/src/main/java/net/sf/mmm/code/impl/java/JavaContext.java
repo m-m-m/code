@@ -14,9 +14,8 @@ import net.sf.mmm.code.api.element.CodeElementWithDeclaringType;
 import net.sf.mmm.code.api.element.CodeElementWithTypeVariables;
 import net.sf.mmm.code.api.node.CodeNode;
 import net.sf.mmm.code.api.type.CodeTypeVariable;
+import net.sf.mmm.code.base.AbstractBaseContextWithCache;
 import net.sf.mmm.code.base.BaseContext;
-import net.sf.mmm.code.base.BaseContextImplWithCache;
-import net.sf.mmm.code.base.BaseFile;
 import net.sf.mmm.code.base.arg.BaseOperationArg;
 import net.sf.mmm.code.base.element.BaseElement;
 import net.sf.mmm.code.base.element.BaseElementWithDeclaringType;
@@ -44,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class JavaContext extends BaseContextImplWithCache {
+public abstract class JavaContext extends AbstractBaseContextWithCache {
 
   private static final Logger LOG = LoggerFactory.getLogger(JavaContext.class);
 
@@ -203,14 +202,6 @@ public abstract class JavaContext extends BaseContextImplWithCache {
         }
         return (BaseType) getContext().getType(clazz);
       } catch (ClassNotFoundException e) {
-        BaseSource source = getSource();
-        if (source.isMutable()) {
-          CodeName path = getContext().parseName(qualifiedName);
-          BaseFile file = source.getRootPackage().getChildren().getFile(path);
-          if (file != null) {
-            return file.getType();
-          }
-        }
         LOG.debug("Class {} not found.", qualifiedName, e);
         return null;
       }

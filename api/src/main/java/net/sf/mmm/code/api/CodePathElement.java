@@ -7,7 +7,8 @@ import net.sf.mmm.code.api.item.CodeItemWithQualifiedNameAndParentPackage;
 import net.sf.mmm.code.api.node.CodeContainer;
 
 /**
- * Abstract top-level interface for any item of code as defined by this API. It reflects code structure.
+ * Abstract interface for any top-level {@link CodeElement} such as {@link CodePackage} or {@link CodeFile}. It reflects
+ * code structure.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0

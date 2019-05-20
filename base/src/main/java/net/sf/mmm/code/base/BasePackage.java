@@ -14,7 +14,7 @@ import net.sf.mmm.code.api.CodePathElement;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.language.CodeLanguage;
-import net.sf.mmm.code.api.language.CodeLanguageJava;
+import net.sf.mmm.code.api.language.JavaLanguage;
 import net.sf.mmm.code.api.node.CodeContainer;
 import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.util.io.api.IoMode;
@@ -99,7 +99,7 @@ public final class BasePackage extends BasePathElement implements CodePackage {
     this.children = new BasePathElements(this);
     Package pkg = reflectiveObject;
     if (pkg == null) {
-      if (CodeLanguageJava.LANGUAGE_NAME_JAVA.equals(getLanguage().getLanguageName())) {
+      if (JavaLanguage.LANGUAGE_NAME_JAVA.equals(getLanguage().getLanguageName())) {
         pkg = Package.getPackage(getQualifiedName());
       }
     } else if (!systemImmutable) {

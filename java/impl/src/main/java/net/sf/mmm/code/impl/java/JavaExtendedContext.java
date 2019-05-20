@@ -2,13 +2,10 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.impl.java;
 
-import net.sf.mmm.code.api.language.CodeLanguage;
-import net.sf.mmm.code.base.BaseFactory;
 import net.sf.mmm.code.base.loader.BaseLoader;
 import net.sf.mmm.code.base.source.BaseSourceImpl;
 import net.sf.mmm.code.base.source.BaseSourceProvider;
 import net.sf.mmm.code.base.type.BaseType;
-import net.sf.mmm.code.base.type.BaseTypeWildcard;
 
 /**
  * Implementation of {@link JavaContext} that inherits from a {@link #getParent() parent} context.
@@ -73,66 +70,6 @@ public class JavaExtendedContext extends JavaContext {
   public JavaRootContext getRootContext() {
 
     return this.parent.getRootContext();
-  }
-
-  @Override
-  public BaseFactory getFactory() {
-
-    return this.parent.getFactory();
-  }
-
-  @Override
-  public BaseTypeWildcard getUnboundedWildcard() {
-
-    return this.parent.getUnboundedWildcard();
-  }
-
-  @Override
-  public CodeLanguage getLanguage() {
-
-    return this.parent.getLanguage();
-  }
-
-  @Override
-  public BaseType getRootType() {
-
-    return this.parent.getRootType();
-  }
-
-  @Override
-  public BaseType getRootEnumerationType() {
-
-    return this.parent.getRootEnumerationType();
-  }
-
-  @Override
-  public BaseType getVoidType() {
-
-    return this.parent.getVoidType();
-  }
-
-  @Override
-  public BaseType getRootExceptionType() {
-
-    return this.parent.getRootExceptionType();
-  }
-
-  @Override
-  public BaseType getBooleanType(boolean primitive) {
-
-    return this.parent.getBooleanType(primitive);
-  }
-
-  @Override
-  public BaseType getNonPrimitiveType(BaseType javaType) {
-
-    return this.parent.getNonPrimitiveType(javaType);
-  }
-
-  @Override
-  public String getQualifiedNameForStandardType(String simpleName, boolean omitStandardPackages) {
-
-    return this.parent.getQualifiedNameForStandardType(simpleName, omitStandardPackages);
   }
 
 }

@@ -5,7 +5,7 @@ package net.sf.mmm.code.impl.java;
 import java.io.File;
 
 import net.sf.mmm.code.api.language.CodeLanguage;
-import net.sf.mmm.code.api.language.CodeLanguageJava;
+import net.sf.mmm.code.api.language.JavaLanguage;
 import net.sf.mmm.code.api.source.CodeSourceDescriptor;
 import net.sf.mmm.code.base.loader.BaseLoader;
 import net.sf.mmm.code.base.loader.SourceCodeProvider;
@@ -67,7 +67,7 @@ public class JavaRootContext extends JavaContext {
   @Override
   public CodeLanguage getLanguage() {
 
-    return CodeLanguageJava.INSTANCE;
+    return JavaLanguage.get();
   }
 
   @Override

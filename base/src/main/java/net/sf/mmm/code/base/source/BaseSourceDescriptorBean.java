@@ -2,6 +2,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.base.source;
 
+import net.sf.mmm.code.api.source.CodeSourceDescriptor;
+
 /**
  * Base implementation of {@link BaseSourceDescriptor} as mutable Java bean.
  *
@@ -59,6 +61,23 @@ public class BaseSourceDescriptorBean extends BaseSourceDescriptor {
     this.scope = scope;
     this.docUrl = docUrl;
     this.id = createId();
+  }
+
+  /**
+   * The constructor.
+   *
+   * @param template the {@link CodeSourceDescriptor} to copy.
+   */
+  public BaseSourceDescriptorBean(CodeSourceDescriptor template) {
+
+    super();
+    if (template != null) {
+      this.groupId = template.getGroupId();
+      this.artifactId = template.getArtifactId();
+      this.version = template.getVersion();
+      this.scope = template.getScope();
+      this.docUrl = template.getDocUrl();
+    }
   }
 
   @Override

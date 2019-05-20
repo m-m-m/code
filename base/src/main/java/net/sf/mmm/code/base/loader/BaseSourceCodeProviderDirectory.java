@@ -6,7 +6,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import net.sf.mmm.code.api.language.CodeLanguageJava;
+import net.sf.mmm.code.api.language.JavaLanguage;
 
 /**
  * Base implementation of {@link BaseSourceCodeProvider} for a source-code directory in the filesystem.
@@ -26,7 +26,7 @@ public class BaseSourceCodeProviderDirectory extends BaseSourceCodeProvider {
    */
   public BaseSourceCodeProviderDirectory(File sourceFolder) {
 
-    this(sourceFolder, CodeLanguageJava.TYPE_EXTENSION_JAVA);
+    this(sourceFolder, JavaLanguage.TYPE_EXTENSION_JAVA);
   }
 
   /**

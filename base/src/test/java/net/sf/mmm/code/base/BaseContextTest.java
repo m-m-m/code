@@ -28,15 +28,7 @@ public abstract class BaseContextTest extends Assertions {
    */
   protected BaseContext createContext() {
 
-    return createContext(true);
-  }
-
-  /**
-   * @return the {@link BaseContext} to test.
-   */
-  protected BaseContext createContext(boolean immutable) {
-
-    return new TestContext(immutable);
+    return new TestContext();
   }
 
   protected CodeAnnotation getTestAnnotation(CodeAnnotations annotations) {

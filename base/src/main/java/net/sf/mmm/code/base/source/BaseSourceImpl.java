@@ -13,9 +13,9 @@ import java.util.Objects;
 
 import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.api.source.CodeSourceDescriptor;
+import net.sf.mmm.code.base.AbstractBaseProvider;
 import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.BasePackage;
-import net.sf.mmm.code.base.BaseProviderImpl;
 import net.sf.mmm.code.base.loader.BaseSourceLoader;
 import net.sf.mmm.code.base.loader.BaseSourceLoaderImpl;
 import net.sf.mmm.code.base.type.BaseGenericType;
@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class BaseSourceImpl extends BaseProviderImpl implements BaseSource {
+public class BaseSourceImpl extends AbstractBaseProvider implements BaseSource {
 
   private static final Logger LOG = LoggerFactory.getLogger(BaseSourceImpl.class);
 
@@ -214,7 +214,7 @@ public class BaseSourceImpl extends BaseProviderImpl implements BaseSource {
     if (this.descriptor == null) {
       this.descriptor = createDescriptor();
       if (this.descriptor == null) {
-        throw new ResourceMissingException("descriptor");
+        LOG.warn("Descriptor not available");
       }
     }
     return this.descriptor;

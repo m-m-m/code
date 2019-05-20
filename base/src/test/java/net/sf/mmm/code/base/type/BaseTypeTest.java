@@ -288,7 +288,7 @@ public class BaseTypeTest extends BaseContextTest {
   public void testGetOrCreateType() {
 
     // given
-    BaseContext context = createContext(false);
+    BaseContext context = createContext().createChildContext();
     BasePackage rootPackage = context.getSource().getRootPackage();
     String pkgName = "mydomain";
     BasePackage pkg = rootPackage.getChildren().getOrCreatePackage(context.parseName(pkgName), true);

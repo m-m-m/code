@@ -23,7 +23,7 @@ import net.sf.mmm.code.api.type.CodeTypeCategory;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class CodeLanguageJava extends AbstractCodeLanguage {
+public class JavaLanguage extends AbstractCodeLanguage {
 
   /** The {@link #getLanguageName() language name}. */
   public static final String LANGUAGE_NAME_JAVA = "Java";
@@ -41,14 +41,13 @@ public class CodeLanguageJava extends AbstractCodeLanguage {
   static final Pattern NAME_PATTERN_TYPE = NAME_PATTERN;
 
   private static final Set<String> REVERVED_NAMES = new HashSet<>(
-      Arrays.asList("abstract", "continue", "for", "new", "switch", "assert", "default", "goto", "package",
-          "synchronized", "boolean", "do", "if", "private", "this", "break", "double", "implements", "protected",
-          "throw", "byte", "else", "import", "public", "throws", "case", "enum", "instanceof", "return", "transient",
-          "catch", "extends", "int", "short", "try", "char", "final", "interface", "static", "void", "class", "finally",
-          "long", "strictfp", "volatile", "const", "float", "native", "super", "while"));
+      Arrays.asList("abstract", "continue", "for", "new", "switch", "assert", "default", "goto", "package", "synchronized", "boolean", "do",
+          "if", "private", "this", "break", "double", "implements", "protected", "throw", "byte", "else", "import", "public", "throws",
+          "case", "enum", "instanceof", "return", "transient", "catch", "extends", "int", "short", "try", "char", "final", "interface",
+          "static", "void", "class", "finally", "long", "strictfp", "volatile", "const", "float", "native", "super", "while"));
 
   /** The singleton instance. */
-  public static final CodeLanguageJava INSTANCE = new CodeLanguageJava();
+  private static final JavaLanguage INSTANCE = new JavaLanguage();
 
   @Override
   public String getLanguageName() {
@@ -135,6 +134,14 @@ public class CodeLanguageJava extends AbstractCodeLanguage {
   public String getFileFilename(CodeFile file) {
 
     return file.getSimpleName() + TYPE_EXTENSION_JAVA;
+  }
+
+  /**
+   * @return the singleton instance.
+   */
+  public static JavaLanguage get() {
+
+    return INSTANCE;
   }
 
 }

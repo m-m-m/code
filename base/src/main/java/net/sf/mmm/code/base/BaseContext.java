@@ -77,4 +77,7 @@ public interface BaseContext extends CodeContext, BaseProvider {
     return (BaseType) CodeContext.super.getOrCreateType(qualifiedName, add);
   }
 
+  @Override
+  BaseContext createChildContext();
+
 }

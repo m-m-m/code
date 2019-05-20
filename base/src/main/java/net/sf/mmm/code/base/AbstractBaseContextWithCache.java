@@ -24,14 +24,14 @@ import net.sf.mmm.util.exception.api.DuplicateObjectException;
 import net.sf.mmm.util.exception.api.ObjectMismatchException;
 
 /**
- * Extends {@link BaseContextImpl} with caching to speed up lookups.
+ * Extends {@link AbstractBaseContext} with caching to speed up lookups.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class BaseContextImplWithCache extends BaseContextImpl {
+public abstract class AbstractBaseContextWithCache extends AbstractBaseContext {
 
-  private static final Logger LOG = LoggerFactory.getLogger(BaseContextImplWithCache.class);
+  private static final Logger LOG = LoggerFactory.getLogger(AbstractBaseContextWithCache.class);
 
   private Map<String, BaseType> typeCache;
 
@@ -44,7 +44,7 @@ public abstract class BaseContextImplWithCache extends BaseContextImpl {
    *
    * @param source the top-level {@link #getSource() source}.
    */
-  public BaseContextImplWithCache(BaseSourceImpl source) {
+  public AbstractBaseContextWithCache(BaseSourceImpl source) {
 
     this(source, null);
   }
@@ -55,7 +55,7 @@ public abstract class BaseContextImplWithCache extends BaseContextImpl {
    * @param source the top-level {@link #getSource() source}.
    * @param sourceProvider the {@link BaseSourceProvider}.
    */
-  public BaseContextImplWithCache(BaseSourceImpl source, BaseSourceProvider sourceProvider) {
+  public AbstractBaseContextWithCache(BaseSourceImpl source, BaseSourceProvider sourceProvider) {
 
     super(source);
     this.typeCache = createCache();
@@ -243,15 +243,15 @@ public abstract class BaseContextImplWithCache extends BaseContextImpl {
   @Override
   public BaseSource getSource(String id) {
 
-    BaseSource javaSource = this.sourceMap.get(id);
-    if (javaSource != null) {
-      return javaSource;
+    BaseSource source = this.sourceMap.get(id);
+    if (source != null) {
+      return source;
     }
     BaseContext parent = getParent();
     if (parent != null) {
-      javaSource = parent.getSource(id);
+      source = parent.getSource(id);
     }
-    return javaSource;
+    return source;
   }
 
   @Override

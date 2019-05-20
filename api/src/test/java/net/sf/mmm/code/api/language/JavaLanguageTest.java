@@ -2,29 +2,29 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.language;
 
-import org.assertj.core.api.Assertions;
-import org.junit.Test;
-import org.mockito.Mockito;
-
 import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.type.CodeTypeCategory;
 import net.sf.mmm.test.TestValues;
 
+import org.assertj.core.api.Assertions;
+import org.junit.Test;
+import org.mockito.Mockito;
+
 /**
- * Test of {@link CodeLanguageJava}.
+ * Test of {@link JavaLanguage}.
  */
-public class CodeLanguageJavaTest extends Assertions implements TestValues {
+public class JavaLanguageTest extends Assertions implements TestValues {
 
   static final String DIGITS_NOT_SUPPORTED_BY_JAVA_8 = "௰Ⅹ\ud835\udfe8";
 
   /**
-   * Tests the basics of {@link CodeLanguageJava}.
+   * Tests the basics of {@link JavaLanguage}.
    */
   @Test
   public void testBasics() {
 
     // given
-    CodeLanguage language = CodeLanguageJava.INSTANCE;
+    CodeLanguage language = JavaLanguage.get();
 
     // then
     assertThat(language.getPackageSeparator()).isEqualTo('.');
@@ -45,15 +45,14 @@ public class CodeLanguageJavaTest extends Assertions implements TestValues {
   }
 
   /**
-   * Tests of
-   * {@link CodeLanguageJava#verifySimpleName(net.sf.mmm.code.api.item.CodeItemWithQualifiedName, String)} for
+   * Tests of {@link JavaLanguage#verifySimpleName(net.sf.mmm.code.api.item.CodeItemWithQualifiedName, String)} for
    * {@link CodePackage}.
    */
   @Test
   public void testPackageNaming() {
 
     // given
-    CodeLanguage language = CodeLanguageJava.INSTANCE;
+    CodeLanguage language = JavaLanguage.get();
 
     // when
     CodePackage pkgRoot = Mockito.mock(CodePackage.class);

@@ -10,7 +10,7 @@ import java.util.function.BiFunction;
 import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.api.element.CodeElementWithDeclaringType;
 import net.sf.mmm.code.api.language.CodeLanguage;
-import net.sf.mmm.code.api.language.CodeLanguageJava;
+import net.sf.mmm.code.api.language.JavaLanguage;
 import net.sf.mmm.code.base.loader.BaseLoader;
 import net.sf.mmm.code.base.loader.BaseSourceLoader;
 import net.sf.mmm.code.base.loader.BaseSourceLoaderImpl;
@@ -21,24 +21,22 @@ import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.base.type.BaseTypeWildcard;
 
 /**
- * Dummy implementation of {@link BaseContextImpl} for testing.
+ * Dummy implementation of {@link AbstractBaseContext} for testing.
  */
-public class TestContext extends BaseContextImplWithCache {
+public class TestContext extends AbstractBaseContextWithCache {
 
   /**
    * The constructor.
-   *
-   * @param immutable - {@code true} if immutable, {@code false} otherwise.
    */
-  public TestContext(boolean immutable) {
+  public TestContext() {
 
-    super(createSource(immutable));
+    super(createSource());
   }
 
-  private static BaseSourceImpl createSource(boolean immutable) {
+  private static BaseSourceImpl createSource() {
 
     BaseSourceLoader loader = new TestSoureLoader();
-    BaseSourceImpl source = new BaseSourceImpl(null, new File(""), null, null, null, null, loader, immutable);
+    BaseSourceImpl source = new BaseSourceImpl(new File(""), null, null, null, loader);
     return source;
   }
 
@@ -102,7 +100,7 @@ public class TestContext extends BaseContextImplWithCache {
   @Override
   public CodeLanguage getLanguage() {
 
-    return CodeLanguageJava.INSTANCE;
+    return JavaLanguage.get();
   }
 
   @Override
@@ -154,7 +152,7 @@ public class TestContext extends BaseContextImplWithCache {
     @Override
     public BaseType getType(CodeName qualifiedName) {
 
-      throw new IllegalStateException();
+      return null;
     }
 
     @Override
