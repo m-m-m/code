@@ -36,13 +36,20 @@ public class CodeImportHelper {
     super();
   }
 
+  public void createImports(CodeImports imports) {
+
+    CodeFile file = imports.getParent();
+    for (CodeType type : file.getTypes()) {
+      createImports(imports, type);
+    }
+  }
+
   public void createImports(CodeFile file) {
 
     CodeImports imports = file.getImports();
     for (CodeType type : file.getTypes()) {
       createImports(imports, type);
     }
-
   }
 
   protected void createImports(CodeImports imports, CodeType type) {

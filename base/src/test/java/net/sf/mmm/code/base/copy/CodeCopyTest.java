@@ -104,7 +104,6 @@ public class CodeCopyTest extends BaseContextTest {
 
     CodeType apiImplBar = pkg11.getChildren().getOrCreateFile("ApiImplBar").getType();
     apiImplBar.getSuperTypes().add(api);
-    apiImplBar.getFile().getImports().add(api);
     CodeMethod apiMethodImplBar = apiImplBar.getMethods().add(apiMethodName);
     apiMethodImplBar.getReturns().setType(result);
     CodeParameter apiMethodImplBarArg = apiMethodImplBar.getParameters().add("value");
@@ -116,13 +115,14 @@ public class CodeCopyTest extends BaseContextTest {
     CodePackage pkg12 = pkg1.getChildren().getOrCreatePackage(pkg12Name);
     CodeType apiImplSome = pkg12.getChildren().getOrCreateFile("ApiImplSome").getType();
     apiImplSome.getSuperTypes().add(api);
-    apiImplSome.getFile().getImports().add(api);
     CodeMethod apiMethodImplSome = apiImplSome.getMethods().add(apiMethodName);
     apiMethodImplSome.getReturns().setType(result);
     CodeParameter apiMethodImplSomeArg = apiMethodImplSome.getParameters().add("value");
     apiMethodImplSomeArg.setType(string);
     apiMethodImplSome.getAnnotations().add(override);
     apiImplSome.getFile().getImports().add(override);
+    apiImplSome.getFile().getImports().add(api);
+    apiImplSome.getFile().getImports().add(result);
     apiImplSome.getFile().getImports().add(apiImplBar);
     apiMethodImplSome.getBody().addText("return new ApiImplBar().getSomething(value);");
 

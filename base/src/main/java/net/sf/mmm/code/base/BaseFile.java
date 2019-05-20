@@ -247,9 +247,6 @@ public final class BaseFile extends BasePathElement implements CodeFile {
         type.writeReference(sink, true);
       }
     } else {
-      if (isMutable()) {
-        createImports();
-      }
       doWriteComment(sink, newline, defaultIndent, currentIndent, language);
       getParentPackage().doWrite(sink, newline, null, currentIndent, language);
       getImports().write(sink, newline, defaultIndent, currentIndent, language);
