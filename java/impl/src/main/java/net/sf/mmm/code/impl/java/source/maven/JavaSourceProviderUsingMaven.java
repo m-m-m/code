@@ -218,13 +218,18 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
             File byteCodeLocation = getByteCodeLocation(source);
             List<URL> dependenciesURLs = new ArrayList<>();
 
-            // Iterate over all dependencies, get URLS and construct MavenClassLoader
             try {
+                // First eclipse target because it is the most updated version of the classes
+                dependenciesURLs.add(getEclipseByteCodeLocation(byteCodeLocation));
                 dependenciesURLs.add(byteCodeLocation.toURI().toURL());
+
+                dependenciesURLs.addAll(getApiByteCodeLocations(byteCodeLocation));
+
             } catch (MalformedURLException e1) {
-                LOG.debug("Not able to get the URL of " + byteCodeLocation.getName() + ".");
+                LOG.debug("Not able to get the URL of " + byteCodeLocation.getName() + " or any of its dependencies.");
                 return new JavaExtendedContext(source, provider, null);
             }
+            // Iterate over all dependencies, get URLS and construct MavenClassLoader
             dependenciesURLs.addAll(getDependenciesURLS(source.getModel()));
 
             try {
@@ -244,8 +249,71 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
     }
 
     /**
+     * Retrieves the URL where the eclipse-target folder should be located. It contains bytecode. This is
+     * useful for devon4j projects, but will not harm other projects.
+     * @param byteCodeLocation
+     *            current location of the byte code
+     * @return the URL with the location of eclipse-target folder
+     * @throws MalformedURLException
+     *             throws {@link MalformedURLException}
+     */
+    private URL getEclipseByteCodeLocation(File byteCodeLocation) throws MalformedURLException {
+        String byteCodeLoc = byteCodeLocation.toURI().toString();
+        String[] segments = byteCodeLoc.split("/");
+
+        if (segments.length >= 3) {
+            segments[segments.length - 2] = "eclipse-target";
+        }
+
+        String eclipseTargetLocation = "";
+        for (String segment : segments) {
+            eclipseTargetLocation = eclipseTargetLocation + segment + "/";
+        }
+        return new URL(eclipseTargetLocation);
+    }
+
+    /**
+     * Retrieves the URLs where the eclipse-target folder should be located on the api module. It contains
+     * bytecode. This is useful for devon4j projects, but will not harm other projects.
+     * @param byteCodeLocation
+     *            current location of the byte code
+     * @return list of URLs with the location of eclipse-target folder on the api module
+     * @throws MalformedURLException
+     *             throws {@link MalformedURLException}
+     */
+    public ArrayList<URL> getApiByteCodeLocations(File byteCodeLocation) throws MalformedURLException {
+        ArrayList<URL> eclipseTargetLocations = new ArrayList<>();
+        String byteCodeLoc = byteCodeLocation.toURI().toString();
+        String[] segments = byteCodeLoc.split("/");
+        if (segments.length >= 3) {
+            // We change from code to api folder
+            segments[segments.length - 3] = "api";
+
+            String apiLocation = "";
+            for (String segment : segments) {
+                apiLocation = apiLocation + segment + "/";
+            }
+
+            // Now we get the eclipse-target classes on the api part
+            segments[segments.length - 2] = "eclipse-target";
+            String eclipseApiLocation = "";
+            for (String segment : segments) {
+                eclipseApiLocation = eclipseApiLocation + segment + "/";
+            }
+
+            // First we add eclipse-target because the compiled classes are normally more updated
+            eclipseTargetLocations.add(new URL(eclipseApiLocation));
+            eclipseTargetLocations.add(new URL(apiLocation));
+        }
+
+        return eclipseTargetLocations;
+    }
+
+    /**
+     * Gets the byte code location, that is located on classes/ folder
      * @param source
-     * @return
+     *            where to get the byte code location from
+     * @return File where the byte code is located
      */
     private File getByteCodeLocation(JavaSourceUsingMaven source) {
         // Create a File object on the root directory of the classes
@@ -261,6 +329,13 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
         return byteCodeLocation;
     }
 
+    /**
+     * Retrieves dependencies from a Maven project. Up to 4 levels of recursiveness (gets the dependency of
+     * the dependency of the dependency...)
+     * @param model
+     *            parsed from the POM of a project
+     * @return POM dependencies in URL format
+     */
     private ArrayList<URL> getDependenciesURLS(Model model) {
         ArrayList<URL> dependenciesURLS = new ArrayList<>();
         int recursiveness = 0; // We only want to recursively get 4 levels of dependency
@@ -270,10 +345,14 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
     }
 
     /**
+     * Recursively gets dependencies from the model, and stores them on a list.
      * @param model
+     *            parsed from the POM of a project
      * @param previousURLs
+     *            list of previous dependencies URLs
      * @param recursiveness
-     * @return
+     *            level of recursiveness. How deep we get into dependencies.
+     * @return POM dependencies in URL format
      */
     private ArrayList<URL> getDependenciesURLS(Model model, ArrayList<URL> previousURLs, int recursiveness) {
 

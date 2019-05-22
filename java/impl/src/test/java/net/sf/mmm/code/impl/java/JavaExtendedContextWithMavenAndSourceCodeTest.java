@@ -111,11 +111,10 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
         assertThat(fields.getDeclared("surname")).isNotNull();
         assertThat(fields.getDeclared("age")).isNotNull();
 
-        Class<?> classFile =
-            context.getClassLoader().loadClass("com.devonfw.module.basic.common.api.entity.GenericEntity");
-        assertThat(classFile).isNotNull();
-
         MavenClassLoader classLoader = (MavenClassLoader) context.getClassLoader();
+
+        Class<?> classFile = classLoader.loadClass("com.devonfw.module.basic.common.api.entity.GenericEntity");
+        assertThat(classFile).isNotNull();
 
         List<? extends CodeSource> dependencies = source.getDependencies().getDeclared();
         assertThat(dependencies).hasSize(2);
