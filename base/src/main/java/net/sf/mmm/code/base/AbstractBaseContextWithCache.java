@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractBaseContextWithCache extends AbstractBaseContext {
 
-  private static final Logger LOG = LoggerFactory.getLogger(AbstractBaseContextWithCache.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractBaseContextWithCache.class);
 
     private Map<String, BaseType> typeCache;
 
@@ -39,24 +39,26 @@ public abstract class AbstractBaseContextWithCache extends AbstractBaseContext {
 
     private BaseSourceProvider sourceProvider;
 
-  /**
-   * The constructor.
-   *
-   * @param source the top-level {@link #getSource() source}.
-   */
-  public AbstractBaseContextWithCache(BaseSourceImpl source) {
+    /**
+     * The constructor.
+     *
+     * @param source
+     *            the top-level {@link #getSource() source}.
+     */
+    public AbstractBaseContextWithCache(BaseSourceImpl source) {
 
-    this(source, null);
         this(source, null);
     }
 
-  /**
-   * The constructor.
-   *
-   * @param source the top-level {@link #getSource() source}.
-   * @param sourceProvider the {@link BaseSourceProvider}.
-   */
-  public AbstractBaseContextWithCache(BaseSourceImpl source, BaseSourceProvider sourceProvider) {
+    /**
+     * The constructor.
+     *
+     * @param source
+     *            the top-level {@link #getSource() source}.
+     * @param sourceProvider
+     *            the {@link BaseSourceProvider}.
+     */
+    public AbstractBaseContextWithCache(BaseSourceImpl source, BaseSourceProvider sourceProvider) {
 
         super(source);
         typeCache = createCache();
@@ -258,16 +260,16 @@ public abstract class AbstractBaseContextWithCache extends AbstractBaseContext {
     @Override
     public BaseSource getSource(String id) {
 
-    BaseSource source = this.sourceMap.get(id);
-    if (source != null) {
-      return source;
+        BaseSource source = sourceMap.get(id);
+        if (source != null) {
+            return source;
+        }
+        BaseContext parent = getParent();
+        if (parent != null) {
+            source = parent.getSource(id);
+        }
+        return source;
     }
-    BaseContext parent = getParent();
-    if (parent != null) {
-      source = parent.getSource(id);
-    }
-    return source;
-  }
 
     @Override
     public void close() throws Exception {

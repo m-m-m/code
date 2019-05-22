@@ -27,9 +27,9 @@ public class JavaRootContext extends JavaContext {
 
     private final JavaClassLoader loader;
 
-  private final JavaFactory factory;
+    private final JavaFactory factory;
 
-  private BaseTypeWildcard unboundedWildcard;
+    private BaseTypeWildcard unboundedWildcard;
 
     /**
      * The constructor.
@@ -39,11 +39,12 @@ public class JavaRootContext extends JavaContext {
      */
     public JavaRootContext(BaseSourceImpl source) {
 
-    super(source);
-    this.loader = new JavaClassLoader(ClassLoader.getSystemClassLoader());
-    this.factory = new JavaFactory();
-    for (Class<?> primitive : JavaConstants.PRIMITIVE_TYPES) {
-      getType(primitive);
+        super(source);
+        loader = new JavaClassLoader(ClassLoader.getSystemClassLoader());
+        factory = new JavaFactory();
+        for (Class<?> primitive : JavaConstants.PRIMITIVE_TYPES) {
+            getType(primitive);
+        }
     }
 
     @Override
@@ -67,11 +68,11 @@ public class JavaRootContext extends JavaContext {
     @Override
     public CodeLanguage getLanguage() {
 
-    return JavaLanguage.get();
-  }
+        return JavaLanguage.get();
+    }
 
-  @Override
-  public BaseType getRootType() {
+    @Override
+    public BaseType getRootType() {
 
         return (BaseType) getType(Object.class);
     }
@@ -94,18 +95,18 @@ public class JavaRootContext extends JavaContext {
         return (BaseType) getType(void.class);
     }
 
-  @Override
-  public BaseType getBooleanType(boolean primitive) {
+    @Override
+    public BaseType getBooleanType(boolean primitive) {
 
-    if (primitive) {
-      return (BaseType) getType(boolean.class);
-    } else {
-      return (BaseType) getType(Boolean.class);
+        if (primitive) {
+            return (BaseType) getType(boolean.class);
+        } else {
+            return (BaseType) getType(Boolean.class);
+        }
     }
-  }
 
-  @Override
-  public BaseTypeWildcard getUnboundedWildcard() {
+    @Override
+    public BaseTypeWildcard getUnboundedWildcard() {
 
         if (unboundedWildcard == null) {
             unboundedWildcard = new BaseTypeWildcard(getRootType(), JavaConstants.UNBOUNDED_WILDCARD);
@@ -164,13 +165,13 @@ public class JavaRootContext extends JavaContext {
         return new BaseSourceImpl(byteCodeLocation, sourceCodeLocation, null, descriptor, loader);
     }
 
-  @Override
-  public JavaFactory getFactory() {
+    @Override
+    public JavaFactory getFactory() {
 
-    return this.factory;
-  }
+        return factory;
+    }
 
-  private static String getJavaMajorVersion(String version) {
+    private static String getJavaMajorVersion(String version) {
 
         String majorVersion;
         if (version.startsWith("1.")) {

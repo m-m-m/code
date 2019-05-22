@@ -64,21 +64,21 @@ public class TestContext extends AbstractBaseContextWithCache {
         return (BaseType) getType(Throwable.class);
     }
 
-  @Override
-  public BaseType getBooleanType(boolean primitive) {
+    @Override
+    public BaseType getBooleanType(boolean primitive) {
 
-    if (primitive) {
-      return (BaseType) getType(boolean.class);
-    } else {
-      return (BaseType) getType(Boolean.class);
+        if (primitive) {
+            return (BaseType) getType(boolean.class);
+        } else {
+            return (BaseType) getType(Boolean.class);
+        }
     }
-  }
 
-  @Override
-  public BaseTypeWildcard getUnboundedWildcard() {
+    @Override
+    public BaseTypeWildcard getUnboundedWildcard() {
 
-    throw new UnsupportedOperationException();
-  }
+        throw new UnsupportedOperationException();
+    }
 
     @Override
     public BaseGenericType getType(Type type, CodeElementWithDeclaringType declaringElement) {
@@ -97,42 +97,34 @@ public class TestContext extends AbstractBaseContextWithCache {
         throw new UnsupportedOperationException();
     }
 
-  @Override
-  public CodeLanguage getLanguage() {
+    @Override
+    public CodeLanguage getLanguage() {
 
-    return JavaLanguage.get();
-  }
+        return JavaLanguage.get();
+    }
 
-  @Override
-  public String getQualifiedNameForStandardType(String simpleName, boolean omitStandardPackages) {
+    @Override
+    public String getQualifiedNameForStandardType(String simpleName, boolean omitStandardPackages) {
 
-    throw new UnsupportedOperationException();
-  }
+        throw new UnsupportedOperationException();
+    }
 
-  @Override
-  public BaseFactory getFactory() {
+    @Override
+    public BaseFactory getFactory() {
 
-    return new TestFactory();
-  }
+        return new TestFactory();
+    }
 
     @Override
     public BaseContext getParent() {
 
-        BaseSource source = getSource();
-        if (source.isMutable()) {
-          CodeName path = getContext().parseName(qualifiedName);
-          BaseFile file = source.getRootPackage().getChildren().getFile(path);
-          if (file != null) {
-            return file.getType();
-          }
-        }
         return null;
     }
 
     @Override
     protected BaseLoader getLoader() {
 
-      return null;
+        return getSource().getLoader();
     }
 
     @Override
@@ -150,6 +142,14 @@ public class TestContext extends AbstractBaseContextWithCache {
                 return (BaseType) getType(clazz);
             } catch (ClassNotFoundException e) {
                 // fail(e.getMessage(), e);
+                BaseSource source = getSource();
+                if (source.isMutable()) {
+                    CodeName path = getContext().parseName(qualifiedName);
+                    BaseFile file = source.getRootPackage().getChildren().getFile(path);
+                    if (file != null) {
+                        return file.getType();
+                    }
+                }
                 return null;
             }
         }
@@ -157,7 +157,7 @@ public class TestContext extends AbstractBaseContextWithCache {
         @Override
         public BaseType getType(CodeName qualifiedName) {
 
-            throw new IllegalStateException();
+            return null;
         }
 
         @Override
@@ -211,4 +211,5 @@ public class TestContext extends AbstractBaseContextWithCache {
         }
 
     }
+
 }

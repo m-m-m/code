@@ -2,6 +2,9 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.impl.java;
 
+import java.io.File;
+
+import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.loader.BaseLoader;
 import net.sf.mmm.code.base.source.BaseSourceImpl;
 import net.sf.mmm.code.base.source.BaseSourceProvider;
@@ -110,6 +113,16 @@ public class JavaExtendedContext extends JavaContext {
     public ClassLoader getClassLoader() {
 
         return loader.getClassLoader();
+    }
+
+    @Override
+    public BaseContext getParent() {
+        return parent;
+    }
+
+    @Override
+    public JavaRootContext getRootContext() {
+        return JavaRootContext.get();
     }
 
 }
