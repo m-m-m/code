@@ -15,4 +15,10 @@ import net.sf.mmm.code.api.element.CodeElementWithDeclaringType;
  */
 public interface CodeArrayType extends CodeGenericType, CodeNodeItemCopyable<CodeElementWithDeclaringType, CodeArrayType> {
 
+  @Override
+  default boolean isArray() {
+
+    return true;
+  }
+
 }

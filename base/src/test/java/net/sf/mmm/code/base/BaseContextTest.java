@@ -2,12 +2,12 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.base;
 
-import org.assertj.core.api.Assertions;
-
 import net.sf.mmm.code.api.annotation.CodeAnnotation;
 import net.sf.mmm.code.api.annotation.CodeAnnotations;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.comment.BaseSingleLineComment;
+
+import org.assertj.core.api.Assertions;
 
 /**
  * Abstract super-class for tests based on {@link TestContext}.

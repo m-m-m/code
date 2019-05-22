@@ -9,9 +9,8 @@ import java.util.function.BiFunction;
 
 import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.api.element.CodeElementWithDeclaringType;
-import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.language.CodeLanguage;
-import net.sf.mmm.code.api.language.CodeLanguageJava;
+import net.sf.mmm.code.api.language.JavaLanguage;
 import net.sf.mmm.code.base.loader.BaseLoader;
 import net.sf.mmm.code.base.loader.BaseSourceLoader;
 import net.sf.mmm.code.base.loader.BaseSourceLoaderImpl;
@@ -22,9 +21,9 @@ import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.base.type.BaseTypeWildcard;
 
 /**
- * Dummy implementation of {@link BaseContextImpl} for testing.
+ * Dummy implementation of {@link AbstractBaseContext} for testing.
  */
-public class TestContext extends BaseContextImplWithCache {
+public class TestContext extends AbstractBaseContextWithCache {
 
     /**
      * The constructor.
@@ -65,11 +64,21 @@ public class TestContext extends BaseContextImplWithCache {
         return (BaseType) getType(Throwable.class);
     }
 
-    @Override
-    public BaseTypeWildcard getUnboundedWildcard() {
+  @Override
+  public BaseType getBooleanType(boolean primitive) {
 
-        throw new UnsupportedOperationException();
+    if (primitive) {
+      return (BaseType) getType(boolean.class);
+    } else {
+      return (BaseType) getType(Boolean.class);
     }
+  }
+
+  @Override
+  public BaseTypeWildcard getUnboundedWildcard() {
+
+    throw new UnsupportedOperationException();
+  }
 
     @Override
     public BaseGenericType getType(Type type, CodeElementWithDeclaringType declaringElement) {
@@ -88,34 +97,42 @@ public class TestContext extends BaseContextImplWithCache {
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public CodeLanguage getLanguage() {
+  @Override
+  public CodeLanguage getLanguage() {
 
-        return CodeLanguageJava.INSTANCE;
-    }
+    return JavaLanguage.get();
+  }
 
-    @Override
-    public String getQualifiedNameForStandardType(String simpleName, boolean omitStandardPackages) {
+  @Override
+  public String getQualifiedNameForStandardType(String simpleName, boolean omitStandardPackages) {
 
-        throw new UnsupportedOperationException();
-    }
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public CodeExpression createExpression(Object value, boolean primitive) {
+  @Override
+  public BaseFactory getFactory() {
 
-        throw new UnsupportedOperationException();
-    }
+    return new TestFactory();
+  }
 
     @Override
     public BaseContext getParent() {
 
+        BaseSource source = getSource();
+        if (source.isMutable()) {
+          CodeName path = getContext().parseName(qualifiedName);
+          BaseFile file = source.getRootPackage().getChildren().getFile(path);
+          if (file != null) {
+            return file.getType();
+          }
+        }
         return null;
     }
 
     @Override
     protected BaseLoader getLoader() {
 
-        return getSource().getLoader();
+      return null;
     }
 
     @Override

@@ -13,12 +13,12 @@ import net.sf.mmm.util.exception.api.ObjectNotFoundException;
  * @author Joerg Hohwiller (hohwille aJavaType users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class BaseProviderImpl extends BaseNodeItemContainerAccess implements BaseProvider {
+public abstract class AbstractBaseProvider extends BaseNodeItemContainerAccess implements BaseProvider {
 
   /**
    * The constructor.
    */
-  public BaseProviderImpl() {
+  public AbstractBaseProvider() {
 
     super();
   }

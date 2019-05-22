@@ -4,8 +4,6 @@ package net.sf.mmm.code.base.copy;
 
 import java.util.Locale;
 
-import org.junit.Test;
-
 import net.sf.mmm.code.api.CodeContext;
 import net.sf.mmm.code.api.CodeFile;
 import net.sf.mmm.code.api.CodePackage;
@@ -19,6 +17,8 @@ import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.api.type.CodeTypeCategory;
 import net.sf.mmm.code.base.BaseContextTest;
+
+import org.junit.Test;
 
 /**
  * Test of {@link CodeNodeItemCopyable} the entire AST.
@@ -104,7 +104,6 @@ public class CodeCopyTest extends BaseContextTest {
 
     CodeType apiImplBar = pkg11.getChildren().getOrCreateFile("ApiImplBar").getType();
     apiImplBar.getSuperTypes().add(api);
-    apiImplBar.getFile().getImports().add(api);
     CodeMethod apiMethodImplBar = apiImplBar.getMethods().add(apiMethodName);
     apiMethodImplBar.getReturns().setType(result);
     CodeParameter apiMethodImplBarArg = apiMethodImplBar.getParameters().add("value");
@@ -116,13 +115,14 @@ public class CodeCopyTest extends BaseContextTest {
     CodePackage pkg12 = pkg1.getChildren().getOrCreatePackage(pkg12Name);
     CodeType apiImplSome = pkg12.getChildren().getOrCreateFile("ApiImplSome").getType();
     apiImplSome.getSuperTypes().add(api);
-    apiImplSome.getFile().getImports().add(api);
     CodeMethod apiMethodImplSome = apiImplSome.getMethods().add(apiMethodName);
     apiMethodImplSome.getReturns().setType(result);
     CodeParameter apiMethodImplSomeArg = apiMethodImplSome.getParameters().add("value");
     apiMethodImplSomeArg.setType(string);
     apiMethodImplSome.getAnnotations().add(override);
     apiImplSome.getFile().getImports().add(override);
+    apiImplSome.getFile().getImports().add(api);
+    apiImplSome.getFile().getImports().add(result);
     apiImplSome.getFile().getImports().add(apiImplBar);
     apiMethodImplSome.getBody().addText("return new ApiImplBar().getSomething(value);");
 
@@ -181,6 +181,7 @@ public class CodeCopyTest extends BaseContextTest {
     assertThat(apiImplBarCopy.getFile().getSourceCode()).isEqualTo("package foo.bar;\n" + //
         "\n" + //
         "import foo.Api;\n" + //
+        "import foo.Result;\n" + //
         "\n" + //
         "public class ApiImplBar implements Api {\n" + //
         "\n" + //
@@ -225,6 +226,7 @@ public class CodeCopyTest extends BaseContextTest {
     assertThat(apiImplSomeCopy.getFile().getSourceCode()).isEqualTo("package foo.some;\n" + //
         "\n" + //
         "import foo.Api;\n" + //
+        "import foo.Result;\n" + //
         "import foo.bar.ApiImplBar;\n" + //
         "\n" + //
         "public class ApiImplSome implements Api {\n" + //
@@ -251,7 +253,8 @@ public class CodeCopyTest extends BaseContextTest {
     verifyCopyWithResolve(context, "net.sf.mmm.example", "Component", "", "MyObject", longType);
   }
 
-  private void verifyCopyWithResolve(CodeContext context, String rootPackage, String component, String detail, String entityName, CodeGenericType longType) {
+  private void verifyCopyWithResolve(CodeContext context, String rootPackage, String component, String detail, String entityName,
+      CodeGenericType longType) {
 
     CodePackage pkgCom = context.getSource().getRootPackage().getChildren().createPackage("com");
     CodePackage pkgInternal = pkgCom.getChildren().getOrCreatePackage("company.tools.internal");
@@ -301,12 +304,17 @@ public class CodeCopyTest extends BaseContextTest {
     assertThat(pkgRootCopy.getQualifiedName()).isEqualTo(rootPackage);
     assertThat(pkgRootCopy.getChildren()).hasSize(1);
 
-    String pkgUcPath = component.toLowerCase(Locale.US) + ".logic.api";
-    if (!detail.isEmpty()) {
-      pkgUcPath = pkgUcPath + "." + detail;
+    String componentPkg = component.toLowerCase(Locale.US);
+    String pkgUcPath = componentPkg + ".logic.api";
+    String detailPkg = detail;
+    if (!detailPkg.isEmpty()) {
+      detailPkg = "." + detailPkg;
     }
+    pkgUcPath = pkgUcPath + detailPkg;
     CodeFile pkgComponentCopy = pkgRootCopy.getChildren().getFile(context.parseName(pkgUcPath + ".UcFind" + entityName));
     assertThat(pkgComponentCopy.getSourceCode()).isEqualTo("package " + rootPackage + "." + pkgUcPath + ";\n" + //
+        "\n" + //
+        "import " + rootPackage + "." + componentPkg + ".common.api" + detailPkg + ".to." + entityName + "Eto;\n" + //
         "\n" + //
         "public interface UcFind" + entityName + " {\n" + //
         "\n" + //

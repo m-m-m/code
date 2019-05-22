@@ -12,6 +12,8 @@ import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.member.CodeFields;
+import net.sf.mmm.code.api.member.CodeMethod;
+import net.sf.mmm.code.api.member.CodeProperty;
 import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.merge.CodeMergeStrategyDecider;
 import net.sf.mmm.code.api.modifier.CodeModifiers;
@@ -35,6 +37,10 @@ public class BaseField extends BaseMember implements CodeField {
 
   private CodeField sourceCodeObject;
 
+  private CodeMethod getter;
+
+  private CodeMethod setter;
+
   /**
    * The constructor.
    *
@@ -43,7 +49,7 @@ public class BaseField extends BaseMember implements CodeField {
    */
   public BaseField(BaseFields parent, String name) {
 
-    this(parent, name, null);
+    this(parent, name, CodeModifiers.MODIFIERS_PRIVATE, null);
   }
 
   /**
@@ -54,7 +60,7 @@ public class BaseField extends BaseMember implements CodeField {
    */
   public BaseField(BaseFields parent, Field reflectiveObject) {
 
-    this(parent, reflectiveObject.getName(), reflectiveObject);
+    this(parent, reflectiveObject.getName(), CodeModifiers.of(reflectiveObject.getModifiers()), reflectiveObject);
   }
 
   /**
@@ -64,9 +70,9 @@ public class BaseField extends BaseMember implements CodeField {
    * @param name the {@link #getName() name}.
    * @param reflectiveObject the {@link #getReflectiveObject() reflective object}. May be {@code null}.
    */
-  private BaseField(BaseFields parent, String name, Field reflectiveObject) {
+  private BaseField(BaseFields parent, String name, CodeModifiers modifiers, Field reflectiveObject) {
 
-    super(parent, CodeModifiers.MODIFIERS_PRIVATE, name);
+    super(parent, modifiers, name);
     this.parent = parent;
     this.reflectiveObject = reflectiveObject;
   }
@@ -195,7 +201,54 @@ public class BaseField extends BaseMember implements CodeField {
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
+  public CodeMethod getGetter() {
+
+    if (this.getter == null) {
+      CodeProperty property = this.parent.getParent().getProperties().get(getName());
+      if (property != null) {
+        this.getter = property.getGetter();
+      }
+    }
+    return this.getter;
+  }
+
+  @Override
+  public CodeMethod getOrCreateGetter() {
+
+    getGetter();
+    if (this.getter == null) {
+      this.getter = getContext().getFactory().createGetter(getDeclaringType(), getName(), getType(), true, getDoc().getLinesAsArray());
+      this.parent.getParent().getMethods().add(this.getter);
+    }
+    return this.getter;
+  }
+
+  @Override
+  public CodeMethod getSetter() {
+
+    if (this.setter == null) {
+      CodeProperty property = this.parent.getParent().getProperties().get(getName());
+      if (property != null) {
+        this.setter = property.getSetter();
+      }
+    }
+    return this.setter;
+  }
+
+  @Override
+  public CodeMethod getOrCreateSetter() {
+
+    getSetter();
+    if (this.setter == null) {
+      this.setter = getContext().getFactory().createSetter(getDeclaringType(), getName(), getType(), true, getDoc().getLinesAsArray());
+      this.parent.getParent().getMethods().add(this.setter);
+    }
+    return this.setter;
+  }
+
+  @Override
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language)
+      throws IOException {
 
     super.doWrite(sink, newline, defaultIndent, currentIndent, language);
     language.writeDeclaration(this, sink);

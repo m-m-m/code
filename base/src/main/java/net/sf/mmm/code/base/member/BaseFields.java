@@ -15,6 +15,7 @@ import net.sf.mmm.code.api.merge.CodeMergeStrategy;
 import net.sf.mmm.code.api.merge.CodeMergeStrategyDecider;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
+import net.sf.mmm.code.base.BaseFactory;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.util.collection.base.AbstractIterator;
 import net.sf.mmm.util.exception.api.DuplicateObjectException;
@@ -54,8 +55,9 @@ public class BaseFields extends BaseMembers<CodeField> implements CodeFields {
     super.doInitialize();
     Class<?> reflectiveObject = getParent().getReflectiveObject();
     if (reflectiveObject != null) {
+      BaseFactory factory = getContext().getFactory();
       for (Field field : reflectiveObject.getDeclaredFields()) {
-        BaseField javaField = new BaseField(this, field);
+        BaseField javaField = factory.createField(this, null, field);
         addInternal(javaField);
       }
     }
@@ -100,7 +102,7 @@ public class BaseFields extends BaseMembers<CodeField> implements CodeFields {
     if (getByName(name) != null) {
       throw new DuplicateObjectException(getDeclaringType().getSimpleName() + ".fields", name);
     }
-    BaseField field = new BaseField(this, name);
+    BaseField field = getContext().getFactory().createField(this, name, null);
     add(field);
     return field;
   }
@@ -153,14 +155,15 @@ public class BaseFields extends BaseMembers<CodeField> implements CodeFields {
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent,
+      CodeLanguage language) throws IOException {
 
     doWriteFields(sink, newline, defaultIndent, currentIndent, language, f -> f.getModifiers().isStatic());
     doWriteFields(sink, newline, defaultIndent, currentIndent, language, f -> !f.getModifiers().isStatic());
   }
 
-  private void doWriteFields(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language, Predicate<CodeField> filter)
-      throws IOException {
+  private void doWriteFields(Appendable sink, String newline, String defaultIndent, String currentIndent,
+      CodeLanguage language, Predicate<CodeField> filter) throws IOException {
 
     for (CodeField field : getDeclared()) {
       if (filter.test(field)) {

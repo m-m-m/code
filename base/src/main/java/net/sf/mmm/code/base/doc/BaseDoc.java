@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -14,9 +15,6 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.sf.mmm.code.api.CodeContext;
 import net.sf.mmm.code.api.arg.CodeException;
@@ -45,6 +43,9 @@ import net.sf.mmm.code.base.member.BaseOperation;
 import net.sf.mmm.code.base.node.BaseNodeItem;
 import net.sf.mmm.code.base.type.BaseType;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Base implementation of {@link CodeDoc}.
  *
@@ -59,8 +60,8 @@ public class BaseDoc extends BaseNodeItem implements CodeDoc {
 
   private static final Pattern PATTERN_INLINE_JAVADOC_TAG = Pattern.compile("\\{@([a-zA-Z]+) ([^}]*)\\}");
 
-  private static final Set<String> HTML_SELF_CLOSING_TAGS = new HashSet<>(
-      Arrays.asList("area", "base", "br", "col", "command", "embed", "hr", "img", "input", "keygen", "link", "meta", "param", "source", "track", "wbr"));
+  private static final Set<String> HTML_SELF_CLOSING_TAGS = new HashSet<>(Arrays.asList("area", "base", "br", "col", "command", "embed",
+      "hr", "img", "input", "keygen", "link", "meta", "param", "source", "track", "wbr"));
 
   private final BaseElement parent;
 
@@ -135,8 +136,22 @@ public class BaseDoc extends BaseNodeItem implements CodeDoc {
   }
 
   @Override
+  public void add(Collection<String> textLines) {
+
+    if ((textLines == null) || textLines.isEmpty()) {
+      return;
+    }
+    verifyMutalbe();
+    initialize();
+    this.lines.addAll(textLines);
+  }
+
+  @Override
   public void add(String... textLines) {
 
+    if ((textLines == null) || (textLines.length == 0)) {
+      return;
+    }
     verifyMutalbe();
     initialize();
     for (String line : textLines) {
@@ -268,7 +283,8 @@ public class BaseDoc extends BaseNodeItem implements CodeDoc {
   private CodeDocLink resolveLink(String text) {
 
     CodeType owningType = getOwningType(getParent());
-    return new BaseDocLink(text, getLanguage().getPackageSeparator(), owningType.getQualifiedName(), this::resolveLinkUrl, this::resolveLinkValue);
+    return new BaseDocLink(text, getLanguage().getPackageSeparator(), owningType.getQualifiedName(), this::resolveLinkUrl,
+        this::resolveLinkValue);
   }
 
   /**
@@ -470,7 +486,8 @@ public class BaseDoc extends BaseNodeItem implements CodeDoc {
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language)
+      throws IOException {
 
     int size = getLines().size();
     BaseOperation operation = null;
@@ -552,8 +569,8 @@ public class BaseDoc extends BaseNodeItem implements CodeDoc {
     }
   }
 
-  private boolean doWriteElement(Appendable sink, String newline, String currentIndent, boolean docStarted, CodeElement element, String tag, String spaces)
-      throws IOException {
+  private boolean doWriteElement(Appendable sink, String newline, String currentIndent, boolean docStarted, CodeElement element, String tag,
+      String spaces) throws IOException {
 
     List<String> docLines = element.getDoc().getLines();
     if (docLines.isEmpty()) {
@@ -567,7 +584,8 @@ public class BaseDoc extends BaseNodeItem implements CodeDoc {
     return true;
   }
 
-  private void doWriteLine(Appendable sink, String newline, String currentIndent, boolean docStarted, String prefix, String line) throws IOException {
+  private void doWriteLine(Appendable sink, String newline, String currentIndent, boolean docStarted, String prefix, String line)
+      throws IOException {
 
     if (!docStarted) {
       writeDocStart(sink, newline, currentIndent);

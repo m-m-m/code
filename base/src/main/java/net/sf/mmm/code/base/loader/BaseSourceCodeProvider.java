@@ -17,7 +17,7 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sf.mmm.code.api.language.CodeLanguageJava;
+import net.sf.mmm.code.api.language.JavaLanguage;
 
 /**
  * Abstract base implementation of {@link SourceCodeProvider}.
@@ -36,7 +36,7 @@ public abstract class BaseSourceCodeProvider implements SourceCodeProvider {
    */
   public BaseSourceCodeProvider() {
 
-    this(CodeLanguageJava.TYPE_EXTENSION_JAVA);
+    this(JavaLanguage.TYPE_EXTENSION_JAVA);
   }
 
   /**
@@ -169,7 +169,7 @@ public abstract class BaseSourceCodeProvider implements SourceCodeProvider {
    */
   protected String filename2TypeSimpleName(String filename) {
 
-    if (CodeLanguageJava.PACKAGE_INFO_JAVA.equals(filename)) {
+    if (JavaLanguage.PACKAGE_INFO_JAVA.equals(filename)) {
       return null;
     }
     if (filename.endsWith(this.typeExtension)) {
@@ -185,7 +185,7 @@ public abstract class BaseSourceCodeProvider implements SourceCodeProvider {
    */
   protected String qualifiedName2PackagePath(String qualifiedName) {
 
-    return qualifiedName2Path(qualifiedName) + "/" + CodeLanguageJava.PACKAGE_INFO_JAVA;
+    return qualifiedName2Path(qualifiedName) + "/" + JavaLanguage.PACKAGE_INFO_JAVA;
   }
 
   /**
@@ -206,7 +206,7 @@ public abstract class BaseSourceCodeProvider implements SourceCodeProvider {
    */
   public static BaseSourceCodeProvider of(File sourceCodeLocation) {
 
-    return of(sourceCodeLocation, CodeLanguageJava.TYPE_EXTENSION_JAVA);
+    return of(sourceCodeLocation, JavaLanguage.TYPE_EXTENSION_JAVA);
   }
 
   /**

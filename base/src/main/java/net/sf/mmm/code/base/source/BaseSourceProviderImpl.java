@@ -2,7 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.base.source;
 
-import net.sf.mmm.code.base.BaseContextImpl;
+import net.sf.mmm.code.base.AbstractBaseContext;
 
 /**
  * Abstract base implemenation of {@link BaseSourceProvider}.
@@ -12,7 +12,7 @@ import net.sf.mmm.code.base.BaseContextImpl;
  */
 public abstract class BaseSourceProviderImpl implements BaseSourceProvider {
 
-  private BaseContextImpl context;
+  private AbstractBaseContext context;
 
   /**
    * The constructor.
@@ -23,15 +23,15 @@ public abstract class BaseSourceProviderImpl implements BaseSourceProvider {
   }
 
   /**
-   * @return the {@link BaseContextImpl}.
+   * @return the {@link AbstractBaseContext}.
    */
-  public BaseContextImpl getContext() {
+  public AbstractBaseContext getContext() {
 
     return this.context;
   }
 
   @Override
-  public void setContext(BaseContextImpl context) {
+  public void setContext(AbstractBaseContext context) {
 
     if (this.context == null) {
       this.context = context;

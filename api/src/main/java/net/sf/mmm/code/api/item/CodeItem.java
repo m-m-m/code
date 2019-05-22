@@ -3,7 +3,7 @@
 package net.sf.mmm.code.api.item;
 
 import net.sf.mmm.code.api.language.CodeLanguage;
-import net.sf.mmm.code.api.language.CodeLanguageJava;
+import net.sf.mmm.code.api.language.JavaLanguage;
 
 /**
  * Abstract top-level interface for any item of code as defined by this API. It reflects code structure.
@@ -67,7 +67,7 @@ public abstract interface CodeItem {
    */
   default CodeLanguage getLanguage() {
 
-    return CodeLanguageJava.INSTANCE;
+    return JavaLanguage.get();
   }
 
   /**

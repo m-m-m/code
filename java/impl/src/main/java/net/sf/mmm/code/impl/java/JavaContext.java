@@ -14,8 +14,8 @@ import net.sf.mmm.code.api.element.CodeElementWithDeclaringType;
 import net.sf.mmm.code.api.element.CodeElementWithTypeVariables;
 import net.sf.mmm.code.api.node.CodeNode;
 import net.sf.mmm.code.api.type.CodeTypeVariable;
+import net.sf.mmm.code.base.AbstractBaseContextWithCache;
 import net.sf.mmm.code.base.BaseContext;
-import net.sf.mmm.code.base.BaseContextImplWithCache;
 import net.sf.mmm.code.base.BasePackage;
 import net.sf.mmm.code.base.arg.BaseOperationArg;
 import net.sf.mmm.code.base.element.BaseElement;
@@ -40,12 +40,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Implementation of {@link JavaContext} for the {@link #getParent() root} context.
+ * Implementation of {@link net.sf.mmm.code.api.CodeContext} for Java.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class JavaContext extends BaseContextImplWithCache {
+public abstract class JavaContext extends AbstractBaseContextWithCache {
 
     private static final Logger LOG = LoggerFactory.getLogger(JavaContext.class);
 

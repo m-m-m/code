@@ -4,9 +4,8 @@ package net.sf.mmm.code.impl.java;
 
 import java.io.File;
 
-import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.language.CodeLanguage;
-import net.sf.mmm.code.api.language.CodeLanguageJava;
+import net.sf.mmm.code.api.language.JavaLanguage;
 import net.sf.mmm.code.api.source.CodeSourceDescriptor;
 import net.sf.mmm.code.base.loader.BaseLoader;
 import net.sf.mmm.code.base.loader.SourceCodeProvider;
@@ -14,7 +13,6 @@ import net.sf.mmm.code.base.source.BaseSourceDescriptorType;
 import net.sf.mmm.code.base.source.BaseSourceImpl;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.base.type.BaseTypeWildcard;
-import net.sf.mmm.code.impl.java.expression.constant.JavaConstant;
 import net.sf.mmm.code.impl.java.loader.JavaSourceLoader;
 
 /**
@@ -29,7 +27,9 @@ public class JavaRootContext extends JavaContext {
 
     private final JavaClassLoader loader;
 
-    private BaseTypeWildcard unboundedWildcard;
+  private final JavaFactory factory;
+
+  private BaseTypeWildcard unboundedWildcard;
 
     /**
      * The constructor.
@@ -39,11 +39,11 @@ public class JavaRootContext extends JavaContext {
      */
     public JavaRootContext(BaseSourceImpl source) {
 
-        super(source);
-        loader = new JavaClassLoader(ClassLoader.getSystemClassLoader());
-        for (Class<?> primitive : JavaConstants.PRIMITIVE_TYPES) {
-            getType(primitive);
-        }
+    super(source);
+    this.loader = new JavaClassLoader(ClassLoader.getSystemClassLoader());
+    this.factory = new JavaFactory();
+    for (Class<?> primitive : JavaConstants.PRIMITIVE_TYPES) {
+      getType(primitive);
     }
 
     @Override
@@ -67,17 +67,11 @@ public class JavaRootContext extends JavaContext {
     @Override
     public CodeLanguage getLanguage() {
 
-        return CodeLanguageJava.INSTANCE;
-    }
+    return JavaLanguage.get();
+  }
 
-    @Override
-    public CodeExpression createExpression(Object value, boolean primitive) {
-
-        return JavaConstant.of(value, primitive);
-    }
-
-    @Override
-    public BaseType getRootType() {
+  @Override
+  public BaseType getRootType() {
 
         return (BaseType) getType(Object.class);
     }
@@ -100,8 +94,18 @@ public class JavaRootContext extends JavaContext {
         return (BaseType) getType(void.class);
     }
 
-    @Override
-    public BaseTypeWildcard getUnboundedWildcard() {
+  @Override
+  public BaseType getBooleanType(boolean primitive) {
+
+    if (primitive) {
+      return (BaseType) getType(boolean.class);
+    } else {
+      return (BaseType) getType(Boolean.class);
+    }
+  }
+
+  @Override
+  public BaseTypeWildcard getUnboundedWildcard() {
 
         if (unboundedWildcard == null) {
             unboundedWildcard = new BaseTypeWildcard(getRootType(), JavaConstants.UNBOUNDED_WILDCARD);
@@ -160,7 +164,13 @@ public class JavaRootContext extends JavaContext {
         return new BaseSourceImpl(byteCodeLocation, sourceCodeLocation, null, descriptor, loader);
     }
 
-    private static String getJavaMajorVersion(String version) {
+  @Override
+  public JavaFactory getFactory() {
+
+    return this.factory;
+  }
+
+  private static String getJavaMajorVersion(String version) {
 
         String majorVersion;
         if (version.startsWith("1.")) {

@@ -115,6 +115,9 @@ public class BasePathElements extends BaseNodeItemContainerFlat<CodePathElement>
       return getFile(path.getSimpleName(), init);
     }
     BasePackage pkg = getPackage(parentPath, init);
+    if (pkg == null) {
+      return null;
+    }
     return pkg.getChildren().getFile(path.getSimpleName(), init);
   }
 
@@ -203,7 +206,8 @@ public class BasePathElements extends BaseNodeItemContainerFlat<CodePathElement>
    * @return the traversed {@link BasePackage}. Has been created if it did not already exist and was produced by the
    *         given {@code factory}.
    */
-  protected BasePackage getPackage(CodeName path, boolean init, BiFunction<BasePackage, String, BasePackage> factory, boolean add, boolean forceAdd) {
+  protected BasePackage getPackage(CodeName path, boolean init, BiFunction<BasePackage, String, BasePackage> factory, boolean add,
+      boolean forceAdd) {
 
     CodeName parentPath = path.getParent();
     String simpleName = path.getSimpleName();
@@ -241,7 +245,7 @@ public class BasePathElements extends BaseNodeItemContainerFlat<CodePathElement>
   }
 
   @Override
-  public CodePackage getOrCreatePackage(CodeName path, boolean add) {
+  public BasePackage getOrCreatePackage(CodeName path, boolean add) {
 
     return getOrCreatePackage(path, add, true);
   }
@@ -313,9 +317,10 @@ public class BasePathElements extends BaseNodeItemContainerFlat<CodePathElement>
       pkg = getOrCreatePackage(parentPath, add, init, forceAdd);
     }
     String simpleName = path.getSimpleName();
-    BaseFile file = pkg.getChildren().getFile(simpleName);
+    BasePathElements children = pkg.getChildren();
+    BaseFile file = children.getFile(simpleName);
     if (file == null) {
-      file = createFile(simpleName, add, forceAdd);
+      file = children.createFile(simpleName, add, forceAdd);
     }
     return file;
   }
@@ -414,7 +419,8 @@ public class BasePathElements extends BaseNodeItemContainerFlat<CodePathElement>
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language)
+      throws IOException {
 
     // packages write their children to separate files - nothing to do...
   }

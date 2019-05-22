@@ -236,7 +236,8 @@ public final class BaseFile extends BasePathElement implements CodeFile {
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language)
+      throws IOException {
 
     if (defaultIndent == null) {
       BaseType type = getType();

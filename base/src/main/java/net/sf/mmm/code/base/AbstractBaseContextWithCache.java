@@ -24,14 +24,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Extends {@link BaseContextImpl} with caching to speed up lookups.
+ * Extends {@link AbstractBaseContext} with caching to speed up lookups.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class BaseContextImplWithCache extends BaseContextImpl {
+public abstract class AbstractBaseContextWithCache extends AbstractBaseContext {
 
-    private static final Logger LOG = LoggerFactory.getLogger(BaseContextImplWithCache.class);
+  private static final Logger LOG = LoggerFactory.getLogger(AbstractBaseContextWithCache.class);
 
     private Map<String, BaseType> typeCache;
 
@@ -39,26 +39,24 @@ public abstract class BaseContextImplWithCache extends BaseContextImpl {
 
     private BaseSourceProvider sourceProvider;
 
-    /**
-     * The constructor.
-     *
-     * @param source
-     *            the top-level {@link #getSource() source}.
-     */
-    public BaseContextImplWithCache(BaseSourceImpl source) {
+  /**
+   * The constructor.
+   *
+   * @param source the top-level {@link #getSource() source}.
+   */
+  public AbstractBaseContextWithCache(BaseSourceImpl source) {
 
+    this(source, null);
         this(source, null);
     }
 
-    /**
-     * The constructor.
-     *
-     * @param source
-     *            the top-level {@link #getSource() source}.
-     * @param sourceProvider
-     *            the {@link BaseSourceProvider}.
-     */
-    public BaseContextImplWithCache(BaseSourceImpl source, BaseSourceProvider sourceProvider) {
+  /**
+   * The constructor.
+   *
+   * @param source the top-level {@link #getSource() source}.
+   * @param sourceProvider the {@link BaseSourceProvider}.
+   */
+  public AbstractBaseContextWithCache(BaseSourceImpl source, BaseSourceProvider sourceProvider) {
 
         super(source);
         typeCache = createCache();
@@ -260,16 +258,16 @@ public abstract class BaseContextImplWithCache extends BaseContextImpl {
     @Override
     public BaseSource getSource(String id) {
 
-        BaseSource javaSource = sourceMap.get(id);
-        if (javaSource != null) {
-            return javaSource;
-        }
-        BaseContext parent = getParent();
-        if (parent != null) {
-            javaSource = parent.getSource(id);
-        }
-        return javaSource;
+    BaseSource source = this.sourceMap.get(id);
+    if (source != null) {
+      return source;
     }
+    BaseContext parent = getParent();
+    if (parent != null) {
+      source = parent.getSource(id);
+    }
+    return source;
+  }
 
     @Override
     public void close() throws Exception {

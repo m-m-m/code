@@ -19,7 +19,8 @@ import net.sf.mmm.code.api.type.CodeGenericType;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public interface CodeMethod extends CodeOperation, CodeAdvancedMergeableItem<CodeMethod>, CodeNodeItemCopyable<CodeMethods, CodeMethod> {
+public interface CodeMethod
+    extends CodeOperation, CodeAdvancedMergeableItem<CodeMethod>, CodeNodeItemCopyable<CodeMethods, CodeMethod> {
 
   /**
    * @return the return type of this method.
@@ -58,6 +59,12 @@ public interface CodeMethod extends CodeOperation, CodeAdvancedMergeableItem<Cod
    *         class hierarchy} is searched first, then the interface hierarchy in left recursive order.
    */
   CodeMethod getParentMethod();
+
+  /**
+   * @return the {@link CodeField} that acts as a native property with this method as {@link CodeField#getGetter()
+   *         getter} or {@link CodeField#getSetter() setter}. Will be {@code null} for a regular method.
+   */
+  CodeField getAccessorField();
 
   @Override
   Method getReflectiveObject();

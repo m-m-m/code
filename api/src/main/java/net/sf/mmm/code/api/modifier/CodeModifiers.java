@@ -60,6 +60,9 @@ public class CodeModifiers {
   /** {@link CodeModifiers} for {@code public}. */
   public static final CodeModifiers MODIFIERS_PUBLIC = new CodeModifiers(CodeVisibility.PUBLIC);
 
+  /** {@link CodeModifiers} for {@code public abstract}. */
+  public static final CodeModifiers MODIFIERS_PUBLIC_ABSTRACT = new CodeModifiers(CodeVisibility.PUBLIC, KEY_ABSTRACT);
+
   /** {@link CodeModifiers} for {@code public static}. */
   public static final CodeModifiers MODIFIERS_PUBLIC_STATIC = new CodeModifiers(CodeVisibility.PUBLIC, KEY_STATIC);
 
@@ -72,6 +75,9 @@ public class CodeModifiers {
   /** {@link CodeModifiers} for {@code private}. */
   public static final CodeModifiers MODIFIERS_PRIVATE = new CodeModifiers(CodeVisibility.PRIVATE);
 
+  /** {@link CodeModifiers} for {@code private abstract}. */
+  public static final CodeModifiers MODIFIERS_PRIVATE_ABSTRACT = new CodeModifiers(CodeVisibility.PRIVATE, KEY_ABSTRACT);
+
   /** {@link CodeModifiers} for {@code private static}. */
   public static final CodeModifiers MODIFIERS_PRIVATE_STATIC = new CodeModifiers(CodeVisibility.PRIVATE, KEY_STATIC);
 
@@ -83,6 +89,9 @@ public class CodeModifiers {
 
   /** {@link CodeModifiers} for {@code protected}. */
   public static final CodeModifiers MODIFIERS_PROTECTED = new CodeModifiers(CodeVisibility.PROTECTED);
+
+  /** {@link CodeModifiers} for {@code protected abstract}. */
+  public static final CodeModifiers MODIFIERS_PROTECTED_ABSTRACT = new CodeModifiers(CodeVisibility.PROTECTED, KEY_ABSTRACT);
 
   /** {@link CodeModifiers} for {@code protected static}. */
   public static final CodeModifiers MODIFIERS_PROTECTED_STATIC = new CodeModifiers(CodeVisibility.PROTECTED, KEY_STATIC);
@@ -105,8 +114,8 @@ public class CodeModifiers {
   /** {@link CodeModifiers} for {@code final}. */
   public static final CodeModifiers MODIFIERS_FINAL = new CodeModifiers(CodeVisibility.DEFAULT, KEY_FINAL);
 
-  /** {@link CodeModifiers} for {@code default}. */
-  public static final CodeModifiers MODIFIERS_DEFAULT = new CodeModifiers(CodeVisibility.PUBLIC, KEY_DEFAULT);
+  /** {@link CodeModifiers} for {@code public default}. */
+  public static final CodeModifiers MODIFIERS_PUBLIC_DEFAULT = new CodeModifiers(CodeVisibility.PUBLIC, KEY_DEFAULT);
 
   private final CodeVisibility visibility;
 
@@ -132,6 +141,7 @@ public class CodeModifiers {
   public CodeModifiers(CodeVisibility visibility, Collection<String> modifiers) {
 
     super();
+    Objects.requireNonNull(visibility, "visibility");
     this.visibility = visibility;
     Set<String> set = new HashSet<>(modifiers);
     for (String modifier : set) {
@@ -209,12 +219,7 @@ public class CodeModifiers {
     if (this.visibility.equals(newVisibility)) {
       return this;
     }
-    Set<String> newModifiers = new HashSet<>(this.modifiers);
-    newModifiers.remove(this.visibility.toString());
-    if (!CodeVisibility.DEFAULT.equals(newVisibility)) {
-      newModifiers.add(newVisibility.toString());
-    }
-    return new CodeModifiers(newVisibility, newModifiers);
+    return new CodeModifiers(newVisibility, this.modifiers);
   }
 
   /**
@@ -242,11 +247,49 @@ public class CodeModifiers {
   }
 
   /**
-   * @return {@code true} if {@link #KEY_DEFAULT default}.
+   * @return {@code true} if {@link #KEY_DEFAULT default} (e.g. for default methods), {@code false} otherwise.
+   * @see #isDefaultVisibility()
    */
-  public boolean isDefault() {
+  public boolean isDefaultModifier() {
 
     return this.modifiers.contains(KEY_DEFAULT);
+  }
+
+  /**
+   * @return {@code true} if {@link #getVisibility() visibility} is {@link CodeVisibility#DEFAULT default},
+   *         {@code false} otherwise.
+   * @see #isDefaultModifier()
+   */
+  public boolean isDefaultVisibility() {
+
+    return CodeVisibility.DEFAULT.equals(this.visibility);
+  }
+
+  /**
+   * @return {@code true} if {@link #getVisibility() visibility} is {@link CodeVisibility#PUBLIC public}, {@code false}
+   *         otherwise.
+   */
+  public boolean isPublic() {
+
+    return CodeVisibility.PUBLIC.equals(this.visibility);
+  }
+
+  /**
+   * @return {@code true} if {@link #getVisibility() visibility} is {@link CodeVisibility#PRIVATE private},
+   *         {@code false} otherwise.
+   */
+  public boolean isPrivate() {
+
+    return CodeVisibility.PRIVATE.equals(this.visibility);
+  }
+
+  /**
+   * @return {@code true} if {@link #getVisibility() visibility} is {@link CodeVisibility#PROTECTED protected},
+   *         {@code false} otherwise.
+   */
+  public boolean isProtected() {
+
+    return CodeVisibility.PROTECTED.equals(this.visibility);
   }
 
   @Override
@@ -290,7 +333,7 @@ public class CodeModifiers {
   public void formatModifiers(Appendable buffer) {
 
     try {
-      if (isDefault()) {
+      if (isDefaultModifier()) {
         appendModifier(buffer, KEY_DEFAULT);
       }
       if (isAbstract()) {
@@ -303,7 +346,8 @@ public class CodeModifiers {
         appendModifier(buffer, KEY_FINAL);
       }
       for (String modifier : this.modifiers) {
-        if (!KEY_DEFAULT.equals(modifier) && !KEY_ABSTRACT.equals(modifier) && !KEY_STATIC.equals(modifier) && !KEY_FINAL.equals(modifier)) {
+        if (!KEY_DEFAULT.equals(modifier) && !KEY_ABSTRACT.equals(modifier) && !KEY_STATIC.equals(modifier)
+            && !KEY_FINAL.equals(modifier)) {
           appendModifier(buffer, modifier);
         }
       }

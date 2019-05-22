@@ -160,4 +160,16 @@ public interface CodeLanguage {
    * @return the filename for the given {@link CodeType}.
    */
   String getFileFilename(CodeFile file);
+
+  /**
+   * @return {@code true} if this language natively supports {@link net.sf.mmm.code.api.member.CodeProperty properties}
+   *         (in such case
+   *         {@link net.sf.mmm.code.api.CodeFactory#createField(net.sf.mmm.code.api.member.CodeFields, String, java.lang.reflect.Field)}
+   *         needs to provide an implementation that also implements {@link net.sf.mmm.code.api.member.CodeProperty}),
+   *         {@code false} otherwise.
+   */
+  default boolean isSupportingNativeProperties() {
+
+    return false;
+  }
 }

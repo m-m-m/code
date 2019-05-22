@@ -2,20 +2,20 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.base.node;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.sf.mmm.code.api.copy.AbstractCodeCopyMapper;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.language.CodeLanguage;
-import net.sf.mmm.code.api.language.CodeLanguageJava;
+import net.sf.mmm.code.api.language.JavaLanguage;
 import net.sf.mmm.code.api.node.CodeNode;
 import net.sf.mmm.code.api.node.CodeNodeItem;
 import net.sf.mmm.code.api.source.CodeSource;
 import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.item.BaseMutableItem;
 import net.sf.mmm.code.base.source.BaseSource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base implementation of {@link CodeNodeItem}.
@@ -86,7 +86,7 @@ public abstract class BaseNodeItem extends BaseMutableItem implements CodeNodeIt
 
     BaseContext context = getContext();
     if (context == null) {
-      return CodeLanguageJava.INSTANCE; // only during initialization (e.g. debugging in constructor)
+      return JavaLanguage.get(); // only during initialization (e.g. debugging in constructor)
     }
     return context.getLanguage();
   }

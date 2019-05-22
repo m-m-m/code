@@ -469,7 +469,8 @@ public class BaseType extends BaseGenericType implements CodeType {
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language)
+      throws IOException {
 
     if (defaultIndent == null) {
       writeReference(sink, true);
@@ -486,12 +487,12 @@ public class BaseType extends BaseGenericType implements CodeType {
     sink.append(newline);
     String bodyIndent = currentIndent + defaultIndent;
     getFields().write(sink, newline, defaultIndent, bodyIndent);
-    if (this.staticInitializer != null) {
+    if (this.staticInitializer != null && !this.staticInitializer.isEmpty()) {
       sink.append(newline);
       sink.append(bodyIndent);
       this.staticInitializer.write(sink, newline, defaultIndent, currentIndent, language);
     }
-    if (this.nonStaticInitializer != null) {
+    if ((this.nonStaticInitializer != null) && !this.nonStaticInitializer.isEmpty()) {
       sink.append(newline);
       sink.append(bodyIndent);
       this.nonStaticInitializer.write(sink, newline, defaultIndent, currentIndent, language);
@@ -554,10 +555,12 @@ public class BaseType extends BaseGenericType implements CodeType {
   @Override
   public boolean isBoolean() {
 
-    String name = getSimpleName();
-    if ("boolean".equals(name) && isPrimitive()) {
+    BaseType booleanType = getContext().getBooleanType(false);
+    if (booleanType.equals(this)) {
       return true;
-    } else if ("Boolean".equals(name) && getParentPackage().isJavaLang()) {
+    }
+    booleanType = getContext().getBooleanType(true);
+    if ((booleanType != null) && (booleanType.equals(this))) {
       return true;
     }
     return false;

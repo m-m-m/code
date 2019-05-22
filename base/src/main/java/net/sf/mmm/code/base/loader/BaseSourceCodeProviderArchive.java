@@ -11,7 +11,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Collections;
 
-import net.sf.mmm.code.api.language.CodeLanguageJava;
+import net.sf.mmm.code.api.language.JavaLanguage;
 import net.sf.mmm.util.io.api.IoMode;
 import net.sf.mmm.util.io.api.RuntimeIoException;
 
@@ -34,7 +34,7 @@ public class BaseSourceCodeProviderArchive extends BaseSourceCodeProvider {
    */
   public BaseSourceCodeProviderArchive(File archiveFile) {
 
-    this(archiveFile, CodeLanguageJava.TYPE_EXTENSION_JAVA);
+    this(archiveFile, JavaLanguage.TYPE_EXTENSION_JAVA);
   }
 
   /**

@@ -5,9 +5,6 @@ package net.sf.mmm.code.base.type;
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.element.CodeElement;
@@ -17,6 +14,9 @@ import net.sf.mmm.code.api.type.CodeParameterizedType;
 import net.sf.mmm.code.base.arg.BaseOperationArg;
 import net.sf.mmm.code.base.element.BaseElement;
 import net.sf.mmm.code.base.member.BaseOperation;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base implementation of {@link CodeParameterizedType}.
@@ -205,7 +205,8 @@ public class BaseParameterizedType extends BaseGenericType implements CodeParame
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language)
+      throws IOException {
 
     super.doWrite(sink, newline, null, "", language);
     writeReference(sink, true);

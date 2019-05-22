@@ -172,7 +172,8 @@ public abstract class BaseOperation extends BaseMember implements CodeOperation 
   public abstract BaseOperation copy();
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language)
+      throws IOException {
 
     super.doWrite(sink, newline, defaultIndent, currentIndent, language);
     if (!getTypeParameters().getDeclared().isEmpty()) {
@@ -180,13 +181,19 @@ public abstract class BaseOperation extends BaseMember implements CodeOperation 
       sink.append(' ');
     }
     doWriteSignature(sink, newline, defaultIndent, currentIndent, language);
-    if ((this.body == null) || (defaultIndent == null)) {
+    if (!canHaveBody() || (defaultIndent == null)) {
       sink.append(language.getStatementTerminator());
       sink.append(newline);
     } else {
       sink.append(' ');
-      this.body.write(sink, newline, defaultIndent, currentIndent, language);
+      getBody().write(sink, newline, defaultIndent, currentIndent, language);
     }
+  }
+
+  @Override
+  public boolean canHaveBody() {
+
+    return true;
   }
 
   /**
@@ -201,7 +208,8 @@ public abstract class BaseOperation extends BaseMember implements CodeOperation 
    * @param language the {@link CodeLanguage} to use.
    * @throws IOException if thrown by {@link Appendable}.
    */
-  protected void doWriteSignature(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
+  protected void doWriteSignature(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language)
+      throws IOException {
 
     sink.append(getName());
     doWriteParameters(sink, newline, defaultIndent, currentIndent, language);
@@ -219,7 +227,8 @@ public abstract class BaseOperation extends BaseMember implements CodeOperation 
    * @param language the {@link CodeLanguage} to use.
    * @throws IOException if thrown by {@link Appendable}.
    */
-  protected void doWriteParameters(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
+  protected void doWriteParameters(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language)
+      throws IOException {
 
     sink.append('(');
     this.parameters.write(sink, newline, null, null);

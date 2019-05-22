@@ -2,15 +2,10 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.impl.java;
 
-import java.io.File;
-
-import net.sf.mmm.code.api.expression.CodeExpression;
-import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.base.loader.BaseLoader;
 import net.sf.mmm.code.base.source.BaseSourceImpl;
 import net.sf.mmm.code.base.source.BaseSourceProvider;
 import net.sf.mmm.code.base.type.BaseType;
-import net.sf.mmm.code.base.type.BaseTypeWildcard;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,64 +86,6 @@ public class JavaExtendedContext extends JavaContext {
     public BaseLoader getLoader() {
 
         return loader;
-    }
-
-    @Override
-    protected BaseType getTypeFromCache(String qualifiedName) {
-
-        BaseType type = super.getTypeFromCache(qualifiedName);
-        if (type == null) {
-            return parent.getTypeFromCache(qualifiedName);
-        }
-        return type;
-    }
-
-    @Override
-    public JavaContext getParent() {
-
-        return parent;
-    }
-
-    @Override
-    public JavaRootContext getRootContext() {
-
-        return parent.getRootContext();
-    }
-
-    @Override
-    public CodeExpression createExpression(Object value, boolean primitive) {
-
-        return parent.createExpression(value, primitive);
-    }
-
-    @Override
-    public BaseTypeWildcard getUnboundedWildcard() {
-
-        return parent.getUnboundedWildcard();
-    }
-
-    @Override
-    public CodeLanguage getLanguage() {
-
-        return parent.getLanguage();
-    }
-
-    @Override
-    public BaseType getRootType() {
-
-        return parent.getRootType();
-    }
-
-    @Override
-    public BaseType getRootEnumerationType() {
-
-        return parent.getRootEnumerationType();
-    }
-
-    @Override
-    public BaseType getVoidType() {
-
-        return parent.getVoidType();
     }
 
     @Override

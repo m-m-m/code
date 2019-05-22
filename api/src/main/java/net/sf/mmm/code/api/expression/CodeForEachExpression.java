@@ -2,6 +2,8 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api.expression;
 
+import net.sf.mmm.code.api.statement.CodeLocalVariable;
+
 /**
  * {@link CodeForExpression} for a {@code foreach} loop.
  *
@@ -9,5 +11,15 @@ package net.sf.mmm.code.api.expression;
  * @since 1.0.0
  */
 public abstract interface CodeForEachExpression extends CodeForExpression {
+
+  /**
+   * @return the loop variable.
+   */
+  CodeLocalVariable getVariable();
+
+  /**
+   * @return the expression resulting in the object to iterate.
+   */
+  CodeExpression getExpression();
 
 }

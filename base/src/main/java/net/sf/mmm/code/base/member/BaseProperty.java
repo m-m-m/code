@@ -4,10 +4,9 @@ package net.sf.mmm.code.base.member;
 
 import java.io.IOException;
 import java.lang.reflect.AccessibleObject;
+import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import net.sf.mmm.code.api.arg.CodeParameter;
 import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.copy.CodeCopyType;
 import net.sf.mmm.code.api.language.CodeLanguage;
@@ -18,6 +17,9 @@ import net.sf.mmm.code.api.modifier.CodeModifiers;
 import net.sf.mmm.code.api.modifier.CodeVisibility;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base implementation of {@link CodeProperty}.
@@ -195,6 +197,18 @@ public class BaseProperty extends BaseMember implements CodeProperty {
       }
       this.getter = method;
     }
+    if (this.type == null) {
+      if (isSetter) {
+        List<? extends CodeParameter> parameters = method.getParameters().getDeclared();
+        if (parameters.size() == 1) {
+          this.type = parameters.get(0).getType();
+        } else {
+          LOG.debug("Inconsistent setter {}.", method);
+        }
+      } else {
+        this.type = method.getReturns().getType();
+      }
+    }
   }
 
   void join(CodeField newField) {
@@ -206,6 +220,11 @@ public class BaseProperty extends BaseMember implements CodeProperty {
       LOG.debug("Replacing field {} with {}.", this.field, newField);
     }
     this.field = newField;
+    if (this.type == null) {
+      this.type = newField.getType();
+    } else {
+      assert (this.type == newField.getType());
+    }
   }
 
   @Override
@@ -226,7 +245,8 @@ public class BaseProperty extends BaseMember implements CodeProperty {
     if ((this.setter != null) && this.setter.getModifiers().getVisibility().isWeakerOrEqualTo(visibility)) {
       return true;
     }
-    if ((this.field != null) && !this.field.getModifiers().isFinal() && this.field.getModifiers().getVisibility().isWeakerOrEqualTo(visibility)) {
+    if ((this.field != null) && !this.field.getModifiers().isFinal()
+        && this.field.getModifiers().getVisibility().isWeakerOrEqualTo(visibility)) {
       return true;
     }
     return false;
@@ -258,7 +278,8 @@ public class BaseProperty extends BaseMember implements CodeProperty {
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent,
+      CodeLanguage language) throws IOException {
 
     // properties are virtual and will never be written...
   }
@@ -287,7 +308,8 @@ public class BaseProperty extends BaseMember implements CodeProperty {
   static String getPropertyName(String methodName) {
 
     String propertyName = methodName;
-    if (propertyName.startsWith("set") || propertyName.startsWith("get") || propertyName.startsWith("has") || propertyName.startsWith("can")) {
+    if (propertyName.startsWith("set") || propertyName.startsWith("get") || propertyName.startsWith("has")
+        || propertyName.startsWith("can")) {
       propertyName = propertyName.substring(3);
     } else if (propertyName.startsWith("is")) {
       propertyName = propertyName.substring(2);

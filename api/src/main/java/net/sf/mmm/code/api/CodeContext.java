@@ -2,7 +2,6 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.api;
 
-import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.imports.CodeImport;
 import net.sf.mmm.code.api.language.CodeLanguage;
 import net.sf.mmm.code.api.type.CodeType;
@@ -47,6 +46,12 @@ public interface CodeContext extends CodeProvider {
    *         return}.
    */
   CodeType getVoidType();
+
+  /**
+   * @param primitive {@code true} for primitive boolean and {@code false} for {@link Boolean} object type.
+   * @return the requested boolean type.
+   */
+  CodeType getBooleanType(boolean primitive);
 
   /**
    * @return the top-level {@link CodeType#isException() exception} {@link CodeType}. All sub-types are considered as
@@ -114,13 +119,37 @@ public interface CodeContext extends CodeProvider {
    * @return the corresponding {@link CodeType#getQualifiedName() qualified name} or {@code null} if no standard type
    *         (import is required).
    */
-  public String getQualifiedNameForStandardType(String simpleName, boolean omitStandardPackages);
+  String getQualifiedNameForStandardType(String simpleName, boolean omitStandardPackages);
 
   /**
-   * @param value the Java value to wrap as constant/literal {@link CodeExpression}.
-   * @param primitive - {@code true} for a primitive type literal, {@code false} otherwise.
-   * @return the according {@link CodeExpression}.
+   * @return the {@link CodeFactory} to create specific {@link net.sf.mmm.code.api.item.CodeItem}s.
    */
-  CodeExpression createExpression(Object value, boolean primitive);
+  CodeFactory getFactory();
+
+  /**
+   * @param qualifiedName the {@link CodeType#getQualifiedName() qualified name} of the requested {@link CodeType}.
+   * @param add - {@code true} to also add newly created code elements (requires mutable access), {@code false}
+   *        otherwise.
+   * @return the requested existing or newly created {@link CodeType}.
+   * @see #createChildContext()
+   */
+  default CodeType getOrCreateType(String qualifiedName, boolean add) {
+
+    CodeType type = getType(qualifiedName);
+    if (type == null) {
+      CodeName path = new CodeName(qualifiedName, getLanguage().getPackageSeparator());
+      CodeFile file = getSource().getRootPackage().getChildren().getOrCreateFile(path, add);
+      type = file.getType();
+    }
+    return type;
+  }
+
+  /**
+   * @return a new mutable child context. It will inherit from this context but have its own virtual {@link #getSource()
+   *         source} that is {@link net.sf.mmm.code.api.source.CodeSource#isMutable() mutable} so you can add your own
+   *         {@link CodePathElement code}.
+   * @see #getOrCreateType(String, boolean)
+   */
+  CodeContext createChildContext();
 
 }

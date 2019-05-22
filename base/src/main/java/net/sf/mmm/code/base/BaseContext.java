@@ -50,6 +50,9 @@ public interface BaseContext extends CodeContext, BaseProvider {
   BaseType getRootExceptionType();
 
   @Override
+  BaseType getBooleanType(boolean primitive);
+
+  @Override
   BaseTypeWildcard getUnboundedWildcard();
 
   /**
@@ -64,5 +67,17 @@ public interface BaseContext extends CodeContext, BaseProvider {
    * @return the corresponding {@link BaseType#getNonPrimitiveType() non-primitive type}.
    */
   BaseType getNonPrimitiveType(BaseType javaType);
+
+  @Override
+  BaseFactory getFactory();
+
+  @Override
+  default BaseType getOrCreateType(String qualifiedName, boolean add) {
+
+    return (BaseType) CodeContext.super.getOrCreateType(qualifiedName, add);
+  }
+
+  @Override
+  BaseContext createChildContext();
 
 }
