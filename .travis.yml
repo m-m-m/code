@@ -2,6 +2,12 @@ language: java
 
 jdk:
   - oraclejdk8
+  
+before_script:
+  - echo $TRAVIS_BUILD_DIR
+  - cd $TRAVIS_BUILD_DIR/java/impl/src/test/resources/testdata/localmavenproject/maven.project
+  - mvn install
+  - cd $TRAVIS_BUILD_DIR
 
 script: mvn install
 
