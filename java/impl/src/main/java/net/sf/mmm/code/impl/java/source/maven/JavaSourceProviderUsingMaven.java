@@ -223,6 +223,7 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
                 dependenciesURLs.add(getEclipseByteCodeLocation(byteCodeLocation));
                 dependenciesURLs.add(byteCodeLocation.toURI().toURL());
 
+                // Now we need dependencies from the API module
                 dependenciesURLs.addAll(getApiByteCodeLocations(byteCodeLocation));
 
             } catch (MalformedURLException e1) {
@@ -290,8 +291,14 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
             segments[segments.length - 3] = "api";
 
             String apiLocation = "";
+            String apiLocationAsFile = "";
+            int i = 0; // I need this to get the file not as URI
             for (String segment : segments) {
                 apiLocation = apiLocation + segment + "/";
+                if (i != 0) {
+                    apiLocationAsFile = apiLocationAsFile + segment + "/";
+                }
+                i++;
             }
 
             // Now we get the eclipse-target classes on the api part
@@ -304,6 +311,12 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
             // First we add eclipse-target because the compiled classes are normally more updated
             eclipseTargetLocations.add(new URL(eclipseApiLocation));
             eclipseTargetLocations.add(new URL(apiLocation));
+
+            Model apiModel = parseModel(new File(apiLocationAsFile));
+
+            // Now we add the dependencies of API. We need this because if the API jar is not found on the
+            // local maven repo, this is the way to get its dependencies
+            eclipseTargetLocations.addAll(getDependenciesURLS(apiModel, eclipseTargetLocations, 1));
         }
 
         return eclipseTargetLocations;
