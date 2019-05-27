@@ -17,5 +17,7 @@
     <module>parser</module>
     <module>maven</module>
     <module>impl</module>
+	<!-- Needed for tests. We have to build it.-->
+	<module>impl\src\test\resources\testdata\localmavenproject\maven.project</module>  
   </modules>  
 </project>

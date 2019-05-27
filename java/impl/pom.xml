@@ -13,6 +13,7 @@
   <packaging>jar</packaging>
   <name>${project.artifactId}</name>
   <description>Implementation of mmm-code-api for Java.</description>
+ 
 
   <build>
     <plugins>

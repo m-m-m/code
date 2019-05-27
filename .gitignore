@@ -8,9 +8,5 @@ target
 eclipse-target
 maven-archiver
 maven-status
-!/java/impl/src/test/resources/testdata/localmavenproject/maven.project/core/target
-!/java/impl/src/test/resources/testdata/localmavenproject/maven.project/core/eclipse-target
-!/java/impl/src/test/resources/testdata/localmavenproject/maven.project/api/target
-!/java/impl/src/test/resources/testdata/localmavenproject/maven.project/api/eclipse-target
 gwt-unitCache
 war
