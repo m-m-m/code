@@ -12,12 +12,16 @@
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>
   <description>The modules of mmm-code for Java.</description>
+  
+  <properties>
+    <maven.test.path>impl\src\test\resources\testdata\localmavenproject\maven.project</maven.test.path>
+  </properties>
 
   <modules>
     <module>parser</module>
     <module>maven</module>
-    <module>impl</module>
 	<!-- Needed for tests. We have to build it.-->
-	<module>impl\src\test\resources\testdata\localmavenproject\maven.project</module>  
+	<module>${maven.test.path}</module>  
+    <module>impl</module>
   </modules>  
 </project>
