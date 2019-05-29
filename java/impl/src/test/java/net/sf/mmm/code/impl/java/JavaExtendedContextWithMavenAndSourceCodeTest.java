@@ -52,6 +52,7 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
     private JavaContext getContextFromLocalMavenProject(File projectLocation) {
 
         return new JavaSourceProviderUsingMaven().createFromLocalMavenProject(projectLocation);
+
     }
 
     /**

@@ -207,6 +207,8 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
     /**
      * @param location
      *            the {@link File} pointing to the Maven project.
+     * @param isExternal
+     *            whether the Maven project is outside of this current project folder
      * @return the {@link JavaContext} for the Maven project at the given {@code location}.
      */
     private JavaContext createFromLocalMavenProject(File location, Boolean isExternal) {
@@ -274,11 +276,11 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
     }
 
     /**
-     * Retrieves the URLs where the eclipse-target folder should be located on the api module. It contains
-     * bytecode. This is useful for devon4j projects, but will not harm other projects.
+     * On the API module, retrieves the dependencies URLs of the eclipse-target and target folder. It contains
+     * byte-code. This is useful for devon4j projects, but will not harm other projects.
      * @param byteCodeLocation
      *            current location of the byte code
-     * @return list of URLs with the location of eclipse-target folder on the api module
+     * @return list of dependencies URLs retrieved from the API module
      * @throws MalformedURLException
      *             throws {@link MalformedURLException}
      */
