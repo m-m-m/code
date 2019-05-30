@@ -376,6 +376,9 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
         }
         recursiveness++;
 
+        if (model == null) {
+            return previousURLs;
+        }
         List<Dependency> dependencies = model.getDependencies();
 
         for (Dependency dependency : dependencies) {
