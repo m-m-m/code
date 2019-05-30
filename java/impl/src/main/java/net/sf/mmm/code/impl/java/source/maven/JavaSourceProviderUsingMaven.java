@@ -107,7 +107,7 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
     private BaseSourceLoader createLoader(File sourceCodeLocation) {
 
         SourceCodeProvider sourceCodeProvider;
-        if (sourceCodeLocation == null) {
+        if ((sourceCodeLocation == null) || !sourceCodeLocation.exists()) {
             sourceCodeProvider = null;
         } else if (sourceCodeLocation.isDirectory()) {
             sourceCodeProvider = new BaseSourceCodeProviderDirectory(sourceCodeLocation);
