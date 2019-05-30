@@ -3,6 +3,7 @@
 package net.sf.mmm.code.impl.java.source.maven;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.CodeSource;
@@ -170,6 +171,7 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
     public JavaSourceUsingMaven createFromLocalMavenProject(JavaContext parentContext, File location) {
 
         final Model model = parseModel(location);
+
         if (model == null) {
             throw new IllegalArgumentException("Could not find pom.xml for basedir: " + location);
         }
@@ -218,22 +220,22 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
 
         if (isExternal) {
             File byteCodeLocation = getByteCodeLocation(source);
-            List<URL> dependenciesURLs = new ArrayList<>();
+            ArrayList<URL> dependenciesURLs = new ArrayList<>();
 
             try {
                 // First eclipse target because it is the most updated version of the classes
                 dependenciesURLs.add(getEclipseByteCodeLocation(byteCodeLocation));
                 dependenciesURLs.add(byteCodeLocation.toURI().toURL());
 
-                // Now we need dependencies from the API module
-                dependenciesURLs.addAll(getApiByteCodeLocations(byteCodeLocation));
+                // Now we need dependencies from the modules
+                dependenciesURLs = getModulesDependenciesURLS(location, dependenciesURLs);
 
             } catch (MalformedURLException e1) {
                 LOG.debug("Not able to get the URL of " + byteCodeLocation.getName() + " or any of its dependencies.");
                 return new JavaExtendedContext(source, provider, null);
             }
             // Iterate over all dependencies, get URLS and construct MavenClassLoader
-            dependenciesURLs.addAll(getDependenciesURLS(source.getModel()));
+            dependenciesURLs = getDependenciesURLS(source.getModel(), dependenciesURLs, 0);
 
             try {
                 URL[] dependencies = new URL[dependenciesURLs.size()];
@@ -325,6 +327,52 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
     }
 
     /**
+     * Tries to find the parent POM of this project in order to retrieve the modules defined-
+     * @param location
+     *            current project, in which we want to check if it has a parent POM with modules
+     * @param dependenciesURLs
+     *            list of previous dependencies URLs
+     * @return list of dependencies URLs retrieved from the modules and the parent POM
+     */
+    private ArrayList<URL> getModulesDependenciesURLS(File location, ArrayList<URL> dependenciesURLs) {
+        final Model model = parseModel(location);
+        try {
+            File parentPom = location.toPath().resolve(model.getParent().getRelativePath()).toFile().getCanonicalFile();
+            Model parentModel = parseModel(parentPom);
+
+            if (parentModel == null) {
+                return dependenciesURLs;
+            }
+
+            for (String module : parentModel.getModules()) {
+                String[] segments = parentPom.toURI().toString().split("/");
+                if (segments.length - 1 == 0) {
+                    break;
+                }
+
+                segments[segments.length - 1] = module;
+
+                String moduleLocation = "";
+                int i = 0; // I need this to get the file not as URI
+                for (String segment : segments) {
+                    if (i != 0) {
+                        moduleLocation = moduleLocation + segment + "/";
+                    }
+                    i++;
+                }
+                Model moduleModel = parseModel(new File(moduleLocation));
+                dependenciesURLs = getDependenciesURLS(moduleModel, dependenciesURLs, 1);
+
+            }
+
+            dependenciesURLs = getDependenciesURLS(parentModel, dependenciesURLs, 1);
+        } catch (IOException e) {
+            LOG.debug("There was a problem while reading your parent pom, the file was not found.", e);
+        }
+        return dependenciesURLs;
+    }
+
+    /**
      * Gets the byte code location, that is located on classes/ folder
      * @param source
      *            where to get the byte code location from
@@ -342,21 +390,6 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
             byteCodeLocation = source.getByteCodeLocation();
         }
         return byteCodeLocation;
-    }
-
-    /**
-     * Retrieves dependencies from a Maven project. Up to 4 levels of recursiveness (gets the dependency of
-     * the dependency of the dependency...)
-     * @param model
-     *            parsed from the POM of a project
-     * @return POM dependencies in URL format
-     */
-    private ArrayList<URL> getDependenciesURLS(Model model) {
-        ArrayList<URL> dependenciesURLS = new ArrayList<>();
-        int recursiveness = 0; // We only want to recursively get 4 levels of dependency
-
-        dependenciesURLS = getDependenciesURLS(model, dependenciesURLS, recursiveness);
-        return dependenciesURLS;
     }
 
     /**
