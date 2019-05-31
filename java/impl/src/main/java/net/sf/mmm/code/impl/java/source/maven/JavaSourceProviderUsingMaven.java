@@ -227,13 +227,12 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
                 dependenciesURLs.add(getEclipseByteCodeLocation(byteCodeLocation));
                 dependenciesURLs.add(byteCodeLocation.toURI().toURL());
 
-                // Now we need dependencies from the modules
-                dependenciesURLs = getModulesDependenciesURLS(location, dependenciesURLs);
-
             } catch (MalformedURLException e1) {
                 LOG.debug("Not able to get the URL of " + byteCodeLocation.getName() + " or any of its dependencies.");
                 return new JavaExtendedContext(source, provider, null);
             }
+            // Now we need dependencies from the modules
+            dependenciesURLs = getModulesDependenciesURLS(location, dependenciesURLs);
             // Iterate over all dependencies, get URLS and construct MavenClassLoader
             dependenciesURLs = getDependenciesURLS(source.getModel(), dependenciesURLs, 0);
 
@@ -263,8 +262,7 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
      *             throws {@link MalformedURLException}
      */
     private URL getEclipseByteCodeLocation(File byteCodeLocation) throws MalformedURLException {
-        String byteCodeLoc = byteCodeLocation.toURI().toString();
-        String[] segments = byteCodeLoc.split("/");
+        String[] segments = getPathSegmentsFromFile(byteCodeLocation);
 
         if (segments.length >= 3) {
             segments[segments.length - 2] = "eclipse-target";
@@ -278,55 +276,6 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
     }
 
     /**
-     * On the API module, retrieves the dependencies URLs of the eclipse-target and target folder. It contains
-     * byte-code. This is useful for devon4j projects, but will not harm other projects.
-     * @param byteCodeLocation
-     *            current location of the byte code
-     * @return list of dependencies URLs retrieved from the API module
-     * @throws MalformedURLException
-     *             throws {@link MalformedURLException}
-     */
-    public ArrayList<URL> getApiByteCodeLocations(File byteCodeLocation) throws MalformedURLException {
-        ArrayList<URL> eclipseTargetLocations = new ArrayList<>();
-        String byteCodeLoc = byteCodeLocation.toURI().toString();
-        String[] segments = byteCodeLoc.split("/");
-        if (segments.length >= 3) {
-            // We change from code to api folder
-            segments[segments.length - 3] = "api";
-
-            String apiLocation = "";
-            String apiLocationAsFile = "";
-            int i = 0; // I need this to get the file not as URI
-            for (String segment : segments) {
-                apiLocation = apiLocation + segment + "/";
-                if (i != 0) {
-                    apiLocationAsFile = apiLocationAsFile + segment + "/";
-                }
-                i++;
-            }
-
-            // Now we get the eclipse-target classes on the api part
-            segments[segments.length - 2] = "eclipse-target";
-            String eclipseApiLocation = "";
-            for (String segment : segments) {
-                eclipseApiLocation = eclipseApiLocation + segment + "/";
-            }
-
-            // First we add eclipse-target because the compiled classes are normally more updated
-            eclipseTargetLocations.add(new URL(eclipseApiLocation));
-            eclipseTargetLocations.add(new URL(apiLocation));
-
-            Model apiModel = parseModel(new File(apiLocationAsFile));
-
-            // Now we add the dependencies of API. We need this because if the API jar is not found on the
-            // local maven repo, this is the way to get its dependencies
-            eclipseTargetLocations.addAll(getDependenciesURLS(apiModel, eclipseTargetLocations, 1));
-        }
-
-        return eclipseTargetLocations;
-    }
-
-    /**
      * Tries to find the parent POM of this project in order to retrieve the modules defined-
      * @param location
      *            current project, in which we want to check if it has a parent POM with modules
@@ -335,37 +284,48 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
      * @return list of dependencies URLs retrieved from the modules and the parent POM
      */
     private ArrayList<URL> getModulesDependenciesURLS(File location, ArrayList<URL> dependenciesURLs) {
-        final Model model = parseModel(location);
+        Model model = parseModel(location);
+
+        if (model == null) {
+            return dependenciesURLs;
+        }
+
         try {
-            File parentPom = location.toPath().resolve(model.getParent().getRelativePath()).toFile().getCanonicalFile();
-            Model parentModel = parseModel(parentPom);
+            while (model.getParent() != null) {
+                File parentPom =
+                    location.toPath().resolve(model.getParent().getRelativePath()).toFile().getCanonicalFile();
+                Model parentModel = parseModel(parentPom);
 
-            if (parentModel == null) {
-                return dependenciesURLs;
-            }
-
-            for (String module : parentModel.getModules()) {
-                String[] segments = parentPom.toURI().toString().split("/");
-                if (segments.length - 1 == 0) {
-                    break;
+                if (parentModel == null) {
+                    return dependenciesURLs;
                 }
 
-                segments[segments.length - 1] = module;
-
-                String moduleLocation = "";
-                int i = 0; // I need this to get the file not as URI
-                for (String segment : segments) {
-                    if (i != 0) {
-                        moduleLocation = moduleLocation + segment + "/";
+                for (String module : parentModel.getModules()) {
+                    String[] segments = getPathSegmentsFromFile(parentPom);
+                    if (segments.length - 1 == 0) {
+                        break;
                     }
-                    i++;
+
+                    segments[segments.length - 1] = module;
+
+                    String moduleLocation = "";
+                    int i = 0; // I need this to get the file not as URI
+                    for (String segment : segments) {
+                        if (i != 0) {
+                            moduleLocation = moduleLocation + segment + "/";
+                        }
+                        i++;
+                    }
+                    Model moduleModel = parseModel(new File(moduleLocation));
+                    dependenciesURLs = getDependenciesURLS(moduleModel, dependenciesURLs, 1);
+
                 }
-                Model moduleModel = parseModel(new File(moduleLocation));
-                dependenciesURLs = getDependenciesURLS(moduleModel, dependenciesURLs, 1);
 
+                dependenciesURLs = getDependenciesURLS(parentModel, dependenciesURLs, 1);
+
+                model = parentModel;
+                location = parentPom.getParentFile();
             }
-
-            dependenciesURLs = getDependenciesURLS(parentModel, dependenciesURLs, 1);
         } catch (IOException e) {
             LOG.debug("There was a problem while reading your parent pom, the file was not found.", e);
         }
@@ -448,6 +408,18 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
     private static File getCwd() {
 
         return new File(".").getAbsoluteFile().getParentFile();
+    }
+
+    /**
+     * Useful for segmenting a path into an array. The path gets split by its path separator
+     * @param byteCodeLocation
+     *            the file which you want to get its path segmented by the path separator
+     * @return an array containing in each element one segment of the path
+     */
+    private String[] getPathSegmentsFromFile(File byteCodeLocation) {
+        String byteCodeLoc = byteCodeLocation.toURI().toString();
+        String[] segments = byteCodeLoc.split("/");
+        return segments;
     }
 
 }
