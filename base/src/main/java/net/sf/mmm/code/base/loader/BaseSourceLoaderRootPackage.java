@@ -13,51 +13,52 @@ import net.sf.mmm.code.base.type.BaseType;
  */
 public class BaseSourceLoaderRootPackage extends BaseSourceLoaderImpl {
 
-    /**
-     * The constructor.
-     */
-    public BaseSourceLoaderRootPackage() {
+  /**
+   * The constructor.
+   */
+  public BaseSourceLoaderRootPackage() {
 
+  }
+
+  @Override
+  public void scan(BasePackage pkg) {
+
+    // nothing to do...
+  }
+
+  @Override
+  public BaseType getType(String qualifiedName) {
+
+    return getType(getContext().parseName(qualifiedName));
+  }
+
+  @Override
+  public BaseType getType(CodeName qualifiedName) {
+
+    BaseFile file = getSource().getRootPackage().getChildren().getFile(qualifiedName);
+    if (file != null) {
+      return file.getType();
     }
+    return null;
+  }
 
-    @Override
-    public void scan(BasePackage pkg) {
+  @Override
+  public BaseGenericType getType(Class<?> clazz) {
 
-        // nothing to do...
-    }
+    return null;
+  }
 
-    @Override
-    public BaseType getType(String qualifiedName) {
+  @Override
+  public void close() throws Exception {
 
-        return getType(getContext().parseName(qualifiedName));
-    }
+    // ignore
+  }
 
-    @Override
-    public BaseType getType(CodeName qualifiedName) {
+  @Override
+  public ClassLoader getClassLoader() {
 
-        BaseFile file = getSource().getRootPackage().getChildren().getFile(qualifiedName);
-        if (file != null) {
-            return file.getType();
-        }
-        return null;
-    }
-
-    @Override
-    public BaseGenericType getType(Class<?> clazz) {
-
-        return null;
-    }
-
-    @Override
-    public void close() throws Exception {
-
-        // ignore
-    }
-
-    @Override
-    public ClassLoader getClassLoader() {
-        // nothing to do
-        return null;
-    }
+    // nothing to do
+    return null;
+  }
 
 }

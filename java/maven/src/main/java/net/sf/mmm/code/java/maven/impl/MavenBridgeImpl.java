@@ -32,144 +32,143 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  */
 public class MavenBridgeImpl implements MavenBridge, MavenConstants {
 
-    private final MavenXpp3Reader pomReader;
+  private final MavenXpp3Reader pomReader;
 
-    private final MavenResolver resolver;
+  private final MavenResolver resolver;
 
-    /**
-     * The constructor.
-     */
-    public MavenBridgeImpl() {
+  /**
+   * The constructor.
+   */
+  public MavenBridgeImpl() {
 
-        this(null);
+    this(null);
+  }
+
+  /**
+   * The constructor.
+   *
+   * @param localRepository the {@link File} pointing to the maven local repository.
+   */
+  public MavenBridgeImpl(File localRepository) {
+
+    super();
+    pomReader = new MavenXpp3Reader();
+    File localRepo = localRepository;
+    if (localRepo == null) {
+      localRepo = MavenLocalRepositoryLocator.getLocalRepository(this);
     }
+    resolver = new MavenResolver(localRepo);
+  }
 
-    /**
-     * The constructor.
-     *
-     * @param localRepository
-     *            the {@link File} pointing to the maven local repository.
-     */
-    public MavenBridgeImpl(File localRepository) {
+  @Override
+  public File findPom(File source) {
 
-        super();
-        pomReader = new MavenXpp3Reader();
-        File localRepo = localRepository;
-        if (localRepo == null) {
-            localRepo = MavenLocalRepositoryLocator.getLocalRepository(this);
+    String filename = source.getName();
+    if (source.isFile()) {
+      String basename;
+      File pomFile;
+      int lastDot = filename.lastIndexOf('.');
+      if (lastDot > 0) {
+        basename = filename.substring(0, lastDot);
+        // If the file is already a pom.xml, we should not change it to pom.pom
+        if (basename.equals("pom")) {
+          pomFile = source;
+        } else {
+          pomFile = new File(source.getParent(), basename + POM_EXTENSION);
         }
-        resolver = new MavenResolver(localRepo);
-    }
-
-    @Override
-    public File findPom(File source) {
-
-        String filename = source.getName();
-        if (source.isFile()) {
-            String basename;
-            File pomFile;
-            int lastDot = filename.lastIndexOf('.');
-            if (lastDot > 0) {
-                basename = filename.substring(0, lastDot);
-                // If the file is already a pom.xml, we should not change it to pom.pom
-                if (basename.equals("pom")) {
-                    pomFile = source;
-                } else {
-                    pomFile = new File(source.getParent(), basename + POM_EXTENSION);
-                }
-                if (pomFile.exists()) {
-                    return pomFile;
-                }
-            }
-            int lastSlash = filename.indexOf('-');
-            if (lastSlash > 0) {
-                basename = filename.substring(0, lastSlash);
-                pomFile = new File(source.getParent(), basename + POM_EXTENSION);
-                if (pomFile.exists()) {
-                    return pomFile;
-                }
-            }
-        } else if (source.isDirectory()) {
-            return findPomFromFolder(source, 0);
-        }
-        return null;
-    }
-
-    @Override
-    public File findArtifactSources(File artifact) {
-
-        if (artifact.isFile()) {
-            String filename = artifact.getName();
-            int lastDot = filename.lastIndexOf('.');
-            if (lastDot > 0) {
-                String extension = filename.substring(lastDot);
-                String sourcesBasename = filename.substring(0, lastDot) + "-" + CLASSIFIER_SOURCES;
-                File sourcesFile = new File(artifact.getParent(), sourcesBasename + extension);
-                if (sourcesFile.exists()) {
-                    return sourcesFile;
-                }
-                sourcesFile = new File(artifact.getParent(), sourcesBasename + ".zip");
-                if (sourcesFile.exists()) {
-                    return sourcesFile;
-                }
-            }
-        }
-        return null;
-    }
-
-    private File findPomFromFolder(File folder, int recursion) {
-
-        if (folder == null) {
-            return null;
-        }
-        File pomFile = new File(folder, POM_XML);
         if (pomFile.exists()) {
-            return pomFile;
+          return pomFile;
         }
-        if (recursion > 4) {
-            return null;
+      }
+      int lastSlash = filename.indexOf('-');
+      if (lastSlash > 0) {
+        basename = filename.substring(0, lastSlash);
+        pomFile = new File(source.getParent(), basename + POM_EXTENSION);
+        if (pomFile.exists()) {
+          return pomFile;
         }
-        return findPomFromFolder(folder.getParentFile(), recursion + 1);
+      }
+    } else if (source.isDirectory()) {
+      return findPomFromFolder(source, 0);
     }
+    return null;
+  }
 
-    @Override
-    public File findPom(Dependency dependency) {
+  @Override
+  public File findArtifactSources(File artifact) {
 
-        return resolver.resolvePom(dependency);
-    }
-
-    @Override
-    public File findArtifact(Dependency dependency) {
-
-        return resolver.resolveArtifact(dependency);
-    }
-
-    @Override
-    public Model readModel(File pomFile) {
-
-        try (InputStream in = new FileInputStream(pomFile)) {
-            Model model = pomReader.read(in);
-            model.setPomFile(pomFile);
-            return model;
-        } catch (IOException e) {
-            throw new RuntimeIoException(e, IoMode.READ);
-        } catch (XmlPullParserException e) {
-            throw new XmlInvalidException(e, pomFile);
+    if (artifact.isFile()) {
+      String filename = artifact.getName();
+      int lastDot = filename.lastIndexOf('.');
+      if (lastDot > 0) {
+        String extension = filename.substring(lastDot);
+        String sourcesBasename = filename.substring(0, lastDot) + "-" + CLASSIFIER_SOURCES;
+        File sourcesFile = new File(artifact.getParent(), sourcesBasename + extension);
+        if (sourcesFile.exists()) {
+          return sourcesFile;
         }
-    }
-
-    @Override
-    public Model readEffectiveModel(File pomFile) {
-
-        try {
-            ModelBuildingRequest buildingRequest = new DefaultModelBuildingRequest()
-                .setSystemProperties(System.getProperties()).setPomFile(pomFile).setModelResolver(resolver);
-            DefaultModelBuilder defaultModelBuilder = new DefaultModelBuilderFactory().newInstance();
-            ModelBuildingResult buildingResult = defaultModelBuilder.build(buildingRequest);
-            return buildingResult.getEffectiveModel();
-        } catch (ModelBuildingException e) {
-            throw new IllegalStateException(e);
+        sourcesFile = new File(artifact.getParent(), sourcesBasename + ".zip");
+        if (sourcesFile.exists()) {
+          return sourcesFile;
         }
+      }
     }
+    return null;
+  }
+
+  private File findPomFromFolder(File folder, int recursion) {
+
+    if (folder == null) {
+      return null;
+    }
+    File pomFile = new File(folder, POM_XML);
+    if (pomFile.exists()) {
+      return pomFile;
+    }
+    if (recursion > 4) {
+      return null;
+    }
+    return findPomFromFolder(folder.getParentFile(), recursion + 1);
+  }
+
+  @Override
+  public File findPom(Dependency dependency) {
+
+    return resolver.resolvePom(dependency);
+  }
+
+  @Override
+  public File findArtifact(Dependency dependency) {
+
+    return resolver.resolveArtifact(dependency);
+  }
+
+  @Override
+  public Model readModel(File pomFile) {
+
+    try (InputStream in = new FileInputStream(pomFile)) {
+      Model model = pomReader.read(in);
+      model.setPomFile(pomFile);
+      return model;
+    } catch (IOException e) {
+      throw new RuntimeIoException(e, IoMode.READ);
+    } catch (XmlPullParserException e) {
+      throw new XmlInvalidException(e, pomFile);
+    }
+  }
+
+  @Override
+  public Model readEffectiveModel(File pomFile) {
+
+    try {
+      ModelBuildingRequest buildingRequest = new DefaultModelBuildingRequest()
+          .setSystemProperties(System.getProperties()).setPomFile(pomFile).setModelResolver(resolver);
+      DefaultModelBuilder defaultModelBuilder = new DefaultModelBuilderFactory().newInstance();
+      ModelBuildingResult buildingResult = defaultModelBuilder.build(buildingRequest);
+      return buildingResult.getEffectiveModel();
+    } catch (ModelBuildingException e) {
+      throw new IllegalStateException(e);
+    }
+  }
 
 }

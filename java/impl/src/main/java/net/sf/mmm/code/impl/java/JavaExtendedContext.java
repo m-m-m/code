@@ -21,108 +21,102 @@ import org.slf4j.LoggerFactory;
  */
 public class JavaExtendedContext extends JavaContext {
 
-    private final JavaContext parent;
+  private final JavaContext parent;
 
-    private final JavaClassLoader loader;
+  private final JavaClassLoader loader;
 
-    private static final Logger LOG = LoggerFactory.getLogger(JavaExtendedContext.class);
+  private static final Logger LOG = LoggerFactory.getLogger(JavaExtendedContext.class);
 
-    /**
-     * The constructor.
-     *
-     * @param source
-     *            the {@link #getSource() source}.
-     * @param sourceProvider
-     *            the {@link BaseSourceProvider}.
-     * @param mvnClassLoader
-     */
-    public JavaExtendedContext(BaseSourceImpl source, BaseSourceProvider sourceProvider, ClassLoader mvnClassLoader) {
+  /**
+   * The constructor.
+   *
+   * @param source the {@link #getSource() source}.
+   * @param sourceProvider the {@link BaseSourceProvider}.
+   * @param mvnClassLoader
+   */
+  public JavaExtendedContext(BaseSourceImpl source, BaseSourceProvider sourceProvider, ClassLoader mvnClassLoader) {
 
-        this(JavaRootContext.get(), source, sourceProvider, mvnClassLoader);
+    this(JavaRootContext.get(), source, sourceProvider, mvnClassLoader);
+  }
+
+  /**
+   * The constructor.
+   *
+   * @param parent the {@link #getParent() parent context}.
+   * @param source the {@link #getSource() source}.
+   * @param sourceProvider the {@link BaseSourceProvider}.
+   * @param mvnClassLoader
+   */
+  public JavaExtendedContext(JavaContext parent, BaseSourceImpl source, BaseSourceProvider sourceProvider,
+      ClassLoader mvnClassLoader) {
+
+    super(source, sourceProvider);
+
+    this.parent = parent;
+
+    if (mvnClassLoader == null) {
+      loader = new JavaClassLoader();
+    } else {
+      loader = new JavaClassLoader(mvnClassLoader);
     }
 
-    /**
-     * The constructor.
-     *
-     * @param parent
-     *            the {@link #getParent() parent context}.
-     * @param source
-     *            the {@link #getSource() source}.
-     * @param sourceProvider
-     *            the {@link BaseSourceProvider}.
-     * @param mvnClassLoader
-     */
-    public JavaExtendedContext(JavaContext parent, BaseSourceImpl source, BaseSourceProvider sourceProvider,
-        ClassLoader mvnClassLoader) {
+  }
 
-        super(source, sourceProvider);
+  /**
+   * The constructor.
+   *
+   * @param parent the {@link #getParent() parent context}.
+   * @param source the {@link #getSource() source}.
+   * @param sourceProvider the {@link BaseSourceProvider}.
+   */
+  public JavaExtendedContext(JavaContext parent, BaseSourceImpl source, BaseSourceProvider sourceProvider,
+      File mavenProjectLocation) {
 
-        this.parent = parent;
+    super(source, sourceProvider);
+    this.parent = parent;
+    loader = new JavaClassLoader();
+  }
 
-        if (mvnClassLoader == null) {
-            loader = new JavaClassLoader();
-        } else {
-            loader = new JavaClassLoader(mvnClassLoader);
-        }
+  @Override
+  public BaseLoader getLoader() {
 
-    }
+    return loader;
+  }
 
-    /**
-     * The constructor.
-     *
-     * @param parent
-     *            the {@link #getParent() parent context}.
-     * @param source
-     *            the {@link #getSource() source}.
-     * @param sourceProvider
-     *            the {@link BaseSourceProvider}.
-     */
-    public JavaExtendedContext(JavaContext parent, BaseSourceImpl source, BaseSourceProvider sourceProvider,
-        File mavenProjectLocation) {
+  @Override
+  public BaseType getRootExceptionType() {
 
-        super(source, sourceProvider);
-        this.parent = parent;
-        loader = new JavaClassLoader();
-    }
+    return parent.getRootExceptionType();
+  }
 
-    @Override
-    public BaseLoader getLoader() {
+  @Override
+  public BaseType getNonPrimitiveType(BaseType javaType) {
 
-        return loader;
-    }
+    return parent.getNonPrimitiveType(javaType);
+  }
 
-    @Override
-    public BaseType getRootExceptionType() {
+  @Override
+  public String getQualifiedNameForStandardType(String simpleName, boolean omitStandardPackages) {
 
-        return parent.getRootExceptionType();
-    }
+    return parent.getQualifiedNameForStandardType(simpleName, omitStandardPackages);
+  }
 
-    @Override
-    public BaseType getNonPrimitiveType(BaseType javaType) {
+  @Override
+  public ClassLoader getClassLoader() {
 
-        return parent.getNonPrimitiveType(javaType);
-    }
+    return loader.getClassLoader();
+  }
 
-    @Override
-    public String getQualifiedNameForStandardType(String simpleName, boolean omitStandardPackages) {
+  @Override
+  public BaseContext getParent() {
 
-        return parent.getQualifiedNameForStandardType(simpleName, omitStandardPackages);
-    }
+    return parent;
+  }
 
-    @Override
-    public ClassLoader getClassLoader() {
+  @Override
+  public JavaRootContext getRootContext() {
 
-        return loader.getClassLoader();
-    }
-
-    @Override
-    public BaseContext getParent() {
-        return parent;
-    }
-
-    @Override
-    public JavaRootContext getRootContext() {
-        return JavaRootContext.get();
-    }
+    return JavaRootContext.get();
+  }
 
 }
