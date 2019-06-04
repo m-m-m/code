@@ -42,6 +42,18 @@ public class JavaSourceCodeParserImpl implements SourceCodeParser {
   }
 
   /**
+   * Parses the full qualified name of the input
+   *
+   * @param reader the {@link Reader} to read the source-code from.
+   * @param file the {@link BaseFile} to read.
+   * @return the full qualified name of the Java file.
+   */
+  public String parseQualifiedName(Reader reader, BaseFile file) {
+
+    return this.codeReader.parseQualifiedName(reader, file);
+  }
+
+  /**
    * @return the default instance of this class.
    */
   public static JavaSourceCodeParserImpl get() {
