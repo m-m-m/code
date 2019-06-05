@@ -121,15 +121,16 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
     CodeSource codeSource = clazz.getProtectionDomain().getCodeSource();
     BaseSource source = getSource();
 
-    try {
-      if (codeSource.equals(source.getReflectiveObject()) == false) {
-        throw new IllegalStateException(source.getId() + " not responsible for " + codeSource.getLocation());
-      }
-    } catch (NullPointerException e) {
+    if (codeSource == null) {
       if (codeSource != source.getReflectiveObject()) {
         throw new IllegalStateException(source.getId() + " not responsible for " + codeSource.getLocation());
       }
+    } else {
+      if (codeSource.equals(source.getReflectiveObject()) == false) {
+        throw new IllegalStateException(source.getId() + " not responsible for " + codeSource.getLocation());
+      }
     }
+
     BasePackage parentPackage;
     Package pkg = clazz.getPackage();
     if (pkg == null) {
