@@ -58,12 +58,12 @@ public abstract class AbstractBaseContextWithCache extends AbstractBaseContext {
   public AbstractBaseContextWithCache(BaseSourceImpl source, BaseSourceProvider sourceProvider) {
 
     super(source);
-    typeCache = createCache();
+    this.typeCache = createCache();
     this.sourceProvider = sourceProvider;
     if (this.sourceProvider != null) {
       this.sourceProvider.setContext(this);
     }
-    sourceMap = new HashMap<>();
+    this.sourceMap = new HashMap<>();
     registerSource(source);
   }
 
@@ -125,7 +125,7 @@ public abstract class AbstractBaseContextWithCache extends AbstractBaseContext {
   private BaseType getTypeAndPutInCache(String qualifiedName, BaseType type) {
 
     if (type != null) {
-      typeCache.put(qualifiedName, type);
+      this.typeCache.put(qualifiedName, type);
     } else {
       LOG.debug("Failed to get type {}", qualifiedName);
     }
@@ -138,7 +138,7 @@ public abstract class AbstractBaseContextWithCache extends AbstractBaseContext {
    */
   protected BaseType getTypeFromCache(String qualifiedName) {
 
-    return typeCache.get(qualifiedName);
+    return this.typeCache.get(qualifiedName);
   }
 
   /**
@@ -160,7 +160,7 @@ public abstract class AbstractBaseContextWithCache extends AbstractBaseContext {
     BaseSource source = getSource(id);
     if (source == null) {
       verifyCreateSource(id);
-      source = sourceProvider.create(byteCodeLocation, sourceCodeLocation);
+      source = this.sourceProvider.create(byteCodeLocation, sourceCodeLocation);
       registerSource(source);
     }
     return source;
@@ -185,7 +185,7 @@ public abstract class AbstractBaseContextWithCache extends AbstractBaseContext {
     }
     if (source == null) {
       verifyCreateSource(id);
-      source = sourceProvider.create(codeSource);
+      source = this.sourceProvider.create(codeSource);
       registerSource(source);
     }
     return source;
@@ -223,7 +223,7 @@ public abstract class AbstractBaseContextWithCache extends AbstractBaseContext {
    */
   protected boolean isPreventRegisterSource() {
 
-    if ((sourceProvider == null) && (getParent() == null)) {
+    if ((this.sourceProvider == null) && (getParent() == null)) {
       return true;
     }
     return false;
@@ -231,7 +231,7 @@ public abstract class AbstractBaseContextWithCache extends AbstractBaseContext {
 
   private void verifyCreateSource(Object arg) {
 
-    if (sourceProvider == null) {
+    if (this.sourceProvider == null) {
       throw new IllegalStateException(
           "Can not create source for external code in " + getClass().getSimpleName() + ": " + arg);
     }
@@ -239,7 +239,7 @@ public abstract class AbstractBaseContextWithCache extends AbstractBaseContext {
 
   private void registerSource(BaseSource source) {
 
-    BaseSource duplicate = sourceMap.put(source.getId(), source);
+    BaseSource duplicate = this.sourceMap.put(source.getId(), source);
     if (duplicate != null) {
       throw new DuplicateObjectException(source, source.getId(), duplicate);
     }
@@ -248,7 +248,7 @@ public abstract class AbstractBaseContextWithCache extends AbstractBaseContext {
   @Override
   public BaseSource getSource(String id) {
 
-    BaseSource source = sourceMap.get(id);
+    BaseSource source = this.sourceMap.get(id);
     if (source != null) {
       return source;
     }
@@ -263,12 +263,12 @@ public abstract class AbstractBaseContextWithCache extends AbstractBaseContext {
   public void close() throws Exception {
 
     super.close();
-    typeCache = null;
-    for (BaseSource src : sourceMap.values()) {
+    this.typeCache = null;
+    for (BaseSource src : this.sourceMap.values()) {
       src.close();
     }
-    sourceMap = null;
-    sourceProvider = null;
+    this.sourceMap = null;
+    this.sourceProvider = null;
   }
 
 }

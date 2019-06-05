@@ -101,9 +101,9 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
   public JavaSourceCodeReaderLowlevel(int capacity) {
 
     super(capacity);
-    javaDocLines = new ArrayList<>();
-    comments = new ArrayList<>();
-    annotations = new ArrayList<>();
+    this.javaDocLines = new ArrayList<>();
+    this.comments = new ArrayList<>();
+    this.annotations = new ArrayList<>();
   }
 
   @Override
@@ -111,7 +111,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
 
     super.reset();
     clearConsumeState();
-    file = null;
+    this.file = null;
   }
 
   /**
@@ -119,10 +119,10 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
    */
   protected void clearConsumeState() {
 
-    javaDocLines.clear();
-    comments.clear();
-    elementComment = null;
-    annotations.clear();
+    this.javaDocLines.clear();
+    this.comments.clear();
+    this.elementComment = null;
+    this.annotations.clear();
   }
 
   /**
@@ -132,7 +132,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
    */
   public List<CodeComment> getComments() {
 
-    return comments;
+    return this.comments;
   }
 
   /**
@@ -141,16 +141,16 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
    */
   public CodeComment getElementComment() {
 
-    if (elementComment == null) {
-      int size = comments.size();
+    if (this.elementComment == null) {
+      int size = this.comments.size();
       if (size == 1) {
-        elementComment = comments.get(0);
+        this.elementComment = this.comments.get(0);
       } else if (size > 1) {
-        elementComment = new BaseComments(new ArrayList<>(comments));
+        this.elementComment = new BaseComments(new ArrayList<>(this.comments));
       }
-      comments.clear();
+      this.comments.clear();
     }
-    return elementComment;
+    return this.elementComment;
   }
 
   /**
@@ -159,7 +159,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
    */
   public List<String> getJavaDocLines() {
 
-    return javaDocLines;
+    return this.javaDocLines;
   }
 
   /**
@@ -168,7 +168,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
    */
   public List<CodeAnnotation> getAnnotations() {
 
-    return annotations;
+    return this.annotations;
   }
 
   /**
@@ -205,14 +205,14 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
   private CodeComment getAndClearComments() {
 
     CodeComment comment = null;
-    int commentCount = comments.size();
+    int commentCount = this.comments.size();
     if (commentCount > 0) {
       if (commentCount == 1) {
-        comment = comments.get(0);
+        comment = this.comments.get(0);
       } else {
-        comment = new BaseComments(new ArrayList<>(comments));
+        comment = new BaseComments(new ArrayList<>(this.comments));
       }
-      comments.clear();
+      this.comments.clear();
     }
     return comment;
   }
@@ -243,7 +243,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
 
     String annotationTypeName = parseQName();
     String annotationQName = getQualifiedName(annotationTypeName);
-    CodeAnnotation annotation = new BaseAnnotation(file.getAnnotations(), annotationTypeName, annotationQName);
+    CodeAnnotation annotation = new BaseAnnotation(this.file.getAnnotations(), annotationTypeName, annotationQName);
     if (expect('(')) {
       parseAnnotationParameters(annotation, annotationTypeName);
     }
@@ -251,7 +251,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
     if (comment != null) {
       annotation.setComment(comment);
     }
-    annotations.add(annotation);
+    this.annotations.add(annotation);
   }
 
   private void parseAnnotationParameters(CodeAnnotation annotation, String annotationTypeName) {
@@ -263,11 +263,11 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
     Map<String, CodeExpression> parameters = annotation.getParameters();
     boolean first = true;
     while (!expect(')')) {
-      char currentChar = buffer[offset];
+      char currentChar = this.buffer[this.offset];
       CodeExpression value = null;
       // There was a bug here in which the reader got blocked in an infinite loop because of the comma
       if (currentChar == ',') {
-        offset++;
+        this.offset++;
       }
       String key = readUntil(CHAR_FILTER_ANNOTATION_KEY, false, ")", false, true);
       if (key.isEmpty()) {
@@ -275,12 +275,12 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
           key = "value"; // Java build in default
         } else {
           LOG.warn("Annotation {} parameter without name in {}.", annotationTypeName, Character.toString(forcePeek()),
-              file);
+              this.file);
         }
       } else {
         parseWhitespacesAndComments();
         if (!expect('=')) {
-          for (CodeImport importStatement : file.getImports()) {
+          for (CodeImport importStatement : this.file.getImports()) {
             if (importStatement.isStatic()) {
               String reference = importStatement.getReference();
               int index = reference.length() - key.length() - 1;
@@ -289,7 +289,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
                   String fieldName = key;
                   key = "value";
                   String typeName = reference.substring(0, index);
-                  value = new BaseFieldReferenceLazy(file.getContext(), typeName, null, fieldName);
+                  value = new BaseFieldReferenceLazy(this.file.getContext(), typeName, null, fieldName);
                   break;
                 }
               }
@@ -297,7 +297,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
           }
           if (value == null) {
             LOG.warn("Invalid character '{}' after annotation parameter {}.{} name in {}.",
-                Character.toString(forcePeek()), annotationTypeName, key, file);
+                Character.toString(forcePeek()), annotationTypeName, key, this.file);
           }
         }
       }
@@ -452,7 +452,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
   private String getQualifiedName(String name) {
 
     if (name.indexOf('.') == -1) {
-      return file.getContext().getQualifiedName(name, file, false);
+      return this.file.getContext().getQualifiedName(name, this.file, false);
     }
     return name;
   }
@@ -462,24 +462,24 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
     char c = forcePeek();
     if (c == '/') {
       String line = readLine(true);
-      comments.add(new BaseSingleLineComment(line));
+      this.comments.add(new BaseSingleLineComment(line));
     } else if (c == '*') {
       next();
       c = forcePeek();
       if (c == '*') { // JavaDoc or regular comment
         next();
-        if (!javaDocLines.isEmpty()) {
-          LOG.warn("Duplicate JavaDoc in {}.", file);
+        if (!this.javaDocLines.isEmpty()) {
+          LOG.warn("Duplicate JavaDoc in {}.", this.file);
         }
-        parseDocOrBlockComment(javaDocLines);
+        parseDocOrBlockComment(this.javaDocLines);
       } else {
         List<String> lines = new ArrayList<>();
         parseDocOrBlockComment(lines);
         BaseBlockComment comment = new BaseBlockComment(lines);
-        comments.add(comment);
+        this.comments.add(comment);
       }
     } else {
-      LOG.warn("Illegal language: {} in {}.", "/" + c, file);
+      LOG.warn("Illegal language: {} in {}.", "/" + c, this.file);
     }
   }
 

@@ -55,9 +55,9 @@ public class JavaExtendedContext extends JavaContext {
     this.parent = parent;
 
     if (mvnClassLoader == null) {
-      loader = new JavaClassLoader();
+      this.loader = new JavaClassLoader();
     } else {
-      loader = new JavaClassLoader(mvnClassLoader);
+      this.loader = new JavaClassLoader(mvnClassLoader);
     }
 
   }
@@ -74,43 +74,43 @@ public class JavaExtendedContext extends JavaContext {
 
     super(source, sourceProvider);
     this.parent = parent;
-    loader = new JavaClassLoader();
+    this.loader = new JavaClassLoader();
   }
 
   @Override
   public BaseLoader getLoader() {
 
-    return loader;
+    return this.loader;
   }
 
   @Override
   public BaseType getRootExceptionType() {
 
-    return parent.getRootExceptionType();
+    return this.parent.getRootExceptionType();
   }
 
   @Override
   public BaseType getNonPrimitiveType(BaseType javaType) {
 
-    return parent.getNonPrimitiveType(javaType);
+    return this.parent.getNonPrimitiveType(javaType);
   }
 
   @Override
   public String getQualifiedNameForStandardType(String simpleName, boolean omitStandardPackages) {
 
-    return parent.getQualifiedNameForStandardType(simpleName, omitStandardPackages);
+    return this.parent.getQualifiedNameForStandardType(simpleName, omitStandardPackages);
   }
 
   @Override
   public ClassLoader getClassLoader() {
 
-    return loader.getClassLoader();
+    return this.loader.getClassLoader();
   }
 
   @Override
   public BaseContext getParent() {
 
-    return parent;
+    return this.parent;
   }
 
   @Override

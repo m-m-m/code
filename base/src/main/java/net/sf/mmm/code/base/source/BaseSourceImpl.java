@@ -114,9 +114,9 @@ public class BaseSourceImpl extends AbstractBaseProvider implements BaseSource {
     }
     this.reflectiveObject = reflectiveObject;
     this.immutable = immutable;
-    rootPackage = new BasePackage(this);
+    this.rootPackage = new BasePackage(this);
     if (immutable) {
-      rootPackage.setImmutable();
+      this.rootPackage.setImmutable();
     }
     if (dependencies != null) {
       this.dependencies = new BaseSourceDependencies(this, dependencies);
@@ -131,7 +131,7 @@ public class BaseSourceImpl extends AbstractBaseProvider implements BaseSource {
   @Override
   public boolean isImmutable() {
 
-    return immutable;
+    return this.immutable;
   }
 
   /**
@@ -164,7 +164,7 @@ public class BaseSourceImpl extends AbstractBaseProvider implements BaseSource {
   @Override
   public BaseContext getContext() {
 
-    return context;
+    return this.context;
   }
 
   /**
@@ -183,19 +183,19 @@ public class BaseSourceImpl extends AbstractBaseProvider implements BaseSource {
   @Override
   public BasePackage getRootPackage() {
 
-    return rootPackage;
+    return this.rootPackage;
   }
 
   @Override
   public BaseSourceLoader getLoader() {
 
-    return loader;
+    return this.loader;
   }
 
   @Override
   public CodeSource getReflectiveObject() {
 
-    return reflectiveObject;
+    return this.reflectiveObject;
   }
 
   @Override
@@ -211,13 +211,13 @@ public class BaseSourceImpl extends AbstractBaseProvider implements BaseSource {
   @Override
   public CodeSourceDescriptor getDescriptor() {
 
-    if (descriptor == null) {
-      descriptor = createDescriptor();
-      if (descriptor == null) {
+    if (this.descriptor == null) {
+      this.descriptor = createDescriptor();
+      if (this.descriptor == null) {
         LOG.warn("Descriptor not available");
       }
     }
-    return descriptor;
+    return this.descriptor;
   }
 
   /**
@@ -231,13 +231,13 @@ public class BaseSourceImpl extends AbstractBaseProvider implements BaseSource {
   @Override
   public BaseSourceDependencies getDependencies() {
 
-    if (dependencies == null) {
-      dependencies = createDependencies();
-      if (dependencies == null) {
+    if (this.dependencies == null) {
+      this.dependencies = createDependencies();
+      if (this.dependencies == null) {
         throw new ResourceMissingException("dependencies");
       }
     }
-    return dependencies;
+    return this.dependencies;
   }
 
   /**
@@ -251,21 +251,21 @@ public class BaseSourceImpl extends AbstractBaseProvider implements BaseSource {
   @Override
   public File getByteCodeLocation() {
 
-    if (byteCodeLocation == null) {
-      if (reflectiveObject != null) {
-        byteCodeLocation = BaseSourceHelper.asFile(reflectiveObject.getLocation());
+    if (this.byteCodeLocation == null) {
+      if (this.reflectiveObject != null) {
+        this.byteCodeLocation = BaseSourceHelper.asFile(this.reflectiveObject.getLocation());
       }
     }
-    return byteCodeLocation;
+    return this.byteCodeLocation;
   }
 
   @Override
   public File getSourceCodeLocation() {
 
-    if (sourceCodeLocation == null) {
-      sourceCodeLocation = createSourceCodeLocation();
+    if (this.sourceCodeLocation == null) {
+      this.sourceCodeLocation = createSourceCodeLocation();
     }
-    return sourceCodeLocation;
+    return this.sourceCodeLocation;
   }
 
   /**
@@ -279,14 +279,14 @@ public class BaseSourceImpl extends AbstractBaseProvider implements BaseSource {
   @Override
   public String getId() {
 
-    if (id == null) {
+    if (this.id == null) {
       File location = getByteCodeLocation();
       if (location == null) {
         location = getSourceCodeLocation();
       }
-      id = getNormalizedId(location);
+      this.id = getNormalizedId(location);
     }
-    return id;
+    return this.id;
   }
 
   @Override
@@ -320,9 +320,9 @@ public class BaseSourceImpl extends AbstractBaseProvider implements BaseSource {
   @Override
   public void close() throws Exception {
 
-    if (loader != null) {
-      loader.close();
-      loader = null;
+    if (this.loader != null) {
+      this.loader.close();
+      this.loader = null;
     }
   }
 
@@ -347,7 +347,7 @@ public class BaseSourceImpl extends AbstractBaseProvider implements BaseSource {
   @Override
   public ClassLoader getClassLoader() {
 
-    return loader.getClassLoader();
+    return this.loader.getClassLoader();
   }
 
 }

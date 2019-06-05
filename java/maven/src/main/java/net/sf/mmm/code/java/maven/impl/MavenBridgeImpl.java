@@ -52,12 +52,12 @@ public class MavenBridgeImpl implements MavenBridge, MavenConstants {
   public MavenBridgeImpl(File localRepository) {
 
     super();
-    pomReader = new MavenXpp3Reader();
+    this.pomReader = new MavenXpp3Reader();
     File localRepo = localRepository;
     if (localRepo == null) {
       localRepo = MavenLocalRepositoryLocator.getLocalRepository(this);
     }
-    resolver = new MavenResolver(localRepo);
+    this.resolver = new MavenResolver(localRepo);
   }
 
   @Override
@@ -134,20 +134,20 @@ public class MavenBridgeImpl implements MavenBridge, MavenConstants {
   @Override
   public File findPom(Dependency dependency) {
 
-    return resolver.resolvePom(dependency);
+    return this.resolver.resolvePom(dependency);
   }
 
   @Override
   public File findArtifact(Dependency dependency) {
 
-    return resolver.resolveArtifact(dependency);
+    return this.resolver.resolveArtifact(dependency);
   }
 
   @Override
   public Model readModel(File pomFile) {
 
     try (InputStream in = new FileInputStream(pomFile)) {
-      Model model = pomReader.read(in);
+      Model model = this.pomReader.read(in);
       model.setPomFile(pomFile);
       return model;
     } catch (IOException e) {
@@ -162,7 +162,7 @@ public class MavenBridgeImpl implements MavenBridge, MavenConstants {
 
     try {
       ModelBuildingRequest buildingRequest = new DefaultModelBuildingRequest()
-          .setSystemProperties(System.getProperties()).setPomFile(pomFile).setModelResolver(resolver);
+          .setSystemProperties(System.getProperties()).setPomFile(pomFile).setModelResolver(this.resolver);
       DefaultModelBuilder defaultModelBuilder = new DefaultModelBuilderFactory().newInstance();
       ModelBuildingResult buildingResult = defaultModelBuilder.build(buildingRequest);
       return buildingResult.getEffectiveModel();

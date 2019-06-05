@@ -199,7 +199,7 @@ public abstract class JavaContext extends AbstractBaseContextWithCache {
 
       Class<?> clazz = null;
       try {
-        clazz = classloader.loadClass(qualifiedName);
+        clazz = this.classloader.loadClass(qualifiedName);
         if (clazz.isArray()) {
           throw new IllegalArgumentException(qualifiedName);
         }
@@ -230,7 +230,6 @@ public abstract class JavaContext extends AbstractBaseContextWithCache {
       BaseSource source = getOrCreateSource(codeSource);
       JavaSourceLoader javaSourceLoader = (JavaSourceLoader) source.getLoader();
 
-      // HERE
       if (codeSource != source.getReflectiveObject()) {
         BasePackage parentPackage;
         Package pkg = clazz.getPackage();
@@ -247,13 +246,13 @@ public abstract class JavaContext extends AbstractBaseContextWithCache {
 
     /**
      * Gets the current class loader
-     * 
+     *
      * @return class loader
      */
     @Override
     public ClassLoader getClassLoader() {
 
-      return classloader;
+      return this.classloader;
     }
 
   }

@@ -39,8 +39,8 @@ public class JavaRootContext extends JavaContext {
   public JavaRootContext(BaseSourceImpl source) {
 
     super(source);
-    loader = new JavaClassLoader(ClassLoader.getSystemClassLoader());
-    factory = new JavaFactory();
+    this.loader = new JavaClassLoader(ClassLoader.getSystemClassLoader());
+    this.factory = new JavaFactory();
     for (Class<?> primitive : JavaConstants.PRIMITIVE_TYPES) {
       getType(primitive);
     }
@@ -61,7 +61,7 @@ public class JavaRootContext extends JavaContext {
   @Override
   protected BaseLoader getLoader() {
 
-    return loader;
+    return this.loader;
   }
 
   @Override
@@ -107,10 +107,10 @@ public class JavaRootContext extends JavaContext {
   @Override
   public BaseTypeWildcard getUnboundedWildcard() {
 
-    if (unboundedWildcard == null) {
-      unboundedWildcard = new BaseTypeWildcard(getRootType(), JavaConstants.UNBOUNDED_WILDCARD);
+    if (this.unboundedWildcard == null) {
+      this.unboundedWildcard = new BaseTypeWildcard(getRootType(), JavaConstants.UNBOUNDED_WILDCARD);
     }
-    return unboundedWildcard;
+    return this.unboundedWildcard;
   }
 
   @Override
@@ -167,7 +167,7 @@ public class JavaRootContext extends JavaContext {
   @Override
   public JavaFactory getFactory() {
 
-    return factory;
+    return this.factory;
   }
 
   private static String getJavaMajorVersion(String version) {
@@ -204,7 +204,7 @@ public class JavaRootContext extends JavaContext {
   @Override
   public ClassLoader getClassLoader() {
 
-    return loader.getClassLoader();
+    return this.loader.getClassLoader();
   }
 
 }

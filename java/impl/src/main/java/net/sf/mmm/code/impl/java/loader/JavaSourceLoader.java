@@ -54,10 +54,10 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
    */
   public SourceCodeParser getParser() {
 
-    if (parser == null) {
-      parser = JavaSourceCodeParserImpl.get();
+    if (this.parser == null) {
+      this.parser = JavaSourceCodeParserImpl.get();
     }
-    return parser;
+    return this.parser;
   }
 
   /**
@@ -78,13 +78,13 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
    */
   public SourceCodeProvider getSourceCodeProvider() {
 
-    return sourceCodeProvider;
+    return this.sourceCodeProvider;
   }
 
   @Override
   public BaseType getType(String qualifiedName) {
 
-    if (sourceCodeProvider == null) {
+    if (this.sourceCodeProvider == null) {
       return null;
     }
     return getType(getSource().parseName(qualifiedName));
@@ -93,11 +93,11 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
   @Override
   public BaseType getType(CodeName qualifiedName) {
 
-    if (sourceCodeProvider == null) {
+    if (this.sourceCodeProvider == null) {
       return null;
     }
     CodeName parent = qualifiedName.getParent();
-    try (Reader reader = sourceCodeProvider.openType(qualifiedName.getFullName())) {
+    try (Reader reader = this.sourceCodeProvider.openType(qualifiedName.getFullName())) {
       if (reader == null) {
         return getTypeFromSource(parent, qualifiedName.getSimpleName());
       } else {
@@ -175,11 +175,11 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
 
   private BasePackage getSourcePackage(BasePackage parentPackage, String simpleName) {
 
-    if (sourceCodeProvider == null) {
+    if (this.sourceCodeProvider == null) {
       return null;
     }
     BasePackage pkg = new BasePackage(parentPackage, simpleName, null, null, true);
-    try (Reader reader = sourceCodeProvider.openPackage(pkg.getQualifiedName())) {
+    try (Reader reader = this.sourceCodeProvider.openPackage(pkg.getQualifiedName())) {
       if (reader != null) {
         getParser().parsePackage(reader, pkg);
       }
@@ -192,7 +192,7 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
 
   private Supplier<BaseFile> getSourceFileSupplier(BasePackage pkg, String simpleName) {
 
-    if (sourceCodeProvider == null) {
+    if (this.sourceCodeProvider == null) {
       return null;
     }
     return () -> getFileFromSource(pkg, simpleName);
@@ -201,7 +201,7 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
   private BaseFile getFileFromSource(BasePackage pkg, String simpleName) {
 
     BaseFile file = pkg.getChildren().createFile(simpleName);
-    try (Reader reader = sourceCodeProvider.openType(file.getQualifiedName())) {
+    try (Reader reader = this.sourceCodeProvider.openType(file.getQualifiedName())) {
       if (reader != null) {
         getParser().parseType(reader, file);
         return file;
@@ -233,10 +233,10 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
   @Override
   public void scan(BasePackage pkg) {
 
-    if ((sourceCodeProvider != null)) {
+    if ((this.sourceCodeProvider != null)) {
       try {
         String qualifiedName = pkg.getQualifiedName();
-        List<String> simpleNames = sourceCodeProvider.scanPackage(qualifiedName);
+        List<String> simpleNames = this.sourceCodeProvider.scanPackage(qualifiedName);
         CodeContext context = getContext();
         String prefix = qualifiedName + context.getLanguage().getPackageSeparator();
         for (String simpleName : simpleNames) {
@@ -253,9 +253,9 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
   @Override
   public void close() throws Exception {
 
-    if (sourceCodeProvider != null) {
-      sourceCodeProvider.close();
-      sourceCodeProvider = null;
+    if (this.sourceCodeProvider != null) {
+      this.sourceCodeProvider.close();
+      this.sourceCodeProvider = null;
     }
   }
 
