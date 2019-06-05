@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +36,7 @@ import net.sf.mmm.code.java.maven.impl.MavenBridgeImpl;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Parent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -260,12 +263,9 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
     if (segments.length >= 3) {
       segments[segments.length - 2] = "eclipse-target";
     }
+    Path moduleLocation = Paths.get("", segments);
 
-    String eclipseTargetLocation = "";
-    for (String segment : segments) {
-      eclipseTargetLocation = eclipseTargetLocation + segment + "/";
-    }
-    return new URL(eclipseTargetLocation);
+    return moduleLocation.toUri().toURL();
   }
 
   /**
@@ -283,13 +283,15 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
       return dependenciesURLs;
     }
 
+    Parent parent = model.getParent();
+
     try {
-      while (model.getParent() != null) {
-        File parentPom = location.toPath().resolve(model.getParent().getRelativePath()).toFile().getCanonicalFile();
+      while (parent != null) {
+        File parentPom = location.toPath().resolve(parent.getRelativePath()).toFile().getCanonicalFile();
         Model parentModel = parseModel(parentPom);
 
         if (parentModel == null) {
-          return dependenciesURLs;
+          break;
         }
 
         for (String module : parentModel.getModules()) {
@@ -300,22 +302,16 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
 
           segments[segments.length - 1] = module;
 
-          String moduleLocation = "";
-          int i = 0; // I need this to get the file not as URI
-          for (String segment : segments) {
-            if (i != 0) {
-              moduleLocation = moduleLocation + segment + "/";
-            }
-            i++;
-          }
-          Model moduleModel = parseModel(new File(moduleLocation));
-          dependenciesURLs = getDependenciesURLS(moduleModel, dependenciesURLs, 1);
+          Path moduleLocation = Paths.get("", segments);
 
+          Model moduleModel = parseModel(moduleLocation.toFile());
+          dependenciesURLs = getDependenciesURLS(moduleModel, dependenciesURLs, 1);
         }
 
         dependenciesURLs = getDependenciesURLS(parentModel, dependenciesURLs, 1);
 
         model = parentModel;
+        parent = model.getParent();
         location = parentPom.getParentFile();
       }
     } catch (IOException e) {
@@ -405,10 +401,19 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
    * @param byteCodeLocation the file which you want to get its path segmented by the path separator
    * @return an array containing in each element one segment of the path
    */
-  private String[] getPathSegmentsFromFile(File byteCodeLocation) {
+  private static String[] getPathSegmentsFromFile(File file) {
 
-    String byteCodeLoc = byteCodeLocation.toURI().toString();
-    return byteCodeLoc.split("/");
+    ArrayList<String> nameElements = new ArrayList<>();
+    Path path = file.toPath();
+
+    nameElements.add(path.getRoot().toFile().toString());
+
+    while (path.getParent() != null) {
+      nameElements.add(1, path.toFile().getName());
+      path = path.getParent();
+    }
+
+    return nameElements.toArray(new String[0]);
   }
 
 }

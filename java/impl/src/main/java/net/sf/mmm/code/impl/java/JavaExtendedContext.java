@@ -4,7 +4,6 @@ package net.sf.mmm.code.impl.java;
 
 import java.io.File;
 
-import net.sf.mmm.code.base.BaseContext;
 import net.sf.mmm.code.base.loader.BaseLoader;
 import net.sf.mmm.code.base.source.BaseSourceImpl;
 import net.sf.mmm.code.base.source.BaseSourceProvider;
@@ -108,7 +107,7 @@ public class JavaExtendedContext extends JavaContext {
   }
 
   @Override
-  public BaseContext getParent() {
+  public JavaContext getParent() {
 
     return this.parent;
   }

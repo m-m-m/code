@@ -208,7 +208,7 @@ public abstract class JavaContext extends AbstractBaseContextWithCache {
         LOG.debug("Class {} not found.", qualifiedName, e);
         return null;
       } catch (NoClassDefFoundError e) {
-        LOG.debug("Failed to find a dependency.", e);
+        getType(e.getMessage());
         return null;
       }
     }
