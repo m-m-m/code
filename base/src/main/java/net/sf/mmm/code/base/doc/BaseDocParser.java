@@ -62,9 +62,9 @@ public class BaseDocParser {
   public BaseDocParser() {
 
     super();
-    argMap = new HashMap<>();
-    genericMap = new HashMap<>();
-    exceptionMap = new HashMap<>();
+    this.argMap = new HashMap<>();
+    this.genericMap = new HashMap<>();
+    this.exceptionMap = new HashMap<>();
   }
 
   private void parseDocForElement(CodeElement element, List<String> javaDocLines) {
@@ -86,7 +86,7 @@ public class BaseDocParser {
             tag = parseParamTag(line);
           } else if (line.startsWith(TAG_RETURN)) {
             parseReturnTag(line);
-            tag = returns;
+            tag = this.returns;
           } else if (line.startsWith(TAG_THROWS)) {
             tag = parseThrowsTag(line, TAG_THROWS_LENGTH);
           } else if (line.startsWith(TAG_EXCEPTION)) {
@@ -124,7 +124,7 @@ public class BaseDocParser {
     if (end < start) {
       end = length;
     }
-    return parseTag(line, start, end, length, exceptionMap, "Invalid JavaDoc with duplicated throws: {}");
+    return parseTag(line, start, end, length, this.exceptionMap, "Invalid JavaDoc with duplicated throws: {}");
   }
 
   private BaseDocTag parseTag(String line, int start, int end, int length, Map<String, BaseDocTag> map,
@@ -169,13 +169,13 @@ public class BaseDocParser {
       return null;
     } else if (c == '<') {
       int end = line.indexOf('>', start);
-      return parseTag(line, start, end, length, genericMap, duplicationLog);
+      return parseTag(line, start, end, length, this.genericMap, duplicationLog);
     } else {
       int end = line.indexOf(' ', start);
       if (end == -1) {
         end = line.length();
       }
-      return parseTag(line, start, end, length, argMap, duplicationLog);
+      return parseTag(line, start, end, length, this.argMap, duplicationLog);
     }
   }
 
@@ -197,20 +197,20 @@ public class BaseDocParser {
       }
     }
     String returnDoc = line.substring(start).trim();
-    if (returns == null) {
-      returns = new BaseDocTag(returnDoc);
+    if (this.returns == null) {
+      this.returns = new BaseDocTag(returnDoc);
     } else {
       LOG.warn("Invalid JavaDoc with duplicated return: {}", line);
-      returns.add(returnDoc);
+      this.returns.add(returnDoc);
     }
   }
 
   private void clear() {
 
-    argMap.clear();
-    exceptionMap.clear();
-    genericMap.clear();
-    returns = null;
+    this.argMap.clear();
+    this.exceptionMap.clear();
+    this.genericMap.clear();
+    this.returns = null;
   }
 
   /**
@@ -234,8 +234,8 @@ public class BaseDocParser {
       }
     }
     applyTypeVariablesDoc(operation);
-    if ((returns != null) && (operation instanceof CodeMethod)) {
-      returns.put(((CodeMethod) operation).getReturns().getDoc());
+    if ((this.returns != null) && (operation instanceof CodeMethod)) {
+      this.returns.put(((CodeMethod) operation).getReturns().getDoc());
     }
   }
 
@@ -272,19 +272,19 @@ public class BaseDocParser {
 
   private BaseDocTag getArgumentDoc(String name) {
 
-    return argMap.get(name);
+    return this.argMap.get(name);
   }
 
   private BaseDocTag getTypeParameterDoc(String name) {
 
-    return genericMap.get(name);
+    return this.genericMap.get(name);
   }
 
   private BaseDocTag getExceptionDoc(CodeGenericType exception) {
 
-    BaseDocTag exceptionTag = exceptionMap.get(exception.getSimpleName());
+    BaseDocTag exceptionTag = this.exceptionMap.get(exception.getSimpleName());
     if (exceptionTag == null) {
-      exceptionTag = exceptionMap.get(exception.getQualifiedName());
+      exceptionTag = this.exceptionMap.get(exception.getQualifiedName());
     }
     return exceptionTag;
   }

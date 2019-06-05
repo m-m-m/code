@@ -9,6 +9,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.CodeSource;
+import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -147,6 +148,18 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
       sourceCodeArtifact = BaseSourceHelper.getFileOrNull(sourceCodeArtifact);
     }
     BaseSourceLoader loader = createLoader(sourceCodeArtifact);
+
+    try {
+      URL reflectiveObjectURL = byteCodeArtifact.toURI().toURL();
+      CodeSource dependencyCodeSource = new CodeSource(reflectiveObjectURL, (Certificate[]) null);
+
+      return new JavaSourceUsingMaven(this, dependencyCodeSource, byteCodeArtifact, sourceCodeArtifact,
+          () -> parseModel(byteCodeArtifact), dependency.getScope(), loader);
+
+    } catch (MalformedURLException e) {
+      LOG.error("Malformed URL of the byte code artifact");
+    }
+
     return new JavaSourceUsingMaven(this, byteCodeArtifact, sourceCodeArtifact, () -> parseModel(byteCodeArtifact),
         dependency.getScope(), loader);
   }

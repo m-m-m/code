@@ -59,13 +59,13 @@ public class BaseContextChild extends AbstractBaseContext {
   @Override
   public BaseContext getParent() {
 
-    return parent;
+    return this.parent;
   }
 
   @Override
   public BaseGenericType getType(Type type, CodeElementWithDeclaringType declaringElement) {
 
-    return parent.getType(type, declaringElement);
+    return this.parent.getType(type, declaringElement);
   }
 
   @Override
@@ -73,7 +73,7 @@ public class BaseContextChild extends AbstractBaseContext {
 
     BaseType type = getSource().getLoader().getType(qualifiedName);
     if (type == null) {
-      type = parent.getType(qualifiedName);
+      type = this.parent.getType(qualifiedName);
     }
     return type;
   }
@@ -81,13 +81,13 @@ public class BaseContextChild extends AbstractBaseContext {
   @Override
   public BaseGenericType getType(Class<?> clazz) {
 
-    return parent.getType(clazz);
+    return this.parent.getType(clazz);
   }
 
   @Override
   public ClassLoader getClassLoader() {
 
-    return parent.getClassLoader();
+    return this.parent.getClassLoader();
   }
 
 }

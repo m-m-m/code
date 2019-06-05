@@ -16,7 +16,6 @@ import net.sf.mmm.code.api.node.CodeNode;
 import net.sf.mmm.code.api.type.CodeTypeVariable;
 import net.sf.mmm.code.base.AbstractBaseContextWithCache;
 import net.sf.mmm.code.base.BaseContext;
-import net.sf.mmm.code.base.BasePackage;
 import net.sf.mmm.code.base.arg.BaseOperationArg;
 import net.sf.mmm.code.base.element.BaseElement;
 import net.sf.mmm.code.base.element.BaseElementWithDeclaringType;
@@ -33,7 +32,6 @@ import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.base.type.BaseTypeVariable;
 import net.sf.mmm.code.base.type.BaseTypeVariables;
 import net.sf.mmm.code.base.type.BaseTypeWildcard;
-import net.sf.mmm.code.impl.java.loader.JavaSourceLoader;
 import net.sf.mmm.util.exception.api.IllegalCaseException;
 
 import org.slf4j.Logger;
@@ -228,19 +226,7 @@ public abstract class JavaContext extends AbstractBaseContextWithCache {
       }
       CodeSource codeSource = clazz.getProtectionDomain().getCodeSource();
       BaseSource source = getOrCreateSource(codeSource);
-      JavaSourceLoader javaSourceLoader = (JavaSourceLoader) source.getLoader();
 
-      if (codeSource != source.getReflectiveObject()) {
-        BasePackage parentPackage;
-        Package pkg = clazz.getPackage();
-        if (pkg == null) {
-          parentPackage = getSource().getRootPackage();
-        } else {
-          String pkgName = pkg.getName();
-          parentPackage = javaSourceLoader.getPackage(source.parseName(pkgName));
-        }
-        return javaSourceLoader.getTypeInternal(clazz, parentPackage);
-      }
       return source.getLoader().getType(clazz);
     }
 

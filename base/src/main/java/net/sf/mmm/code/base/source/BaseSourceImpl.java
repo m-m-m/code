@@ -35,7 +35,7 @@ public class BaseSourceImpl extends AbstractBaseProvider implements BaseSource {
 
   private static final Logger LOG = LoggerFactory.getLogger(BaseSourceImpl.class);
 
-  private final CodeSource reflectiveObject;
+  private CodeSource reflectiveObject;
 
   private final BasePackage rootPackage;
 
