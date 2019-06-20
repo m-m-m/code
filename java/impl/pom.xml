@@ -13,50 +13,52 @@
   <packaging>jar</packaging>
   <name>${project.artifactId}</name>
   <description>Implementation of mmm-code-api for Java.</description>
- 
+
   <properties>
     <maven.test.path>src\test\resources\testdata\localmavenproject\maven.project</maven.test.path>
   </properties>
 
   <build>
-    <plugins>
-      <!-- Ensure sources are downloaded for tests (even in CI/travis) -->
+    <pluginManagement>
+      <plugins>
+        <!-- Ensure sources are downloaded for tests (even in CI/travis) -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>3.0.2</version>
+          <executions>
+            <execution>
+              <id>download-sources</id>
+              <goals>
+                <goal>sources</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.0.2</version>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.6.0</version>
         <executions>
           <execution>
-            <id>download-sources</id>
+            <id>Install test project</id>
+            <phase>test-compile</phase>
             <goals>
-              <goal>sources</goal>
+              <goal>exec</goal>
             </goals>
           </execution>
         </executions>
-      </plugin>
-
-    <plugin>
-      <groupId>org.codehaus.mojo</groupId>
-      <artifactId>exec-maven-plugin</artifactId>
-      <version>1.6.0</version>
-      <executions>
-        <execution>
-          <id>Install test project</id>
-          <phase>test-compile</phase>
-          <goals>
-            <goal>exec</goal>
-          </goals>
-        </execution>
-      </executions>
-      <configuration>
-          <executable>mvn</executable>      
-          <workingDirectory>${maven.test.path}</workingDirectory>
-          <arguments>
-            <argument>install</argument>
-          </arguments>
-      </configuration>
-      </plugin>
-    </plugins>
+        <configuration>
+            <executable>mvn</executable>
+            <workingDirectory>${maven.test.path}</workingDirectory>
+            <arguments>
+              <argument>install</argument>
+            </arguments>
+        </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
 
   <dependencies>

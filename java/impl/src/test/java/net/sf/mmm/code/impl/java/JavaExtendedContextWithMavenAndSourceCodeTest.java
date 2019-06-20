@@ -41,7 +41,7 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
    */
   private JavaContext getContext() {
 
-    return new JavaSourceProviderUsingMaven().createFromLocalMavenProject();
+    return JavaSourceProviderUsingMaven.createFromLocalMavenProject();
   }
 
   /**
@@ -51,7 +51,7 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
    */
   private JavaContext getContextFromLocalMavenProject(File projectLocation) {
 
-    return new JavaSourceProviderUsingMaven().createFromLocalMavenProject(projectLocation);
+    return JavaSourceProviderUsingMaven.createFromLocalMavenProject(projectLocation);
 
   }
 

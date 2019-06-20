@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  */
 public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl implements MavenConstants {
 
-  private final MavenBridge mavenBridge;
+  private static final MavenBridge mavenBridge = new MavenBridgeImpl();
 
   private static final Logger LOG = LoggerFactory.getLogger(JavaSourceProviderUsingMaven.class);
 
@@ -59,7 +59,6 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
   public JavaSourceProviderUsingMaven() {
 
     super();
-    this.mavenBridge = new MavenBridgeImpl();
   }
 
   @Override
@@ -76,7 +75,7 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
 
   private SourceCodeProvider createSourceCodeProvider(File location, Supplier<Model> supplier) {
 
-    File artifactSources = this.mavenBridge.findArtifactSources(location);
+    File artifactSources = mavenBridge.findArtifactSources(location);
     if (artifactSources != null) {
       return new BaseSourceCodeProviderArchive(artifactSources);
     }
@@ -122,18 +121,18 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
     return new JavaSourceLoader(sourceCodeProvider);
   }
 
-  private Model parseModel(File location) {
+  private static Model parseModel(File location) {
 
-    File pomFile = this.mavenBridge.findPom(location);
+    File pomFile = mavenBridge.findPom(location);
     if ((pomFile == null) || !pomFile.isFile()) {
       return null;
     }
-    return this.mavenBridge.readEffectiveModel(pomFile);
+    return mavenBridge.readEffectiveModel(pomFile);
   }
 
   BaseSource createSource(Dependency dependency) {
 
-    File byteCodeArtifact = this.mavenBridge.findArtifact(dependency);
+    File byteCodeArtifact = mavenBridge.findArtifact(dependency);
     JavaContext context = (JavaContext) getContext();
     String id = BaseSourceImpl.getNormalizedId(byteCodeArtifact);
     return context.getOrCreateSource(id, () -> createSource(dependency, byteCodeArtifact));
@@ -144,7 +143,7 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
     File sourceCodeArtifact = null;
     Dependency sourceDependency = DependencyHelper.createSource(dependency);
     if (sourceDependency != null) {
-      sourceCodeArtifact = this.mavenBridge.findArtifact(sourceDependency);
+      sourceCodeArtifact = mavenBridge.findArtifact(sourceDependency);
       sourceCodeArtifact = BaseSourceHelper.getFileOrNull(sourceCodeArtifact);
     }
     BaseSourceLoader loader = createLoader(sourceCodeArtifact);
@@ -203,7 +202,7 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
   /**
    * @return the {@link JavaContext} for the local Maven project in the current working directory.
    */
-  public JavaContext createFromLocalMavenProject() {
+  public static JavaContext createFromLocalMavenProject() {
 
     return createFromLocalMavenProject(getCwd(), false);
   }
@@ -212,7 +211,7 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
    * @param location the {@link File} pointing to the Maven project.
    * @return the {@link JavaContext} for the Maven project at the given {@code location}.
    */
-  public JavaContext createFromLocalMavenProject(File location) {
+  public static JavaContext createFromLocalMavenProject(File location) {
 
     return createFromLocalMavenProject(location, true);
   }
@@ -222,7 +221,7 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
    * @param isExternal whether the Maven project is outside of this current project folder
    * @return the {@link JavaContext} for the Maven project at the given {@code location}.
    */
-  private JavaContext createFromLocalMavenProject(File location, Boolean isExternal) {
+  private static JavaContext createFromLocalMavenProject(File location, Boolean isExternal) {
 
     JavaSourceProviderUsingMaven provider = new JavaSourceProviderUsingMaven();
     JavaSourceUsingMaven source = provider.createFromLocalMavenProject(JavaRootContext.get(), location);
@@ -269,7 +268,7 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
    * @return the URL with the location of eclipse-target folder
    * @throws MalformedURLException throws {@link MalformedURLException}
    */
-  private URL getEclipseByteCodeLocation(File byteCodeLocation) throws MalformedURLException {
+  private static URL getEclipseByteCodeLocation(File byteCodeLocation) throws MalformedURLException {
 
     String[] segments = getPathSegmentsFromFile(byteCodeLocation);
 
@@ -288,7 +287,7 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
    * @param dependenciesURLs list of previous dependencies URLs
    * @return list of dependencies URLs retrieved from the modules and the parent POM
    */
-  private ArrayList<URL> getModulesDependenciesURLS(File location, ArrayList<URL> dependenciesURLs) {
+  private static ArrayList<URL> getModulesDependenciesURLS(File location, ArrayList<URL> dependenciesURLs) {
 
     Model model = parseModel(location);
 
@@ -339,7 +338,7 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
    * @param source where to get the byte code location from
    * @return File where the byte code is located
    */
-  private File getByteCodeLocation(JavaSourceUsingMaven source) {
+  private static File getByteCodeLocation(JavaSourceUsingMaven source) {
 
     // Create a File object on the root directory of the classes
     File byteCodeLocation = null;
@@ -362,7 +361,7 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
    * @param recursiveness level of recursiveness. How deep we get into dependencies.
    * @return POM dependencies in URL format
    */
-  private ArrayList<URL> getDependenciesURLS(Model model, ArrayList<URL> previousURLs, int recursiveness) {
+  private static ArrayList<URL> getDependenciesURLS(Model model, ArrayList<URL> previousURLs, int recursiveness) {
 
     if (recursiveness >= 4) {
       return previousURLs;
@@ -376,7 +375,7 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
 
     for (Dependency dependency : dependencies) {
       try {
-        File artifact = this.mavenBridge.findArtifact(dependency);
+        File artifact = mavenBridge.findArtifact(dependency);
         URL jarUrl = new URL(artifact.toURI().toString());
         boolean isAlreadyContained = previousURLs.parallelStream().anyMatch(url -> jarUrl.equals(url));
 
@@ -386,8 +385,8 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
 
         previousURLs.add(jarUrl);
 
-        File artifactPom = this.mavenBridge.findPom(dependency);
-        Model artifactModel = this.mavenBridge.readEffectiveModel(artifactPom);
+        File artifactPom = mavenBridge.findPom(dependency);
+        Model artifactModel = mavenBridge.readEffectiveModel(artifactPom);
 
         previousURLs = getDependenciesURLS(artifactModel, previousURLs, recursiveness);
 
