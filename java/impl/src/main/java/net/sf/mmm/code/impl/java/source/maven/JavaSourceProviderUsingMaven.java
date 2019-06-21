@@ -232,7 +232,7 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
 
       try {
         // First eclipse target because it is the most updated version of the classes
-        dependenciesURLs.add(getEclipseByteCodeLocation(byteCodeLocation));
+        dependenciesURLs.add(getEclipseByteCodeLocation(location));
         dependenciesURLs.add(byteCodeLocation.toURI().toURL());
 
       } catch (MalformedURLException e1) {
@@ -264,18 +264,13 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
    * Retrieves the URL where the eclipse-target folder should be located. It contains bytecode. This is useful for
    * devon4j projects, but will not harm other projects.
    *
-   * @param byteCodeLocation current location of the byte code
+   * @param projectLocation current location of the byte code
    * @return the URL with the location of eclipse-target folder
    * @throws MalformedURLException throws {@link MalformedURLException}
    */
-  private static URL getEclipseByteCodeLocation(File byteCodeLocation) throws MalformedURLException {
+  private static URL getEclipseByteCodeLocation(File projectLocation) throws MalformedURLException {
 
-    String[] segments = getPathSegmentsFromFile(byteCodeLocation);
-
-    if (segments.length >= 3) {
-      segments[segments.length - 2] = "eclipse-target";
-    }
-    Path moduleLocation = Paths.get("", segments);
+    Path moduleLocation = projectLocation.toPath().resolve("eclipse-target" + File.separator + "classes");
 
     return moduleLocation.toUri().toURL();
   }
@@ -317,6 +312,12 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
           Path moduleLocation = Paths.get("", segments);
 
           Model moduleModel = parseModel(moduleLocation.toFile());
+
+          // We add eclipse-target URL
+          URL eclipseTargetURL = getEclipseByteCodeLocation(moduleLocation.toFile());
+          if (isURLAlreadyContained(dependenciesURLs, eclipseTargetURL) == false) {
+            dependenciesURLs.add(eclipseTargetURL);
+          }
           dependenciesURLs = getDependenciesURLS(moduleModel, dependenciesURLs, 1);
         }
 
@@ -377,9 +378,8 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
       try {
         File artifact = mavenBridge.findArtifact(dependency);
         URL jarUrl = new URL(artifact.toURI().toString());
-        boolean isAlreadyContained = previousURLs.parallelStream().anyMatch(url -> jarUrl.equals(url));
 
-        if (isAlreadyContained) {
+        if (isURLAlreadyContained(previousURLs, jarUrl)) {
           return previousURLs;
         }
 
@@ -392,14 +392,24 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
 
       } catch (MalformedURLException e) {
         LOG.debug("Problem when getting dependency URL " + dependency.getArtifactId() + " from the current project", e);
-        continue;
       } catch (IllegalStateException e) {
         LOG.debug("Problem when reading pom of dependency " + dependency.getArtifactId()
             + ". Not adding it to the classpath.");
-        continue;
       }
     }
     return previousURLs;
+  }
+
+  /**
+   * Tries to find the given URL in the list of dependencies URLs
+   * 
+   * @param dependenciesURLs list of dependencies URLs where we are going to find the given URL
+   * @param givenURL URL we will try to find on the list
+   * @return true if the list contains the given URL
+   */
+  private static boolean isURLAlreadyContained(ArrayList<URL> dependenciesURLs, URL givenURL) {
+
+    return dependenciesURLs.parallelStream().anyMatch(url -> givenURL.equals(url));
   }
 
   private static File getCwd() {
