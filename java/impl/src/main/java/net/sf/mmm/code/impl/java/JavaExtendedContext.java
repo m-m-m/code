@@ -49,7 +49,6 @@ public class JavaExtendedContext extends JavaContext {
     } else {
       this.loader = new JavaClassLoader(classLoader);
     }
-
   }
 
   @Override

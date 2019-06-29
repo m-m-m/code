@@ -135,8 +135,8 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
   }
 
   /**
-   * @return the {@link CodeComment} for the currently parsed "element" (type, member, etc.) parsed by the
-   *         last invocation of {@link #consume()}.
+   * @return the {@link CodeComment} for the currently parsed "element" (type, member, etc.) parsed by the last
+   *         invocation of {@link #consume()}.
    */
   public CodeComment getElementComment() {
 
@@ -153,8 +153,8 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
   }
 
   /**
-   * @return the plain JavaDoc lines that have been parsed by the last invocation of {@link #consume()}. Will
-   *         be {@link List#isEmpty() empty} for no JavaDoc.
+   * @return the plain JavaDoc lines that have been parsed by the last invocation of {@link #consume()}. Will be
+   *         {@link List#isEmpty() empty} for no JavaDoc.
    */
   public List<String> getJavaDocLines() {
 
@@ -525,8 +525,8 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
   }
 
   /**
-   * @param inInterface - {@code true} if in the context of an interface (where public is the default),
-   *        {@code false} otherwise.
+   * @param inInterface - {@code true} if in the context of an interface (where public is the default), {@code false}
+   *        otherwise.
    * @return the parsed {@link CodeModifiers}.
    */
   protected CodeModifiers parseModifiers(boolean inInterface) {

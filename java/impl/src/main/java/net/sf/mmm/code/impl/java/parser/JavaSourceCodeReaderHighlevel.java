@@ -98,23 +98,6 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
 
   private void parsePackage() {
 
-    String actualPkg = getActualPackage();
-    String expectedPkg = this.file.getParentPackage().getQualifiedName();
-    if (!actualPkg.equals(expectedPkg)) {
-      LOG.warn("Expected package '{}' for file '{}' but found package '{}'", expectedPkg, this.file.getSimpleName(), actualPkg);
-    }
-
-    this.file.setComment(getElementComment());
-    this.elementComment = null;
-  }
-
-  /**
-   * Reads the Java file in order to find the package.
-   *
-   * @return the parsed package of the file
-   */
-  private String getActualPackage() {
-
     consume();
     String actualPkg = "";
     char c = forcePeek();
@@ -122,7 +105,13 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
       skipWhile(CharFilter.WHITESPACE_FILTER);
       actualPkg = readUntil(';', true).trim();
     }
-    return actualPkg;
+    String expectedPkg = this.file.getParentPackage().getQualifiedName();
+    if (!actualPkg.equals(expectedPkg)) {
+      LOG.warn("Expected package '{}' for file '{}' but found package '{}'", expectedPkg, this.file.getSimpleName(), actualPkg);
+    }
+
+    this.file.setComment(getElementComment());
+    this.elementComment = null;
   }
 
   private void parseImports() {
@@ -311,8 +300,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     return parseTypeElementForMember(modifiers, memberComment, memberAnnotations, member);
   }
 
-  private boolean parseTypeElementForMember(CodeModifiers modifiers, CodeComment memberComment, List<CodeAnnotation> memberAnnotations,
-      BaseMember member) {
+  private boolean parseTypeElementForMember(CodeModifiers modifiers, CodeComment memberComment, List<CodeAnnotation> memberAnnotations, BaseMember member) {
 
     if (member != null) {
       member.setModifiers(modifiers);
@@ -368,8 +356,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
       }
       todo = !(expect(')'));
       if (todo && !expect(',')) {
-        LOG.warn("Expecting ',' or ')' to terminate signature of operation {} but found '{}' in {}", operation, "" + forcePeek(),
-            this.file.getQualifiedName());
+        LOG.warn("Expecting ',' or ')' to terminate signature of operation {} but found '{}' in {}", operation, "" + forcePeek(), this.file.getQualifiedName());
       }
     }
   }
@@ -401,8 +388,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     }
     List<CodeStatement> statements = parseBlock();
     if (statements == null) {
-      LOG.warn("Expecting ';' or '{' to terminate signature of operation {} but found '{}' in {}", operation, "" + forcePeek(),
-          this.file.getQualifiedName());
+      LOG.warn("Expecting ';' or '{' to terminate signature of operation {} but found '{}' in {}", operation, "" + forcePeek(), this.file.getQualifiedName());
       return;
     }
     operation.setBody(new BaseBlockBody(operation, statements));
@@ -541,8 +527,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     }
   }
 
-  private BaseGenericType parseGenericType(CodeElementWithTypeVariables element, boolean withTypeParams, boolean withArray,
-      boolean withComposedTypes) {
+  private BaseGenericType parseGenericType(CodeElementWithTypeVariables element, boolean withTypeParams, boolean withArray, boolean withComposedTypes) {
 
     String typeName = parseQName();
     if (typeName == null) {
@@ -636,8 +621,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     if (expectStrict(keyword)) {
       int count = skipWhile(CharFilter.WHITESPACE_FILTER);
       if (count == 0) {
-        LOG.warn("Missing whitespace after {} expression of type parameter {} at {} of {}", keyword, type.getName(), element,
-            this.file.getQualifiedName());
+        LOG.warn("Missing whitespace after {} expression of type parameter {} at {} of {}", keyword, type.getName(), element, this.file.getQualifiedName());
       }
       BaseGenericType bound = parseGenericType(element, true, true, withComposedTypes);
       if (bound == null) {
