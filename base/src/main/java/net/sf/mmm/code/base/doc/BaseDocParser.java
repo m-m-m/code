@@ -127,8 +127,7 @@ public class BaseDocParser {
     return parseTag(line, start, end, length, this.exceptionMap, "Invalid JavaDoc with duplicated throws: {}");
   }
 
-  private BaseDocTag parseTag(String line, int start, int end, int length, Map<String, BaseDocTag> map,
-      String duplicationLog) {
+  private BaseDocTag parseTag(String line, int start, int end, int length, Map<String, BaseDocTag> map, String duplicationLog) {
 
     String name = line.substring(start, end);
     int index = end + 1;
@@ -215,8 +214,8 @@ public class BaseDocParser {
 
   /**
    * @param operation the {@link CodeOperation} that has already been created with its entire signature.
-   * @param javaDocLines the {@link List} of plain {@link CodeDoc} {@link CodeDoc#getLines() lines} to parse and apply
-   *        to the given {@link CodeOperation}.
+   * @param javaDocLines the {@link List} of plain {@link CodeDoc} {@link CodeDoc#getLines() lines} to parse
+   *        and apply to the given {@link CodeOperation}.
    */
   public void parseDoc(CodeOperation operation, List<String> javaDocLines) {
 
@@ -251,8 +250,8 @@ public class BaseDocParser {
 
   /**
    * @param type the {@link CodeType} that has already been created with type variables.
-   * @param javaDocLines the {@link List} of plain {@link CodeDoc} {@link CodeDoc#getLines() lines} to parse and apply
-   *        to the given {@link CodeType}.
+   * @param javaDocLines the {@link List} of plain {@link CodeDoc} {@link CodeDoc#getLines() lines} to parse
+   *        and apply to the given {@link CodeType}.
    */
   public void parseDoc(CodeType type, List<String> javaDocLines) {
 
@@ -262,8 +261,8 @@ public class BaseDocParser {
 
   /**
    * @param field the {@link CodeField}.
-   * @param javaDocLines the {@link List} of plain {@link CodeDoc} {@link CodeDoc#getLines() lines} to parse and apply
-   *        to the given {@link CodeField}.
+   * @param javaDocLines the {@link List} of plain {@link CodeDoc} {@link CodeDoc#getLines() lines} to parse
+   *        and apply to the given {@link CodeField}.
    */
   public void parseDoc(CodeField field, List<String> javaDocLines) {
 
