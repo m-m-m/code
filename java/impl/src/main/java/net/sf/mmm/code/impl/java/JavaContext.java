@@ -202,11 +202,8 @@ public abstract class JavaContext extends AbstractBaseContextWithCache {
           throw new IllegalArgumentException(qualifiedName);
         }
         return (BaseType) getContext().getType(clazz);
-      } catch (ClassNotFoundException e) {
+      } catch (ClassNotFoundException | NoClassDefFoundError e) {
         LOG.debug("Class {} not found.", qualifiedName, e);
-        return null;
-      } catch (NoClassDefFoundError e) {
-        getType(e.getMessage());
         return null;
       }
     }

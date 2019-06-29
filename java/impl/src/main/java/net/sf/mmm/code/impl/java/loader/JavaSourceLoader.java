@@ -4,8 +4,10 @@ package net.sf.mmm.code.impl.java.loader;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.net.URL;
 import java.security.CodeSource;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import net.sf.mmm.code.api.CodeContext;
@@ -121,14 +123,12 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
     CodeSource codeSource = clazz.getProtectionDomain().getCodeSource();
     BaseSource source = getSource();
 
-    if (codeSource == null) {
-      if (codeSource != source.getReflectiveObject()) {
-        throw new IllegalStateException(source.getId() + " not responsible for " + codeSource.getLocation());
+    if (!Objects.equals(codeSource, source.getReflectiveObject())) {
+      URL location = null;
+      if (codeSource != null) {
+        location = codeSource.getLocation();
       }
-    } else {
-      if (codeSource.equals(source.getReflectiveObject()) == false) {
-        throw new IllegalStateException(source.getId() + " not responsible for " + codeSource.getLocation());
-      }
+      throw new IllegalStateException(source.getId() + " not responsible for location " + location);
     }
 
     BasePackage parentPackage;
@@ -142,7 +142,7 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
     return getTypeInternal(clazz, parentPackage);
   }
 
-  public BaseType getTypeInternal(Class<?> clazz, BasePackage pkg) {
+  private BaseType getTypeInternal(Class<?> clazz, BasePackage pkg) {
 
     String simpleName = clazz.getSimpleName();
     Class<?> declaringClass = clazz.getDeclaringClass();
@@ -164,7 +164,7 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
     return type;
   }
 
-  public BasePackage getPackage(CodeName qualifiedName) {
+  private BasePackage getPackage(CodeName qualifiedName) {
 
     BasePackage pkg = getSource().getRootPackage();
     if (qualifiedName != null) {
@@ -175,9 +175,7 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
 
   private BasePackage createPackage(BasePackage parentPackage, String simpleName) {
 
-    BasePackage pkg = new BasePackage(parentPackage, simpleName, null,
-        () -> getSourcePackage(parentPackage, simpleName), true);
-    // pkg.setImmutable();
+    BasePackage pkg = new BasePackage(parentPackage, simpleName, null, () -> getSourcePackage(parentPackage, simpleName), true);
     return pkg;
   }
 
@@ -191,7 +189,6 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
       if (reader != null) {
         getParser().parsePackage(reader, pkg);
       }
-      // pkg.setImmutable();
     } catch (IOException e) {
       LOG.debug("Open package failed: {}", e.getMessage(), e);
     }

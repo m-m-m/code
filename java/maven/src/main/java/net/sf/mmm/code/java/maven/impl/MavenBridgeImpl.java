@@ -32,6 +32,8 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  */
 public class MavenBridgeImpl implements MavenBridge, MavenConstants {
 
+  private static final MavenBridgeImpl INSTANCE = new MavenBridgeImpl();
+
   private final MavenXpp3Reader pomReader;
 
   private final MavenResolver resolver;
@@ -161,14 +163,22 @@ public class MavenBridgeImpl implements MavenBridge, MavenConstants {
   public Model readEffectiveModel(File pomFile) {
 
     try {
-      ModelBuildingRequest buildingRequest = new DefaultModelBuildingRequest()
-          .setSystemProperties(System.getProperties()).setPomFile(pomFile).setModelResolver(this.resolver);
+      ModelBuildingRequest buildingRequest = new DefaultModelBuildingRequest().setSystemProperties(System.getProperties())
+          .setPomFile(pomFile).setModelResolver(this.resolver);
       DefaultModelBuilder defaultModelBuilder = new DefaultModelBuilderFactory().newInstance();
       ModelBuildingResult buildingResult = defaultModelBuilder.build(buildingRequest);
       return buildingResult.getEffectiveModel();
     } catch (ModelBuildingException e) {
       throw new IllegalStateException(e);
     }
+  }
+
+  /**
+   * @return the default instance.
+   */
+  public static MavenBridge getDefault() {
+
+    return INSTANCE;
   }
 
 }

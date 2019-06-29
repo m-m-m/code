@@ -2,15 +2,9 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.impl.java;
 
-import java.io.File;
-
 import net.sf.mmm.code.base.loader.BaseLoader;
 import net.sf.mmm.code.base.source.BaseSourceImpl;
 import net.sf.mmm.code.base.source.BaseSourceProvider;
-import net.sf.mmm.code.base.type.BaseType;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of {@link JavaContext} that inherits from a {@link #getParent() parent} context.
@@ -24,18 +18,16 @@ public class JavaExtendedContext extends JavaContext {
 
   private final JavaClassLoader loader;
 
-  private static final Logger LOG = LoggerFactory.getLogger(JavaExtendedContext.class);
-
   /**
    * The constructor.
    *
    * @param source the {@link #getSource() source}.
    * @param sourceProvider the {@link BaseSourceProvider}.
-   * @param mvnClassLoader
+   * @param classLoader the explicit {@link ClassLoader} used to load the byte-code.
    */
-  public JavaExtendedContext(BaseSourceImpl source, BaseSourceProvider sourceProvider, ClassLoader mvnClassLoader) {
+  public JavaExtendedContext(BaseSourceImpl source, BaseSourceProvider sourceProvider, ClassLoader classLoader) {
 
-    this(JavaRootContext.get(), source, sourceProvider, mvnClassLoader);
+    this(JavaRootContext.get(), source, sourceProvider, classLoader);
   }
 
   /**
@@ -44,60 +36,26 @@ public class JavaExtendedContext extends JavaContext {
    * @param parent the {@link #getParent() parent context}.
    * @param source the {@link #getSource() source}.
    * @param sourceProvider the {@link BaseSourceProvider}.
-   * @param mvnClassLoader
+   * @param classLoader the explicit {@link ClassLoader} used to load the byte-code.
    */
-  public JavaExtendedContext(JavaContext parent, BaseSourceImpl source, BaseSourceProvider sourceProvider,
-      ClassLoader mvnClassLoader) {
+  public JavaExtendedContext(JavaContext parent, BaseSourceImpl source, BaseSourceProvider sourceProvider, ClassLoader classLoader) {
 
     super(source, sourceProvider);
 
     this.parent = parent;
 
-    if (mvnClassLoader == null) {
+    if (classLoader == null) {
       this.loader = new JavaClassLoader();
     } else {
-      this.loader = new JavaClassLoader(mvnClassLoader);
+      this.loader = new JavaClassLoader(classLoader);
     }
 
-  }
-
-  /**
-   * The constructor.
-   *
-   * @param parent the {@link #getParent() parent context}.
-   * @param source the {@link #getSource() source}.
-   * @param sourceProvider the {@link BaseSourceProvider}.
-   */
-  public JavaExtendedContext(JavaContext parent, BaseSourceImpl source, BaseSourceProvider sourceProvider,
-      File mavenProjectLocation) {
-
-    super(source, sourceProvider);
-    this.parent = parent;
-    this.loader = new JavaClassLoader();
   }
 
   @Override
   public BaseLoader getLoader() {
 
     return this.loader;
-  }
-
-  @Override
-  public BaseType getRootExceptionType() {
-
-    return this.parent.getRootExceptionType();
-  }
-
-  @Override
-  public BaseType getNonPrimitiveType(BaseType javaType) {
-
-    return this.parent.getNonPrimitiveType(javaType);
-  }
-
-  @Override
-  public String getQualifiedNameForStandardType(String simpleName, boolean omitStandardPackages) {
-
-    return this.parent.getQualifiedNameForStandardType(simpleName, omitStandardPackages);
   }
 
   @Override
@@ -115,7 +73,7 @@ public class JavaExtendedContext extends JavaContext {
   @Override
   public JavaRootContext getRootContext() {
 
-    return JavaRootContext.get();
+    return this.parent.getRootContext();
   }
 
 }

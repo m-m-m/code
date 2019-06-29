@@ -62,11 +62,10 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
 
   static final CharFilter CHAR_FILTER_ANNOTATION_KEY = c -> ((c == '{') || (c == '=') || (c == ','));
 
-  static final CharFilter CHAR_FILTER_OPERATOR = c -> ((c == '+') || (c == '-') || (c == '*') || (c == '/')
-      || (c == '^') || (c == '%') || (c == '>') || (c == '<') || (c == '!') || (c == '~') || (c == '='));
+  static final CharFilter CHAR_FILTER_OPERATOR = c -> ((c == '+') || (c == '-') || (c == '*') || (c == '/') || (c == '^') || (c == '%')
+      || (c == '>') || (c == '<') || (c == '!') || (c == '~') || (c == '='));
 
-  static final CharFilter CHAR_FILTER_NUMBER_LITERAL_START = c -> ((c >= '0') && (c <= '9') || (c == '+')
-      || (c == '-'));
+  static final CharFilter CHAR_FILTER_NUMBER_LITERAL_START = c -> ((c >= '0') && (c <= '9') || (c == '+') || (c == '-'));
 
   static final CharFilter CHAR_FILTER_STATEMENT_END = c -> ((c == ';') || (c == '\r') || (c == '\n'));
 
@@ -274,8 +273,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
         if (first) {
           key = "value"; // Java build in default
         } else {
-          LOG.warn("Annotation {} parameter without name in {}.", annotationTypeName, Character.toString(forcePeek()),
-              this.file);
+          LOG.warn("Annotation {} parameter without name in {}.", annotationTypeName, Character.toString(forcePeek()), this.file);
         }
       } else {
         parseWhitespacesAndComments();
@@ -296,8 +294,8 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
             }
           }
           if (value == null) {
-            LOG.warn("Invalid character '{}' after annotation parameter {}.{} name in {}.",
-                Character.toString(forcePeek()), annotationTypeName, key, this.file);
+            LOG.warn("Invalid character '{}' after annotation parameter {}.{} name in {}.", Character.toString(forcePeek()),
+                annotationTypeName, key, this.file);
           }
         }
       }
@@ -312,8 +310,8 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
             }
           } while ((arg != null) && expect(','));
           if (!expect('}')) {
-            LOG.warn("Invalid annotation array value - missing closing curly brace '}' for annotation {} at value {}",
-                annotationTypeName, key);
+            LOG.warn("Invalid annotation array value - missing closing curly brace '}' for annotation {} at value {}", annotationTypeName,
+                key);
           }
           value = new BaseArrayInstatiation(args);
         } else {
