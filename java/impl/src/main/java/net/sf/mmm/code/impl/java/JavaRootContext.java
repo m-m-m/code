@@ -201,10 +201,4 @@ public class JavaRootContext extends JavaContext {
     return instance;
   }
 
-  @Override
-  public ClassLoader getClassLoader() {
-
-    return this.loader.getClassLoader();
-  }
-
 }

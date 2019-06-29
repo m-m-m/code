@@ -84,10 +84,4 @@ public class BaseContextChild extends AbstractBaseContext {
     return this.parent.getType(clazz);
   }
 
-  @Override
-  public ClassLoader getClassLoader() {
-
-    return this.parent.getClassLoader();
-  }
-
 }

@@ -3,18 +3,11 @@
 package net.sf.mmm.code.impl.java.source.maven;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.CodeSource;
 import java.security.cert.Certificate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Supplier;
 
 import net.sf.mmm.code.base.loader.BaseSourceCodeProviderArchive;
@@ -39,7 +32,6 @@ import net.sf.mmm.code.java.maven.impl.MavenBridgeImpl;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
-import org.apache.maven.model.Parent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +43,7 @@ import org.slf4j.LoggerFactory;
  */
 public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl implements MavenConstants {
 
-  private MavenBridge mavenBridge;
+  private final MavenBridge mavenBridge;
 
   private static final Logger LOG = LoggerFactory.getLogger(JavaSourceProviderUsingMaven.class);
 
@@ -170,27 +162,16 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
       LOG.error("Malformed URL of the byte code artifact");
     }
 
-    return new JavaSourceUsingMaven(this, byteCodeArtifact, sourceCodeArtifact, () -> parseModel(byteCodeArtifact), dependency.getScope(),
-        loader);
+    return new JavaSourceUsingMaven(this, byteCodeArtifact, sourceCodeArtifact, () -> parseModel(byteCodeArtifact), dependency.getScope(), loader);
   }
 
   /**
-   * @param parentContext the {@link JavaContext} to inherit and use as {@link JavaContext#getParent() parent}. Most
-   *        likely {@link net.sf.mmm.code.impl.java.JavaRootContext#get()}.
-   * @return the {@link BaseSourceImpl source} for the Maven project at the current {@link File} location (CWD).
-   */
-  public BaseSourceImpl createFromLocalMavenProject(JavaContext parentContext) {
-
-    return createFromLocalMavenProject(parentContext, getCwd());
-  }
-
-  /**
-   * @param parentContext the {@link JavaContext} to inherit and use as {@link JavaContext#getParent() parent}. Most
-   *        likely {@link net.sf.mmm.code.impl.java.JavaRootContext#get()}.
+   * @param parentContext the {@link JavaContext} to inherit and use as {@link JavaContext#getParent()
+   *        parent}. Most likely {@link net.sf.mmm.code.impl.java.JavaRootContext#get()}.
    * @param location the {@link File} pointing to the Maven project.
    * @return the {@link BaseSourceImpl source} for the Maven project at the given {@link File} location.
    */
-  public JavaSourceUsingMaven createFromLocalMavenProject(JavaContext parentContext, File location) {
+  private JavaSourceUsingMaven createFromLocalMavenProject(JavaContext parentContext, File location) {
 
     final Model model = parseModel(location);
 
@@ -200,8 +181,8 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
     Supplier<Model> modelSupplier = () -> model;
     File byteCodeLocation = ModelHelper.getOutputDirectory(model);
     File sourceCodeLocation = ModelHelper.getSourceDirectory(model);
-    JavaSourceUsingMaven compileDependency = new JavaSourceUsingMaven(this, byteCodeLocation, sourceCodeLocation, modelSupplier,
-        SCOPE_COMPILE, createLoader(sourceCodeLocation));
+    JavaSourceUsingMaven compileDependency = new JavaSourceUsingMaven(this, byteCodeLocation, sourceCodeLocation, modelSupplier, SCOPE_COMPILE,
+        createLoader(sourceCodeLocation));
     File testByteCodeLocation = ModelHelper.getTestOutputDirectory(model);
     File testSourceCodeLocation = ModelHelper.getTestSourceDirectory(model);
     BaseSourceLoader testLoader = createLoader(testSourceCodeLocation);
@@ -224,208 +205,60 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
    */
   public static JavaContext createFromLocalMavenProject(File location) {
 
-    return createFromLocalMavenProject(location, true);
+    return createFromLocalMavenProject(location, false);
   }
 
   /**
    * @param location the {@link File} pointing to the Maven project.
-   * @param buildClasspath - {@code true} to build a custom {@link ClassLoader} for the maven project, {@code false} to
-   *        use the existing {@link Thread#getContextClassLoader() CCL}.
+   * @param buildClassLoader - {@code true} to build a custom {@link ClassLoader} for the maven project,
+   *        {@code false} to use the existing {@link Thread#getContextClassLoader() CCL}.
    * @return the {@link JavaContext} for the Maven project at the given {@code location}.
    */
-  private static JavaContext createFromLocalMavenProject(File location, boolean buildClasspath) {
+  public static JavaContext createFromLocalMavenProject(File location, boolean buildClassLoader) {
+
+    return createFromLocalMavenProject(location, buildClassLoader, MavenConstants.SCOPE_TEST);
+  }
+
+  /**
+   * @param location the {@link File} pointing to the Maven project.
+   * @param buildClassLoader - {@code true} to build a custom {@link ClassLoader} for the maven project,
+   *        {@code false} to use the existing {@link Thread#getContextClassLoader() CCL}.
+   * @param scope the (maximum) scope of dependencies to resolve for custom {@link ClassLoader}.
+   * @return the {@link JavaContext} for the Maven project at the given {@code location}.
+   */
+  public static JavaContext createFromLocalMavenProject(File location, boolean buildClassLoader, String scope) {
+
+    return createFromLocalMavenProject(location, buildClassLoader, scope, null);
+  }
+
+  /**
+   * @param location the {@link File} pointing to the Maven project.
+   * @param buildClassLoader - {@code true} to build a custom {@link ClassLoader} for the maven project,
+   *        {@code false} to use the existing {@link Thread#getContextClassLoader() CCL}.
+   * @param scope the (maximum) scope of dependencies to resolve for custom {@link ClassLoader}.
+   * @param altOutputDir the alternative output folder-name (e.g. "eclipse-target" as alternative to
+   *        "target"). May be {@code null}.
+   * @return the {@link JavaContext} for the Maven project at the given {@code location}.
+   */
+  public static JavaContext createFromLocalMavenProject(File location, boolean buildClassLoader, String scope, String altOutputDir) {
 
     JavaSourceProviderUsingMaven provider = new JavaSourceProviderUsingMaven();
     JavaSourceUsingMaven source = provider.createFromLocalMavenProject(JavaRootContext.get(), location);
 
-    if (buildClasspath) {
-      File byteCodeLocation = getByteCodeLocation(source);
-      Set<URL> dependenciesUrls = new HashSet<>();
-
-      try {
-        // First eclipse target because it is the most updated version of the classes
-        dependenciesUrls.add(getEclipseByteCodeLocation(location));
-        dependenciesUrls.add(byteCodeLocation.toURI().toURL());
-
-      } catch (MalformedURLException e1) {
-        LOG.debug("Not able to get the URL of " + byteCodeLocation.getName() + " or any of its dependencies.");
-        return new JavaExtendedContext(source, provider, null);
-      }
-      // Now we need dependencies from the modules
-      provider.collectModuleDependenciesUrls(location, dependenciesUrls);
-      // Iterate over all dependencies, get URLS and construct MavenClassLoader
-      provider.collectDependenciesUrls(source.getModel(), dependenciesUrls, 0);
-
-      try {
-        URL[] dependencies = new URL[dependenciesUrls.size()];
-        dependencies = dependenciesUrls.toArray(dependencies);
-
-        MavenClassLoader mvnClassLoader = new MavenClassLoader(Thread.currentThread().getContextClassLoader(), dependencies);
-
-        return new JavaExtendedContext(source, provider, mvnClassLoader);
-      } catch (Exception e) {
-        throw new IllegalStateException(e);
-      }
+    ClassLoader classLoader;
+    if (buildClassLoader) {
+      MavenDependencyCollector dependencyCollector = new MavenDependencyCollector(provider.mavenBridge, scope, altOutputDir);
+      dependencyCollector.collectWithModules(source.getModel());
+      classLoader = dependencyCollector.asClassLoader();
     } else {
-      return new JavaExtendedContext(source, provider, null);
+      classLoader = Thread.currentThread().getContextClassLoader();
     }
-  }
-
-  /**
-   * Retrieves the URL where the eclipse-target folder should be located. It contains bytecode. This is useful for
-   * devon4j projects, but will not harm other projects.
-   *
-   * @param projectLocation current location of the byte code
-   * @return the URL with the location of eclipse-target folder
-   * @throws MalformedURLException throws {@link MalformedURLException}
-   */
-  private static URL getEclipseByteCodeLocation(File projectLocation) throws MalformedURLException {
-
-    Path moduleLocation = projectLocation.toPath().resolve("eclipse-target" + File.separator + "classes");
-
-    return moduleLocation.toUri().toURL();
-  }
-
-  /**
-   * Gets the byte code location, that is located on classes/ folder
-   *
-   * @param source where to get the byte code location from
-   * @return File where the byte code is located
-   */
-  private static File getByteCodeLocation(JavaSourceUsingMaven source) {
-
-    // Create a File object on the root directory of the classes
-    File byteCodeLocation = null;
-    String byteCodeLocationString = source.getByteCodeLocation().toString();
-    if (byteCodeLocationString.substring(byteCodeLocationString.lastIndexOf(File.separator) + 1).equals("test-classes")) {
-      byteCodeLocation = source.getByteCodeLocation().getParentFile().toPath().resolve("classes" + File.separator).toFile();
-    } else {
-      byteCodeLocation = source.getByteCodeLocation();
-    }
-    return byteCodeLocation;
-  }
-
-  /**
-   * Recursively gets dependencies from the model, and stores them on a list.
-   *
-   * @param model parsed from the POM of a project
-   * @param dependencyUrls {@link Set} where to add the dependency {@link URL}s.
-   * @param recursiveness level of recursiveness. How deep we get into dependencies.
-   */
-  private void collectDependenciesUrls(Model model, Set<URL> dependencyUrls, int recursiveness) {
-
-    if (recursiveness >= 4) {
-      return;
-    }
-    recursiveness++;
-
-    if (model == null) {
-      return;
-    }
-    List<Dependency> dependencies = model.getDependencies();
-
-    for (Dependency dependency : dependencies) {
-      try {
-        File artifact = this.mavenBridge.findArtifact(dependency);
-        URL jarUrl = new URL(artifact.toURI().toString());
-
-        if (dependencyUrls.contains(jarUrl)) {
-          return;
-        }
-
-        dependencyUrls.add(jarUrl);
-
-        File artifactPom = this.mavenBridge.findPom(dependency);
-        Model artifactModel = this.mavenBridge.readEffectiveModel(artifactPom);
-
-        collectDependenciesUrls(artifactModel, dependencyUrls, recursiveness);
-
-      } catch (MalformedURLException e) {
-        LOG.warn("Problem when getting dependency URL " + dependency.getArtifactId() + " from the current project", e);
-      } catch (IllegalStateException e) {
-        LOG.warn("Problem when reading pom of dependency " + dependency.getArtifactId() + ". Not adding it to the classpath.");
-      }
-    }
-  }
-
-  /**
-   * Tries to find the parent POM of this project in order to retrieve the modules defined-
-   *
-   * @param location current project, in which we want to check if it has a parent POM with modules
-   * @param dependenciesUrls {@link Set} where to add the collected dependency {@link URL}s.
-   */
-  private void collectModuleDependenciesUrls(File location, Set<URL> dependenciesUrls) {
-
-    Model model = parseModel(location);
-
-    if (model == null) {
-      return;
-    }
-
-    Parent parent = model.getParent();
-
-    try {
-      while (parent != null) {
-        File parentPom = location.toPath().resolve(parent.getRelativePath()).toFile().getCanonicalFile();
-        Model parentModel = parseModel(parentPom);
-
-        if (parentModel == null) {
-          break;
-        }
-
-        for (String module : parentModel.getModules()) {
-          String[] segments = getPathSegmentsFromFile(parentPom);
-          if (segments.length - 1 == 0) {
-            break;
-          }
-
-          segments[segments.length - 1] = module;
-
-          Path moduleLocation = Paths.get("", segments);
-
-          Model moduleModel = parseModel(moduleLocation.toFile());
-
-          // We add eclipse-target URL
-          URL eclipseTargetUrl = getEclipseByteCodeLocation(moduleLocation.toFile());
-          dependenciesUrls.add(eclipseTargetUrl);
-          collectDependenciesUrls(moduleModel, dependenciesUrls, 1);
-        }
-
-        collectDependenciesUrls(parentModel, dependenciesUrls, 1);
-
-        model = parentModel;
-        parent = model.getParent();
-        location = parentPom.getParentFile();
-      }
-    } catch (IOException e) {
-      throw new IllegalStateException("I/O error whilst reading POMs and collecting dependencies.", e);
-    }
+    return new JavaExtendedContext(source, provider, classLoader);
   }
 
   private static File getCwd() {
 
     return new File(".").getAbsoluteFile().getParentFile();
-  }
-
-  /**
-   * Useful for segmenting a path into an array. The path gets split by its path separator
-   *
-   * @param byteCodeLocation the file which you want to get its path segmented by the path separator
-   * @return an array containing in each element one segment of the path
-   */
-  private static String[] getPathSegmentsFromFile(File file) {
-
-    ArrayList<String> nameElements = new ArrayList<>();
-    Path path = file.toPath();
-
-    nameElements.add(path.getRoot().toFile().toString());
-
-    while (path.getParent() != null) {
-      nameElements.add(1, path.toFile().getName());
-      path = path.getParent();
-    }
-
-    return nameElements.toArray(new String[0]);
   }
 
 }

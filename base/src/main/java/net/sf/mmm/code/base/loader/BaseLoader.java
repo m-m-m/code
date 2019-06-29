@@ -33,15 +33,11 @@ public interface BaseLoader extends CodeLoader {
 
   /**
    * @param clazz the {@link Class} to get as {@link CodeGenericType}.
-   * @return the existing or otherwise newly created {@link CodeGenericType}. Typically a {@link CodeType} but may also
-   *         be a {@link CodeType#createArray() array type} in case an {@link Class#isArray() array} was given.
+   * @return the existing or otherwise newly created {@link CodeGenericType}. Typically a {@link CodeType} but
+   *         may also be a {@link CodeType#createArray() array type} in case an {@link Class#isArray() array}
+   *         was given.
    */
   @Override
   BaseGenericType getType(Class<?> clazz);
-
-  /**
-   * @return current class loader
-   */
-  ClassLoader getClassLoader();
 
 }

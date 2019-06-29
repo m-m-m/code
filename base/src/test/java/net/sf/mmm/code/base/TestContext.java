@@ -127,12 +127,6 @@ public class TestContext extends AbstractBaseContextWithCache {
     return getSource().getLoader();
   }
 
-  @Override
-  public ClassLoader getClassLoader() {
-
-    return Thread.currentThread().getContextClassLoader();
-  }
-
   private static class TestSoureLoader extends BaseSourceLoaderImpl {
 
     @Override
@@ -173,8 +167,7 @@ public class TestContext extends AbstractBaseContextWithCache {
       Package pkg = clazz.getPackage();
       if (pkg != null) {
         String pkgName = pkg.getName();
-        BiFunction<BasePackage, String, BasePackage> factory = (parentPkg, simpleName) -> createPackage(pkg, parentPkg,
-            simpleName);
+        BiFunction<BasePackage, String, BasePackage> factory = (parentPkg, simpleName) -> createPackage(pkg, parentPkg, simpleName);
         parentPackage = getPackage(parentPackage.getChildren(), source.parseName(pkgName), false, factory, true, true);
       }
       BasePathElements children = parentPackage.getChildren();
@@ -203,12 +196,6 @@ public class TestContext extends AbstractBaseContextWithCache {
     @Override
     public void close() throws Exception {
 
-    }
-
-    @Override
-    public ClassLoader getClassLoader() {
-
-      return Thread.currentThread().getContextClassLoader();
     }
 
   }

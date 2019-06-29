@@ -47,7 +47,6 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
   public JavaSourceLoader(SourceCodeProvider sourceCodeProvider) {
 
     super();
-    // Objects.requireNonNull(sourceCodeProvider, "sourceCodeProvider");
     this.sourceCodeProvider = sourceCodeProvider;
   }
 
@@ -262,12 +261,6 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
       this.sourceCodeProvider.close();
       this.sourceCodeProvider = null;
     }
-  }
-
-  @Override
-  public ClassLoader getClassLoader() {
-
-    return Thread.currentThread().getContextClassLoader();
   }
 
 }

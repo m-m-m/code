@@ -227,17 +227,6 @@ public abstract class JavaContext extends AbstractBaseContextWithCache {
       return source.getLoader().getType(clazz);
     }
 
-    /**
-     * Gets the current class loader
-     *
-     * @return class loader
-     */
-    @Override
-    public ClassLoader getClassLoader() {
-
-      return this.classloader;
-    }
-
   }
 
 }

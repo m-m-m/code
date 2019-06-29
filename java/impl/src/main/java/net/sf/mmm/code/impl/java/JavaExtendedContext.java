@@ -59,12 +59,6 @@ public class JavaExtendedContext extends JavaContext {
   }
 
   @Override
-  public ClassLoader getClassLoader() {
-
-    return this.loader.getClassLoader();
-  }
-
-  @Override
   public JavaContext getParent() {
 
     return this.parent;

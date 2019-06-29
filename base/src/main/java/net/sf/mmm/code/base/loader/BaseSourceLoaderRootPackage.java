@@ -54,11 +54,4 @@ public class BaseSourceLoaderRootPackage extends BaseSourceLoaderImpl {
     // ignore
   }
 
-  @Override
-  public ClassLoader getClassLoader() {
-
-    // nothing to do
-    return null;
-  }
-
 }

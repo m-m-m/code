@@ -3,7 +3,6 @@
 package net.sf.mmm.code.impl.java;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -14,8 +13,9 @@ import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.source.CodeSource;
 import net.sf.mmm.code.api.source.CodeSourceDescriptor;
 import net.sf.mmm.code.api.type.CodeType;
+import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.impl.java.source.maven.JavaSourceProviderUsingMaven;
-import net.sf.mmm.code.impl.java.source.maven.MavenClassLoader;
+import net.sf.mmm.code.java.maven.api.MavenConstants;
 
 import org.junit.Test;
 
@@ -32,7 +32,7 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
   /**
    * Root Path where to test data is stored
    */
-  private static final Path rootTestPath = new File("src/test/resources/testdata/").toPath();
+  private static final File rootTestPath = new File("src/test/resources/testdata/");
 
   /**
    * Get context from current project
@@ -42,17 +42,6 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
   private JavaContext getContext() {
 
     return JavaSourceProviderUsingMaven.createFromLocalMavenProject();
-  }
-
-  /**
-   * Get context from a local Maven project
-   *
-   * @return the {@link JavaContext} of the local Maven project
-   */
-  private JavaContext getContextFromLocalMavenProject(File projectLocation) {
-
-    return JavaSourceProviderUsingMaven.createFromLocalMavenProject(projectLocation);
-
   }
 
   /**
@@ -80,11 +69,11 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
   }
 
   /**
-   * Testing the retrieval of the context (including class loaders) from a local Maven project. Also tests whether we
-   * are able to retrieve a class from this local Maven project
+   * Testing the retrieval of the context (including class loaders) from a local Maven project. Also tests
+   * whether we are able to retrieve a class from this local Maven project
    *
-   * @throws ClassNotFoundException throws {@link ClassNotFoundException} when the class from the local Maven project
-   *         has not been found
+   * @throws ClassNotFoundException throws {@link ClassNotFoundException} when the class from the local Maven
+   *         project has not been found
    */
   @Test
   public void testContextLoadingFromLocalMavenProject() throws ClassNotFoundException {
@@ -93,8 +82,9 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
     String entityClass = "com.maven.project.sampledatamanagement.dataaccess.api.SampleDataEntity";
 
     // Local Maven project we want to test
-    File mavenProjectDirectory = rootTestPath.resolve("localmavenproject/maven.project/core").toFile();
-    JavaContext context = getContextFromLocalMavenProject(mavenProjectDirectory);
+    File mavenProjectDirectory = new File(rootTestPath, "localmavenproject/maven.project/core");
+    JavaContext context = JavaSourceProviderUsingMaven.createFromLocalMavenProject(mavenProjectDirectory, true, MavenConstants.SCOPE_TEST,
+        "eclipse-target");
 
     CodeType type = context.getType(entityClass);
     assertThat(type.getDoc().getLines()).containsExactly("This is the JavaDoc of {@link SampleDataEntity}.");
@@ -110,10 +100,8 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
     assertThat(fields.getDeclared("surname")).isNotNull();
     assertThat(fields.getDeclared("age")).isNotNull();
 
-    MavenClassLoader classLoader = (MavenClassLoader) context.getClassLoader();
-
-    Class<?> classFile = classLoader.loadClass("com.devonfw.module.basic.common.api.entity.GenericEntity");
-    assertThat(classFile).isNotNull();
+    BaseType genericEntityType = context.getType("com.devonfw.module.basic.common.api.entity.GenericEntity");
+    assertThat(genericEntityType).isNotNull();
 
     List<? extends CodeSource> dependencies = source.getDependencies().getDeclared();
     assertThat(dependencies).hasSize(2);
@@ -169,15 +157,15 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
     // then
     verifyHeader(type.getFile());
     verifyClass(type, clazz, context);
-    assertThat(type.getDoc().getLines()).containsExactly(
-        "Implementation of {@link net.sf.mmm.code.api.CodeContext} for Java.", "",
+    assertThat(type.getDoc().getLines()).containsExactly("Implementation of {@link net.sf.mmm.code.api.CodeContext} for Java.", "",
         "@author Joerg Hohwiller (hohwille at users.sourceforge.net)", "@since 1.0.0");
     assertThat(type.getMethods().getDeclared("getRootContext").getReturns().getDoc().getLines())
         .containsExactly("the root {@link JavaContext context} responsible for the fundamental code (from JDK).");
   }
 
   /**
-   * Test full integration of {@link JavaContext#getType(String)} from byte-code and source-code (from JAR files).
+   * Test full integration of {@link JavaContext#getType(String)} from byte-code and source-code (from JAR
+   * files).
    */
   @Test
   public void testTypeWithSourceFromJar() {
@@ -191,19 +179,15 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
     CodeType type = context.getType(clazz.getName());
 
     // then
-    assertThat(type.getFile().getComment().getCommentLines()).containsExactly(
-        "Copyright (C) 2009 The JSR-330 Expert Group", "",
-        "Licensed under the Apache License, Version 2.0 (the \"License\");",
-        "you may not use this file except in compliance with the License.", "You may obtain a copy of the License at",
-        "", "     http://www.apache.org/licenses/LICENSE-2.0", "",
-        "Unless required by applicable law or agreed to in writing, software",
-        "distributed under the License is distributed on an \"AS IS\" BASIS,",
+    assertThat(type.getFile().getComment().getCommentLines()).containsExactly("Copyright (C) 2009 The JSR-330 Expert Group", "",
+        "Licensed under the Apache License, Version 2.0 (the \"License\");", "you may not use this file except in compliance with the License.",
+        "You may obtain a copy of the License at", "", "     http://www.apache.org/licenses/LICENSE-2.0", "",
+        "Unless required by applicable law or agreed to in writing, software", "distributed under the License is distributed on an \"AS IS\" BASIS,",
         "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
         "See the License for the specific language governing permissions and", "limitations under the License.");
 
-    assertThat(type.getDoc().getLines()).containsExactly("String-based {@linkplain Qualifier qualifier}.", "",
-        "<p>Example usage:", "", "<pre>", "  public class Car {",
-        "    &#064;Inject <b>@Named(\"driver\")</b> Seat driverSeat;",
+    assertThat(type.getDoc().getLines()).containsExactly("String-based {@linkplain Qualifier qualifier}.", "", "<p>Example usage:", "", "<pre>",
+        "  public class Car {", "    &#064;Inject <b>@Named(\"driver\")</b> Seat driverSeat;",
         "    &#064;Inject <b>@Named(\"passenger\")</b> Seat passengerSeat;", "    ...", "  }</pre>");
 
     List<? extends CodeMethod> methods = type.getMethods().getDeclared();

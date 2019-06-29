@@ -62,8 +62,8 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
 
   static final CharFilter CHAR_FILTER_ANNOTATION_KEY = c -> ((c == '{') || (c == '=') || (c == ','));
 
-  static final CharFilter CHAR_FILTER_OPERATOR = c -> ((c == '+') || (c == '-') || (c == '*') || (c == '/') || (c == '^') || (c == '%')
-      || (c == '>') || (c == '<') || (c == '!') || (c == '~') || (c == '='));
+  static final CharFilter CHAR_FILTER_OPERATOR = c -> ((c == '+') || (c == '-') || (c == '*') || (c == '/') || (c == '^') || (c == '%') || (c == '>')
+      || (c == '<') || (c == '!') || (c == '~') || (c == '='));
 
   static final CharFilter CHAR_FILTER_NUMBER_LITERAL_START = c -> ((c >= '0') && (c <= '9') || (c == '+') || (c == '-'));
 
@@ -135,8 +135,8 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
   }
 
   /**
-   * @return the {@link CodeComment} for the currently parsed "element" (type, member, etc.) parsed by the last
-   *         invocation of {@link #consume()}.
+   * @return the {@link CodeComment} for the currently parsed "element" (type, member, etc.) parsed by the
+   *         last invocation of {@link #consume()}.
    */
   public CodeComment getElementComment() {
 
@@ -153,8 +153,8 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
   }
 
   /**
-   * @return the plain JavaDoc lines that have been parsed by the last invocation of {@link #consume()}. Will be
-   *         {@link List#isEmpty() empty} for no JavaDoc.
+   * @return the plain JavaDoc lines that have been parsed by the last invocation of {@link #consume()}. Will
+   *         be {@link List#isEmpty() empty} for no JavaDoc.
    */
   public List<String> getJavaDocLines() {
 
@@ -262,18 +262,19 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
     Map<String, CodeExpression> parameters = annotation.getParameters();
     boolean first = true;
     while (!expect(')')) {
-      char currentChar = this.buffer[this.offset];
-      CodeExpression value = null;
-      // There was a bug here in which the reader got blocked in an infinite loop because of the comma
-      if (currentChar == ',') {
-        this.offset++;
+      if (!first) {
+        boolean comma = expect(',');
+        if (!comma) {
+          LOG.warn("Annotation {} parameters not separated with comma in {}.", annotationTypeName, this.file);
+        }
       }
+      CodeExpression value = null;
       String key = readUntil(CHAR_FILTER_ANNOTATION_KEY, false, ")", false, true);
       if (key.isEmpty()) {
         if (first) {
           key = "value"; // Java build in default
         } else {
-          LOG.warn("Annotation {} parameter without name in {}.", annotationTypeName, Character.toString(forcePeek()), this.file);
+          LOG.warn("Annotation {} parameter without name (found '{}') in {}.", annotationTypeName, Character.toString(forcePeek()), this.file);
         }
       } else {
         parseWhitespacesAndComments();
@@ -294,8 +295,8 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
             }
           }
           if (value == null) {
-            LOG.warn("Invalid character '{}' after annotation parameter {}.{} name in {}.", Character.toString(forcePeek()),
-                annotationTypeName, key, this.file);
+            LOG.warn("Invalid character '{}' after annotation parameter {}.{} name in {}.", Character.toString(forcePeek()), annotationTypeName, key,
+                this.file);
           }
         }
       }
@@ -310,8 +311,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
             }
           } while ((arg != null) && expect(','));
           if (!expect('}')) {
-            LOG.warn("Invalid annotation array value - missing closing curly brace '}' for annotation {} at value {}", annotationTypeName,
-                key);
+            LOG.warn("Invalid annotation array value - missing closing curly brace '}' for annotation {} at value {}", annotationTypeName, key);
           }
           value = new BaseArrayInstatiation(args);
         } else {
@@ -319,6 +319,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
         }
       }
       parameters.put(key, value);
+      first = false;
     }
 
   }
@@ -524,8 +525,8 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
   }
 
   /**
-   * @param inInterface - {@code true} if in the context of an interface (where public is the default), {@code false}
-   *        otherwise.
+   * @param inInterface - {@code true} if in the context of an interface (where public is the default),
+   *        {@code false} otherwise.
    * @return the parsed {@link CodeModifiers}.
    */
   protected CodeModifiers parseModifiers(boolean inInterface) {

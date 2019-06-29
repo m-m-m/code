@@ -96,24 +96,6 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     return javaFile.getType();
   }
 
-  /**
-   * @param reader the {@link Reader} to read the source-code from.
-   * @param javaFile the {@link BaseFile} to read.
-   * @return the full qualified name of the Java file.
-   */
-  public String parseQualifiedName(Reader reader, BaseFile javaFile) {
-
-    if (this.file != null) {
-      throw new IllegalStateException();
-    }
-    setReader(reader);
-    this.file = javaFile;
-    String actualPkg = getActualPackage();
-    String simpleName = this.file.getSimpleName();
-
-    return actualPkg + "." + simpleName;
-  }
-
   private void parsePackage() {
 
     String actualPkg = getActualPackage();
@@ -490,8 +472,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
         todo = !expect('>');
         if (todo) {
           if (!expect(',')) {
-            LOG.warn("Expecting '>' or ',' to terminate type parameter for {} at {} of {}", identifier, owner,
-                this.file.getQualifiedName());
+            LOG.warn("Expecting '>' or ',' to terminate type parameter for {} at {} of {}", identifier, owner, this.file.getQualifiedName());
           }
         }
       }
@@ -513,8 +494,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
         todo = !expect('>');
         if (todo) {
           if (!expect(',')) {
-            LOG.warn("Expecting '>' or ',' to terminate type parameter for {} at {} of {}", type.getName(), element,
-                this.file.getQualifiedName());
+            LOG.warn("Expecting '>' or ',' to terminate type parameter for {} at {} of {}", type.getName(), element, this.file.getQualifiedName());
           }
         }
       }
@@ -645,8 +625,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     }
   }
 
-  private boolean parseBound(JavaGenericTypeFromSource type, boolean superBound, CodeElementWithTypeVariables element,
-      boolean withComposedTypes) {
+  private boolean parseBound(JavaGenericTypeFromSource type, boolean superBound, CodeElementWithTypeVariables element, boolean withComposedTypes) {
 
     String keyword;
     if (superBound) {

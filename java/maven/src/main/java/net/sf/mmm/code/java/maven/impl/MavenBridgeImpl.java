@@ -23,6 +23,8 @@ import org.apache.maven.model.building.ModelBuildingRequest;
 import org.apache.maven.model.building.ModelBuildingResult;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of {@link MavenBridge}.
@@ -31,6 +33,8 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * @since 1.0.0
  */
 public class MavenBridgeImpl implements MavenBridge, MavenConstants {
+
+  private static final Logger LOG = LoggerFactory.getLogger(MavenBridgeImpl.class);
 
   private static final MavenBridgeImpl INSTANCE = new MavenBridgeImpl();
 
@@ -148,6 +152,7 @@ public class MavenBridgeImpl implements MavenBridge, MavenConstants {
   @Override
   public Model readModel(File pomFile) {
 
+    LOG.debug("Reading raw model of {}", pomFile);
     try (InputStream in = new FileInputStream(pomFile)) {
       Model model = this.pomReader.read(in);
       model.setPomFile(pomFile);
@@ -162,9 +167,10 @@ public class MavenBridgeImpl implements MavenBridge, MavenConstants {
   @Override
   public Model readEffectiveModel(File pomFile) {
 
+    LOG.debug("Reading effective model of {}", pomFile);
     try {
-      ModelBuildingRequest buildingRequest = new DefaultModelBuildingRequest().setSystemProperties(System.getProperties())
-          .setPomFile(pomFile).setModelResolver(this.resolver);
+      ModelBuildingRequest buildingRequest = new DefaultModelBuildingRequest().setSystemProperties(System.getProperties()).setPomFile(pomFile)
+          .setModelResolver(this.resolver);
       DefaultModelBuilder defaultModelBuilder = new DefaultModelBuilderFactory().newInstance();
       ModelBuildingResult buildingResult = defaultModelBuilder.build(buildingRequest);
       return buildingResult.getEffectiveModel();

@@ -69,6 +69,44 @@ public class DependencyHelper implements MavenConstants {
   }
 
   /**
+   * @param dependency the {@link Dependency} to check.
+   * @param scope the maximum scope to include. E.g. {@link MavenConstants#SCOPE_COMPILE} for only
+   *        compile-time dependencies.
+   * @return {@code true} if the scope of the given {@link Dependency} is equal or weaker than the given
+   *         {@code scope}.
+   */
+  public static boolean hasScopeIncludedIn(Dependency dependency, String scope) {
+
+    String dependencyScope = getScope(dependency);
+    if (dependencyScope.equals(scope)) {
+      return true;
+    }
+    int score = getScopeScore(scope);
+    int dependencyScore = getScopeScore(dependencyScope);
+    if (dependencyScore <= score) {
+      return true;
+    }
+    return false;
+  }
+
+  private static int getScopeScore(String scope) {
+
+    if (MavenConstants.SCOPE_COMPILE.equals(scope)) {
+      return 0;
+    } else if (MavenConstants.SCOPE_RUNTIME.equals(scope)) {
+      return 1;
+    } else if (MavenConstants.SCOPE_PROVIDED.equals(scope)) {
+      return 2;
+    } else if (MavenConstants.SCOPE_TEST.equals(scope)) {
+      return 3;
+    } else if (MavenConstants.SCOPE_IMPORT.equals(scope)) {
+      return 4;
+    } else {
+      return 5;
+    }
+  }
+
+  /**
    * @param dependency the {@link Dependency}.
    * @return the {@link Dependency#getType() type} or {@link #TYPE_JAR} if {@code null}.
    */
