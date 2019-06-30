@@ -8,10 +8,12 @@ import java.util.regex.Pattern;
 
 import javax.inject.Named;
 
+import net.sf.mmm.code.api.item.CodeItem;
 import net.sf.mmm.code.api.member.CodeFields;
 import net.sf.mmm.code.api.member.CodeMethod;
 import net.sf.mmm.code.api.source.CodeSource;
 import net.sf.mmm.code.api.source.CodeSourceDescriptor;
+import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.impl.java.source.maven.JavaSourceProviderUsingMaven;
@@ -69,24 +71,43 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
   }
 
   /**
-   * Testing the retrieval of the context (including class loaders) from a local Maven project. Also tests
-   * whether we are able to retrieve a class from this local Maven project
-   *
-   * @throws ClassNotFoundException throws {@link ClassNotFoundException} when the class from the local Maven
-   *         project has not been found
+   * Testing own maven project with own classloader.
    */
   @Test
-  public void testContextLoadingFromLocalMavenProject() throws ClassNotFoundException {
+  public void testContextFromOwnMavenProject() {
+
+    // given
+    File mavenProjectDirectory = new File(".");
+    JavaContext context = JavaSourceProviderUsingMaven.createFromLocalMavenProject(mavenProjectDirectory, true, MavenConstants.SCOPE_TEST, null);
+
+    // when
+    CodeType type = context.getType(CodeItem.class.getName());
+
+    // then
+    assertThat(type.getContext()).isSameAs(context);
+    assertThat(type.getDoc().getLines()).contains("Abstract top-level interface for any item of code as defined by this API. It reflects code structure.");
+  }
+
+  /**
+   * Testing the retrieval of the context (including class loaders) from a local Maven project. Also tests whether we
+   * are able to retrieve a class from this local Maven project
+   */
+  @Test
+  public void testContextFromCustomMavenProject() {
 
     // given
     String entityClass = "com.maven.project.sampledatamanagement.dataaccess.api.SampleDataEntity";
 
     // Local Maven project we want to test
     File mavenProjectDirectory = new File(rootTestPath, "localmavenproject/maven.project/core");
-    JavaContext context = JavaSourceProviderUsingMaven.createFromLocalMavenProject(mavenProjectDirectory, true, MavenConstants.SCOPE_TEST,
-        "eclipse-target");
+    JavaContext context = JavaSourceProviderUsingMaven.createFromLocalMavenProject(mavenProjectDirectory, true, MavenConstants.SCOPE_TEST, "eclipse-target");
+
+    CodeGenericType objectType = context.getType(Object.class);
+    assertThat(objectType.getContext()).isSameAs(JavaRootContext.get());
+    assertThat(context.getType(JavaContext.class.getName())).isNull();
 
     CodeType type = context.getType(entityClass);
+    assertThat(type.getContext()).isSameAs(context);
     assertThat(type.getDoc().getLines()).containsExactly("This is the JavaDoc of {@link SampleDataEntity}.");
     assertThat(type.getDoc().getSourceCode()).isEqualTo("/** This is the JavaDoc of {@link SampleDataEntity}. */\n");
     CodeSource source = type.getSource();
@@ -164,8 +185,7 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
   }
 
   /**
-   * Test full integration of {@link JavaContext#getType(String)} from byte-code and source-code (from JAR
-   * files).
+   * Test full integration of {@link JavaContext#getType(String)} from byte-code and source-code (from JAR files).
    */
   @Test
   public void testTypeWithSourceFromJar() {
@@ -183,8 +203,8 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
         "Licensed under the Apache License, Version 2.0 (the \"License\");", "you may not use this file except in compliance with the License.",
         "You may obtain a copy of the License at", "", "     http://www.apache.org/licenses/LICENSE-2.0", "",
         "Unless required by applicable law or agreed to in writing, software", "distributed under the License is distributed on an \"AS IS\" BASIS,",
-        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
-        "See the License for the specific language governing permissions and", "limitations under the License.");
+        "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.", "See the License for the specific language governing permissions and",
+        "limitations under the License.");
 
     assertThat(type.getDoc().getLines()).containsExactly("String-based {@linkplain Qualifier qualifier}.", "", "<p>Example usage:", "", "<pre>",
         "  public class Car {", "    &#064;Inject <b>@Named(\"driver\")</b> Seat driverSeat;",

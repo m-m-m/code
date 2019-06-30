@@ -45,8 +45,7 @@ public class MavenDependencyCollector {
    * The constructor.
    *
    * @param mavenBridge the {@link MavenBridge} instance to use.
-   * @param maxScope the maximum {@link Dependency#getScope() scope} of the {@link Dependency dependencies} to
-   *        collect.
+   * @param maxScope the maximum {@link Dependency#getScope() scope} of the {@link Dependency dependencies} to collect.
    * @param altBuildDir the alternative build directory (e.g. "eclipse-target").
    */
   public MavenDependencyCollector(MavenBridge mavenBridge, String maxScope, String altBuildDir) {
@@ -94,7 +93,7 @@ public class MavenDependencyCollector {
    */
   public ClassLoader asClassLoader() {
 
-    return asClassLoader(ClassLoader.getSystemClassLoader());
+    return asClassLoader(ClassLoader.getSystemClassLoader().getParent());
   }
 
   /**
@@ -116,9 +115,8 @@ public class MavenDependencyCollector {
   }
 
   /**
-   * @param model the {@link Model} of the local maven project for which to collect all the dependencies
-   *        including all its sibling modules by recursively traversing the parent POMs and collecting the
-   *        modules.
+   * @param model the {@link Model} of the local maven project for which to collect all the dependencies including all
+   *        its sibling modules by recursively traversing the parent POMs and collecting the modules.
    */
   public void collectWithModules(Model model) {
 

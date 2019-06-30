@@ -18,6 +18,9 @@ import net.sf.mmm.code.base.imports.BaseImports;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.util.exception.api.ObjectMismatchException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Base implementation of {@link CodeFile}.
  *
@@ -25,6 +28,8 @@ import net.sf.mmm.util.exception.api.ObjectMismatchException;
  * @since 1.0.0
  */
 public final class BaseFile extends BasePathElement implements CodeFile {
+
+  private static final Logger LOG = LoggerFactory.getLogger(BaseFile.class);
 
   private final BaseImports imports;
 
@@ -57,15 +62,15 @@ public final class BaseFile extends BasePathElement implements CodeFile {
   public BaseFile(BasePackage parentPackage, Class<?> reflectiveObject, Supplier<BaseFile> sourceSupplier) {
 
     this(parentPackage, reflectiveObject.getSimpleName(), reflectiveObject);
-    Package pkg = reflectiveObject.getPackage();
-    Package pkg2 = parentPackage.getReflectiveObject();
-    if (pkg != pkg2) {
-      if (pkg2 != null) {
-        throw new ObjectMismatchException(Package.class, pkg, pkg2);
-      }
+    Package classPackage = reflectiveObject.getPackage();
+    Package pkgPackage = parentPackage.getReflectiveObject();
+    if (classPackage != pkgPackage) {
       String pkgName = parentPackage.getQualifiedName();
-      if (!pkgName.equals(pkg.getName())) {
-        throw new ObjectMismatchException(Package.class, pkg, pkgName);
+      if (!pkgName.equals(classPackage.getName())) {
+        throw new ObjectMismatchException(Package.class, classPackage, pkgName);
+      }
+      if (pkgPackage != null) {
+        LOG.debug("Duplicate package: existing '" + pkgPackage + "' new '" + classPackage + "'.");
       }
     }
     this.sourceSupplier = sourceSupplier;
@@ -236,8 +241,7 @@ public final class BaseFile extends BasePathElement implements CodeFile {
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language)
-      throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
     if (defaultIndent == null) {
       BaseType type = getType();

@@ -116,7 +116,7 @@ public class TestContext extends AbstractBaseContextWithCache {
   }
 
   @Override
-  public BaseContext getParent() {
+  public AbstractBaseContext getParent() {
 
     return null;
   }

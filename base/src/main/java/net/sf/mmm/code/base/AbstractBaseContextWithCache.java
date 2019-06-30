@@ -10,7 +10,6 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 import net.sf.mmm.code.api.CodeName;
-import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.loader.BaseLoader;
 import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.source.BaseSourceImpl;
@@ -70,9 +69,8 @@ public abstract class AbstractBaseContextWithCache extends AbstractBaseContext {
   /**
    * @param <K> key type.
    * @param <V> value type.
-   * @return a new empty {@link Map} instance to use as cache. May be a regular {@link HashMap} but can also
-   *         be a full blown cache implementation that will automatically evict old items if a specific size
-   *         is reached.
+   * @return a new empty {@link Map} instance to use as cache. May be a regular {@link HashMap} but can also be a full
+   *         blown cache implementation that will automatically evict old items if a specific size is reached.
    */
   protected <K, V> Map<K, V> createCache() {
 
@@ -115,12 +113,25 @@ public abstract class AbstractBaseContextWithCache extends AbstractBaseContext {
       return componentType.createArray();
     }
     String qualifiedName = clazz.getName();
-    BaseType type = getTypeFromCache(qualifiedName);
+    BaseGenericType type = getTypeFromCache(qualifiedName);
     if (type != null) {
       return type;
     }
-    type = (BaseType) getLoader().getType(clazz);
-    return getTypeAndPutInCache(qualifiedName, type);
+    type = getLoader().getType(clazz);
+    return getTypeAndPutInCache(qualifiedName, (BaseType) type);
+  }
+
+  @Override
+  protected BaseType getTypeFromCache(String qualifiedName) {
+
+    AbstractBaseContext parent = getParent();
+    if (parent != null) {
+      BaseType type = parent.getTypeFromCache(qualifiedName);
+      if (type != null) {
+        return type;
+      }
+    }
+    return this.typeCache.get(qualifiedName);
   }
 
   private BaseType getTypeAndPutInCache(String qualifiedName, BaseType type) {
@@ -128,19 +139,9 @@ public abstract class AbstractBaseContextWithCache extends AbstractBaseContext {
     if (type != null) {
       this.typeCache.put(qualifiedName, type);
     } else {
-      LOG.debug("Failed to get type {}", qualifiedName);
+      LOG.trace("Failed to get type {}", qualifiedName);
     }
     return type;
-  }
-
-  /**
-   * @param qualifiedName the {@link CodeType#getQualifiedName() qualified name} of the requested
-   *        {@link CodeType}.
-   * @return the requested {@link CodeType} from the cache or {@code null} if not in cache.
-   */
-  protected BaseType getTypeFromCache(String qualifiedName) {
-
-    return this.typeCache.get(qualifiedName);
   }
 
   /**
@@ -176,6 +177,8 @@ public abstract class AbstractBaseContextWithCache extends AbstractBaseContext {
 
     if (codeSource == null) {
       return getRootContext().getSource();
+    } else if (this.sourceProvider == null) {
+      return null;
     }
     BaseSource source = null;
     String id = null;
@@ -186,7 +189,6 @@ public abstract class AbstractBaseContextWithCache extends AbstractBaseContext {
       source = getSource(id);
     }
     if (source == null) {
-      verifyCreateSource(id);
       source = this.sourceProvider.create(codeSource);
       registerSource(source);
     }
@@ -194,12 +196,12 @@ public abstract class AbstractBaseContextWithCache extends AbstractBaseContext {
   }
 
   /**
-   * <b>Attention:</b> This is an internal method that shall not be used from outside. Use
-   * {@link #getSource(String)} instead.
+   * <b>Attention:</b> This is an internal method that shall not be used from outside. Use {@link #getSource(String)}
+   * instead.
    *
    * @param id the {@link BaseSource#getId() ID} of the requested source.
-   * @param sourceSupplier the {@link Supplier} used as factory to {@link Supplier#get() create} the source if
-   *        it does not already exist.
+   * @param sourceSupplier the {@link Supplier} used as factory to {@link Supplier#get() create} the source if it does
+   *        not already exist.
    * @return the existing {@link BaseSource} for the given {@link BaseSource#getId() ID}.
    */
   public BaseSource getOrCreateSource(String id, Supplier<BaseSource> sourceSupplier) {
@@ -220,8 +222,8 @@ public abstract class AbstractBaseContextWithCache extends AbstractBaseContext {
   }
 
   /**
-   * @return {@code true} if {@link #getOrCreateSource(String, Supplier)} may not be called to register a new
-   *         source, {@code false} otherwise.
+   * @return {@code true} if {@link #getOrCreateSource(String, Supplier)} may not be called to register a new source,
+   *         {@code false} otherwise.
    */
   protected boolean isPreventRegisterSource() {
 

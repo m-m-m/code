@@ -223,7 +223,9 @@ public abstract class JavaContext extends AbstractBaseContextWithCache {
       }
       CodeSource codeSource = clazz.getProtectionDomain().getCodeSource();
       BaseSource source = getOrCreateSource(codeSource);
-
+      if (source == null) {
+        return null;
+      }
       return source.getLoader().getType(clazz);
     }
 
