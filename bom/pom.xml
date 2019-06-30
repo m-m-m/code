@@ -9,7 +9,7 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>mmm-code-bom</artifactId>
-  <version>${net.sf.mmm.code.version}</version>
+  <version>${revision}${changelist}</version>
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>
   <description>Bill of materials (BOM) for mmm-code.</description>
@@ -33,27 +33,27 @@
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>mmm-code-api</artifactId>
-        <version>${net.sf.mmm.code.version}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>mmm-code-base</artifactId>
-        <version>${net.sf.mmm.code.version}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>mmm-code-java-maven</artifactId>
-        <version>${net.sf.mmm.code.version}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>mmm-code-java-parser</artifactId>
-        <version>${net.sf.mmm.code.version}</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>mmm-code-java-impl</artifactId>
-        <version>${net.sf.mmm.code.version}</version>
+        <version>${project.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

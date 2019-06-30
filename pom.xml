@@ -21,9 +21,9 @@
   </modules>
 
   <properties>
-    <!-- Internal project versions -->
+    <revision>dev</revision>
+    <changelist>-SNAPSHOT</changelist>
     <net.sf.mmm.util.version>7.5.1</net.sf.mmm.util.version>
-    <net.sf.mmm.code.version>1.0.0-beta1-SNAPSHOT</net.sf.mmm.code.version>
     <java.version>1.8</java.version>
   </properties>
 

@@ -9,7 +9,7 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>mmm-code-java-impl</artifactId>
-  <version>${net.sf.mmm.code.version}</version>
+  <version>${revision}${changelist}</version>
   <packaging>jar</packaging>
   <name>${project.artifactId}</name>
   <description>Implementation of mmm-code-api for Java.</description>

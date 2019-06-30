@@ -24,7 +24,7 @@
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>mmm-code-bom</artifactId>
-        <version>${net.sf.mmm.code.version}</version>
+        <version>${revision}${changelist}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>

@@ -6,6 +6,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.util.List;
+import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.sf.mmm.code.java.maven.api.MavenBridge;
 import net.sf.mmm.code.java.maven.api.MavenConstants;
@@ -35,6 +40,8 @@ import org.slf4j.LoggerFactory;
 public class MavenBridgeImpl implements MavenBridge, MavenConstants {
 
   private static final Logger LOG = LoggerFactory.getLogger(MavenBridgeImpl.class);
+
+  private static final Pattern PATTERN_PROPERTY_PARAMETER = Pattern.compile("-D([a-zA-Z0-9.-_]+)=\"?(([^ ]| (?!-D))*)\"?");
 
   private static final MavenBridgeImpl INSTANCE = new MavenBridgeImpl();
 
@@ -169,13 +176,49 @@ public class MavenBridgeImpl implements MavenBridge, MavenConstants {
 
     LOG.debug("Reading effective model of {}", pomFile);
     try {
-      ModelBuildingRequest buildingRequest = new DefaultModelBuildingRequest().setSystemProperties(System.getProperties()).setPomFile(pomFile)
+      Properties properties = System.getProperties();
+      properties = resolveProperties(properties, pomFile.getAbsoluteFile().getParentFile());
+      ModelBuildingRequest buildingRequest = new DefaultModelBuildingRequest().setSystemProperties(properties).setPomFile(pomFile)
           .setModelResolver(this.resolver);
       DefaultModelBuilder defaultModelBuilder = new DefaultModelBuilderFactory().newInstance();
       ModelBuildingResult buildingResult = defaultModelBuilder.build(buildingRequest);
       return buildingResult.getEffectiveModel();
     } catch (ModelBuildingException e) {
       throw new IllegalStateException(e);
+    }
+  }
+
+  private Properties resolveProperties(Properties properties, File projectBaseDir) {
+
+    try {
+      File mvnDir = new File(projectBaseDir, ".mvn");
+      if (mvnDir.isDirectory()) {
+        File mvnConfig = new File(mvnDir, "maven.config");
+        if (mvnConfig.isFile()) {
+          properties = new Properties(properties);
+          List<String> lines = Files.readAllLines(mvnConfig.toPath());
+          for (String line : lines) {
+            resolveProperties(properties, line.trim());
+          }
+        }
+      }
+      File parent = projectBaseDir.getParentFile();
+      if (parent != null) {
+        return resolveProperties(properties, parent);
+      }
+      return properties;
+    } catch (IOException e) {
+      throw new IllegalStateException("Error reading maven.config from " + projectBaseDir, e);
+    }
+  }
+
+  private void resolveProperties(Properties properties, String line) {
+
+    Matcher matcher = PATTERN_PROPERTY_PARAMETER.matcher(line);
+    while (matcher.find()) {
+      String key = matcher.group(1);
+      String value = matcher.group(2);
+      properties.put(key, value);
     }
   }
 
