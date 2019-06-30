@@ -24,7 +24,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.0.2</version>
         <executions>
           <execution>
             <id>download-sources</id>
@@ -34,27 +33,25 @@
           </execution>
         </executions>
       </plugin>
-
-    <plugin>
-      <groupId>org.codehaus.mojo</groupId>
-      <artifactId>exec-maven-plugin</artifactId>
-      <version>1.6.0</version>
-      <executions>
-        <execution>
-          <id>Install test project</id>
-          <phase>test-compile</phase>
-          <goals>
-            <goal>exec</goal>
-          </goals>
-        </execution>
-      </executions>
-      <configuration>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>Install test project</id>
+            <phase>test-compile</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
           <executable>mvn</executable>      
           <workingDirectory>${maven.test.path}</workingDirectory>
           <arguments>
             <argument>install</argument>
           </arguments>
-      </configuration>
+        </configuration>
       </plugin>
     </plugins>
   </build>
