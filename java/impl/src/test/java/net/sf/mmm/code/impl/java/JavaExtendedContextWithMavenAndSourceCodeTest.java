@@ -29,7 +29,7 @@ import org.junit.Test;
  */
 public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseTypeTest {
 
-  private static final Pattern VERSION_PATTERN = Pattern.compile("[0-9]+\\.[0-9]+\\.[0-9]+(-SNAPSHOT)?");
+  private static final Pattern VERSION_PATTERN = Pattern.compile("[0-9]+(\\.[0-9]+)*(-beta[0-9]+)?(-SNAPSHOT)?");
 
   /**
    * Root Path where to test data is stored

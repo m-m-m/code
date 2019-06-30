@@ -22,8 +22,6 @@ import org.junit.Test;
  */
 public class MavenBridgeImplTest extends Assertions implements MavenConstants {
 
-  /** TODO: javadoc. */
-
   private static final File POM_XML = new File(MavenConstants.POM_XML);
 
   private static final Pattern VERSION_PATTERN = Pattern.compile("[0-9]+(\\.[0-9]+)*(-beta[0-9]+)?(-SNAPSHOT)?");
