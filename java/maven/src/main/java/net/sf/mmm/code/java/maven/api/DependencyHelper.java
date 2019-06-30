@@ -16,8 +16,8 @@ import org.apache.maven.model.Dependency;
 public class DependencyHelper implements MavenConstants {
 
   /**
-   * {@link Dependency} does not properly implement {@link Dependency#equals(Object) equals}. This method
-   * compares two given {@link Dependency} objects.
+   * {@link Dependency} does not properly implement {@link Dependency#equals(Object) equals}. This method compares two
+   * given {@link Dependency} objects.
    *
    * @param dep1 the first {@link Dependency}.
    * @param dep2 the second {@link Dependency}.
@@ -66,44 +66,6 @@ public class DependencyHelper implements MavenConstants {
       scope = SCOPE_COMPILE; // default
     }
     return scope;
-  }
-
-  /**
-   * @param dependency the {@link Dependency} to check.
-   * @param scope the maximum scope to include. E.g. {@link MavenConstants#SCOPE_COMPILE} for only
-   *        compile-time dependencies.
-   * @return {@code true} if the scope of the given {@link Dependency} is equal or weaker than the given
-   *         {@code scope}.
-   */
-  public static boolean hasScopeIncludedIn(Dependency dependency, String scope) {
-
-    String dependencyScope = getScope(dependency);
-    if (dependencyScope.equals(scope)) {
-      return true;
-    }
-    int score = getScopeScore(scope);
-    int dependencyScore = getScopeScore(dependencyScope);
-    if (dependencyScore <= score) {
-      return true;
-    }
-    return false;
-  }
-
-  private static int getScopeScore(String scope) {
-
-    if (MavenConstants.SCOPE_COMPILE.equals(scope)) {
-      return 0;
-    } else if (MavenConstants.SCOPE_RUNTIME.equals(scope)) {
-      return 1;
-    } else if (MavenConstants.SCOPE_PROVIDED.equals(scope)) {
-      return 2;
-    } else if (MavenConstants.SCOPE_TEST.equals(scope)) {
-      return 3;
-    } else if (MavenConstants.SCOPE_IMPORT.equals(scope)) {
-      return 4;
-    } else {
-      return 5;
-    }
   }
 
   /**
@@ -215,9 +177,9 @@ public class DependencyHelper implements MavenConstants {
   /**
    * @param dependency the regular artifact dependency (should not have a {@link Dependency#getClassifier()
    *        classifier}).
-   * @return a new {@link Dependency} pointing to the sources of the given {@link Dependency} or {@code null}
-   *         if the given {@link Dependency} does not point to a code artifact (e.g.
-   *         {@link Dependency#getType() type} is {@link #TYPE_POM pom}).
+   * @return a new {@link Dependency} pointing to the sources of the given {@link Dependency} or {@code null} if the
+   *         given {@link Dependency} does not point to a code artifact (e.g. {@link Dependency#getType() type} is
+   *         {@link #TYPE_POM pom}).
    */
   public static Dependency createSource(Dependency dependency) {
 
@@ -231,9 +193,8 @@ public class DependencyHelper implements MavenConstants {
 
   /**
    * @param dependency the {@link Dependency}.
-   * @return the GAV-coordninates as "«{@link Dependency#getGroupId()
-   *         groupId}»:«{@link Dependency#getArtifactId() artifactId}»:«{@link Dependency#getVersion()
-   *         version}»".
+   * @return the GAV-coordninates as "«{@link Dependency#getGroupId() groupId}»:«{@link Dependency#getArtifactId()
+   *         artifactId}»:«{@link Dependency#getVersion() version}»".
    */
   public static String getGav(Dependency dependency) {
 

@@ -6,6 +6,7 @@ import java.io.File;
 
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Parent;
 
 /**
  * Simple helper to deal with maven {@link Model} objects.
@@ -107,6 +108,38 @@ public class ModelHelper implements MavenConstants {
       }
     }
     return getDirectory(model, testOutputDirectory);
+  }
+
+  /**
+   * @param model the {@link Model} of the maven project.
+   * @return the GAV-coordninates as "«{@link Model#getGroupId() groupId}»:«{@link Model#getArtifactId()
+   *         artifactId}»:«{@link Model#getVersion() version}»".
+   */
+  public static String getGav(Model model) {
+
+    StringBuilder buffer = new StringBuilder();
+    buffer.append(model.getGroupId());
+    buffer.append(':');
+    buffer.append(model.getArtifactId());
+    buffer.append(':');
+    buffer.append(model.getVersion());
+    return buffer.toString();
+  }
+
+  /**
+   * @param parent the {@link Parent} of a maven project.
+   * @return the GAV-coordninates as "«{@link Parent#getGroupId() groupId}»:«{@link Parent#getArtifactId()
+   *         artifactId}»:«{@link Parent#getVersion() version}»".
+   */
+  public static String getGav(Parent parent) {
+
+    StringBuilder buffer = new StringBuilder();
+    buffer.append(parent.getGroupId());
+    buffer.append(':');
+    buffer.append(parent.getArtifactId());
+    buffer.append(':');
+    buffer.append(parent.getVersion());
+    return buffer.toString();
   }
 
 }
