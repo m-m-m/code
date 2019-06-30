@@ -17,7 +17,7 @@ import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.impl.java.source.maven.JavaSourceProviderUsingMaven;
-import net.sf.mmm.code.java.maven.api.MavenConstants;
+import net.sf.mmm.code.impl.java.source.maven.MavenDependencyCollector;
 
 import org.junit.Test;
 
@@ -78,10 +78,10 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
 
     // given
     File mavenProjectDirectory = new File(".");
-    JavaContext context = JavaSourceProviderUsingMaven.createFromLocalMavenProject(mavenProjectDirectory, true, MavenConstants.SCOPE_TEST, null);
+    JavaContext context = JavaSourceProviderUsingMaven.createFromLocalMavenProject(mavenProjectDirectory, true);
 
     // when
-    CodeType type = context.getType(CodeItem.class.getName());
+    CodeType type = context.getRequiredType(CodeItem.class.getName());
 
     // then
     assertThat(type.getContext()).isSameAs(context);
@@ -100,13 +100,14 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
 
     // Local Maven project we want to test
     File mavenProjectDirectory = new File(rootTestPath, "localmavenproject/maven.project/core");
-    JavaContext context = JavaSourceProviderUsingMaven.createFromLocalMavenProject(mavenProjectDirectory, true, MavenConstants.SCOPE_TEST, "eclipse-target");
+    MavenDependencyCollector dependencyCollector = new MavenDependencyCollector(true, true, "eclipse-target");
+    JavaContext context = JavaSourceProviderUsingMaven.createFromLocalMavenProject(mavenProjectDirectory, dependencyCollector);
 
     CodeGenericType objectType = context.getType(Object.class);
     assertThat(objectType.getContext()).isSameAs(JavaRootContext.get());
     assertThat(context.getType(JavaContext.class.getName())).isNull();
 
-    CodeType type = context.getType(entityClass);
+    CodeType type = context.getRequiredType(entityClass);
     assertThat(type.getContext()).isSameAs(context);
     assertThat(type.getDoc().getLines()).containsExactly("This is the JavaDoc of {@link SampleDataEntity}.");
     assertThat(type.getDoc().getSourceCode()).isEqualTo("/** This is the JavaDoc of {@link SampleDataEntity}. */\n");
