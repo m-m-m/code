@@ -6,9 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.sf.mmm.code.api.arg.CodeException;
 import net.sf.mmm.code.api.arg.CodeParameter;
 import net.sf.mmm.code.api.doc.CodeDoc;
@@ -20,6 +17,9 @@ import net.sf.mmm.code.api.member.CodeOperation;
 import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.api.type.CodeTypeVariable;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Parser to parse and apply {@link CodeDoc} read as plain lines of {@link String}s from the source code to
@@ -171,6 +171,9 @@ public class BaseDocParser {
       return parseTag(line, start, end, length, this.genericMap, duplicationLog);
     } else {
       int end = line.indexOf(' ', start);
+      if (end == -1) {
+        end = line.length();
+      }
       return parseTag(line, start, end, length, this.argMap, duplicationLog);
     }
   }

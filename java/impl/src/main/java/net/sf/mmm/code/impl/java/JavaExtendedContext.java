@@ -5,7 +5,6 @@ package net.sf.mmm.code.impl.java;
 import net.sf.mmm.code.base.loader.BaseLoader;
 import net.sf.mmm.code.base.source.BaseSourceImpl;
 import net.sf.mmm.code.base.source.BaseSourceProvider;
-import net.sf.mmm.code.base.type.BaseType;
 
 /**
  * Implementation of {@link JavaContext} that inherits from a {@link #getParent() parent} context.
@@ -24,10 +23,11 @@ public class JavaExtendedContext extends JavaContext {
    *
    * @param source the {@link #getSource() source}.
    * @param sourceProvider the {@link BaseSourceProvider}.
+   * @param classLoader the explicit {@link ClassLoader} used to load the byte-code.
    */
-  public JavaExtendedContext(BaseSourceImpl source, BaseSourceProvider sourceProvider) {
+  public JavaExtendedContext(BaseSourceImpl source, BaseSourceProvider sourceProvider, ClassLoader classLoader) {
 
-    this(JavaRootContext.get(), source, sourceProvider);
+    this(JavaRootContext.get(), source, sourceProvider, classLoader);
   }
 
   /**
@@ -36,28 +36,25 @@ public class JavaExtendedContext extends JavaContext {
    * @param parent the {@link #getParent() parent context}.
    * @param source the {@link #getSource() source}.
    * @param sourceProvider the {@link BaseSourceProvider}.
+   * @param classLoader the explicit {@link ClassLoader} used to load the byte-code.
    */
-  public JavaExtendedContext(JavaContext parent, BaseSourceImpl source, BaseSourceProvider sourceProvider) {
+  public JavaExtendedContext(JavaContext parent, BaseSourceImpl source, BaseSourceProvider sourceProvider, ClassLoader classLoader) {
 
     super(source, sourceProvider);
+
     this.parent = parent;
-    this.loader = new JavaClassLoader();
+
+    if (classLoader == null) {
+      this.loader = new JavaClassLoader();
+    } else {
+      this.loader = new JavaClassLoader(classLoader);
+    }
   }
 
   @Override
-  protected BaseLoader getLoader() {
+  public BaseLoader getLoader() {
 
     return this.loader;
-  }
-
-  @Override
-  protected BaseType getTypeFromCache(String qualifiedName) {
-
-    BaseType type = super.getTypeFromCache(qualifiedName);
-    if (type == null) {
-      return this.parent.getTypeFromCache(qualifiedName);
-    }
-    return type;
   }
 
   @Override

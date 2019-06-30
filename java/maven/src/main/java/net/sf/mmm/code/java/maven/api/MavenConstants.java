@@ -46,6 +46,9 @@ public interface MavenConstants {
   /** {@link org.apache.maven.model.Dependency#getScope() Scope} {@value}. */
   String SCOPE_PROVIDED = "provided";
 
+  /** {@link org.apache.maven.model.Dependency#getScope() Scope} {@value}. */
+  String SCOPE_IMPORT = "import";
+
   /** {@link org.apache.maven.model.Dependency#getType() Type} {@value}. */
   String TYPE_JAR = "jar";
 
@@ -64,10 +67,16 @@ public interface MavenConstants {
   /** Default for {@link org.apache.maven.model.Build#getDirectory()} */
   String DEFAULT_BUILD_DIRECTORY = "target";
 
+  /** Default folder-name for {@link org.apache.maven.model.Build#getOutputDirectory()} */
+  String DEFAULT_OUTPUT_FOLDER = "classes";
+
   /** Default for {@link org.apache.maven.model.Build#getOutputDirectory()} */
-  String DEFAULT_OUTPUT_DIRECTORY = "target/classes";
+  String DEFAULT_OUTPUT_DIRECTORY = DEFAULT_BUILD_DIRECTORY + "/" + DEFAULT_OUTPUT_FOLDER;
+
+  /** Default folder-name for {@link org.apache.maven.model.Build#getTestOutputDirectory()} */
+  String DEFAULT_TEST_OUTPUT_FOLDER = "test-classes";
 
   /** Default for {@link org.apache.maven.model.Build#getTestOutputDirectory()} */
-  String DEFAULT_TEST_OUTPUT_DIRECTORY = "target/test-classes";
+  String DEFAULT_TEST_OUTPUT_DIRECTORY = DEFAULT_BUILD_DIRECTORY + "/" + DEFAULT_TEST_OUTPUT_FOLDER;
 
 }

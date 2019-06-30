@@ -3,6 +3,7 @@
 package net.sf.mmm.code.base;
 
 import net.sf.mmm.code.api.language.CodeLanguage;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.source.BaseSourceImpl;
 import net.sf.mmm.code.base.type.BaseType;
@@ -31,6 +32,9 @@ public abstract class AbstractBaseContext extends AbstractBaseProvider implement
   }
 
   @Override
+  public abstract AbstractBaseContext getParent();
+
+  @Override
   public BaseContext getContext() {
 
     return this;
@@ -40,6 +44,15 @@ public abstract class AbstractBaseContext extends AbstractBaseProvider implement
   public BaseSource getSource() {
 
     return this.source;
+  }
+
+  /**
+   * @param qualifiedName the {@link CodeType#getQualifiedName() qualified name} of the requested {@link CodeType}.
+   * @return the requested {@link CodeType} from the cache or {@code null} if not in cache.
+   */
+  protected BaseType getTypeFromCache(String qualifiedName) {
+
+    return null;
   }
 
   @Override

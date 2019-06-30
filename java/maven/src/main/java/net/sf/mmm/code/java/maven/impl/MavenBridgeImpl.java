@@ -7,6 +7,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import net.sf.mmm.code.java.maven.api.MavenBridge;
+import net.sf.mmm.code.java.maven.api.MavenConstants;
+import net.sf.mmm.util.io.api.IoMode;
+import net.sf.mmm.util.io.api.RuntimeIoException;
+import net.sf.mmm.util.xml.base.XmlInvalidException;
+
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.building.DefaultModelBuilder;
@@ -17,12 +23,8 @@ import org.apache.maven.model.building.ModelBuildingRequest;
 import org.apache.maven.model.building.ModelBuildingResult;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
-import net.sf.mmm.code.java.maven.api.MavenBridge;
-import net.sf.mmm.code.java.maven.api.MavenConstants;
-import net.sf.mmm.util.io.api.IoMode;
-import net.sf.mmm.util.io.api.RuntimeIoException;
-import net.sf.mmm.util.xml.base.XmlInvalidException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of {@link MavenBridge}.
@@ -31,6 +33,10 @@ import net.sf.mmm.util.xml.base.XmlInvalidException;
  * @since 1.0.0
  */
 public class MavenBridgeImpl implements MavenBridge, MavenConstants {
+
+  private static final Logger LOG = LoggerFactory.getLogger(MavenBridgeImpl.class);
+
+  private static final MavenBridgeImpl INSTANCE = new MavenBridgeImpl();
 
   private final MavenXpp3Reader pomReader;
 
@@ -70,7 +76,12 @@ public class MavenBridgeImpl implements MavenBridge, MavenConstants {
       int lastDot = filename.lastIndexOf('.');
       if (lastDot > 0) {
         basename = filename.substring(0, lastDot);
-        pomFile = new File(source.getParent(), basename + POM_EXTENSION);
+        // If the file is already a pom.xml, we should not change it to pom.pom
+        if (basename.equals("pom")) {
+          pomFile = source;
+        } else {
+          pomFile = new File(source.getParent(), basename + POM_EXTENSION);
+        }
         if (pomFile.exists()) {
           return pomFile;
         }
@@ -141,6 +152,7 @@ public class MavenBridgeImpl implements MavenBridge, MavenConstants {
   @Override
   public Model readModel(File pomFile) {
 
+    LOG.debug("Reading raw model of {}", pomFile);
     try (InputStream in = new FileInputStream(pomFile)) {
       Model model = this.pomReader.read(in);
       model.setPomFile(pomFile);
@@ -155,6 +167,7 @@ public class MavenBridgeImpl implements MavenBridge, MavenConstants {
   @Override
   public Model readEffectiveModel(File pomFile) {
 
+    LOG.debug("Reading effective model of {}", pomFile);
     try {
       ModelBuildingRequest buildingRequest = new DefaultModelBuildingRequest().setSystemProperties(System.getProperties()).setPomFile(pomFile)
           .setModelResolver(this.resolver);
@@ -164,6 +177,14 @@ public class MavenBridgeImpl implements MavenBridge, MavenConstants {
     } catch (ModelBuildingException e) {
       throw new IllegalStateException(e);
     }
+  }
+
+  /**
+   * @return the default instance.
+   */
+  public static MavenBridge getDefault() {
+
+    return INSTANCE;
   }
 
 }

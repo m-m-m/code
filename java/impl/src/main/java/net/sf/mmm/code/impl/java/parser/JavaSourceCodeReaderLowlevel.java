@@ -10,9 +10,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.api.annotation.CodeAnnotation;
 import net.sf.mmm.code.api.comment.CodeComment;
@@ -43,6 +40,9 @@ import net.sf.mmm.code.impl.java.expression.literal.JavaLiteralLong;
 import net.sf.mmm.code.impl.java.expression.literal.JavaLiteralString;
 import net.sf.mmm.util.filter.api.CharFilter;
 import net.sf.mmm.util.scanner.base.CharReaderScanner;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Wrapper for a {@link Reader} with internal char buffer to read and parse textual data.
@@ -262,13 +262,19 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
     Map<String, CodeExpression> parameters = annotation.getParameters();
     boolean first = true;
     while (!expect(')')) {
+      if (!first) {
+        boolean comma = expect(',');
+        if (!comma) {
+          LOG.warn("Annotation {} parameters not separated with comma in {}.", annotationTypeName, this.file);
+        }
+      }
       CodeExpression value = null;
       String key = readUntil(CHAR_FILTER_ANNOTATION_KEY, false, ")", false, true);
       if (key.isEmpty()) {
         if (first) {
           key = "value"; // Java build in default
         } else {
-          LOG.warn("Annotation {} parameter without name in {}.", annotationTypeName, Character.toString(forcePeek()), this.file);
+          LOG.warn("Annotation {} parameter without name (found '{}') in {}.", annotationTypeName, Character.toString(forcePeek()), this.file);
         }
       } else {
         parseWhitespacesAndComments();
@@ -313,6 +319,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
         }
       }
       parameters.put(key, value);
+      first = false;
     }
 
   }

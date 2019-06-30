@@ -3,12 +3,12 @@
 package net.sf.mmm.code.impl.java.source.maven;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.CodeSource;
+import java.security.cert.Certificate;
 import java.util.Objects;
 import java.util.function.Supplier;
-
-import org.apache.maven.model.Dependency;
-import org.apache.maven.model.Model;
 
 import net.sf.mmm.code.base.loader.BaseSourceCodeProviderArchive;
 import net.sf.mmm.code.base.loader.BaseSourceCodeProviderDirectory;
@@ -30,8 +30,13 @@ import net.sf.mmm.code.java.maven.api.MavenConstants;
 import net.sf.mmm.code.java.maven.api.ModelHelper;
 import net.sf.mmm.code.java.maven.impl.MavenBridgeImpl;
 
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Model;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- * Implemenation of {@link BaseSourceProvider} using maven to read and extract metadata from POMs.
+ * Implementation of {@link BaseSourceProvider} using maven to read and extract metadata from POMs.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
@@ -40,13 +45,25 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
 
   private final MavenBridge mavenBridge;
 
+  private static final Logger LOG = LoggerFactory.getLogger(JavaSourceProviderUsingMaven.class);
+
   /**
    * The constructor.
    */
   public JavaSourceProviderUsingMaven() {
 
+    this(MavenBridgeImpl.getDefault());
+  }
+
+  /**
+   * The constructor.
+   *
+   * @param mavenBridge the {@link MavenBridge} instance to use.
+   */
+  public JavaSourceProviderUsingMaven(MavenBridge mavenBridge) {
+
     super();
-    this.mavenBridge = new MavenBridgeImpl();
+    this.mavenBridge = mavenBridge;
   }
 
   @Override
@@ -94,10 +111,10 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
     return new net.sf.mmm.code.impl.java.supplier.SupplierAdapter<>(() -> parseModel(location));
   }
 
-  private BaseSourceLoader createLoader(File sourceCodeLocation) {
+  private static BaseSourceLoader createLoader(File sourceCodeLocation) {
 
     SourceCodeProvider sourceCodeProvider;
-    if (sourceCodeLocation == null) {
+    if ((sourceCodeLocation == null) || !sourceCodeLocation.exists()) {
       sourceCodeProvider = null;
     } else if (sourceCodeLocation.isDirectory()) {
       sourceCodeProvider = new BaseSourceCodeProviderDirectory(sourceCodeLocation);
@@ -133,18 +150,19 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
       sourceCodeArtifact = BaseSourceHelper.getFileOrNull(sourceCodeArtifact);
     }
     BaseSourceLoader loader = createLoader(sourceCodeArtifact);
+
+    try {
+      URL reflectiveObjectURL = byteCodeArtifact.toURI().toURL();
+      CodeSource dependencyCodeSource = new CodeSource(reflectiveObjectURL, (Certificate[]) null);
+
+      return new JavaSourceUsingMaven(this, dependencyCodeSource, byteCodeArtifact, sourceCodeArtifact, () -> parseModel(byteCodeArtifact),
+          dependency.getScope(), loader);
+
+    } catch (MalformedURLException e) {
+      LOG.error("Malformed URL of the byte code artifact");
+    }
+
     return new JavaSourceUsingMaven(this, byteCodeArtifact, sourceCodeArtifact, () -> parseModel(byteCodeArtifact), dependency.getScope(), loader);
-  }
-
-  /**
-   * @param parentContext the {@link JavaContext} to inherit and use as {@link JavaContext#getParent()
-   *        parent}. Most likely {@link net.sf.mmm.code.impl.java.JavaRootContext#get()}.
-   * @return the {@link BaseSourceImpl source} for the Maven project at the current {@link File} location
-   *         (CWD).
-   */
-  public BaseSourceImpl createFromLocalMavenProject(JavaContext parentContext) {
-
-    return createFromLocalMavenProject(parentContext, getCwd());
   }
 
   /**
@@ -153,9 +171,10 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
    * @param location the {@link File} pointing to the Maven project.
    * @return the {@link BaseSourceImpl source} for the Maven project at the given {@link File} location.
    */
-  public BaseSourceImpl createFromLocalMavenProject(JavaContext parentContext, File location) {
+  private JavaSourceUsingMaven createFromLocalMavenProject(JavaContext parentContext, File location) {
 
     final Model model = parseModel(location);
+
     if (model == null) {
       throw new IllegalArgumentException("Could not find pom.xml for basedir: " + location);
     }
@@ -167,8 +186,8 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
     File testByteCodeLocation = ModelHelper.getTestOutputDirectory(model);
     File testSourceCodeLocation = ModelHelper.getTestSourceDirectory(model);
     BaseSourceLoader testLoader = createLoader(testSourceCodeLocation);
-    JavaSourceUsingMaven testDependency = new JavaSourceUsingMaven(this, compileDependency, testByteCodeLocation, testSourceCodeLocation, modelSupplier,
-        testLoader);
+    JavaSourceUsingMaven testDependency = new JavaSourceUsingMaven(this, compileDependency, testByteCodeLocation, testSourceCodeLocation,
+        modelSupplier, testLoader);
     return testDependency;
   }
 
@@ -177,7 +196,7 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
    */
   public static JavaContext createFromLocalMavenProject() {
 
-    return createFromLocalMavenProject(getCwd());
+    return createFromLocalMavenProject(getCwd(), false);
   }
 
   /**
@@ -186,9 +205,55 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
    */
   public static JavaContext createFromLocalMavenProject(File location) {
 
+    return createFromLocalMavenProject(location, false);
+  }
+
+  /**
+   * @param location the {@link File} pointing to the Maven project.
+   * @param buildClassLoader - {@code true} to build a custom {@link ClassLoader} for the maven project,
+   *        {@code false} to use the existing {@link Thread#getContextClassLoader() CCL}.
+   * @return the {@link JavaContext} for the Maven project at the given {@code location}.
+   */
+  public static JavaContext createFromLocalMavenProject(File location, boolean buildClassLoader) {
+
+    return createFromLocalMavenProject(location, buildClassLoader, MavenConstants.SCOPE_TEST);
+  }
+
+  /**
+   * @param location the {@link File} pointing to the Maven project.
+   * @param buildClassLoader - {@code true} to build a custom {@link ClassLoader} for the maven project,
+   *        {@code false} to use the existing {@link Thread#getContextClassLoader() CCL}.
+   * @param scope the (maximum) scope of dependencies to resolve for custom {@link ClassLoader}.
+   * @return the {@link JavaContext} for the Maven project at the given {@code location}.
+   */
+  public static JavaContext createFromLocalMavenProject(File location, boolean buildClassLoader, String scope) {
+
+    return createFromLocalMavenProject(location, buildClassLoader, scope, null);
+  }
+
+  /**
+   * @param location the {@link File} pointing to the Maven project.
+   * @param buildClassLoader - {@code true} to build a custom {@link ClassLoader} for the maven project,
+   *        {@code false} to use the existing {@link Thread#getContextClassLoader() CCL}.
+   * @param scope the (maximum) scope of dependencies to resolve for custom {@link ClassLoader}.
+   * @param altOutputDir the alternative output folder-name (e.g. "eclipse-target" as alternative to
+   *        "target"). May be {@code null}.
+   * @return the {@link JavaContext} for the Maven project at the given {@code location}.
+   */
+  public static JavaContext createFromLocalMavenProject(File location, boolean buildClassLoader, String scope, String altOutputDir) {
+
     JavaSourceProviderUsingMaven provider = new JavaSourceProviderUsingMaven();
-    BaseSourceImpl source = provider.createFromLocalMavenProject(JavaRootContext.get(), location);
-    return new JavaExtendedContext(source, provider);
+    JavaSourceUsingMaven source = provider.createFromLocalMavenProject(JavaRootContext.get(), location);
+
+    ClassLoader classLoader;
+    if (buildClassLoader) {
+      MavenDependencyCollector dependencyCollector = new MavenDependencyCollector(provider.mavenBridge, scope, altOutputDir);
+      dependencyCollector.collectWithModules(source.getModel());
+      classLoader = dependencyCollector.asClassLoader();
+    } else {
+      classLoader = Thread.currentThread().getContextClassLoader();
+    }
+    return new JavaExtendedContext(source, provider, classLoader);
   }
 
   private static File getCwd() {

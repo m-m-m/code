@@ -6,5 +6,7 @@
 *.iml
 target
 eclipse-target
+maven-archiver
+maven-status
 gwt-unitCache
 war

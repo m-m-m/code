@@ -195,13 +195,14 @@ public abstract class JavaContext extends AbstractBaseContextWithCache {
     @Override
     public BaseType getType(String qualifiedName) {
 
+      Class<?> clazz = null;
       try {
-        Class<?> clazz = this.classloader.loadClass(qualifiedName);
+        clazz = this.classloader.loadClass(qualifiedName);
         if (clazz.isArray()) {
           throw new IllegalArgumentException(qualifiedName);
         }
         return (BaseType) getContext().getType(clazz);
-      } catch (ClassNotFoundException e) {
+      } catch (ClassNotFoundException | NoClassDefFoundError e) {
         LOG.debug("Class {} not found.", qualifiedName, e);
         return null;
       }
@@ -222,6 +223,9 @@ public abstract class JavaContext extends AbstractBaseContextWithCache {
       }
       CodeSource codeSource = clazz.getProtectionDomain().getCodeSource();
       BaseSource source = getOrCreateSource(codeSource);
+      if (source == null) {
+        return null;
+      }
       return source.getLoader().getType(clazz);
     }
 

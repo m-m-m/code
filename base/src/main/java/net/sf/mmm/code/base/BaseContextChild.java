@@ -57,7 +57,7 @@ public class BaseContextChild extends AbstractBaseContext {
   }
 
   @Override
-  public BaseContext getParent() {
+  public AbstractBaseContext getParent() {
 
     return this.parent;
   }

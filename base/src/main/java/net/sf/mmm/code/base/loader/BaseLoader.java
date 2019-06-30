@@ -37,6 +37,7 @@ public interface BaseLoader extends CodeLoader {
    *         may also be a {@link CodeType#createArray() array type} in case an {@link Class#isArray() array}
    *         was given.
    */
+  @Override
   BaseGenericType getType(Class<?> clazz);
 
 }
