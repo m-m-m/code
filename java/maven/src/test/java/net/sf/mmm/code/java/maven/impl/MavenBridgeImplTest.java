@@ -9,13 +9,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import net.sf.mmm.code.java.maven.api.DependencyHelper;
+import net.sf.mmm.code.java.maven.api.MavenConstants;
+
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
-
-import net.sf.mmm.code.java.maven.api.DependencyHelper;
-import net.sf.mmm.code.java.maven.api.MavenConstants;
 
 /**
  * Test of {@link MavenBridgeImpl}.
@@ -26,7 +26,7 @@ public class MavenBridgeImplTest extends Assertions implements MavenConstants {
 
   private static final File POM_XML = new File(MavenConstants.POM_XML);
 
-  private static final Pattern VERSION_PATTERN = Pattern.compile("[0-9]+(\\.[0-9]+)*(-SNAPSHOT)?");
+  private static final Pattern VERSION_PATTERN = Pattern.compile("[0-9]+(\\.[0-9]+)*(-beta[0-9]+)?(-SNAPSHOT)?");
 
   /**
    * Test of {@link MavenBridgeImpl#readModel(File)}
