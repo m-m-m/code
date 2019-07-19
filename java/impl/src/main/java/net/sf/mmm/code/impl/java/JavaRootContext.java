@@ -65,6 +65,12 @@ public class JavaRootContext extends JavaContext {
   }
 
   @Override
+  public ClassLoader getClassLoader() {
+
+    return this.loader.getClassLoader();
+  }
+
+  @Override
   public CodeLanguage getLanguage() {
 
     return JavaLanguage.get();
@@ -142,6 +148,12 @@ public class JavaRootContext extends JavaContext {
     return null;
   }
 
+  @Override
+  public JavaFactory getFactory() {
+
+    return this.factory;
+  }
+
   private static BaseSourceImpl createRootSource() {
 
     SourceCodeProvider sourceCodeProvider = null; // TODO
@@ -162,12 +174,6 @@ public class JavaRootContext extends JavaContext {
     }
     CodeSourceDescriptor descriptor = new BaseSourceDescriptorType(groupId, artifactId, version, null, docUrl);
     return new BaseSourceImpl(byteCodeLocation, sourceCodeLocation, null, descriptor, loader);
-  }
-
-  @Override
-  public JavaFactory getFactory() {
-
-    return this.factory;
   }
 
   private static String getJavaMajorVersion(String version) {

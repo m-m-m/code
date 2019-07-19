@@ -84,10 +84,8 @@ public class JavaRootContextTest extends AbstractBaseTypeTest {
     assertThat(language.getKeywordForCategory(CodeTypeCategory.INTERFACE)).isEqualTo("interface");
     assertThat(language.getKeywordForCategory(CodeTypeCategory.ENUMERAION)).isEqualTo("enum");
     assertThat(language.getKeywordForCategory(CodeTypeCategory.ANNOTATION)).isEqualTo("@interface");
-    assertThat(language.getKeywordForVariable(new BaseLocalVariable(source, "foo", context.getRootType(), null, false)))
-        .isEmpty();
-    assertThat(language.getKeywordForVariable(new BaseLocalVariable(source, "foo", context.getRootType(), null, true)))
-        .isEqualTo("final ");
+    assertThat(language.getKeywordForVariable(new BaseLocalVariable(source, "foo", context.getRootType(), null, false))).isEmpty();
+    assertThat(language.getKeywordForVariable(new BaseLocalVariable(source, "foo", context.getRootType(), null, true))).isEqualTo("final ");
   }
 
   /**
@@ -186,6 +184,22 @@ public class JavaRootContextTest extends AbstractBaseTypeTest {
     assertThat(properties.getDeclared().size()).isGreaterThanOrEqualTo(2);
     checkProperty(properties, "year", int.class);
     checkProperty(properties, "month", int.class);
+  }
+
+  /**
+   * Test of {@link JavaContext#getClassLoader()}.
+   */
+  @Test
+  public void testGetClassLoader() {
+
+    // given
+    JavaContext context = getContext();
+
+    // when
+    ClassLoader classLoader = context.getClassLoader();
+
+    // then
+    assertThat(classLoader).isSameAs(ClassLoader.getSystemClassLoader());
   }
 
   private void checkProperty(CodeProperties properties, String name, Class<?> type) {

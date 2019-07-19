@@ -153,13 +153,18 @@ public abstract class JavaContext extends AbstractBaseContextWithCache {
   }
 
   /**
+   * @return the {@link ClassLoader} used by this context to load byte-code.
+   */
+  public abstract ClassLoader getClassLoader();
+
+  /**
    * Implementation of {@link BaseLoader} to load classes from byte-code.
    *
    * @see JavaContext#getLoader()
    */
   protected class JavaClassLoader implements BaseLoader {
 
-    private final ClassLoader classloader;
+    private final ClassLoader classLoader;
 
     /**
      * The constructor.
@@ -177,7 +182,7 @@ public abstract class JavaContext extends AbstractBaseContextWithCache {
     public JavaClassLoader(ClassLoader classloader) {
 
       super();
-      this.classloader = classloader;
+      this.classLoader = classloader;
     }
 
     @Override
@@ -192,12 +197,20 @@ public abstract class JavaContext extends AbstractBaseContextWithCache {
       return JavaContext.this;
     }
 
+    /**
+     * @return the {@link ClassLoader} used to load byte-code.
+     */
+    public ClassLoader getClassLoader() {
+
+      return this.classLoader;
+    }
+
     @Override
     public BaseType getType(String qualifiedName) {
 
       Class<?> clazz = null;
       try {
-        clazz = this.classloader.loadClass(qualifiedName);
+        clazz = this.classLoader.loadClass(qualifiedName);
         if (clazz.isArray()) {
           throw new IllegalArgumentException(qualifiedName);
         }

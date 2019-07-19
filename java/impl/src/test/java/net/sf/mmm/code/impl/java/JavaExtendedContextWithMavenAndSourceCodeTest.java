@@ -17,6 +17,7 @@ import net.sf.mmm.code.api.type.CodeGenericType;
 import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.impl.java.source.maven.JavaSourceProviderUsingMaven;
+import net.sf.mmm.code.impl.java.source.maven.MavenClassLoader;
 import net.sf.mmm.code.impl.java.source.maven.MavenDependencyCollector;
 
 import org.junit.Test;
@@ -97,12 +98,13 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
 
     // given
     String entityClass = "com.maven.project.sampledatamanagement.dataaccess.api.SampleDataEntity";
-
-    // Local Maven project we want to test
-    File mavenProjectDirectory = new File(rootTestPath, "localmavenproject/maven.project/core");
+    File mavenProjectDirectory = new File(rootTestPath, "localmavenproject/maven.project/core"); // test Maven project
     MavenDependencyCollector dependencyCollector = new MavenDependencyCollector(true, true, "eclipse-target");
+
+    // when
     JavaContext context = JavaSourceProviderUsingMaven.createFromLocalMavenProject(mavenProjectDirectory, dependencyCollector);
 
+    // then
     CodeGenericType objectType = context.getType(Object.class);
     assertThat(objectType.getContext()).isSameAs(JavaRootContext.get());
     assertThat(context.getType(JavaContext.class.getName())).isNull();
@@ -115,8 +117,6 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
     assertThat(source.getByteCodeLocation().getName()).isEqualTo("classes");
 
     CodeFields fields = type.getFields();
-
-    // assert
     assertThat(fields.getDeclared("name")).isNotNull();
     assertThat(fields.getDeclared("mail")).isNotNull();
     assertThat(fields.getDeclared("surname")).isNotNull();
@@ -130,6 +130,8 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
 
     type = context.getType("javax.persistence.Entity");
     assertThat(type.getMethods().toString()).isEqualTo("String name();");
+
+    assertThat(context.getClassLoader()).isInstanceOf(MavenClassLoader.class);
   }
 
   private void verifyDescriptor(CodeSourceDescriptor descriptor, String scope) {
