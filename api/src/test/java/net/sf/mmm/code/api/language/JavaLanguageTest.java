@@ -86,8 +86,12 @@ public class JavaLanguageTest extends Assertions implements TestValues {
     verifyPackageName(language, pkg, "a§b", false);
     verifyPackageName(language, pkg, "a௰", false);
     for (int nonAlphaNum = 0; nonAlphaNum < UNICODE_NON_ALPHANUMERIC_SYMBOLS.length(); nonAlphaNum++) {
+      if (nonAlphaNum == 2) {
+        continue;
+      }
       char c = UNICODE_NON_ALPHANUMERIC_SYMBOLS.charAt(nonAlphaNum);
-      assertThat(Character.isLetterOrDigit(c)).as("isLetterOrDigit(" + name[0] + ") expected to be false").isFalse();
+      assertThat(Character.isLetterOrDigit(c))
+          .as("isLetterOrDigit(" + c + ") [index " + nonAlphaNum + "] expected to be false").isFalse();
       verifyPackageName(language, pkg, Character.toString(c), false);
     }
   }

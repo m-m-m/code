@@ -107,7 +107,8 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     }
     String expectedPkg = this.file.getParentPackage().getQualifiedName();
     if (!actualPkg.equals(expectedPkg)) {
-      LOG.warn("Expected package '{}' for file '{}' but found package '{}'", expectedPkg, this.file.getSimpleName(), actualPkg);
+      LOG.warn("Expected package '{}' for file '{}' but found package '{}'", expectedPkg, this.file.getSimpleName(),
+          actualPkg);
     }
 
     this.file.setComment(getElementComment());
@@ -156,8 +157,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     }
     BaseType type = (BaseType) this.file.getType(simpleName, false);
     if (type == null) {
-      type = new BaseType(this.file, simpleName, declaringType, null);
-      this.file.getTypes().add(type);
+      type = (BaseType) declaringType.getNestedTypes().getDeclaredOrCreate(simpleName);
     }
     type.setCategory(category);
     type.setModifiers(modifiers);
@@ -194,7 +194,8 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     } while (elementFound);
     if (!expect('}')) {
       String dummy = readUntil('}', true);
-      LOG.warn("Garbarge at the end of body in {} for type {}: {}", this.file.getQualifiedName(), type.getSimpleName(), dummy);
+      LOG.warn("Garbage at the end of body in {} for type {}: {}", this.file.getQualifiedName(), type.getSimpleName(),
+          dummy);
     }
   }
 
@@ -300,7 +301,8 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     return parseTypeElementForMember(modifiers, memberComment, memberAnnotations, member);
   }
 
-  private boolean parseTypeElementForMember(CodeModifiers modifiers, CodeComment memberComment, List<CodeAnnotation> memberAnnotations, BaseMember member) {
+  private boolean parseTypeElementForMember(CodeModifiers modifiers, CodeComment memberComment,
+      List<CodeAnnotation> memberAnnotations, BaseMember member) {
 
     if (member != null) {
       member.setModifiers(modifiers);
@@ -356,7 +358,8 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
       }
       todo = !(expect(')'));
       if (todo && !expect(',')) {
-        LOG.warn("Expecting ',' or ')' to terminate signature of operation {} but found '{}' in {}", operation, "" + forcePeek(), this.file.getQualifiedName());
+        LOG.warn("Expecting ',' or ')' to terminate signature of operation {} but found '{}' in {}", operation,
+            "" + forcePeek(), this.file.getQualifiedName());
       }
     }
   }
@@ -388,7 +391,8 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     }
     List<CodeStatement> statements = parseBlock();
     if (statements == null) {
-      LOG.warn("Expecting ';' or '{' to terminate signature of operation {} but found '{}' in {}", operation, "" + forcePeek(), this.file.getQualifiedName());
+      LOG.warn("Expecting ';' or '{' to terminate signature of operation {} but found '{}' in {}", operation,
+          "" + forcePeek(), this.file.getQualifiedName());
       return;
     }
     operation.setBody(new BaseBlockBody(operation, statements));
@@ -458,7 +462,8 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
         todo = !expect('>');
         if (todo) {
           if (!expect(',')) {
-            LOG.warn("Expecting '>' or ',' to terminate type parameter for {} at {} of {}", identifier, owner, this.file.getQualifiedName());
+            LOG.warn("Expecting '>' or ',' to terminate type parameter for {} at {} of {}", identifier, owner,
+                this.file.getQualifiedName());
           }
         }
       }
@@ -467,7 +472,8 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     return result;
   }
 
-  private void parseTypeParameters(JavaGenericTypeFromSource type, CodeElementWithTypeVariables element, boolean withTypeParams) {
+  private void parseTypeParameters(JavaGenericTypeFromSource type, CodeElementWithTypeVariables element,
+      boolean withTypeParams) {
 
     if (expect('<')) {
       type.ensureTypeParameters();
@@ -480,7 +486,8 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
         todo = !expect('>');
         if (todo) {
           if (!expect(',')) {
-            LOG.warn("Expecting '>' or ',' to terminate type parameter for {} at {} of {}", type.getName(), element, this.file.getQualifiedName());
+            LOG.warn("Expecting '>' or ',' to terminate type parameter for {} at {} of {}", type.getName(), element,
+                this.file.getQualifiedName());
           }
         }
       }
@@ -527,7 +534,8 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     }
   }
 
-  private BaseGenericType parseGenericType(CodeElementWithTypeVariables element, boolean withTypeParams, boolean withArray, boolean withComposedTypes) {
+  private BaseGenericType parseGenericType(CodeElementWithTypeVariables element, boolean withTypeParams,
+      boolean withArray, boolean withComposedTypes) {
 
     String typeName = parseQName();
     if (typeName == null) {
@@ -540,8 +548,8 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     return parseGenericType(typeName, element, withTypeParams, withArray, withComposedTypes);
   }
 
-  private BaseGenericType parseGenericType(String typeName, CodeElementWithTypeVariables element, boolean withTypeParams, boolean withArray,
-      boolean withComposedTypes) {
+  private BaseGenericType parseGenericType(String typeName, CodeElementWithTypeVariables element,
+      boolean withTypeParams, boolean withArray, boolean withComposedTypes) {
 
     JavaGenericTypeFromSource type = new JavaGenericTypeFromSource(element, typeName, this.file);
     parseWhitespacesAndComments();
@@ -591,7 +599,8 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
       requireWhitespace(element, keyword, name);
       BaseGenericType bound = parseGenericType(element, true, true, true);
       if (bound == null) {
-        LOG.warn("Missing {} bound after type parameter {} at {} of {}", keyword, name, element, this.file.getQualifiedName());
+        LOG.warn("Missing {} bound after type parameter {} at {} of {}", keyword, name, element,
+            this.file.getQualifiedName());
         return false;
       }
       typeVariable.setBound(bound);
@@ -610,7 +619,8 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     }
   }
 
-  private boolean parseBound(JavaGenericTypeFromSource type, boolean superBound, CodeElementWithTypeVariables element, boolean withComposedTypes) {
+  private boolean parseBound(JavaGenericTypeFromSource type, boolean superBound, CodeElementWithTypeVariables element,
+      boolean withComposedTypes) {
 
     String keyword;
     if (superBound) {
@@ -621,11 +631,13 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     if (expectStrict(keyword)) {
       int count = skipWhile(CharFilter.WHITESPACE_FILTER);
       if (count == 0) {
-        LOG.warn("Missing whitespace after {} expression of type parameter {} at {} of {}", keyword, type.getName(), element, this.file.getQualifiedName());
+        LOG.warn("Missing whitespace after {} expression of type parameter {} at {} of {}", keyword, type.getName(),
+            element, this.file.getQualifiedName());
       }
       BaseGenericType bound = parseGenericType(element, true, true, withComposedTypes);
       if (bound == null) {
-        LOG.warn("Missing {} bound after type parameter {} at {} of {}", keyword, type.getName(), element, this.file.getQualifiedName());
+        LOG.warn("Missing {} bound after type parameter {} at {} of {}", keyword, type.getName(), element,
+            this.file.getQualifiedName());
         return false;
       }
       if (superBound) {
