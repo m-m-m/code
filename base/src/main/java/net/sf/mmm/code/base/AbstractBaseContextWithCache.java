@@ -263,7 +263,7 @@ public abstract class AbstractBaseContextWithCache extends AbstractBaseContext {
   }
 
   @Override
-  public void close() throws Exception {
+  public void close() {
 
     super.close();
     this.typeCache = null;

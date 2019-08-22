@@ -49,7 +49,7 @@ public class BaseSourceLoaderRootPackage extends BaseSourceLoaderImpl {
   }
 
   @Override
-  public void close() throws Exception {
+  public void close() {
 
     // ignore
   }

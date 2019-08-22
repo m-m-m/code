@@ -255,7 +255,7 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
   }
 
   @Override
-  public void close() throws Exception {
+  public void close() {
 
     if (this.sourceCodeProvider != null) {
       this.sourceCodeProvider.close();

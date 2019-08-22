@@ -64,7 +64,8 @@ public class BaseSourceImpl extends AbstractBaseProvider implements BaseSource {
    * @param descriptor the {@link #getDescriptor() descriptor}.
    * @param loader the {@link #getLoader() loader}.
    */
-  public BaseSourceImpl(File byteCodeLocation, File sourceCodeLocation, String id, CodeSourceDescriptor descriptor, BaseSourceLoader loader) {
+  public BaseSourceImpl(File byteCodeLocation, File sourceCodeLocation, String id, CodeSourceDescriptor descriptor,
+      BaseSourceLoader loader) {
 
     this(null, byteCodeLocation, sourceCodeLocation, id, descriptor, null, loader, true);
   }
@@ -72,8 +73,8 @@ public class BaseSourceImpl extends AbstractBaseProvider implements BaseSource {
   /**
    * The constructor.
    *
-   * @param reflectiveObject the {@link #getReflectiveObject() reflective object}. May not be {@code null}
-   *        otherwise use different constructor.
+   * @param reflectiveObject the {@link #getReflectiveObject() reflective object}. May not be {@code null} otherwise use
+   *        different constructor.
    * @param descriptor the {@link #getDescriptor() descriptor}.
    * @param loader the {@link #getLoader() loader}.
    */
@@ -86,8 +87,8 @@ public class BaseSourceImpl extends AbstractBaseProvider implements BaseSource {
   /**
    * The constructor.
    *
-   * @param reflectiveObject the {@link #getReflectiveObject() reflective object}. May not be {@code null}
-   *        otherwise use different constructor.
+   * @param reflectiveObject the {@link #getReflectiveObject() reflective object}. May not be {@code null} otherwise use
+   *        different constructor.
    * @param byteCodeLocation the {@link #getByteCodeLocation() byte code location}.
    * @param sourceCodeLocation the {@link #getSourceCodeLocation() source code location}.
    * @param id the {@link #getId() ID}.
@@ -96,8 +97,8 @@ public class BaseSourceImpl extends AbstractBaseProvider implements BaseSource {
    * @param loader the {@link #getLoader() loader}.
    * @param immutable the {@link #isImmutable() immutable} flag.
    */
-  public BaseSourceImpl(CodeSource reflectiveObject, File byteCodeLocation, File sourceCodeLocation, String id, CodeSourceDescriptor descriptor,
-      List<BaseSource> dependencies, BaseSourceLoader loader, boolean immutable) {
+  public BaseSourceImpl(CodeSource reflectiveObject, File byteCodeLocation, File sourceCodeLocation, String id,
+      CodeSourceDescriptor descriptor, List<BaseSource> dependencies, BaseSourceLoader loader, boolean immutable) {
 
     super();
     if ((byteCodeLocation != null) && (id != null)) {
@@ -143,8 +144,7 @@ public class BaseSourceImpl extends AbstractBaseProvider implements BaseSource {
   }
 
   /**
-   * @param location the {@link File} pointing to the location of the code that shall be used as
-   *        {@link #getId() ID}.
+   * @param location the {@link File} pointing to the location of the code that shall be used as {@link #getId() ID}.
    * @return the normalized {@link #getId() ID}.
    */
   public static String getNormalizedId(File location) {
@@ -153,8 +153,7 @@ public class BaseSourceImpl extends AbstractBaseProvider implements BaseSource {
   }
 
   /**
-   * @param source the {@link CodeSource} with to the location of the code that shall be used as
-   *        {@link #getId() ID}.
+   * @param source the {@link CodeSource} with to the location of the code that shall be used as {@link #getId() ID}.
    * @return the normalized {@link #getId() ID}.
    */
   public static String getNormalizedId(CodeSource source) {
@@ -270,8 +269,7 @@ public class BaseSourceImpl extends AbstractBaseProvider implements BaseSource {
   }
 
   /**
-   * @return the lazily created {@link #getSourceCodeLocation() source code location}. Method will be called
-   *         only once.
+   * @return the lazily created {@link #getSourceCodeLocation() source code location}. Method will be called only once.
    */
   protected File createSourceCodeLocation() {
 
@@ -320,7 +318,7 @@ public class BaseSourceImpl extends AbstractBaseProvider implements BaseSource {
   }
 
   @Override
-  public void close() throws Exception {
+  public void close() {
 
     if (this.loader != null) {
       this.loader.close();

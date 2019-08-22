@@ -194,7 +194,7 @@ public class TestContext extends AbstractBaseContextWithCache {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
 
     }
 

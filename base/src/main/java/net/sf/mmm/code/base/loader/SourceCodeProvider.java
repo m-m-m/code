@@ -16,8 +16,7 @@ public interface SourceCodeProvider extends AutoCloseable {
 
   /**
    * @param qualifiedName the qualified name of the {@link net.sf.mmm.code.api.type.CodeType} to open.
-   * @return a new {@link Reader} to read the source-code from or {@code null} if the requested type was not
-   *         found.
+   * @return a new {@link Reader} to read the source-code from or {@code null} if the requested type was not found.
    * @throws IOException on I/O error.
    * @see BaseLoader#getType(String)
    */
@@ -25,19 +24,21 @@ public interface SourceCodeProvider extends AutoCloseable {
 
   /**
    * @param qualifiedName the qualified name of the {@link net.sf.mmm.code.api.CodePackage} to open.
-   * @return a new {@link Reader} to read the source-code from or {@code null} if the requested package was
-   *         not found.
+   * @return a new {@link Reader} to read the source-code from or {@code null} if the requested package was not found.
    * @throws IOException on I/O error.
    */
   Reader openPackage(String qualifiedName) throws IOException;
 
   /**
    * @param qualifiedName the qualified name of the {@link net.sf.mmm.code.api.CodePackage} to scan.
-   * @return a {@link List} with the {@link net.sf.mmm.code.api.type.CodeType#getSimpleName() simple names} of
-   *         the {@link net.sf.mmm.code.api.type.CodeType}s in the specified package or {@code null} if scan
-   *         is not supported.
+   * @return a {@link List} with the {@link net.sf.mmm.code.api.type.CodeType#getSimpleName() simple names} of the
+   *         {@link net.sf.mmm.code.api.type.CodeType}s in the specified package or {@code null} if scan is not
+   *         supported.
    * @throws IOException on I/O error.
    */
   List<String> scanPackage(String qualifiedName) throws IOException;
+
+  @Override
+  void close();
 
 }
