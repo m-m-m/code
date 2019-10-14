@@ -208,17 +208,28 @@ public abstract class JavaContext extends AbstractBaseContextWithCache {
     @Override
     public BaseType getType(String qualifiedName) {
 
-      Class<?> clazz = null;
-      try {
-        clazz = this.classLoader.loadClass(qualifiedName);
-        if (clazz.isArray()) {
-          throw new IllegalArgumentException(qualifiedName);
+      if (this.classLoader != null) {
+        Class<?> clazz = null;
+        try {
+          clazz = this.classLoader.loadClass(qualifiedName);
+          if (clazz.isArray()) {
+            throw new IllegalArgumentException(qualifiedName);
+          }
+          return (BaseType) getContext().getType(clazz);
+        } catch (ClassNotFoundException | NoClassDefFoundError e) {
+          if (LOG.isTraceEnabled()) {
+            LOG.debug("Class {} not found.", qualifiedName, e);
+          } else {
+            LOG.debug("Class {} not found: {}", qualifiedName, e.toString());
+          }
         }
-        return (BaseType) getContext().getType(clazz);
-      } catch (ClassNotFoundException | NoClassDefFoundError e) {
-        LOG.debug("Class {} not found.", qualifiedName, e);
-        return null;
       }
+      BaseType type = getSource().getLoader().getType(parseName(qualifiedName));
+      if (type != null) {
+        // TODO make or create as system immutable to prevent eager init
+        type.setImmutable();
+      }
+      return type;
     }
 
     @Override

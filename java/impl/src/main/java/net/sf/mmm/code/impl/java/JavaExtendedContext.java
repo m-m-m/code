@@ -16,7 +16,9 @@ public class JavaExtendedContext extends JavaContext {
 
   private final JavaContext parent;
 
-  private final JavaClassLoader loader;
+  private final BaseLoader loader;
+
+  private final ClassLoader classLoader;
 
   /**
    * The constructor.
@@ -38,17 +40,38 @@ public class JavaExtendedContext extends JavaContext {
    * @param sourceProvider the {@link BaseSourceProvider}.
    * @param classLoader the explicit {@link ClassLoader} used to load the byte-code.
    */
-  public JavaExtendedContext(JavaContext parent, BaseSourceImpl source, BaseSourceProvider sourceProvider, ClassLoader classLoader) {
+  public JavaExtendedContext(JavaContext parent, BaseSourceImpl source, BaseSourceProvider sourceProvider,
+      ClassLoader classLoader) {
 
     super(source, sourceProvider);
 
     this.parent = parent;
 
+    JavaClassLoader jcl;
     if (classLoader == null) {
-      this.loader = new JavaClassLoader();
+      jcl = new JavaClassLoader();
     } else {
-      this.loader = new JavaClassLoader(classLoader);
+      jcl = new JavaClassLoader(classLoader);
     }
+    this.loader = jcl;
+    this.classLoader = jcl.getClassLoader();
+  }
+
+  /**
+   * The constructor.
+   *
+   * @param parent the {@link #getParent() parent context}.
+   * @param source the {@link #getSource() source}.
+   * @param sourceProvider the {@link BaseSourceProvider}.
+   */
+  public JavaExtendedContext(JavaContext parent, BaseSourceImpl source, BaseSourceProvider sourceProvider) {
+
+    super(source, sourceProvider);
+
+    this.parent = parent;
+
+    this.classLoader = null;
+    this.loader = new JavaClassLoader(null);
   }
 
   @Override
@@ -72,7 +95,7 @@ public class JavaExtendedContext extends JavaContext {
   @Override
   public ClassLoader getClassLoader() {
 
-    return this.loader.getClassLoader();
+    return this.classLoader;
   }
 
 }

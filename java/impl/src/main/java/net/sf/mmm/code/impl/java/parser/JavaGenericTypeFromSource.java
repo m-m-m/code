@@ -142,7 +142,7 @@ public class JavaGenericTypeFromSource extends BaseGenericTypeProxy {
     if (!qualified) {
       qualifiedName = context.getQualifiedName(typeName, this.file, false);
     }
-    BaseType baseType = context.getRequiredType(qualifiedName);
+    BaseType baseType = context.getOrCreateType(qualifiedName, false);
     if (qualified) {
       BaseTypeProxy qualifiedType = new BaseTypeProxy(this.parent, baseType);
       qualifiedType.setQualified(true);

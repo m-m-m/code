@@ -68,7 +68,7 @@ public class SourceCodeProviderProxy implements SourceCodeProvider {
   }
 
   @Override
-  public void close() throws Exception {
+  public void close() {
 
     if (this.delegate != null) {
       this.delegate.close();

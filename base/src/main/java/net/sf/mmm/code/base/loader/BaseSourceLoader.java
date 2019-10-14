@@ -16,9 +16,12 @@ import net.sf.mmm.code.base.BasePackage;
 public interface BaseSourceLoader extends BaseLoader, AutoCloseable {
 
   /**
-   * @param pkg the {@link BasePackage} to scan. Will load all {@link BasePackage#getChildren() children} of
-   *        the package.
+   * @param pkg the {@link BasePackage} to scan. Will load all {@link BasePackage#getChildren() children} of the
+   *        package.
    */
   void scan(BasePackage pkg);
+
+  @Override
+  void close();
 
 }

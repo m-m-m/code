@@ -68,12 +68,16 @@ public class BaseSourceCodeProviderArchive extends BaseSourceCodeProvider {
   }
 
   @Override
-  public void close() throws Exception {
+  public void close() {
 
     if (this.fileSystem == null) {
       return;
     }
-    this.fileSystem.close();
+    try {
+      this.fileSystem.close();
+    } catch (IOException e) {
+      throw new IllegalStateException(e);
+    }
     this.fileSystem = null;
   }
 

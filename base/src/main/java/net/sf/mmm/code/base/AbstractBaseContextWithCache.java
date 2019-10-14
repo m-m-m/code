@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 import net.sf.mmm.code.api.CodeName;
+import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.base.loader.BaseLoader;
 import net.sf.mmm.code.base.source.BaseSource;
 import net.sf.mmm.code.base.source.BaseSourceImpl;
@@ -83,6 +84,18 @@ public abstract class AbstractBaseContextWithCache extends AbstractBaseContext {
   protected abstract BaseLoader getLoader();
 
   @Override
+  public BaseType getOrCreateType(String qualifiedName, boolean add) {
+
+    BaseType type = getType(qualifiedName);
+    if (type == null) {
+      BaseFile file = getSource().getRootPackage().getChildren().getOrCreateFile(parseName(qualifiedName), add);
+      type = file.getType();
+      putTypeInCache(qualifiedName, type);
+    }
+    return type;
+  }
+
+  @Override
   public BaseType getType(String qualifiedName) {
 
     BaseType type = getTypeFromCache(qualifiedName);
@@ -90,7 +103,7 @@ public abstract class AbstractBaseContextWithCache extends AbstractBaseContext {
       return type;
     }
     type = getLoader().getType(qualifiedName);
-    return getTypeAndPutInCache(qualifiedName, type);
+    return putTypeInCache(qualifiedName, type);
   }
 
   @Override
@@ -102,7 +115,7 @@ public abstract class AbstractBaseContextWithCache extends AbstractBaseContext {
       return type;
     }
     type = getLoader().getType(qName);
-    return getTypeAndPutInCache(qualifiedName, type);
+    return putTypeInCache(qualifiedName, type);
   }
 
   @Override
@@ -118,7 +131,7 @@ public abstract class AbstractBaseContextWithCache extends AbstractBaseContext {
       return type;
     }
     type = getLoader().getType(clazz);
-    return getTypeAndPutInCache(qualifiedName, (BaseType) type);
+    return putTypeInCache(qualifiedName, (BaseType) type);
   }
 
   @Override
@@ -134,10 +147,14 @@ public abstract class AbstractBaseContextWithCache extends AbstractBaseContext {
     return this.typeCache.get(qualifiedName);
   }
 
-  private BaseType getTypeAndPutInCache(String qualifiedName, BaseType type) {
+  private BaseType putTypeInCache(String qualifiedName, BaseType type) {
 
     if (type != null) {
       this.typeCache.put(qualifiedName, type);
+      // TODO prevent eager init...?
+      for (CodeType nested : type.getNestedTypes().getDeclared()) {
+        putTypeInCache(nested.getQualifiedName(), (BaseType) nested);
+      }
     } else {
       LOG.trace("Failed to get type {}", qualifiedName);
     }
@@ -236,7 +253,8 @@ public abstract class AbstractBaseContextWithCache extends AbstractBaseContext {
   private void verifyCreateSource(Object arg) {
 
     if (this.sourceProvider == null) {
-      throw new IllegalStateException("Can not create source for external code in " + getClass().getSimpleName() + ": " + arg);
+      throw new IllegalStateException(
+          "Can not create source for external code in " + getClass().getSimpleName() + ": " + arg);
     }
   }
 
@@ -263,7 +281,7 @@ public abstract class AbstractBaseContextWithCache extends AbstractBaseContext {
   }
 
   @Override
-  public void close() throws Exception {
+  public void close() {
 
     super.close();
     this.typeCache = null;

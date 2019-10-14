@@ -28,11 +28,13 @@ public abstract interface CodeProvider extends CodeNode, CodeLoader, AutoCloseab
   }
 
   /**
-   * @param qualifiedName the {@link CodeType#getQualifiedName() qualified name} of the requested
-   *        {@link CodeType}.
+   * @param qualifiedName the {@link CodeType#getQualifiedName() qualified name} of the requested {@link CodeType}.
    * @return the requested {@link CodeGenericType}. Typically {@link CodeType}.
    * @throws ObjectNotFoundException if the type was not found.
    */
   CodeType getRequiredType(String qualifiedName);
+
+  @Override
+  void close();
 
 }

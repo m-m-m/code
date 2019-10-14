@@ -103,7 +103,8 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
         return getTypeFromSource(parent, qualifiedName.getSimpleName());
       } else {
         BasePackage pkg = getPackage(parent);
-        BaseFile file = getFileFromSource(pkg, qualifiedName.getSimpleName());
+        BaseFile file = pkg.getChildren().createFile(qualifiedName.getSimpleName());
+        getParser().parseType(reader, file);
         return file.getType();
       }
     } catch (IOException e) {
@@ -174,7 +175,8 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
 
   private BasePackage createPackage(BasePackage parentPackage, String simpleName) {
 
-    BasePackage pkg = new BasePackage(parentPackage, simpleName, null, () -> getSourcePackage(parentPackage, simpleName), true);
+    BasePackage pkg = new BasePackage(parentPackage, simpleName, null,
+        () -> getSourcePackage(parentPackage, simpleName), true);
     return pkg;
   }
 
@@ -222,16 +224,13 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
       return null;
     }
     String parentSimpleName = parent.getSimpleName();
-    BaseType declaringType;
     if ((parentSimpleName.length() > 0) && Character.isUpperCase(parentSimpleName.charAt(0))) {
-      declaringType = getTypeFromSource(parent.getParent(), parentSimpleName);
-    } else {
-      declaringType = getType(parent);
+      BaseType declaringType = getTypeFromSource(parent.getParent(), parentSimpleName);
+      if (declaringType != null) {
+        return (BaseType) declaringType.getNestedTypes().get(simpleName);
+      }
     }
-    if (declaringType == null) {
-      return null;
-    }
-    return (BaseType) declaringType.getNestedTypes().get(simpleName);
+    return null;
   }
 
   @Override
@@ -255,7 +254,7 @@ public class JavaSourceLoader extends BaseSourceLoaderImpl {
   }
 
   @Override
-  public void close() throws Exception {
+  public void close() {
 
     if (this.sourceCodeProvider != null) {
       this.sourceCodeProvider.close();

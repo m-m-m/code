@@ -185,6 +185,20 @@ public class BaseType extends BaseGenericType implements CodeType {
     return this.simpleName;
   }
 
+  /**
+   * @return the type name what is the {@link #getSimpleName() simple name} in case of a top-level type, and in case of
+   *         a nested type the {@link #getTypeName() type name} of the {@link #getDeclaringType() declaring type}
+   *         followed by a package separator and the {@link #getSimpleName() simple name}.
+   */
+  protected String getTypeName() {
+
+    String typeName = getSimpleName();
+    if (this.declaringType != null) {
+      typeName = this.declaringType.getTypeName() + getLanguage().getPackageSeparator() + typeName;
+    }
+    return typeName;
+  }
+
   @Override
   public void setSimpleName(String simpleName) {
 
@@ -207,10 +221,11 @@ public class BaseType extends BaseGenericType implements CodeType {
     }
     BasePackage pkg = getParentPackage();
     String result;
+    String typeName = getTypeName();
     if (pkg.isRoot()) {
-      result = getSimpleName();
+      result = typeName;
     } else {
-      result = pkg.getQualifiedName() + getLanguage().getPackageSeparator() + getSimpleName();
+      result = pkg.getQualifiedName() + getLanguage().getPackageSeparator() + typeName;
     }
     if (isImmutable()) {
       this.qualifiedName = result;
@@ -469,8 +484,8 @@ public class BaseType extends BaseGenericType implements CodeType {
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language)
-      throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent,
+      CodeLanguage language) throws IOException {
 
     if (defaultIndent == null) {
       writeReference(sink, true);
@@ -481,7 +496,8 @@ public class BaseType extends BaseGenericType implements CodeType {
     doWriteBody(sink, newline, defaultIndent, currentIndent, language);
   }
 
-  void doWriteBody(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
+  void doWriteBody(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language)
+      throws IOException {
 
     sink.append(" {");
     sink.append(newline);

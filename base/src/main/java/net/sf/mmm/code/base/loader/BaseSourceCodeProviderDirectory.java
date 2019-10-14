@@ -50,7 +50,7 @@ public class BaseSourceCodeProviderDirectory extends BaseSourceCodeProvider {
   }
 
   @Override
-  public void close() throws Exception {
+  public void close() {
 
     this.sourceDirectory = null;
   }

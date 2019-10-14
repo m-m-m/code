@@ -135,7 +135,7 @@ public abstract class AbstractBaseContext extends AbstractBaseProvider implement
   }
 
   @Override
-  public void close() throws Exception {
+  public void close() {
 
     this.source.close();
     this.source = null;

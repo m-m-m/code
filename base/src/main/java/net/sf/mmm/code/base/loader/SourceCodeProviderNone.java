@@ -44,7 +44,7 @@ public class SourceCodeProviderNone implements SourceCodeProvider {
   }
 
   @Override
-  public void close() throws Exception {
+  public void close() {
 
     // nothing to do
   }
