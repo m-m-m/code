@@ -1,10 +1,6 @@
-= Mature Modular Meta-framework (mmm)
+image:https://travis-ci.org/m-m-m/l10n.svg?branch=master["build-status",link="https://travis-ci.org/m-m-m/l10n"]
 
-image:https://raw.github.com/m-m-m/mmm/master/src/site/resources/images/logo.png[logo]
-
-*Welcome to the wonderful world of http://m-m-m.sourceforge.net/index.html[mmm]*
-
-== mmm-code
+= mmm-code
 
 image:https://img.shields.io/github/license/m-m-m/code.svg?label=License["Apache License, Version 2.0",link=https://github.com/m-m-m/code/blob/develop/LICENSE]
 image:https://img.shields.io/maven-central/v/net.sf.m-m-m/mmm-code-api.svg?label=Maven%20Central["Maven Central",link=https://search.maven.org/search?q=g:net.sf.m-m-m]
