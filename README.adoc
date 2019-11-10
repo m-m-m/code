@@ -1,4 +1,4 @@
-image:https://travis-ci.org/m-m-m/l10n.svg?branch=master["build-status",link="https://travis-ci.org/m-m-m/l10n"]
+image:https://raw.github.com/m-m-m/mmm/master/src/site/resources/images/logo.png[logo,link="https://m-m-m.github.io"]
 
 = mmm-code
 
