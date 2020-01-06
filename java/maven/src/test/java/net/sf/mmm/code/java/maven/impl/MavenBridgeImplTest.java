@@ -68,7 +68,8 @@ public class MavenBridgeImplTest extends Assertions implements MavenConstants {
     assertThat(model.getVersion()).matches(VERSION_PATTERN);
     String utilVersion = model.getProperties().getProperty("net.sf.mmm.util.version");
     verifyDependencies(model, DependencyHelper.create(groupId, "mmm-util-io", utilVersion),
-        DependencyHelper.create(groupId, "mmm-util-test", utilVersion, SCOPE_TEST), DependencyHelper.create("org.apache.maven", "maven-core", "3.5.0"));
+        DependencyHelper.create(groupId, "mmm-util-test", utilVersion, SCOPE_TEST),
+        DependencyHelper.create("org.apache.maven", "maven-core", "3.6.1"));
   }
 
   private void verifyDependencies(Model model, Dependency... dependencies) {
