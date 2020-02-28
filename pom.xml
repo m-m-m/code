@@ -20,7 +20,7 @@
   </modules>
 
   <properties>
-    <revision>1.0.0-beta3</revision>
+    <revision>1.0.0-beta5</revision>
     <changelist>-SNAPSHOT</changelist>
     <net.sf.mmm.util.version>7.5.1</net.sf.mmm.util.version>
     <java.version>1.8</java.version>
