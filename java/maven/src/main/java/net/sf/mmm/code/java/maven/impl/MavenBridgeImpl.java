@@ -41,7 +41,8 @@ public class MavenBridgeImpl implements MavenBridge, MavenConstants {
 
   private static final Logger LOG = LoggerFactory.getLogger(MavenBridgeImpl.class);
 
-  private static final Pattern PATTERN_PROPERTY_PARAMETER = Pattern.compile("-D([a-zA-Z0-9.-_]+)=\"?(([^ ]| (?!-D))*)\"?");
+  private static final Pattern PATTERN_PROPERTY_PARAMETER = Pattern
+      .compile("-D([a-zA-Z0-9.-_]+)=\"?(([^ ]| (?!-D))*)\"?");
 
   private static final MavenBridgeImpl INSTANCE = new MavenBridgeImpl();
 
@@ -178,13 +179,14 @@ public class MavenBridgeImpl implements MavenBridge, MavenConstants {
     try {
       Properties properties = System.getProperties();
       properties = resolveProperties(properties, pomFile.getAbsoluteFile().getParentFile());
-      ModelBuildingRequest buildingRequest = new DefaultModelBuildingRequest().setSystemProperties(properties).setPomFile(pomFile)
-          .setModelResolver(this.resolver);
+      ModelBuildingRequest buildingRequest = new DefaultModelBuildingRequest().setSystemProperties(properties)
+          .setPomFile(pomFile).setModelResolver(this.resolver);
       DefaultModelBuilder defaultModelBuilder = new DefaultModelBuilderFactory().newInstance();
       ModelBuildingResult buildingResult = defaultModelBuilder.build(buildingRequest);
       return buildingResult.getEffectiveModel();
     } catch (ModelBuildingException e) {
-      throw new IllegalStateException(e);
+      LOG.error("Failed to parse POM {}", pomFile, e);
+      return null;
     }
   }
 
