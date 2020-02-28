@@ -292,7 +292,7 @@ public class MavenDependencyCollector {
             File artifact = this.mavenBridge.findArtifact(dependency);
             boolean added = add(artifact, modelGav);
             if (!added) {
-              return;
+              continue;
             }
             File artifactPom = this.mavenBridge.findPom(dependency);
             dependencyModel = this.mavenBridge.readEffectiveModel(artifactPom);
