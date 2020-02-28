@@ -92,23 +92,27 @@ public class MavenDependencyCollector {
     this.altBuildDir = altBuildDir;
   }
 
-  private boolean add(File dependencyFile) {
+  private boolean add(File dependencyFile, String source) {
 
     if (!dependencyFile.exists()) {
       return false;
     }
     try {
-      return add(dependencyFile.toURI().toURL());
+      return add(dependencyFile.toURI().toURL(), source);
     } catch (MalformedURLException e) {
       throw new IllegalStateException("Failed to convert file to URL: " + dependencyFile, e);
     }
   }
 
-  private boolean add(URL dependencyUrl) {
+  private boolean add(URL dependencyUrl, String source) {
 
     boolean added = this.dependencySet.add(dependencyUrl);
     if (added) {
-      LOG.debug("Adding dependency " + dependencyUrl);
+      if (source == null) {
+        LOG.debug("Adding dependency {}", dependencyUrl);
+      } else {
+        LOG.debug("Adding dependency {} for {}", dependencyUrl, source);
+      }
       this.dependencyList.add(dependencyUrl);
     }
     return added;
@@ -168,7 +172,7 @@ public class MavenDependencyCollector {
     if (parent != null) {
       String parentGav = ModelHelper.getGav(parent);
       if (this.gav2ProjectMap.containsKey(parentGav)) {
-        LOG.debug("Already visited parent project {}", parentGav);
+        LOG.trace("Already visited parent project {}", parentGav);
       } else {
         String relativePath = parent.getRelativePath();
         Model parentModel = null;
@@ -208,7 +212,7 @@ public class MavenDependencyCollector {
     if (addDependencies) {
       LOG.debug("Collecting dependencies for {}", gav);
       addOutputDirectories(model);
-      collect(model, this.includeTestDependencies, 0);
+      collect(model, gav, this.includeTestDependencies, 0);
     }
   }
 
@@ -223,7 +227,7 @@ public class MavenDependencyCollector {
       collectWithReactor(model, true);
     } else {
       addOutputDirectories(model);
-      collect(model, this.includeTestDependencies, 0);
+      collect(model, ModelHelper.getGav(model), this.includeTestDependencies, 0);
     }
   }
 
@@ -246,14 +250,14 @@ public class MavenDependencyCollector {
       if (name.equals(MavenConstants.DEFAULT_BUILD_DIRECTORY)) {
         File altBuildDirectory = new File(projectDirectory, this.altBuildDir);
         File altOutputDirectory = new File(altBuildDirectory, defaultOutputFolder);
-        add(altOutputDirectory);
+        add(altOutputDirectory, null);
       } else if (name.equals(this.altBuildDir)) {
-        add(outputDirectory);
+        add(outputDirectory, null);
         buildDirectory = new File(projectDirectory, MavenConstants.DEFAULT_BUILD_DIRECTORY);
         outputDirectory = new File(buildDirectory, defaultOutputFolder);
       }
     }
-    add(outputDirectory);
+    add(outputDirectory, null);
   }
 
   /**
@@ -262,7 +266,7 @@ public class MavenDependencyCollector {
    * @param model {@link Model} parsed from the POM of a project.
    * @param recursiveness level of recursiveness. How deep we get into dependencies.
    */
-  private void collect(Model model, boolean includeTest, int recursiveness) {
+  private void collect(Model model, String modelGav, boolean includeTest, int recursiveness) {
 
     if (model == null) {
       return;
@@ -279,23 +283,23 @@ public class MavenDependencyCollector {
       boolean isTestDependency = MavenConstants.SCOPE_TEST.equals(dependency.getScope());
       if (includeTest || !isTestDependency) {
         if ((recursiveness == 0) || !dependency.isOptional()) {
-          Model artifactModel = null;
+          Model dependencyModel = null;
+          String dependencyGav = DependencyHelper.getGav(dependency);
           if (this.buildReactor) {
-            String gav = DependencyHelper.getGav(dependency);
-            artifactModel = this.gav2ProjectMap.get(gav);
+            dependencyModel = this.gav2ProjectMap.get(dependencyGav);
           }
-          if (artifactModel == null) {
+          if (dependencyModel == null) {
             File artifact = this.mavenBridge.findArtifact(dependency);
-            boolean added = add(artifact);
+            boolean added = add(artifact, modelGav);
             if (!added) {
               return;
             }
             File artifactPom = this.mavenBridge.findPom(dependency);
-            artifactModel = this.mavenBridge.readEffectiveModel(artifactPom);
+            dependencyModel = this.mavenBridge.readEffectiveModel(artifactPom);
           } else {
-            addOutputDirectories(artifactModel);
+            addOutputDirectories(dependencyModel);
           }
-          collect(artifactModel, isTestDependency, recursiveness);
+          collect(dependencyModel, dependencyGav, isTestDependency, recursiveness);
         }
       } else {
         LOG.debug("Omitting optional dependency " + dependency);
