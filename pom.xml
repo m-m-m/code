@@ -10,7 +10,7 @@
   </parent>
   <groupId>net.sf.m-m-m</groupId>
   <artifactId>mmm-code-parent</artifactId>
-  <version>dev-SNAPSHOT</version><!-- never released -->
+  <version>${revision}${changelist}</version>
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>
   <description>Library to parse, analyze, transform and generate code with reflective support for both byte-code and source-code.</description>

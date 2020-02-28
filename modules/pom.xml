@@ -5,7 +5,7 @@
   <parent>
     <groupId>net.sf.m-m-m</groupId>
     <artifactId>mmm-code-parent</artifactId>
-    <version>dev-SNAPSHOT</version>
+    <version>${revision}${changelist}</version>
   </parent>
   <artifactId>mmm-code-modules</artifactId>
   <packaging>pom</packaging>

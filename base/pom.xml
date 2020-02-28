@@ -5,11 +5,10 @@
   <parent>
     <groupId>net.sf.m-m-m</groupId>
     <artifactId>mmm-code-modules</artifactId>
-    <version>dev-SNAPSHOT</version>
+    <version>${revision}${changelist}</version>
     <relativePath>../modules/pom.xml</relativePath>
   </parent>
   <artifactId>mmm-code-base</artifactId>
-  <version>${revision}${changelist}</version>
   <packaging>jar</packaging>
   <name>${project.artifactId}</name>
   <description>Base implementations of mmm-code-api.</description>
