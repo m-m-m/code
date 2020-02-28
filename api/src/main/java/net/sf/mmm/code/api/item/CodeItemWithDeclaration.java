@@ -18,8 +18,6 @@ public interface CodeItemWithDeclaration extends CodeItem {
    * @param sink the {@link Appendable} where to {@link Appendable#append(CharSequence) append} the code from this
    *        {@link CodeItem}.
    * @param declaration {@code true} if used as a declaration, {@code false} otherwise (for usage as reference).
-   * @param qualified {@code true} for {@link CodeItemWithQualifiedFlag#isQualified() fully qualified} type names,
-   *        {@code false} otherwise.
    * @throws IOException if thrown by {@link Appendable}.
    */
   default void writeReference(Appendable sink, boolean declaration) throws IOException {

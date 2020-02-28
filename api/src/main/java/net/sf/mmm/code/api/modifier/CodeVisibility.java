@@ -64,9 +64,8 @@ public class CodeVisibility implements Comparable<CodeVisibility> {
 
   /**
    * @param visibility the {@link CodeVisibility} to compare to.
-   * @return {@code true} if this {@link CodeVisibility} is stronger or {@link #equals(Object) equal} to the
-   *         given {@code visibility}, {@code false} otherwise. E.g. {@value #PRIVATE} is stronger than
-   *         {@value #PUBLIC}.
+   * @return {@code true} if this {@link CodeVisibility} is stronger or {@link #equals(Object) equal} to the given
+   *         {@code visibility}, {@code false} otherwise. E.g. {@link #PRIVATE} is stronger than {@link #PUBLIC}.
    */
   public boolean isStrongerOrEqualTo(CodeVisibility visibility) {
 
@@ -78,9 +77,8 @@ public class CodeVisibility implements Comparable<CodeVisibility> {
 
   /**
    * @param visibility the {@link CodeVisibility} to compare to.
-   * @return {@code true} if this {@link CodeVisibility} is weaker or {@link #equals(Object) equal} to the
-   *         given {@code visibility}, {@code false} otherwise. E.g. {@value #PUBLIC} is weaker than
-   *         {@value #PRIVATE}.
+   * @return {@code true} if this {@link CodeVisibility} is weaker or {@link #equals(Object) equal} to the given
+   *         {@code visibility}, {@code false} otherwise. E.g. {@link #PUBLIC} is weaker than {@link #PRIVATE}.
    */
   public boolean isWeakerOrEqualTo(CodeVisibility visibility) {
 

@@ -7,10 +7,9 @@ import net.sf.mmm.code.api.annotation.CodeAnnotations;
 import net.sf.mmm.code.api.element.CodeElement;
 
 /**
- * Implementation of {@link CodeMergeStrategyDecider} that will always decide to
- * {@link CodeMergeStrategy#isMerge() merge} but {@link CodeMergeStrategy#MERGE_OVERRIDE_BODY overrides} the
- * body if a {@link javax.annotation.Generated} annotation is present and otherwise
- * {@link CodeMergeStrategy#MERGE_KEEP_BODY keeps} the original body.
+ * Implementation of {@link CodeMergeStrategyDecider} that will always decide to {@link CodeMergeStrategy#isMerge()
+ * merge} but {@link CodeMergeStrategy#MERGE_OVERRIDE_BODY overrides} the body if a {@literal @Generated} annotation is
+ * present and otherwise {@link CodeMergeStrategy#MERGE_KEEP_BODY keeps} the original body.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
@@ -29,7 +28,8 @@ public class CodeMergeStrategyDeciderDefault implements CodeMergeStrategyDecider
   }
 
   @Override
-  public CodeMergeStrategy decide(CodeAdvancedMergeableItem<?> original, CodeAdvancedMergeableItem<?> other, CodeMergeStrategy parentStrategy) {
+  public CodeMergeStrategy decide(CodeAdvancedMergeableItem<?> original, CodeAdvancedMergeableItem<?> other,
+      CodeMergeStrategy parentStrategy) {
 
     if (original instanceof CodeElement) {
       CodeAnnotations annotations = ((CodeElement) original).getAnnotations();

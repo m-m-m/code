@@ -3,7 +3,6 @@ package net.sf.mmm.code.api;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import net.sf.mmm.code.api.copy.CodeCopyMapper;
 import net.sf.mmm.code.api.expression.CodeExpression;
 import net.sf.mmm.code.api.member.CodeField;
 import net.sf.mmm.code.api.member.CodeFields;
@@ -31,7 +30,6 @@ public interface CodeFactory {
    * @param parent the {@link CodeField#getParent() parent}.
    * @param name the {@link CodeField#getName() name}. May be {@code null}.
    * @param reflectiveObject the {@link CodeField#getReflectiveObject() reflective object}. May be {@code null}.
-   * @param copyMapper the {@link CodeCopyMapper}
    * @return a new {@link CodeField}.
    */
   CodeField createField(CodeFields parent, String name, Field reflectiveObject);
@@ -53,7 +51,8 @@ public interface CodeFactory {
    * @param doc the optional documentation of the property.
    * @return the new getter {@link CodeMethod method}.
    */
-  CodeMethod createGetter(CodeType type, String propertyName, CodeGenericType propertyType, boolean implement, String... doc);
+  CodeMethod createGetter(CodeType type, String propertyName, CodeGenericType propertyType, boolean implement,
+      String... doc);
 
   /**
    * @param type the {@link CodeType} in which the setter shall be created.
@@ -64,6 +63,7 @@ public interface CodeFactory {
    * @param doc the optional documentation of the property.
    * @return the new setter {@link CodeMethod method}.
    */
-  CodeMethod createSetter(CodeType type, String propertyName, CodeGenericType propertyType, boolean implement, String... doc);
+  CodeMethod createSetter(CodeType type, String propertyName, CodeGenericType propertyType, boolean implement,
+      String... doc);
 
 }

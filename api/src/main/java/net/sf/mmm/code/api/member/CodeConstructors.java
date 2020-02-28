@@ -19,7 +19,6 @@ public interface CodeConstructors extends CodeOperations<CodeConstructor>, CodeN
     CodeAdvancedMergeableItem<CodeConstructors>, CodeNodeItemCopyable<CodeType, CodeConstructors> {
 
   /**
-   * @param name the {@link CodeOperation#getName() name} of the requested {@link CodeOperation}.
    * @param parameterTypes the {@link CodeGenericType}s of the {@link CodeOperation#getParameters() parameters}.
    * @return the requested {@link CodeOperation} or {@code null} if not found.
    */

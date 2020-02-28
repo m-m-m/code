@@ -10,8 +10,10 @@ import net.sf.mmm.code.api.statement.CodeReturnStatement;
 
 /**
  * {@link CodeExpression} representing a lambda function.<br>
- * Syntax: <pre>
- * («{@link #getVariables() variable-1}, ..., {@link #getVariables() variable-N}») -> {«{@link #getBody() body}»}
+ * Syntax:
+ * 
+ * <pre>
+ * («{@link #getVariables() variable-1}, ..., {@link #getVariables() variable-N}») -&gt; {«{@link #getBody() body}»}
  * </pre>
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
@@ -20,8 +22,8 @@ import net.sf.mmm.code.api.statement.CodeReturnStatement;
 public interface CodeLambdaExpression extends CodeExpression, CodeFunction {
 
   /**
-   * @return the {@link List} of {@link CodeVariable}s taken as input for the lambda. May be
-   *         {@link List#isEmpty() empty} (for burger arrow function) but never {@code null}.
+   * @return the {@link List} of {@link CodeVariable}s taken as input for the lambda. May be {@link List#isEmpty()
+   *         empty} (for burger arrow function) but never {@code null}.
    */
   List<? extends CodeVariable> getVariables();
 

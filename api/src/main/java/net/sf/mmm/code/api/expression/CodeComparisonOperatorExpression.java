@@ -9,10 +9,16 @@ import net.sf.mmm.code.api.operator.CodeComparisonOperator;
 
 /**
  * {@link CodeOperatorExpression} for a {@link CodeComparisonOperator} expression. <br>
- * Syntax: <pre>
+ * Syntax:
+ * 
+ * <pre>
  * «{@link #getLeftArg() left-arg}» «{@link #getOperator() operator}» «{@link #getRightArg() right-arg}»
- * </pre> Example: <pre>
- * 5 > 3
+ * </pre>
+ * 
+ * Example:
+ * 
+ * <pre>
+ * 5 &gt; 3
  * </pre>
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)

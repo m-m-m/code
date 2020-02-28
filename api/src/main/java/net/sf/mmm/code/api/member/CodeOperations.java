@@ -13,8 +13,8 @@ public abstract interface CodeOperations<O extends CodeOperation> extends CodeMe
 
   /**
    * @param operation the {@link CodeOperation} copy to look for.
-   * @return the {@link CodeOperation} from {@link #getDeclared()} that {@link CodeOperations#equals(Object)
-   *         matches} the given operation;
+   * @return the {@link CodeOperation} from {@link #getDeclared()} that {@link Object#equals(Object) matches} the given
+   *         operation.
    */
   O get(O operation);
 
