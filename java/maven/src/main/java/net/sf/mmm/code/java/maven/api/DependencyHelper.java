@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Objects;
 
 import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Parent;
 
 /**
  * Simple helper to deal with maven {@link Dependency} objects.
@@ -118,6 +119,15 @@ public class DependencyHelper implements MavenConstants {
   }
 
   /**
+   * @param parent the {@link Parent}.
+   * @return the new {@link Dependency} pointing to the specified POM.
+   */
+  public static Dependency create(Parent parent) {
+
+    return create(parent.getGroupId(), parent.getArtifactId(), parent.getVersion(), SCOPE_COMPILE, TYPE_POM);
+  }
+
+  /**
    * @param groupId - {@link Dependency#getGroupId()}.
    * @param artifactId - {@link Dependency#getArtifactId()}.
    * @param version - - {@link Dependency#getVersion()}.
@@ -162,7 +172,8 @@ public class DependencyHelper implements MavenConstants {
    * @param classifier - {@link Dependency#getClassifier()}.
    * @return the new {@link Dependency}.
    */
-  public static Dependency create(String groupId, String artifactId, String version, String scope, String type, String classifier) {
+  public static Dependency create(String groupId, String artifactId, String version, String scope, String type,
+      String classifier) {
 
     Dependency dependency = new Dependency();
     dependency.setGroupId(groupId);

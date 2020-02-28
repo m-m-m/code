@@ -73,7 +73,8 @@ public class MavenDependencyCollector {
    *        resolve dependencies to sibling modules (slower but more accurate), {@code false} otherwise.
    * @param altBuildDir the alternative build directory (e.g. "eclipse-target").
    */
-  public MavenDependencyCollector(MavenBridge mavenBridge, boolean includeTestDependencies, boolean buildReactor, String altBuildDir) {
+  public MavenDependencyCollector(MavenBridge mavenBridge, boolean includeTestDependencies, boolean buildReactor,
+      String altBuildDir) {
 
     super();
     this.mavenBridge = mavenBridge;
@@ -169,8 +170,24 @@ public class MavenDependencyCollector {
       if (this.gav2ProjectMap.containsKey(parentGav)) {
         LOG.debug("Already visited parent project {}", parentGav);
       } else {
-        File parentPom = normalize(new File(modelBasedir, parent.getRelativePath()));
-        Model parentModel = parseModel(parentPom);
+        String relativePath = parent.getRelativePath();
+        Model parentModel = null;
+        if (!relativePath.isEmpty()) {
+          File parentPom = normalize(new File(modelBasedir, relativePath));
+          parentModel = parseModel(parentPom);
+          if (parentModel != null) {
+            String parentModelGav = ModelHelper.getGav(parentModel);
+            if (!parentGav.equals(parentModelGav)) {
+              LOG.warn("Project {} has parent {} with relativePath {} but that points to {}", gav, parentGav,
+                  relativePath, parentModelGav);
+              parentModel = null;
+            }
+          }
+        }
+        if (parentModel == null) {
+          File parentPom = normalize(this.mavenBridge.findPom(DependencyHelper.create(parent)));
+          parentModel = parseModel(parentPom);
+        }
         collectWithReactor(parentModel, addDependencies);
       }
     }
@@ -189,6 +206,7 @@ public class MavenDependencyCollector {
       }
     }
     if (addDependencies) {
+      LOG.debug("Collecting dependencies for {}", gav);
       addOutputDirectories(model);
       collect(model, this.includeTestDependencies, 0);
     }
@@ -256,6 +274,7 @@ public class MavenDependencyCollector {
     recursiveness++;
     List<Dependency> dependencies = model.getDependencies();
 
+    LOG.trace("Start scanning dependencies of {}", model);
     for (Dependency dependency : dependencies) {
       boolean isTestDependency = MavenConstants.SCOPE_TEST.equals(dependency.getScope());
       if (includeTest || !isTestDependency) {
@@ -282,6 +301,7 @@ public class MavenDependencyCollector {
         LOG.debug("Omitting optional dependency " + dependency);
       }
     }
+    LOG.trace("Done scanning dependencies of {}", model);
   }
 
   static File normalize(File file) {
