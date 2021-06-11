@@ -95,6 +95,7 @@ public class MavenDependencyCollector {
   private boolean add(File dependencyFile, String source) {
 
     if (!dependencyFile.exists()) {
+      LOG.debug("Omitting dependency due to missing file {} for source {}", dependencyFile, source);
       return false;
     }
     try {
@@ -114,6 +115,9 @@ public class MavenDependencyCollector {
         LOG.debug("Adding dependency {} for {}", dependencyUrl, source);
       }
       this.dependencyList.add(dependencyUrl);
+    } else {
+      LOG.trace("Omitting duplicate dependency {} that was already been collected for source {}.", dependencyUrl,
+          source);
     }
     return added;
   }
