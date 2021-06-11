@@ -7,10 +7,6 @@ script: mvn install
 
 sudo: false
 
-cache:
-  directories:
-    - $HOME/.m2
-
 branches:
   except:
     - gh-pages

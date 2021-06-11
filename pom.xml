@@ -5,12 +5,12 @@
   <parent>
     <groupId>io.github.m-m-m</groupId>
     <artifactId>mmm</artifactId>
-    <version>8</version>
+    <version>12</version>
     <relativePath>../parent/pom.xml</relativePath>
   </parent>
   <groupId>net.sf.m-m-m</groupId>
   <artifactId>mmm-code-parent</artifactId>
-  <version>${revision}${changelist}</version>
+  <version>${revision}</version>
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>
   <description>Library to parse, analyze, transform and generate code with reflective support for both byte-code and source-code.</description>
