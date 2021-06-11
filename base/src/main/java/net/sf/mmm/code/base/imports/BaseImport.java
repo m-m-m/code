@@ -122,7 +122,7 @@ public class BaseImport extends BaseItem implements CodeImport, Comparable<BaseI
   @Override
   protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
 
-    sink.append(currentIndent); // indendation pointless...
+    sink.append(currentIndent); // indentation pointless...
     sink.append("import ");
     if (this.staticFlag) {
       sink.append("static ");
