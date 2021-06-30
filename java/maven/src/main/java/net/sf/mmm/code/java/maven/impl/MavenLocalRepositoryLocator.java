@@ -41,13 +41,6 @@ public class MavenLocalRepositoryLocator implements MavenConstants {
    */
   public static File getLocalRepository(MavenBridgeImpl pomReader) {
 
-    String localRepository = System.getenv("M2_REPO");
-    if (localRepository != null) {
-      File localRepo = new File(localRepository);
-      if (localRepo.isDirectory()) {
-        return localRepo;
-      }
-    }
     CodeSource codeSource = Model.class.getProtectionDomain().getCodeSource();
     if (codeSource != null) {
       URL location = codeSource.getLocation();
