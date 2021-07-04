@@ -1,4 +1,8 @@
 .*
+!.github
+!.gitignore
+!.mvn
+!.travis.yml
 *.bak
 *.log
 *.diff
@@ -6,7 +10,4 @@
 *.iml
 target
 eclipse-target
-maven-archiver
-maven-status
-gwt-unitCache
 war
