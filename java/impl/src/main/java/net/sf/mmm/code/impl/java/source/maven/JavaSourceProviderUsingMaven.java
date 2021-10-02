@@ -72,7 +72,8 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
     Objects.requireNonNull(source, "source");
     File location = BaseSourceHelper.asFile(source.getLocation());
     Supplier<Model> supplier = createModelSupplier(location);
-    SourceCodeProvider sourceCodeProvider = new SourceCodeProviderProxy(() -> createSourceCodeProvider(location, supplier));
+    SourceCodeProvider sourceCodeProvider = new SourceCodeProviderProxy(
+        () -> createSourceCodeProvider(location, supplier));
     BaseSourceLoader loader = new JavaSourceLoader(sourceCodeProvider);
     return new JavaSourceUsingMaven(this, source, supplier, loader);
   }
@@ -102,13 +103,15 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
       location = sourceCodeLocation;
     }
     Supplier<Model> modelSupplier = createModelSupplier(location);
-    return new JavaSourceUsingMaven(this, byteCodeLocation, sourceCodeLocation, modelSupplier, null, createLoader(sourceCodeLocation));
+    return new JavaSourceUsingMaven(this, byteCodeLocation, sourceCodeLocation, modelSupplier, null,
+        createLoader(sourceCodeLocation));
   }
 
   @SuppressWarnings("deprecation")
   private Supplier<Model> createModelSupplier(File location) {
 
-    return new net.sf.mmm.code.impl.java.supplier.SupplierAdapter<>(() -> parseModel(location));
+    return new net.sf.mmm.code.impl.java.supplier.SupplierAdapter<>(
+        () -> this.mavenBridge.readEffectiveModelFromLocationWithFallback(location));
   }
 
   private static BaseSourceLoader createLoader(File sourceCodeLocation) {
@@ -122,15 +125,6 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
       sourceCodeProvider = new BaseSourceCodeProviderArchive(sourceCodeLocation);
     }
     return new JavaSourceLoader(sourceCodeProvider);
-  }
-
-  private Model parseModel(File location) {
-
-    File pomFile = this.mavenBridge.findPom(location);
-    if ((pomFile == null) || !pomFile.isFile()) {
-      return null;
-    }
-    return this.mavenBridge.readEffectiveModel(pomFile);
   }
 
   BaseSource createSource(Dependency dependency) {
@@ -155,14 +149,17 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
       URL reflectiveObjectURL = byteCodeArtifact.toURI().toURL();
       CodeSource dependencyCodeSource = new CodeSource(reflectiveObjectURL, (Certificate[]) null);
 
-      return new JavaSourceUsingMaven(this, dependencyCodeSource, byteCodeArtifact, sourceCodeArtifact, () -> parseModel(byteCodeArtifact),
-          dependency.getScope(), loader);
+      return new JavaSourceUsingMaven(this, dependencyCodeSource, byteCodeArtifact, sourceCodeArtifact,
+          () -> this.mavenBridge.readEffectiveModelFromLocationWithFallback(byteCodeArtifact), dependency.getScope(),
+          loader);
 
     } catch (MalformedURLException e) {
       LOG.error("Malformed URL of the byte code artifact");
     }
 
-    return new JavaSourceUsingMaven(this, byteCodeArtifact, sourceCodeArtifact, () -> parseModel(byteCodeArtifact), dependency.getScope(), loader);
+    return new JavaSourceUsingMaven(this, byteCodeArtifact, sourceCodeArtifact,
+        () -> this.mavenBridge.readEffectiveModelFromLocationWithFallback(byteCodeArtifact), dependency.getScope(),
+        loader);
   }
 
   /**
@@ -173,7 +170,7 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
    */
   private JavaSourceUsingMaven createFromLocalMavenProject(JavaContext parentContext, File location) {
 
-    final Model model = parseModel(location);
+    final Model model = this.mavenBridge.readEffectiveModelFromLocation(location, false);
 
     if (model == null) {
       throw new IllegalArgumentException("Could not find pom.xml for basedir: " + location);
@@ -181,13 +178,13 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
     Supplier<Model> modelSupplier = () -> model;
     File byteCodeLocation = ModelHelper.getOutputDirectory(model);
     File sourceCodeLocation = ModelHelper.getSourceDirectory(model);
-    JavaSourceUsingMaven compileDependency = new JavaSourceUsingMaven(this, byteCodeLocation, sourceCodeLocation, modelSupplier, SCOPE_COMPILE,
-        createLoader(sourceCodeLocation));
+    JavaSourceUsingMaven compileDependency = new JavaSourceUsingMaven(this, byteCodeLocation, sourceCodeLocation,
+        modelSupplier, SCOPE_COMPILE, createLoader(sourceCodeLocation));
     File testByteCodeLocation = ModelHelper.getTestOutputDirectory(model);
     File testSourceCodeLocation = ModelHelper.getTestSourceDirectory(model);
     BaseSourceLoader testLoader = createLoader(testSourceCodeLocation);
-    JavaSourceUsingMaven testDependency = new JavaSourceUsingMaven(this, compileDependency, testByteCodeLocation, testSourceCodeLocation, modelSupplier,
-        testLoader);
+    JavaSourceUsingMaven testDependency = new JavaSourceUsingMaven(this, compileDependency, testByteCodeLocation,
+        testSourceCodeLocation, modelSupplier, testLoader);
     return testDependency;
   }
 
@@ -236,7 +233,8 @@ public class JavaSourceProviderUsingMaven extends BaseSourceProviderImpl impleme
     } else {
       provider = new JavaSourceProviderUsingMaven(dependencyCollector.mavenBridge);
     }
-    JavaSourceUsingMaven source = provider.createFromLocalMavenProject(JavaRootContext.get(), MavenDependencyCollector.normalize(location));
+    JavaSourceUsingMaven source = provider.createFromLocalMavenProject(JavaRootContext.get(),
+        MavenDependencyCollector.normalize(location));
 
     ClassLoader classLoader;
     if (dependencyCollector == null) {

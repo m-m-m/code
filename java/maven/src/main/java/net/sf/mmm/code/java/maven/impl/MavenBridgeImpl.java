@@ -185,8 +185,29 @@ public class MavenBridgeImpl implements MavenBridge, MavenConstants {
       ModelBuildingResult buildingResult = defaultModelBuilder.build(buildingRequest);
       return buildingResult.getEffectiveModel();
     } catch (ModelBuildingException e) {
-      LOG.error("Failed to parse POM {}", pomFile, e);
+      throw new IllegalStateException("Failed to read effective model for " + pomFile
+          + ". Try to run 'mvn help:effective-pom' in that folder manually. If that fails, fix your pom.xml. Otherwise report a bug at https://github.com/m-m-m/code/issues/new/choose",
+          e);
+    }
+  }
+
+  @Override
+  public Model readEffectiveModelFromLocation(File location, boolean fallback) {
+
+    File pomFile = findPom(location);
+    if ((pomFile == null) || !pomFile.isFile()) {
       return null;
+    }
+    try {
+      return readEffectiveModel(pomFile);
+    } catch (Throwable e) {
+      if (fallback) {
+        LOG.warn("Failed to resolve effective POM for {}. Trying to continue without resolving effective POM...",
+            location, e);
+        return readModel(pomFile);
+      } else {
+        throw e;
+      }
     }
   }
 
