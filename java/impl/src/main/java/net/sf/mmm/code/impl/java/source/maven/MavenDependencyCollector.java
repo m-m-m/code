@@ -299,14 +299,14 @@ public class MavenDependencyCollector {
               continue;
             }
             File artifactPom = this.mavenBridge.findPom(dependency);
-            dependencyModel = this.mavenBridge.readEffectiveModel(artifactPom);
+            dependencyModel = this.mavenBridge.readEffectiveModelFromLocationWithFallback(artifactPom);
           } else {
             addOutputDirectories(dependencyModel);
           }
           collect(dependencyModel, dependencyGav, isTestDependency, recursiveness);
         }
       } else {
-        LOG.debug("Omitting optional dependency " + dependency);
+        LOG.debug("Omitting optional dependency {}", dependency);
       }
     }
     LOG.trace("Done scanning dependencies of {}", model);

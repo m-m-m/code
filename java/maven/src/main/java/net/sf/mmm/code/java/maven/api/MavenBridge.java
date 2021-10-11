@@ -16,8 +16,8 @@ import org.apache.maven.model.Model;
 public interface MavenBridge {
 
   /**
-   * @param source the {@link File} pointing to a code source of any kind. May be a JAR from the local
-   *        repository, a source folder of a maven project, or any other kind of source.
+   * @param source the {@link File} pointing to a code source of any kind. May be a JAR from the local repository, a
+   *        source folder of a maven project, or any other kind of source.
    * @return the corresponding {@code pom.xml} file or {@code null} if not found.
    */
   File findPom(File source);
@@ -35,10 +35,9 @@ public interface MavenBridge {
   File findArtifact(Dependency dependency);
 
   /**
-   * @param artifact the {@link File} (potentially) pointing to an artifact (e.g. JAR) in the local
-   *        repository.
-   * @return the corresponding sources archive or {@code null} if the given {@link File} was not pointing to a
-   *         maven artifact.
+   * @param artifact the {@link File} (potentially) pointing to an artifact (e.g. JAR) in the local repository.
+   * @return the corresponding sources archive or {@code null} if the given {@link File} was not pointing to a maven
+   *         artifact.
    */
   File findArtifactSources(File artifact);
 
@@ -55,5 +54,25 @@ public interface MavenBridge {
    * @see #readModel(File)
    */
   Model readEffectiveModel(File pomFile);
+
+  /**
+   * @param location the location where the module or POM of the project should be found.
+   * @param fallback - {@code true} to use {@link #readModel(File) raw model} as fallback in case
+   *        {@link #readEffectiveModel(File) effective model} can not be computed, {@code false} otherwise (fast-fail).
+   * @return the {@link #readEffectiveModel(File) effective model} or if {@code fallback} is {@code true} and the
+   *         {@link #readEffectiveModel(File) effective model} failed to be computed, the {@link #readModel(File) raw
+   *         model}.
+   */
+  Model readEffectiveModelFromLocation(File location, boolean fallback);
+
+  /**
+   * @param location the location where the module or POM of the project should be found.
+   * @return the {@link #readEffectiveModel(File) effective model} or if the {@link #readEffectiveModel(File) effective
+   *         model} failed to be computed, the {@link #readModel(File) raw model}.
+   */
+  default Model readEffectiveModelFromLocationWithFallback(File location) {
+
+    return readEffectiveModelFromLocation(location, true);
+  }
 
 }
