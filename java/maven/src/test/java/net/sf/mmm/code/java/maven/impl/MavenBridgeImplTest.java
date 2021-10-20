@@ -24,6 +24,11 @@ public class MavenBridgeImplTest extends Assertions implements MavenConstants {
 
   private static final File POM_XML = new File(MavenConstants.POM_XML);
 
+  /**
+   * Root Path where to test data is stored
+   */
+  private static final File rootTestPath = new File("src/test/resources/testdata/");
+
   private static final Pattern VERSION_PATTERN = Pattern.compile("[0-9]+(\\.[0-9]+)*(-beta[0-9]+)?(-SNAPSHOT)?");
 
   /**
@@ -46,6 +51,24 @@ public class MavenBridgeImplTest extends Assertions implements MavenConstants {
     assertThat(model.getVersion()).isEqualTo("${revision}");
     verifyDependencies(model, DependencyHelper.create(PROJECT_GROUP_ID, "mmm-util-io", null),
         DependencyHelper.create("org.apache.maven", "maven-core", "${maven.version}"));
+  }
+
+  /**
+   * Testing if a valid child pom artifact dependency version can be resolved from its parent using dependencyManagement
+   * (mvn help:effective-pom still works)
+   */
+  @Test
+  public void testResolveDependencyManagementVersionFromParent() {
+
+    // given
+    File mavenProjectDirectory = new File(rootTestPath, "localmavenproject/maven.project/core"); // test Maven project
+
+    // when
+    MavenBridgeImpl reader = new MavenBridgeImpl();
+    Model model = reader.readEffectiveModel(new File(mavenProjectDirectory, "pom.xml"));
+
+    // then
+    assertThat(model).isNotNull();
   }
 
   /**
