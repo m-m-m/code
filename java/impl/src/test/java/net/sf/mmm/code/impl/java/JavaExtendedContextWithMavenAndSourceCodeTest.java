@@ -33,9 +33,9 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
   private static final Pattern VERSION_PATTERN = Pattern.compile("[0-9]+(\\.[0-9]+)*(-beta[0-9]+)?(-SNAPSHOT)?");
 
   /**
-   * Root Path where to test data is stored
+   * Root Path where test data is stored
    */
-  private static final File rootTestPath = new File("src/test/resources/testdata/");
+  private static final File ROOT_TEST_PATH = new File("src/test/resources/testdata/");
 
   /**
    * Get context from current project
@@ -99,7 +99,7 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
 
     // given
     String entityClass = "com.maven.project.sampledatamanagement.dataaccess.api.SampleDataEntity";
-    File mavenProjectDirectory = new File(rootTestPath, "localmavenproject/maven.project/core"); // test Maven project
+    File mavenProjectDirectory = new File(ROOT_TEST_PATH, "localmavenproject/maven.project/core"); // test Maven project
     MavenDependencyCollector dependencyCollector = new MavenDependencyCollector(true, true, "eclipse-target");
 
     // when

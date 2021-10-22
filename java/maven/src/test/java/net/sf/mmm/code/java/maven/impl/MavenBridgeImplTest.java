@@ -25,9 +25,9 @@ public class MavenBridgeImplTest extends Assertions implements MavenConstants {
   private static final File POM_XML = new File(MavenConstants.POM_XML);
 
   /**
-   * Root Path where to test data is stored
+   * Root Path where test data is stored
    */
-  private static final File rootTestPath = new File("src/test/resources/testdata/");
+  private static final File ROOT_TEST_PATH = new File("src/test/resources/testdata/");
 
   private static final Pattern VERSION_PATTERN = Pattern.compile("[0-9]+(\\.[0-9]+)*(-beta[0-9]+)?(-SNAPSHOT)?");
 
@@ -61,7 +61,7 @@ public class MavenBridgeImplTest extends Assertions implements MavenConstants {
   public void testResolveDependencyManagementVersionFromParent() {
 
     // given
-    File mavenProjectDirectory = new File(rootTestPath, "localmavenproject/maven.project/core"); // test Maven project
+    File mavenProjectDirectory = new File(ROOT_TEST_PATH, "localmavenproject/maven.project/core"); // test Maven project
 
     // when
     MavenBridgeImpl reader = new MavenBridgeImpl();
