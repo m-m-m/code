@@ -15,7 +15,7 @@ import net.sf.mmm.code.java.maven.api.MavenConstants;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test of {@link MavenBridgeImpl}.
