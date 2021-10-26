@@ -253,8 +253,8 @@ public class CodeCopyTest extends BaseContextTest {
     verifyCopyWithResolve(context, "net.sf.mmm.example", "Component", "", "MyObject", longType);
   }
 
-  private void verifyCopyWithResolve(CodeContext context, String rootPackage, String component, String detail, String entityName,
-      CodeGenericType longType) {
+  private void verifyCopyWithResolve(CodeContext context, String rootPackage, String component, String detail,
+      String entityName, CodeGenericType longType) {
 
     CodePackage pkgCom = context.getSource().getRootPackage().getChildren().createPackage("com");
     CodePackage pkgInternal = pkgCom.getChildren().getOrCreatePackage("company.tools.internal");
@@ -311,7 +311,8 @@ public class CodeCopyTest extends BaseContextTest {
       detailPkg = "." + detailPkg;
     }
     pkgUcPath = pkgUcPath + detailPkg;
-    CodeFile pkgComponentCopy = pkgRootCopy.getChildren().getFile(context.parseName(pkgUcPath + ".UcFind" + entityName));
+    CodeFile pkgComponentCopy = pkgRootCopy.getChildren()
+        .getFile(context.parseName(pkgUcPath + ".UcFind" + entityName));
     assertThat(pkgComponentCopy.getSourceCode()).isEqualTo("package " + rootPackage + "." + pkgUcPath + ";\n" + //
         "\n" + //
         "import " + rootPackage + "." + componentPkg + ".common.api" + detailPkg + ".to." + entityName + "Eto;\n" + //

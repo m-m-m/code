@@ -111,9 +111,11 @@ public class BaseTypeTest extends BaseContextTest {
     assertThat(classNested21.getSimpleName()).isEqualTo(simpleNameNested21);
     assertThat(annotationNested211.getSimpleName()).isEqualTo(simpleNameNested211);
     assertThat(enumNested212.getSimpleName()).isEqualTo(simpleNameNested212);
-    assertThat((List<BaseType>) classTop.getNestedTypes().getDeclared()).containsExactly(classStaticNested1, interfacetypeNested2);
+    assertThat((List<BaseType>) classTop.getNestedTypes().getDeclared()).containsExactly(classStaticNested1,
+        interfacetypeNested2);
     assertThat((List<BaseType>) interfacetypeNested2.getNestedTypes().getDeclared()).containsExactly(classNested21);
-    assertThat((List<BaseType>) classNested21.getNestedTypes().getDeclared()).containsExactly(annotationNested211, enumNested212);
+    assertThat((List<BaseType>) classNested21.getNestedTypes().getDeclared()).containsExactly(annotationNested211,
+        enumNested212);
     assertThat(classTop.getFile().toString()).isEqualTo("ClassToplevel<T>");
     assertThat(classTop.getFile().getSourceCode()).isEqualTo("package mydomain;\n" + //
         "\n" + //
@@ -193,8 +195,8 @@ public class BaseTypeTest extends BaseContextTest {
     class2Foo.getSuperTypes().add(interface4Foo);
 
     // then
-    assertThat(getAllSuperTypesAsList(class2Foo)).containsExactly(class1Other, interface1Other, interface2Bar, interface4Foo,
-        interface3Some);
+    assertThat(getAllSuperTypesAsList(class2Foo)).containsExactly(class1Other, interface1Other, interface2Bar,
+        interface4Foo, interface3Some);
   }
 
   private List<CodeGenericType> getAllSuperTypesAsList(BaseType class2Foo) {

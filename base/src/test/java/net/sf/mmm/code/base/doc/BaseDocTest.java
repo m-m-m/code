@@ -41,9 +41,10 @@ public class BaseDocTest extends BaseContextTest {
     doc.getLines().add("Also lists may occur: <ul><li><strong>item1</strong></li><li>item2</li></ul>");
 
     // then
-    assertThat(doc.getFormatted(CodeDocFormat.RAW)).isEqualTo("{@linkplain Foo} references {@link Bar#method()} and {@link Bar#method() link-title}.\n" + //
-        "JavaDoc can contain markup like {@code code}, <em>italic</em>, <b>bold</b>, etc.\n" + //
-        "Also lists may occur: <ul><li><strong>item1</strong></li><li>item2</li></ul>");
+    assertThat(doc.getFormatted(CodeDocFormat.RAW))
+        .isEqualTo("{@linkplain Foo} references {@link Bar#method()} and {@link Bar#method() link-title}.\n" + //
+            "JavaDoc can contain markup like {@code code}, <em>italic</em>, <b>bold</b>, etc.\n" + //
+            "Also lists may occur: <ul><li><strong>item1</strong></li><li>item2</li></ul>");
     assertThat(doc.getFormatted(CodeDocFormat.PLAIN_TEXT)).isEqualTo("Foo references Bar.method() and link-title.\n" + //
         "JavaDoc can contain markup like code, italic, bold, etc.\n" + //
         "Also lists may occur: \n" + //
@@ -54,8 +55,9 @@ public class BaseDocTest extends BaseContextTest {
             + //
             "JavaDoc can contain markup like <code>code</code>, <em>italic</em>, <b>bold</b>, etc.\n" + //
             "Also lists may occur: <ul><li><strong>item1</strong></li><li>item2</li></ul>");
-    assertThat(doc.getFormatted(CodeDocFormat.ASCII_DOC))
-        .isEqualTo("link:./Foo.html[Foo] references `link:../pkg2/Bar.html#method--[Bar.method()]` and `link:../pkg2/Bar.html#method--[link-title]`.\n" + //
+    assertThat(doc.getFormatted(CodeDocFormat.ASCII_DOC)).isEqualTo(
+        "link:./Foo.html[Foo] references `link:../pkg2/Bar.html#method--[Bar.method()]` and `link:../pkg2/Bar.html#method--[link-title]`.\n"
+            + //
             "JavaDoc can contain markup like `code`, _italic_, *bold*, etc.\n" + //
             "Also lists may occur: \n" + //
             "\n" + //
