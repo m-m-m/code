@@ -5,7 +5,7 @@ package net.sf.mmm.code.java.maven.impl;
 import java.io.File;
 
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test of {@link MavenLocalRepositoryLocator}.

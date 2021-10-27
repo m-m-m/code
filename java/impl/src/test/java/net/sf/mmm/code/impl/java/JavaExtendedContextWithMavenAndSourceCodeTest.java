@@ -20,7 +20,7 @@ import net.sf.mmm.code.impl.java.source.maven.JavaSourceProviderUsingMaven;
 import net.sf.mmm.code.impl.java.source.maven.MavenClassLoader;
 import net.sf.mmm.code.impl.java.source.maven.MavenDependencyCollector;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test of {@link JavaExtendedContext} using {@link JavaSourceProviderUsingMaven}.

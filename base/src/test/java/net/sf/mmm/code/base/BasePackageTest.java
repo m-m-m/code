@@ -5,7 +5,7 @@ package net.sf.mmm.code.base;
 import java.util.List;
 import java.util.function.Supplier;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.base.annoation.BaseAnnotation;

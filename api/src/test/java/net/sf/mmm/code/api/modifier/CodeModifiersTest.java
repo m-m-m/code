@@ -1,7 +1,7 @@
 package net.sf.mmm.code.api.modifier;
 
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test of {@link CodeModifiers}.

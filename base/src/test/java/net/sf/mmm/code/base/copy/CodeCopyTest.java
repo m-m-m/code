@@ -18,7 +18,7 @@ import net.sf.mmm.code.api.type.CodeType;
 import net.sf.mmm.code.api.type.CodeTypeCategory;
 import net.sf.mmm.code.base.BaseContextTest;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test of {@link CodeNodeItemCopyable} the entire AST.

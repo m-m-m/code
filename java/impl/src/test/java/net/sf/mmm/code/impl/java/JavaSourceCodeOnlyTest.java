@@ -16,7 +16,7 @@ import net.sf.mmm.code.base.source.BaseSourceProvider;
 import net.sf.mmm.code.base.type.BaseType;
 import net.sf.mmm.code.impl.java.loader.JavaSourceLoader;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test of {@link JavaExtendedContext} with only source code available.

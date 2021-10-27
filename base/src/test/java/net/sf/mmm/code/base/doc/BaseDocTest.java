@@ -2,7 +2,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.base.doc;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.sf.mmm.code.api.doc.CodeDocFormat;
 import net.sf.mmm.code.base.BaseContext;

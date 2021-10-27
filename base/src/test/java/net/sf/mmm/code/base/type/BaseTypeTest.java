@@ -19,7 +19,7 @@ import net.sf.mmm.code.base.expression.BaseConstant;
 import net.sf.mmm.code.base.member.BaseField;
 import net.sf.mmm.code.base.member.BaseMethod;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test of {@link BaseType}.

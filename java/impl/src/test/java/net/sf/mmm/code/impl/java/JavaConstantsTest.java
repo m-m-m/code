@@ -5,7 +5,7 @@ package net.sf.mmm.code.impl.java;
 import java.lang.reflect.WildcardType;
 
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test of {@link JavaConstants}.

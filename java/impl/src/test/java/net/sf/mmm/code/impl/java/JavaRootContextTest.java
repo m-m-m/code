@@ -22,7 +22,7 @@ import net.sf.mmm.code.base.statement.BaseLocalVariable;
 import net.sf.mmm.code.base.type.BaseGenericType;
 import net.sf.mmm.code.base.type.BaseParameterizedType;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test of {@link JavaRootContext}.
