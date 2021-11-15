@@ -213,25 +213,33 @@ public class MavenBridgeImpl implements MavenBridge, MavenConstants {
 
   private Properties resolveProperties(Properties properties, File projectBaseDir) {
 
-    try {
-      File mvnDir = new File(projectBaseDir, ".mvn");
-      if (mvnDir.isDirectory()) {
-        File mvnConfig = new File(mvnDir, "maven.config");
-        if (mvnConfig.isFile()) {
-          properties = new Properties(properties);
-          List<String> lines = Files.readAllLines(mvnConfig.toPath());
-          for (String line : lines) {
-            resolveProperties(properties, line.trim());
+    if (projectBaseDir.getParentFile() == null) {
+      return properties;
+    }
+
+    boolean pomFileExists = new File(projectBaseDir, POM_XML).exists();
+    boolean parentPomFileExists = new File(projectBaseDir.getParentFile(), POM_XML).exists();
+    if (pomFileExists && !parentPomFileExists) {
+      return properties; // found "project's top level directory"
+    } else if (pomFileExists) {
+      try {
+        File mvnDir = new File(projectBaseDir, ".mvn");
+        if (mvnDir.isDirectory()) {
+          File mvnConfig = new File(mvnDir, "maven.config");
+          if (mvnConfig.isFile()) {
+            properties = new Properties(properties);
+            List<String> lines = Files.readAllLines(mvnConfig.toPath());
+            for (String line : lines) {
+              resolveProperties(properties, line.trim());
+            }
           }
         }
+        return resolveProperties(properties, projectBaseDir.getParentFile());
+      } catch (IOException e) {
+        throw new IllegalStateException("Error reading maven.config from " + projectBaseDir, e);
       }
-      File parent = projectBaseDir.getParentFile();
-      if (parent != null) {
-        return resolveProperties(properties, parent);
-      }
-      return properties;
-    } catch (IOException e) {
-      throw new IllegalStateException("Error reading maven.config from " + projectBaseDir, e);
+    } else {
+      return resolveProperties(properties, projectBaseDir.getParentFile());
     }
   }
 
