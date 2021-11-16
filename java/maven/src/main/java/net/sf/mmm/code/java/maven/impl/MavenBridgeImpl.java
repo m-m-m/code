@@ -227,7 +227,6 @@ public class MavenBridgeImpl implements MavenBridge, MavenConstants {
         if (mvnDir.isDirectory()) {
           File mvnConfig = new File(mvnDir, "maven.config");
           if (mvnConfig.isFile()) {
-            properties = new Properties(properties);
             List<String> lines = Files.readAllLines(mvnConfig.toPath());
             for (String line : lines) {
               resolveProperties(properties, line.trim());
