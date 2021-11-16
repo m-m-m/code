@@ -220,8 +220,7 @@ public class MavenBridgeImpl implements MavenBridge, MavenConstants {
     boolean pomFileExists = new File(projectBaseDir, POM_XML).exists();
     boolean parentPomFileExists = new File(projectBaseDir.getParentFile(), POM_XML).exists();
     if (pomFileExists && !parentPomFileExists) {
-      return properties; // found "project's top level directory"
-    } else if (pomFileExists) {
+      // found "project's top level directory"
       try {
         File mvnDir = new File(projectBaseDir, ".mvn");
         if (mvnDir.isDirectory()) {
