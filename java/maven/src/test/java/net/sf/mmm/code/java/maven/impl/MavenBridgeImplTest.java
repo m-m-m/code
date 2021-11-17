@@ -48,7 +48,7 @@ public class MavenBridgeImplTest extends Assertions implements MavenConstants {
     assertThat(model).isNotNull();
     assertThat(model.getArtifactId()).isEqualTo("mmm-code-java-maven");
     assertThat(model.getParent().getGroupId()).isEqualTo(groupId);
-    assertThat(model.getVersion()).isEqualTo("${revision}");
+    assertThat(model.getParent().getVersion()).isEqualTo("${revision}");
     verifyDependencies(model, DependencyHelper.create(PROJECT_GROUP_ID, "mmm-util-io", null),
         DependencyHelper.create("org.apache.maven", "maven-core", "${maven.version}"));
   }
