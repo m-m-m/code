@@ -54,11 +54,10 @@ public class MavenBridgeImplTest extends Assertions implements MavenConstants {
   }
 
   /**
-   * Testing if a valid child pom artifact dependency version can be resolved from its parent using dependencyManagement
-   * (mvn help:effective-pom still works)
+   * Tests if a valid child revision can be read from the maven.config
    */
   @Test
-  public void testResolveDependencyManagementVersionFromParent() {
+  public void testResolveRevisionParameterOfMavenConfig() {
 
     // given
     File mavenProjectDirectory = new File(ROOT_TEST_PATH, "localmavenproject/maven.project/core"); // test Maven project
@@ -68,7 +67,7 @@ public class MavenBridgeImplTest extends Assertions implements MavenConstants {
     Model model = reader.readEffectiveModel(new File(mavenProjectDirectory, "pom.xml"));
 
     // then
-    assertThat(model).isNotNull();
+    assertThat(model.getVersion()).isEqualTo("1.0.0-SNAPSHOT");
   }
 
   /**

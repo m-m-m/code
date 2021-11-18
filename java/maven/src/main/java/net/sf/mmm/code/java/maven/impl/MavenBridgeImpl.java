@@ -232,7 +232,7 @@ public class MavenBridgeImpl implements MavenBridge, MavenConstants {
             }
           }
         }
-        return resolveProperties(properties, projectBaseDir.getParentFile());
+        return properties;
       } catch (IOException e) {
         throw new IllegalStateException("Error reading maven.config from " + projectBaseDir, e);
       }

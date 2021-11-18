@@ -9,26 +9,4 @@
   <packaging>jar</packaging>
   <name>${project.artifactId}</name>
 
-  <dependencies>
-	  <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-jdbc</artifactId>
-    </dependency>
-  </dependencies>
-
-  <profiles>
-      <profile>
-      <!-- separate eclipse build from command-line... -->
-      <id>eclipse</id>
-      <activation>
-        <property>
-          <name>eclipse.application</name>
-        </property>
-      </activation>
-      <build>
-        <directory>eclipse-target</directory>
-      </build>
-    </profile>
-  </profiles>
-
 </project>
