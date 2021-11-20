@@ -5,7 +5,7 @@ package net.sf.mmm.code.base;
 import java.util.List;
 import java.util.function.Supplier;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.base.annoation.BaseAnnotation;
@@ -141,7 +141,8 @@ public class BasePackageTest extends BaseContextTest {
       testGetPackageParameterized(true, false);
       failBecauseExceptionWasNotThrown(ReadOnlyException.class);
     } catch (ReadOnlyException e) {
-      assertThat(e.getNlsMessage().getMessage()).isEqualTo("Failed to modify \"BasePathElements:«root».getChildren()\" as it is read-only!");
+      assertThat(e.getNlsMessage().getMessage())
+          .isEqualTo("Failed to modify \"BasePathElements:«root».getChildren()\" as it is read-only!");
     }
   }
 
@@ -163,7 +164,8 @@ public class BasePackageTest extends BaseContextTest {
     assertThat(pkg.getSimpleName()).isEqualTo("some");
     assertThat(pkg.getComment()).isSameAs(TEST_COMMENT);
     assertThat(pkg.getDoc().getLines()).containsExactly(TEST_TEXT1, TEST_TEXT2);
-    assertThat((List<BaseAnnotation>) pkg.getAnnotations().getDeclared()).hasSize(1).allMatch(x -> x.getType() == getTestAnnotationType(null));
+    assertThat((List<BaseAnnotation>) pkg.getAnnotations().getDeclared()).hasSize(1)
+        .allMatch(x -> x.getType() == getTestAnnotationType(null));
     assertThat(pkg.isImmutable()).isTrue();
     BasePackage pkgFromRoot = rootPackage.getChildren().getPackage(pkgQName);
     if (add) {
@@ -234,8 +236,10 @@ public class BasePackageTest extends BaseContextTest {
     assertThat(javaLangPackage.getChildren().getFile("String")).isSameAs(stringType.getFile());
     assertThat(rootPackageChildren.getPackage(context.parseName("java.lang"))).isSameAs(javaLangPackage);
     assertThat(rootPackageChildren.getFile(context.parseName("java.lang.String")).getType()).isSameAs(stringType);
-    assertThat((List<BasePathElement>) javaPackage.getChildren().getDeclared()).contains(javaLangPackage, javaUtilPackage);
-    assertThat((List<BasePathElement>) javaLangPackage.getChildren().getDeclared()).contains(stringType.getFile(), integerType.getFile());
+    assertThat((List<BasePathElement>) javaPackage.getChildren().getDeclared()).contains(javaLangPackage,
+        javaUtilPackage);
+    assertThat((List<BasePathElement>) javaLangPackage.getChildren().getDeclared()).contains(stringType.getFile(),
+        integerType.getFile());
   }
 
   private BaseType getClassType(BaseContext context, Class<?> clazz) {

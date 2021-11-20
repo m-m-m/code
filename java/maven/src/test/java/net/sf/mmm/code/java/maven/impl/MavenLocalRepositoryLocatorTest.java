@@ -5,7 +5,7 @@ package net.sf.mmm.code.java.maven.impl;
 import java.io.File;
 
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test of {@link MavenLocalRepositoryLocator}.
@@ -22,7 +22,8 @@ public class MavenLocalRepositoryLocatorTest extends Assertions {
     File defaultLocalRepository = MavenLocalRepositoryLocator.getDefaultLocalRepository();
 
     // then
-    assertThat(defaultLocalRepository).isEqualTo(new File(System.getProperty("user.home"), ".m2/repository")).isDirectory();
+    assertThat(defaultLocalRepository).isEqualTo(new File(System.getProperty("user.home"), ".m2/repository"))
+        .isDirectory();
   }
 
 }

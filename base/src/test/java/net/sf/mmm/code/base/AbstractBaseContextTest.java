@@ -12,7 +12,7 @@ import net.sf.mmm.code.api.CodePackage;
 import net.sf.mmm.code.api.node.CodeNodeWithFileWriting;
 import net.sf.mmm.code.api.type.CodeType;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test of {@link AbstractBaseContext} via {@link TestContext}.

@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.sf.mmm.code.api.CodeName;
 import net.sf.mmm.code.api.annotation.CodeAnnotation;

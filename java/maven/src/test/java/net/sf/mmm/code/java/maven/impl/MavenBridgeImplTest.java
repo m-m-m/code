@@ -15,7 +15,7 @@ import net.sf.mmm.code.java.maven.api.MavenConstants;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test of {@link MavenBridgeImpl}.
@@ -23,6 +23,11 @@ import org.junit.Test;
 public class MavenBridgeImplTest extends Assertions implements MavenConstants {
 
   private static final File POM_XML = new File(MavenConstants.POM_XML);
+
+  /**
+   * Root Path where test data is stored
+   */
+  private static final File ROOT_TEST_PATH = new File("src/test/resources/testdata/");
 
   private static final Pattern VERSION_PATTERN = Pattern.compile("[0-9]+(\\.[0-9]+)*(-beta[0-9]+)?(-SNAPSHOT)?");
 
@@ -43,9 +48,26 @@ public class MavenBridgeImplTest extends Assertions implements MavenConstants {
     assertThat(model).isNotNull();
     assertThat(model.getArtifactId()).isEqualTo("mmm-code-java-maven");
     assertThat(model.getParent().getGroupId()).isEqualTo(groupId);
-    assertThat(model.getVersion()).isEqualTo("${revision}");
+    assertThat(model.getParent().getVersion()).isEqualTo("${revision}");
     verifyDependencies(model, DependencyHelper.create(PROJECT_GROUP_ID, "mmm-util-io", null),
         DependencyHelper.create("org.apache.maven", "maven-core", "${maven.version}"));
+  }
+
+  /**
+   * Tests if a valid child revision can be read from the maven.config
+   */
+  @Test
+  public void testResolveRevisionParameterOfMavenConfig() {
+
+    // given
+    File mavenProjectDirectory = new File(ROOT_TEST_PATH, "localmavenproject/maven.project/core"); // test Maven project
+
+    // when
+    MavenBridgeImpl reader = new MavenBridgeImpl();
+    Model model = reader.readEffectiveModel(new File(mavenProjectDirectory, "pom.xml"));
+
+    // then
+    assertThat(model.getVersion()).isEqualTo("1.0.0-SNAPSHOT");
   }
 
   /**
@@ -69,7 +91,10 @@ public class MavenBridgeImplTest extends Assertions implements MavenConstants {
     String utilVersion = model.getProperties().getProperty("net.sf.mmm.util.version");
     verifyDependencies(model, DependencyHelper.create(groupId, "mmm-util-io", utilVersion),
         DependencyHelper.create(groupId, "mmm-util-test", utilVersion, SCOPE_TEST),
-        DependencyHelper.create("org.apache.maven", "maven-core", "3.6.1"));
+        DependencyHelper.create("org.apache.maven", "maven-core", "3.6.1"),
+        DependencyHelper.create("org.assertj", "assertj-core", "3.19.0", SCOPE_TEST),
+        DependencyHelper.create("org.junit.jupiter", "junit-jupiter", "5.7.0", SCOPE_TEST),
+        DependencyHelper.create("ch.qos.logback", "logback-classic", "1.3.0-alpha5", SCOPE_TEST));
   }
 
   private void verifyDependencies(Model model, Dependency... dependencies) {

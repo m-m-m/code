@@ -1,7 +1,7 @@
 package net.sf.mmm.code.api.modifier;
 
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test of {@link CodeModifiers}.
@@ -53,7 +53,8 @@ public class CodeModifiersTest extends Assertions {
     assertThat(modifiers.isProtected()).isFalse();
     assertThat(modifiers.isDefaultVisibility()).isFalse();
     assertThat(modifiers.toString()).isEqualTo("public static final ");
-    assertThat(modifiers.changeVisibility(CodeVisibility.PRIVATE)).isEqualTo(CodeModifiers.MODIFIERS_PUBLIC_STATIC_FINAL);
+    assertThat(modifiers.changeVisibility(CodeVisibility.PRIVATE))
+        .isEqualTo(CodeModifiers.MODIFIERS_PUBLIC_STATIC_FINAL);
     assertThat(modifiers.changeVisibility(CodeVisibility.DEFAULT).toString()).isEqualTo("static final ");
   }
 

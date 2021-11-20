@@ -7,7 +7,7 @@ import net.sf.mmm.code.api.type.CodeTypeCategory;
 import net.sf.mmm.test.TestValues;
 
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 /**
