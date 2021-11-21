@@ -65,7 +65,7 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
     CodeSource compileDependency = dependencies.get(0);
     verifyDependency(compileDependency, "target/classes", "src/main/java", "compile");
     assertThat(source.getParent()).isSameAs(compileDependency);
-    CodeSource testDependency = dependencies.get(1);
+    CodeSource testDependency = dependencies.get(2);
     verifyDescriptor(testDependency.getDescriptor(), "test", "mmm-util-test");
   }
 
