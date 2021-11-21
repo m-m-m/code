@@ -217,27 +217,21 @@ public class MavenBridgeImpl implements MavenBridge, MavenConstants {
       return properties;
     }
 
-    boolean pomFileExists = new File(projectBaseDir, POM_XML).exists();
-    boolean parentPomFileExists = new File(projectBaseDir.getParentFile(), POM_XML).exists();
-    if (pomFileExists && !parentPomFileExists) {
-      // found "project's top level directory"
-      try {
-        File mvnDir = new File(projectBaseDir, ".mvn");
-        if (mvnDir.isDirectory()) {
-          File mvnConfig = new File(mvnDir, "maven.config");
-          if (mvnConfig.isFile()) {
-            List<String> lines = Files.readAllLines(mvnConfig.toPath());
-            for (String line : lines) {
-              resolveProperties(properties, line.trim());
-            }
+    try {
+      File mvnDir = new File(projectBaseDir, ".mvn");
+      if (mvnDir.isDirectory()) {
+        File mvnConfig = new File(mvnDir, "maven.config");
+        if (mvnConfig.isFile()) {
+          List<String> lines = Files.readAllLines(mvnConfig.toPath());
+          for (String line : lines) {
+            resolveProperties(properties, line.trim());
           }
+          return properties;
         }
-        return properties;
-      } catch (IOException e) {
-        throw new IllegalStateException("Error reading maven.config from " + projectBaseDir, e);
       }
-    } else {
       return resolveProperties(properties, projectBaseDir.getParentFile());
+    } catch (IOException e) {
+      throw new IllegalStateException("Error reading maven.config from " + projectBaseDir, e);
     }
   }
 
