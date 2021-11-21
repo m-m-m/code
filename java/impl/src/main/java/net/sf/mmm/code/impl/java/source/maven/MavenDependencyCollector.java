@@ -249,7 +249,7 @@ public class MavenDependencyCollector {
 
     if (this.altBuildDir != null) {
       File buildDirectory = outputDirectory.getParentFile();
-      File projectDirectory = outputDirectory.getParentFile();
+      File projectDirectory = buildDirectory.getParentFile();
       String name = buildDirectory.getName();
       if (name.equals(MavenConstants.DEFAULT_BUILD_DIRECTORY)) {
         File altBuildDirectory = new File(projectDirectory, this.altBuildDir);
