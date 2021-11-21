@@ -32,10 +32,8 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
 
   private static final Pattern VERSION_PATTERN = Pattern.compile("[0-9]+(\\.[0-9]+)*(-beta[0-9]+)?(-SNAPSHOT)?");
 
-  /**
-   * Root Path where test data is stored
-   */
-  private static final File ROOT_TEST_PATH = new File("src/test/resources/testdata/");
+  /** Root Path where test data is stored. */
+  private static final File ROOT_TEST_PATH = new File("target/test-classes/testdata/");
 
   /**
    * Get context from current project
