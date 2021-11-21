@@ -12,7 +12,7 @@
   <packaging>jar</packaging>
   <name>${project.artifactId}</name>
   <description>Implementation of mmm-code-api for Java.</description>
- 
+
   <properties>
     <maven.test.path>src\test\resources\testdata\localmavenproject\maven.project</maven.test.path>
   </properties>
@@ -45,7 +45,7 @@
           </execution>
         </executions>
         <configuration>
-          <executable>mvn</executable>      
+          <executable>mvn</executable>
           <workingDirectory>${maven.test.path}</workingDirectory>
           <arguments>
             <argument>install</argument>
@@ -67,6 +67,11 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>mmm-code-java-maven</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
