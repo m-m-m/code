@@ -2,14 +2,14 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package net.sf.mmm.code.java.parser.base;
 
+import net.sf.mmm.code.java.parser.base.JavaSourceCodeParser.*;
+
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import net.sf.mmm.code.java.parser.base.JavaSourceCodeParser.*;
-
 /**
- * TODO: this class ...
+ * Implementation of {@link JavaSourceCodeParserBaseListener}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
