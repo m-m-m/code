@@ -3,7 +3,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>net.sf.m-m-m</groupId>
+    <groupId>io.github.m-m-m</groupId>
     <artifactId>mmm-code-java</artifactId>
     <version>${revision}</version>
     <relativePath>../pom.xml</relativePath>
@@ -33,7 +33,7 @@
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>mmm-util-core</artifactId>
+      <artifactId>mmm-base</artifactId>
     </dependency>
   </dependencies>
 
@@ -45,7 +45,7 @@
         <version>${antlr4.version}</version>
         <configuration>
           <sourceDirectory>${basedir}/src/main/resources</sourceDirectory>
-          <outputDirectory>${project.build.directory}/generated-sources/antlr4/net/sf/mmm/code/java/parser/base</outputDirectory>
+          <outputDirectory>${project.build.directory}/generated-sources/antlr4/io/github/mmm/code/java/parser/base</outputDirectory>
           <includes>
             <include>JavaSourceCodeLexer.g4</include>
             <include>JavaSourceCodeParser.g4</include>

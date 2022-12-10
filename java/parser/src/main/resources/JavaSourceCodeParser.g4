@@ -28,7 +28,7 @@
 */
 parser grammar JavaSourceCodeParser;
 @header {
-package net.sf.mmm.code.java.parser.base;
+package io.github.mmm.code.java.parser.base;
 }
 
 options { tokenVocab=JavaSourceCodeLexer; }

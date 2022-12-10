@@ -28,7 +28,7 @@
 */
 
 lexer grammar JavaSourceCodeLexer;
-@lexer::header {package net.sf.mmm.code.java.parser.base;
+@lexer::header {package io.github.mmm.code.java.parser.base;
 }
 // Keywords
 

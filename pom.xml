@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>io.github.m-m-m</groupId>
@@ -8,23 +7,85 @@
     <version>17</version>
     <relativePath>../parent/pom.xml</relativePath>
   </parent>
-  <groupId>net.sf.m-m-m</groupId>
   <artifactId>mmm-code-parent</artifactId>
   <version>${revision}</version>
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>
   <description>Library to parse, analyze, transform and generate code with reflective support for both byte-code and source-code.</description>
 
+  <properties>
+    <java.version>11</java.version>
+    <mmm.repository>code</mmm.repository>
+    <revision>0-SNAPSHOT</revision>
+  </properties>
+
   <modules>
-    <module>bom</module>
-    <module>modules</module>
+    <module>api</module>
+    <module>base</module>
+    <module>java</module>
   </modules>
 
-  <properties>
-    <revision>1.0.0-beta5</revision>
-    <changelist>-SNAPSHOT</changelist>
-    <net.sf.mmm.util.version>7.5.1</net.sf.mmm.util.version>
-    <java.version>8</java.version>
-    <mmm.repository>code</mmm.repository>
-  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+      <version>4.9.0</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <dependencyManagement>
+    <dependencies>
+      <!-- BOM of mmm-base -->
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>mmm-base-parent</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <!-- BOM of mmm-scanner -->
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>mmm-scanner-parent</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <!-- BOM of mmm-util -->
+      <dependency>
+        <groupId>net.sf.m-m-m</groupId>
+        <artifactId>mmm-util-bom</artifactId>
+        <version>7.5.1</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <!-- Internal dependencies -->
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>mmm-code-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>mmm-code-base</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>mmm-code-java-maven</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>mmm-code-java-parser</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>mmm-code-java-impl</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 </project>

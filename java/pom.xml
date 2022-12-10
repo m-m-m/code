@@ -3,19 +3,19 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>net.sf.m-m-m</groupId>
-    <artifactId>mmm-code-modules</artifactId>
+    <groupId>io.github.m-m-m</groupId>
+    <artifactId>mmm-code-parent</artifactId>
     <version>${revision}</version>
-    <relativePath>../modules/pom.xml</relativePath>
+    <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>mmm-code-java</artifactId>
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>
   <description>The modules of mmm-code for Java.</description>
-  
+
   <modules>
     <module>parser</module>
     <module>maven</module>
     <module>impl</module>
-  </modules>  
+  </modules>
 </project>

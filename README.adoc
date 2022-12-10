@@ -5,7 +5,7 @@ image:https://github.com/m-m-m/code/actions/workflows/build.yml/badge.svg["Build
 
 = mmm-code
 
-image:https://img.shields.io/maven-central/v/net.sf.m-m-m/mmm-code-api.svg?label=Maven%20Central["Maven Central",link=https://search.maven.org/search?q=g:net.sf.m-m-m]
+image:https://img.shields.io/maven-central/v/io.github.m-m-m/mmm-code-api.svg?label=Maven%20Central["Maven Central",link=https://search.maven.org/search?q=g:io.github.m-m-m]
 image:https://javadoc.io/badge2/io.github.m-m-m/mmm-code/javadoc.svg["code JavaDoc", link=https://javadoc.io/doc/io.github.m-m-m/mmm-code]
 
 The `mmm-code` project is a library to parse, analyze, transform and generate code.
