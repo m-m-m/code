@@ -14,7 +14,7 @@
   <description>Implementation of mmm-code-api for Java.</description>
 
   <properties>
-    <maven.test.path>src\test\resources\testdata\localmavenproject\maven.project</maven.test.path>
+    <maven.test.path>target/test-classes/testdata/localmavenproject/maven.project</maven.test.path>
   </properties>
 
   <dependencies>
