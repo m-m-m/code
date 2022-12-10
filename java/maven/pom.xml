@@ -15,7 +15,6 @@
 
   <properties>
     <maven.version>3.6.1</maven.version>
-    <maven.test.path>target/test/resources/testdata/localmavenproject/maven.project</maven.test.path>
   </properties>
 
   <dependencies>
@@ -29,47 +28,5 @@
       <artifactId>mmm-code-base</artifactId>
     </dependency>
   </dependencies>
-
-  <build>
-    <pluginManagement>
-      <plugins>
-        <!-- Ensure sources are downloaded for tests (even in CI/travis) -->
-        <!--
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-dependency-plugin</artifactId>
-          <executions>
-            <execution>
-              <id>download-sources</id>
-              <goals>
-                <goal>sources</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>exec-maven-plugin</artifactId>
-          <executions>
-            <execution>
-              <id>Install test project</id>
-              <phase>test-compile</phase>
-              <goals>
-                <goal>exec</goal>
-              </goals>
-            </execution>
-          </executions>
-          <configuration>
-            <executable>mvn</executable>
-            <workingDirectory>${maven.test.path}</workingDirectory>
-            <arguments>
-              <argument>install</argument>
-            </arguments>
-          </configuration>
-        </plugin>
-        -->
-      </plugins>
-    </pluginManagement>
-  </build>
 
 </project>
