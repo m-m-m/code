@@ -98,7 +98,6 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
     // given
     String entityClass = "com.maven.project.sampledatamanagement.dataaccess.api.SampleDataEntity";
     File mavenProjectDirectory = new File(ROOT_TEST_PATH, "localmavenproject/maven.project/core"); // test Maven project
-    System.out.println(mavenProjectDirectory.getAbsolutePath());
     MavenDependencyCollector dependencyCollector = new MavenDependencyCollector(true, true, "eclipse-target");
 
     // when

@@ -15,7 +15,7 @@
 
   <properties>
     <maven.version>3.6.1</maven.version>
-    <maven.test.path>src\test\resources\testdata\localmavenproject\maven.project</maven.test.path>
+    <maven.test.path>target/test/resources/testdata/localmavenproject/maven.project</maven.test.path>
   </properties>
 
   <dependencies>
