@@ -3,7 +3,6 @@
 package io.github.mmm.code.base;
 
 import io.github.mmm.base.exception.ObjectNotFoundException;
-import io.github.mmm.code.api.type.CodeType;
 import io.github.mmm.code.base.node.BaseNodeItemContainerAccess;
 import io.github.mmm.code.base.type.BaseType;
 
@@ -34,7 +33,7 @@ public abstract class AbstractBaseProvider extends BaseNodeItemContainerAccess i
 
     BaseType type = getType(qualifiedName);
     if (type == null) {
-      throw new ObjectNotFoundException(CodeType.class, qualifiedName);
+      throw new ObjectNotFoundException("CodeType", qualifiedName);
     }
     return type;
   }
