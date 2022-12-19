@@ -11,7 +11,7 @@ import io.github.mmm.code.api.type.CodeGenericType;
 
 /**
  * Internal class to iterate over all {@link io.github.mmm.code.api.type.CodeType#getSuperTypes() super types} of a
- * {@link io.github.mmm.code.api.type.CodeType} super types left recursively.
+ * {@link io.github.mmm.code.api.type.CodeType} left recursively.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
@@ -51,6 +51,7 @@ public final class InternalSuperTypeIterator implements Iterator<InternalSuperTy
     } else {
       this.iteratedTypes = this.parent.iteratedTypes;
     }
+    // due to its recursive nature this will not work if initialized here, will be done in hasNext()
     // this.next = findNext();
   }
 
