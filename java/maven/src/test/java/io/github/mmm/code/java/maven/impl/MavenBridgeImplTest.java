@@ -90,10 +90,10 @@ public class MavenBridgeImplTest extends Assertions implements MavenConstants {
     assertThat(model.getVersion()).matches(VERSION_PATTERN);
     verifyDependencies(model, DependencyHelper.create(groupId, "mmm-code-base", "0-SNAPSHOT"),
         DependencyHelper.create("org.apache.maven", "maven-core", "3.6.1"),
-        DependencyHelper.create("org.assertj", "assertj-core", "3.19.0", SCOPE_TEST),
-        DependencyHelper.create("org.junit.jupiter", "junit-jupiter", "5.7.0", SCOPE_TEST),
+        DependencyHelper.create("org.assertj", "assertj-core", "3.23.1", SCOPE_TEST),
+        DependencyHelper.create("org.junit.jupiter", "junit-jupiter", "5.9.1", SCOPE_TEST),
         DependencyHelper.create("org.mockito", "mockito-junit-jupiter", "4.9.0", SCOPE_TEST),
-        DependencyHelper.create("ch.qos.logback", "logback-classic", "1.3.0-alpha5", SCOPE_TEST));
+        DependencyHelper.create("ch.qos.logback", "logback-classic", "1.4.5", SCOPE_TEST));
   }
 
   private void verifyDependencies(Model model, Dependency... dependencies) {
@@ -112,20 +112,20 @@ public class MavenBridgeImplTest extends Assertions implements MavenConstants {
     }
     if (!expected.isEmpty() || !remaining.isEmpty()) {
       StringBuilder failure = new StringBuilder(128);
-      failure.append("Expected\n ");
+      failure.append("Expected ");
       failure.append(modelDependencies);
-      failure.append("\nto contain\n  ");
+      failure.append(" to contain ");
       failure.append(dependenciesList);
-      failure.append("\nbut ");
+      failure.append(" but ");
       if (!expected.isEmpty()) {
-        failure.append("could not find\n  ");
+        failure.append("could not find ");
         failure.append(expected);
       }
       if (!remaining.isEmpty()) {
         if (expected.isEmpty()) {
-          failure.append("did not expect\n  ");
+          failure.append("did not expect ");
         } else {
-          failure.append("\nand did not expect\n  ");
+          failure.append(" and did not expect ");
         }
         failure.append(remaining);
       }

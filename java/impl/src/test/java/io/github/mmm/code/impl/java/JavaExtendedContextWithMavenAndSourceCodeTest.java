@@ -65,8 +65,9 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
     CodeSource compileDependency = dependencies.get(0);
     verifyDependency(compileDependency, "target/classes", "src/main/java", "compile");
     assertThat(source.getParent()).isSameAs(compileDependency);
-    CodeSource testDependency = dependencies.get(1);
-    verifyDescriptor(testDependency.getDescriptor(), "test", "logback-classic", "ch.qos.logback");
+    verifyContainsDescriptor(dependencies, "test", "assertj-core", "org.assertj");
+    verifyContainsDescriptor(dependencies, "test", "junit-jupiter", "org.junit.jupiter");
+    verifyContainsDescriptor(dependencies, "test", "logback-classic", "ch.qos.logback");
   }
 
   /**
@@ -142,6 +143,19 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
   private void verifyDescriptor(CodeSourceDescriptor descriptor, String scope, String artifactId) {
 
     verifyDescriptor(descriptor, scope, artifactId, "io.github.m-m-m");
+  }
+
+  private void verifyContainsDescriptor(List<? extends CodeSource> dependencies, String scope, String artifactId,
+      String groupId) {
+
+    for (CodeSource dependency : dependencies) {
+      CodeSourceDescriptor descriptor = dependency.getDescriptor();
+      if (groupId.equals(descriptor.getGroupId()) && artifactId.equals(descriptor.getArtifactId())) {
+        verifyDescriptor(descriptor, scope, artifactId, groupId);
+        return;
+      }
+    }
+    fail("Dependency not found: " + groupId + ":" + artifactId);
   }
 
   private void verifyDescriptor(CodeSourceDescriptor descriptor, String scope, String artifactId, String groupId) {
