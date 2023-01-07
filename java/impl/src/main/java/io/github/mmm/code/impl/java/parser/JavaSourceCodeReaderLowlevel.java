@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.github.mmm.base.filter.CharFilter;
+import io.github.mmm.base.text.TextFormatMessageType;
 import io.github.mmm.code.api.CodeName;
 import io.github.mmm.code.api.annotation.CodeAnnotation;
 import io.github.mmm.code.api.comment.CodeComment;
@@ -405,7 +406,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
 
   private JavaLiteral<?> parseLiteral() {
 
-    String stringLiteral = readJavaStringLiteral(true);
+    String stringLiteral = readJavaStringLiteral(TextFormatMessageType.WARNING);
     if (stringLiteral != null) {
       return JavaLiteralString.of(stringLiteral);
     }
@@ -413,7 +414,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
     if (literal != null) {
       return literal;
     }
-    Character charLiteral = readJavaCharLiteral(true);
+    Character charLiteral = readJavaCharLiteral(TextFormatMessageType.WARNING);
     if (charLiteral != null) {
       return JavaLiteralChar.of(charLiteral);
     }
@@ -435,7 +436,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
 
   private JavaLiteral<? extends Number> parseNumberLiteral() {
 
-    String decimal = consumeDecimal();
+    String decimal = readDecimal();
     char c = Character.toLowerCase(peek());
     if (c == 'l') {
       return JavaLiteralLong.of(Long.parseLong(decimal));

@@ -4,7 +4,7 @@
   <parent>
     <groupId>io.github.m-m-m</groupId>
     <artifactId>mmm</artifactId>
-    <version>17</version>
+    <version>18</version>
     <relativePath>../parent/pom.xml</relativePath>
   </parent>
   <artifactId>mmm-code-parent</artifactId>
@@ -35,27 +35,11 @@
   </dependencies>
   <dependencyManagement>
     <dependencies>
-      <!-- BOM of mmm-base -->
-      <dependency>
-        <groupId>${project.groupId}</groupId>
-        <artifactId>mmm-base-parent</artifactId>
-        <version>${project.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
       <!-- BOM of mmm-scanner -->
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>mmm-scanner-parent</artifactId>
         <version>${project.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <!-- BOM of mmm-util -->
-      <dependency>
-        <groupId>net.sf.m-m-m</groupId>
-        <artifactId>mmm-util-bom</artifactId>
-        <version>7.5.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
