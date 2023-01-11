@@ -101,7 +101,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     consume();
     String actualPkg = "";
     char c = peek();
-    if ((c == 'p') && expectStrict("package")) {
+    if ((c == 'p') && expect("package")) {
       skipWhile(CharFilter.WHITESPACE);
       actualPkg = readUntil(';', true).trim();
     }
@@ -119,9 +119,9 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
 
     consume();
     while (peek() == 'i') {
-      if (expectStrict("import")) {
+      if (expect("import")) {
         parseWhitespacesAndComments();
-        boolean staticImport = expectStrict("static");
+        boolean staticImport = expect("static");
         if (staticImport) {
           parseWhitespacesAndComments();
         }
@@ -331,7 +331,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
 
     parseOperationArgs(operation);
     parseOperationThrows(operation);
-    if ((operation instanceof BaseMethod) && expectStrict("default")) { // default result of annotation...
+    if ((operation instanceof BaseMethod) && expect("default")) { // default result of annotation...
       requireWhitespace(operation, "default", operation);
       CodeExpression value = parseAssignmentValue();
       ((BaseMethod) operation).setDefaultValue(value);
@@ -367,7 +367,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
   private void parseOperationThrows(BaseOperation operation) {
 
     parseWhitespacesAndComments();
-    if (!expectStrict("throws")) {
+    if (!expect("throws")) {
       return;
     }
     requireWhitespace(operation, operation.getName(), operation.getParent().getParent());
@@ -497,7 +497,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
   private void parseImplements(BaseType type) {
 
     consume();
-    boolean found = expectStrict("implements");
+    boolean found = expect("implements");
     if (!found) {
       return;
     }
@@ -511,7 +511,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
   private void parseExtends(BaseType type) {
 
     consume();
-    boolean found = expectStrict("extends");
+    boolean found = expect("extends");
     if (!found) {
       return;
     }
@@ -594,7 +594,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
   private boolean parseBound(BaseTypeVariable typeVariable, CodeElementWithTypeVariables element) {
 
     String keyword = "extends";
-    if (expectStrict(keyword)) {
+    if (expect(keyword)) {
       String name = typeVariable.getName();
       requireWhitespace(element, keyword, name);
       BaseGenericType bound = parseGenericType(element, true, true, true);
@@ -628,7 +628,7 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     } else {
       keyword = "extends";
     }
-    if (expectStrict(keyword)) {
+    if (expect(keyword)) {
       int count = skipWhile(CharFilter.WHITESPACE);
       if (count == 0) {
         LOG.warn("Missing whitespace after {} expression of type parameter {} at {} of {}", keyword, type.getName(),
@@ -670,19 +670,19 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
     consume();
     char c = peek();
     if (c == 'c') {
-      if (expectStrict("class")) {
+      if (expect("class")) {
         return CodeTypeCategory.CLASS;
       }
     } else if (c == 'i') {
-      if (expectStrict("interface")) {
+      if (expect("interface")) {
         return CodeTypeCategory.INTERFACE;
       }
     } else if (c == 'e') {
-      if (expectStrict("enum")) {
+      if (expect("enum")) {
         return CodeTypeCategory.ENUMERAION;
       }
     } else if (c == '@') {
-      if (expectStrict("@interface")) {
+      if (expect("@interface")) {
         return CodeTypeCategory.ANNOTATION;
       }
     }

@@ -38,10 +38,6 @@ import io.github.mmm.code.impl.java.expression.JavaNAryOperatorExpression;
 import io.github.mmm.code.impl.java.expression.literal.JavaLiteral;
 import io.github.mmm.code.impl.java.expression.literal.JavaLiteralBoolean;
 import io.github.mmm.code.impl.java.expression.literal.JavaLiteralChar;
-import io.github.mmm.code.impl.java.expression.literal.JavaLiteralDouble;
-import io.github.mmm.code.impl.java.expression.literal.JavaLiteralFloat;
-import io.github.mmm.code.impl.java.expression.literal.JavaLiteralInt;
-import io.github.mmm.code.impl.java.expression.literal.JavaLiteralLong;
 import io.github.mmm.code.impl.java.expression.literal.JavaLiteralString;
 import io.github.mmm.scanner.CharReaderScanner;
 
@@ -410,46 +406,19 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
     if (stringLiteral != null) {
       return JavaLiteralString.of(stringLiteral);
     }
-    JavaLiteral<?> literal = parseBooleanLiteral();
-    if (literal != null) {
-      return literal;
+    Boolean booleanLiteral = readBoolean();
+    if (booleanLiteral != null) {
+      return JavaLiteralBoolean.of(booleanLiteral.booleanValue());
     }
     Character charLiteral = readJavaCharLiteral(TextFormatMessageType.WARNING);
     if (charLiteral != null) {
       return JavaLiteralChar.of(charLiteral);
     }
-    if (CHAR_FILTER_NUMBER_LITERAL_START.accept(peek())) {
-      return parseNumberLiteral();
-    }
-    return literal;
-  }
-
-  private JavaLiteral<Boolean> parseBooleanLiteral() {
-
-    if (expectStrict("true")) {
-      return JavaLiteralBoolean.TRUE;
-    } else if (expectStrict("false")) {
-      return JavaLiteralBoolean.FALSE;
+    Number numberLiteral = readJavaNumberLiteral();
+    if (numberLiteral != null) {
+      return JavaLiteral.of(numberLiteral);
     }
     return null;
-  }
-
-  private JavaLiteral<? extends Number> parseNumberLiteral() {
-
-    String decimal = readDecimal();
-    char c = Character.toLowerCase(peek());
-    if (c == 'l') {
-      return JavaLiteralLong.of(Long.parseLong(decimal));
-    } else if (c == 'f') {
-      return JavaLiteralFloat.of(Float.parseFloat(decimal));
-    } else if (c == 'd') {
-      return JavaLiteralDouble.of(Double.parseDouble(decimal));
-    }
-    if ((decimal.indexOf('.') >= 0) || (decimal.indexOf('e') >= 0)) {
-      return JavaLiteralDouble.of(Double.parseDouble(decimal));
-    } else {
-      return JavaLiteralInt.of(Integer.parseInt(decimal));
-    }
   }
 
   private String getQualifiedName(String name) {
@@ -464,8 +433,8 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
 
     char c = peek();
     if (c == '/') {
-      String line = readLine(true);
-      this.comments.add(new BaseSingleLineComment(line));
+      String docLine = readLine(true);
+      this.comments.add(new BaseSingleLineComment(docLine));
     } else if (c == '*') {
       next();
       c = peek();
@@ -488,11 +457,11 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
 
   private void parseDocOrBlockComment(List<String> lines) {
 
-    String line = readDocOrCommentLine();
-    if (!line.isEmpty()) {
-      lines.add(line);
+    String docLine = readDocOrCommentLine();
+    if (!docLine.isEmpty()) {
+      lines.add(docLine);
     }
-    if (expectStrict("*/")) {
+    if (expect("*/")) {
       return;
     }
     while (true) {
@@ -507,25 +476,25 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
           return;
         }
       }
-      line = readDocOrCommentLine();
-      lines.add(line);
+      docLine = readDocOrCommentLine();
+      lines.add(docLine);
     }
   }
 
   private String readDocOrCommentLine() {
 
     expectOne(' ');
-    String line = readUntil(CharFilter.NEWLINE, true, "*/", false, false);
+    String docLine = readUntil(CharFilter.NEWLINE, true, "*/", false, false);
     // trim end
-    int max = line.length() - 1;
+    int max = docLine.length() - 1;
     int end = max;
-    while ((end > 0) && (line.charAt(end) == ' ')) {
+    while ((end > 0) && (docLine.charAt(end) == ' ')) {
       end--;
     }
     if (end < max) {
-      line = line.substring(0, end + 1);
+      docLine = docLine.substring(0, end + 1);
     }
-    return line;
+    return docLine;
   }
 
   /**
@@ -579,7 +548,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
 
   private boolean parseModifierKeyword(Set<String> modifiers, String modifier) {
 
-    if (expectStrict(modifier)) {
+    if (expect(modifier)) {
       modifiers.add(modifier);
       return true;
     }
@@ -603,11 +572,11 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
     if (peek() != 'p') {
       return fallback;
     }
-    if (expectStrict("private")) {
+    if (expect("private")) {
       return CodeVisibility.PRIVATE;
-    } else if (expectStrict("public")) {
+    } else if (expect("public")) {
       return CodeVisibility.PUBLIC;
-    } else if (expectStrict("protected")) {
+    } else if (expect("protected")) {
       return CodeVisibility.PROTECTED;
     }
     return fallback;
