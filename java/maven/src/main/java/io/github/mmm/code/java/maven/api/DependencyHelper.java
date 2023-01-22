@@ -29,31 +29,39 @@ public class DependencyHelper implements MavenConstants {
     if (dep1 == dep2) {
       return true;
     }
-    if (!Objects.equals(dep1.getGroupId(), dep2.getGroupId())) {
+    if (!matches(dep1.getGroupId(), dep2.getGroupId())) {
       return false;
     }
-    if (!Objects.equals(dep1.getArtifactId(), dep2.getArtifactId())) {
+    if (!matches(dep1.getArtifactId(), dep2.getArtifactId())) {
       return false;
     }
-    if (!Objects.equals(dep1.getVersion(), dep2.getVersion())) {
+    if (!matches(dep1.getVersion(), dep2.getVersion())) {
       return false;
     }
-    if (!getType(dep1).equals(getType(dep2))) {
+    if (!matches(getType(dep1), getType(dep2))) {
       return false;
     }
-    if (!getScope(dep1).equals(getScope(dep2))) {
+    if (!matches(getScope(dep1), getScope(dep2))) {
       return false;
     }
     if (dep1.isOptional() != dep2.isOptional()) {
       return false;
     }
-    if (!Objects.equals(dep1.getClassifier(), dep2.getClassifier())) {
+    if (!matches(dep1.getClassifier(), dep2.getClassifier())) {
       return false;
     }
-    if (!Objects.equals(dep1.getSystemPath(), dep2.getSystemPath())) {
+    if (!matches(dep1.getSystemPath(), dep2.getSystemPath())) {
       return false;
     }
     return true;
+  }
+
+  private static boolean matches(String s1, String s2) {
+
+    if ("*".equals(s1) || "*".equals(s2)) {
+      return true;
+    }
+    return Objects.equals(s1, s2);
   }
 
   /**
