@@ -42,7 +42,7 @@ public class MavenBridgeImpl implements MavenBridge, MavenConstants {
   private static final Pattern PATTERN_PROPERTY_PARAMETER = Pattern
       .compile("-D([a-zA-Z0-9.-_]+)=\"?(([^ ]| (?!-D))*)\"?");
 
-  private static final MavenBridgeImpl INSTANCE = new MavenBridgeImpl();
+  private static final MavenBridgeImpl INSTANCE;
 
   private final MavenXpp3Reader pomReader;
 
