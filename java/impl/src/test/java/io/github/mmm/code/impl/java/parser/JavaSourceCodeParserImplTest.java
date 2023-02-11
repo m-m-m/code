@@ -108,7 +108,11 @@ public class JavaSourceCodeParserImplTest extends AbstractBaseTypeTest {
     assertThat(type.getModifiers().getVisibility()).isSameAs(CodeVisibility.PUBLIC);
     assertThat(type.getDoc().getLines()).containsExactly("Test of {@link JavaSourceCodeParserImpl}.", "",
         "@author Joerg Hohwiller (hohwille at users.sourceforge.net)");
-    verifyHeader(type.getFile());
+    BaseFile file = type.getFile();
+    verifyHeader(file);
+    List<String> imports = file.getImports().getDeclared().stream().map(i -> i.getReference()).toList();
+    assertThat(imports).contains("java.io.FileReader", "org.junit.jupiter.api.Test",
+        "io.github.mmm.code.impl.java.JavaContext");
     assertThat(type.getFields().getDeclared()).isEmpty();
     assertThat(type.getConstructors().getDeclared()).isEmpty();
     List<? extends CodeMethod> methods = type.getMethods().getDeclared();
@@ -143,7 +147,8 @@ public class JavaSourceCodeParserImplTest extends AbstractBaseTypeTest {
         assertThat(method.getModifiers().getModifiers()).isEmpty();
         assertThat(method.getParameters()).isEmpty();
         assertThat(method.getExceptions()).isEmpty();
-        // assertThat(method.getReturns().getType().getQualifiedName()).isEqualTo("net.sf.mmm.code.api.java.parser.JavaSourceCodeParser");
+        assertThat(method.getReturns().getType().getQualifiedName())
+            .isEqualTo("io.github.mmm.code.base.parser.SourceCodeParser");
       }
     }
   }

@@ -186,16 +186,16 @@ public class BaseNestedTypes extends BaseNodeItemContainerHierarchicalWithName<C
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent,
+      CodeLanguage language) throws IOException {
 
     List<? extends CodeType> nestedTypes = getDeclared();
     if (nestedTypes.isEmpty()) {
       return;
     }
-    String childIndent = currentIndent + defaultIndent;
     for (CodeType nestedType : nestedTypes) {
       sink.append(newline);
-      nestedType.write(sink, newline, defaultIndent, childIndent);
+      nestedType.write(sink, newline, defaultIndent, currentIndent);
     }
   }
 

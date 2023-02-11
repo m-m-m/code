@@ -24,6 +24,9 @@ public final class CodeTypeCategory {
   /** {@link CodeTypeCategory} for an {@link Class#isAnnotation() annotation}. */
   public static final CodeTypeCategory ANNOTATION = new CodeTypeCategory("annotation");
 
+  /** {@link CodeTypeCategory} for an {@link Class#isRecord() annotation}. */
+  public static final CodeTypeCategory RECORD = new CodeTypeCategory("record");
+
   private final String value;
 
   /**

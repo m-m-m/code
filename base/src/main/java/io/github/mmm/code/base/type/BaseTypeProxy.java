@@ -133,14 +133,15 @@ public class BaseTypeProxy extends BaseGenericTypeProxy implements CodeNodeItemC
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent,
+      CodeLanguage language) throws IOException {
 
     if (defaultIndent == null) {
       writeReference(sink, true);
       return;
     }
     super.doWrite(sink, newline, defaultIndent, currentIndent, language, false);
-    this.type.doWriteDeclaration(sink, currentIndent, language);
+    this.type.doWriteDeclaration(sink, newline, defaultIndent, currentIndent, language);
     this.type.doWriteBody(sink, newline, defaultIndent, currentIndent, language);
   }
 

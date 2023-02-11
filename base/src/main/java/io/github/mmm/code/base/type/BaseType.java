@@ -492,43 +492,20 @@ public class BaseType extends BaseGenericType implements CodeType {
       return;
     }
     super.doWrite(sink, newline, defaultIndent, currentIndent, language);
-    doWriteDeclaration(sink, currentIndent, language);
+    doWriteDeclaration(sink, newline, defaultIndent, currentIndent, language);
     doWriteBody(sink, newline, defaultIndent, currentIndent, language);
   }
 
   void doWriteBody(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language)
       throws IOException {
 
-    sink.append(" {");
-    sink.append(newline);
-    String bodyIndent = currentIndent + defaultIndent;
-    getFields().write(sink, newline, defaultIndent, bodyIndent);
-    if (this.staticInitializer != null && !this.staticInitializer.isEmpty()) {
-      sink.append(newline);
-      sink.append(bodyIndent);
-      this.staticInitializer.write(sink, newline, defaultIndent, currentIndent, language);
-    }
-    if ((this.nonStaticInitializer != null) && !this.nonStaticInitializer.isEmpty()) {
-      sink.append(newline);
-      sink.append(bodyIndent);
-      this.nonStaticInitializer.write(sink, newline, defaultIndent, currentIndent, language);
-    }
-    getConstructors().write(sink, newline, defaultIndent, bodyIndent, language);
-    getMethods().write(sink, newline, defaultIndent, bodyIndent, language);
-    getNestedTypes().write(sink, newline, defaultIndent, currentIndent, language);
-    sink.append(currentIndent);
-    sink.append("}");
-    sink.append(newline);
+    language.writeBody(this, sink, newline, defaultIndent, currentIndent);
   }
 
-  void doWriteDeclaration(Appendable sink, String currentIndent, CodeLanguage language) throws IOException {
+  void doWriteDeclaration(Appendable sink, String newline, String defaultIndent, String currentIndent,
+      CodeLanguage language) throws IOException {
 
-    sink.append(currentIndent);
-    sink.append(this.modifiers.toString());
-    sink.append(language.getKeywordForCategory(this.category));
-    sink.append(' ');
-    writeReference(sink, true);
-    getSuperTypes().write(sink, null, null);
+    language.writeDeclaration(this, sink, newline, defaultIndent, currentIndent);
   }
 
   @Override
@@ -589,6 +566,9 @@ public class BaseType extends BaseGenericType implements CodeType {
       category = CodeTypeCategory.INTERFACE;
     } else if (clazz.isEnum()) {
       category = CodeTypeCategory.ENUMERAION;
+      // TODO requires Java 16+
+      // } else if (clazz.isRecord()) {
+      // category = CodeTypeCategory.RECORD;
     } else if (clazz.isAnnotation()) {
       category = CodeTypeCategory.ANNOTATION;
     } else {

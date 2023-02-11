@@ -2,12 +2,10 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package io.github.mmm.code.base.element;
 
-import java.io.IOException;
 import java.util.Objects;
 
 import io.github.mmm.code.api.copy.CodeCopyMapper;
 import io.github.mmm.code.api.element.CodeElementWithModifiers;
-import io.github.mmm.code.api.language.CodeLanguage;
 import io.github.mmm.code.api.modifier.CodeModifiers;
 
 /**
@@ -16,7 +14,8 @@ import io.github.mmm.code.api.modifier.CodeModifiers;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public abstract class BaseElementWithModifiers extends BaseElementWithDeclaringType implements CodeElementWithModifiers {
+public abstract class BaseElementWithModifiers extends BaseElementWithDeclaringType
+    implements CodeElementWithModifiers {
 
   private CodeModifiers modifiers;
 
@@ -59,22 +58,5 @@ public abstract class BaseElementWithModifiers extends BaseElementWithDeclaringT
 
   @Override
   public abstract BaseElementWithModifiers copy();
-
-  @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language) throws IOException {
-
-    super.doWrite(sink, newline, defaultIndent, currentIndent, language);
-    sink.append(currentIndent);
-    doWriteModifiers(sink);
-  }
-
-  /**
-   * @param sink the {@link Appendable}.
-   * @throws IOException if thrown by {@link Appendable}.
-   */
-  protected void doWriteModifiers(Appendable sink) throws IOException {
-
-    sink.append(this.modifiers.toString());
-  }
 
 }

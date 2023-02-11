@@ -35,12 +35,11 @@ public class JavaLanguageTest extends Assertions implements TestValues {
     assertThat(language.getAnnotationEndIfEmpty()).isEmpty();
     assertThat(language.getVariableNameThis()).isEqualTo("this");
     assertThat(language.getMethodKeyword()).isEmpty();
-    assertThat(language.getMethodReturnStart()).isEmpty();
-    assertThat(language.getMethodReturnEnd()).isNull();
     assertThat(language.getKeywordForCategory(CodeTypeCategory.CLASS)).isEqualTo("class");
     assertThat(language.getKeywordForCategory(CodeTypeCategory.INTERFACE)).isEqualTo("interface");
     assertThat(language.getKeywordForCategory(CodeTypeCategory.ENUMERAION)).isEqualTo("enum");
     assertThat(language.getKeywordForCategory(CodeTypeCategory.ANNOTATION)).isEqualTo("@interface");
+    assertThat(language.getKeywordForCategory(CodeTypeCategory.RECORD)).isEqualTo("record");
   }
 
   /**

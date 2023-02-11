@@ -217,7 +217,8 @@ public class BaseField extends BaseMember implements CodeField {
 
     getGetter();
     if (this.getter == null) {
-      this.getter = getContext().getFactory().createGetter(getDeclaringType(), getName(), getType(), true, getDoc().getLinesAsArray());
+      this.getter = getContext().getFactory().createGetter(getDeclaringType(), getName(), getType(), true,
+          getDoc().getLinesAsArray());
       this.parent.getParent().getMethods().add(this.getter);
     }
     return this.getter;
@@ -240,24 +241,18 @@ public class BaseField extends BaseMember implements CodeField {
 
     getSetter();
     if (this.setter == null) {
-      this.setter = getContext().getFactory().createSetter(getDeclaringType(), getName(), getType(), true, getDoc().getLinesAsArray());
+      this.setter = getContext().getFactory().createSetter(getDeclaringType(), getName(), getType(), true,
+          getDoc().getLinesAsArray());
       this.parent.getParent().getMethods().add(this.setter);
     }
     return this.setter;
   }
 
   @Override
-  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language)
-      throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent,
+      CodeLanguage language) throws IOException {
 
-    super.doWrite(sink, newline, defaultIndent, currentIndent, language);
-    language.writeDeclaration(this, sink);
-    if (this.initializer != null) {
-      sink.append(" = ");
-      this.initializer.write(sink, "", "");
-    }
-    sink.append(';');
-    sink.append(newline);
+    language.writeField(this, sink, newline, defaultIndent, currentIndent);
   }
 
 }

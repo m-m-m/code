@@ -20,6 +20,16 @@ public abstract interface CodeItem {
   String DEFAULT_INDENT = "  ";
 
   /**
+   * @return the source-code of this item.
+   */
+  default String write() {
+
+    StringBuilder sb = new StringBuilder();
+    write(sb);
+    return sb.toString();
+  }
+
+  /**
    * @param sink the {@link Appendable} where to {@link Appendable#append(CharSequence) append} the
    *        {@link #getSourceCode() source code} from this {@link CodeItem}.
    */
@@ -52,8 +62,8 @@ public abstract interface CodeItem {
   /**
    * @param sink the {@link Appendable} where to {@link Appendable#append(CharSequence) append} the
    *        {@link #getSourceCode() source code} from this {@link CodeItem}.
-   * @param defaultIndent the {@link String} used for indentation (e.g. a number of spaces to insert per indent level).
    * @param newline the newline {@link String}.
+   * @param defaultIndent the {@link String} used for indentation (e.g. a number of spaces to insert per indent level).
    * @param currentIndent the current indent (number of spaces). Initially the empty string ({@code ""}). Before a
    *        recursion the {@code defaultIndent} will be appended.
    */

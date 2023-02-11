@@ -681,6 +681,10 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
       if (expect("enum")) {
         return CodeTypeCategory.ENUMERAION;
       }
+    } else if (c == 'r') {
+      if (expect("record")) {
+        return CodeTypeCategory.RECORD;
+      }
     } else if (c == '@') {
       if (expect("@interface")) {
         return CodeTypeCategory.ANNOTATION;

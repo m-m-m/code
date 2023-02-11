@@ -9,6 +9,9 @@ import io.github.mmm.code.api.CodePackage;
 import io.github.mmm.code.api.expression.CodeVariable;
 import io.github.mmm.code.api.item.CodeItemWithName;
 import io.github.mmm.code.api.item.CodeItemWithQualifiedName;
+import io.github.mmm.code.api.member.CodeConstructor;
+import io.github.mmm.code.api.member.CodeField;
+import io.github.mmm.code.api.member.CodeMethod;
 import io.github.mmm.code.api.statement.CodeLocalVariable;
 import io.github.mmm.code.api.type.CodeType;
 import io.github.mmm.code.api.type.CodeTypeCategory;
@@ -50,25 +53,74 @@ public interface CodeLanguage {
   void writeDeclaration(CodeVariable variable, Appendable sink) throws IOException;
 
   /**
-   * @return the {@link String} to add prefixed by the {@link io.github.mmm.code.api.arg.CodeReturn} before the
-   *         {@link io.github.mmm.code.api.member.CodeMethod#getName() method name} or {@code null} if the
-   *         {@link io.github.mmm.code.api.arg.CodeReturn} shall be written with {@link #getMethodReturnEnd()}.
+   * Writes a type declaration (e.g. "public class MyClass").
+   *
+   * @param type the {@link CodeType} to write.
+   * @param sink the {@link Appendable} where to {@link Appendable#append(CharSequence) append} the code to.
+   * @param newline the newline {@link String}.
+   * @param defaultIndent the {@link String} used for indentation (e.g. a number of spaces to insert per indent level).
+   * @param currentIndent the current indent (number of spaces). Initially the empty string ({@code ""}). Before a
+   *        recursion the {@code defaultIndent} will be appended.
+   * @throws IOException if thrown by {@link Appendable}.
    */
-  default String getMethodReturnStart() {
-
-    return "";
-  }
+  void writeDeclaration(CodeType type, Appendable sink, String newline, String defaultIndent, String currentIndent)
+      throws IOException;
 
   /**
-   * @return the {@link String} to add followed by the {@link io.github.mmm.code.api.arg.CodeReturn} after the
-   *         {@link io.github.mmm.code.api.member.CodeMethod#getParameters() method parameters} or {@code null} if the
-   *         {@link io.github.mmm.code.api.arg.CodeReturn} shall be written with {@link #getMethodReturnStart()}. E.g. ": "
-   *         for TypeScript or Kotlin.
+   * Writes the type body (e.g. "{\n private String field;\n }\n").
+   *
+   * @param type the {@link CodeType} to write.
+   * @param sink the {@link Appendable} where to {@link Appendable#append(CharSequence) append} the code to.
+   * @param newline the newline {@link String}.
+   * @param defaultIndent the {@link String} used for indentation (e.g. a number of spaces to insert per indent level).
+   * @param currentIndent the current indent (number of spaces). Initially the empty string ({@code ""}). Before a
+   *        recursion the {@code defaultIndent} will be appended.
+   * @throws IOException if thrown by {@link Appendable}.
    */
-  default String getMethodReturnEnd() {
+  void writeBody(CodeType type, Appendable sink, String newline, String defaultIndent, String currentIndent)
+      throws IOException;
 
-    return null;
-  }
+  /**
+   * Writes the given field (e.g. "private String field;\n").
+   *
+   * @param field the {@link CodeField} to write.
+   * @param sink the {@link Appendable} where to {@link Appendable#append(CharSequence) append} the code to.
+   * @param newline the newline {@link String}.
+   * @param defaultIndent the {@link String} used for indentation (e.g. a number of spaces to insert per indent level).
+   * @param currentIndent the current indent (number of spaces). Initially the empty string ({@code ""}). Before a
+   *        recursion the {@code defaultIndent} will be appended.
+   * @throws IOException if thrown by {@link Appendable}.
+   */
+  void writeField(CodeField field, Appendable sink, String newline, String defaultIndent, String currentIndent)
+      throws IOException;
+
+  /**
+   * Writes the given method (e.g. "String getName();\n").
+   *
+   * @param method the {@link CodeField} to write.
+   * @param sink the {@link Appendable} where to {@link Appendable#append(CharSequence) append} the code to.
+   * @param newline the newline {@link String}.
+   * @param defaultIndent the {@link String} used for indentation (e.g. a number of spaces to insert per indent level).
+   * @param currentIndent the current indent (number of spaces). Initially the empty string ({@code ""}). Before a
+   *        recursion the {@code defaultIndent} will be appended.
+   * @throws IOException if thrown by {@link Appendable}.
+   */
+  void writeMethod(CodeMethod method, Appendable sink, String newline, String defaultIndent, String currentIndent)
+      throws IOException;
+
+  /**
+   * Writes the given {@link CodeConstructor}.
+   *
+   * @param constructor the {@link CodeConstructor} to write.
+   * @param sink the {@link Appendable} where to {@link Appendable#append(CharSequence) append} the code to.
+   * @param newline the newline {@link String}.
+   * @param defaultIndent the {@link String} used for indentation (e.g. a number of spaces to insert per indent level).
+   * @param currentIndent the current indent (number of spaces). Initially the empty string ({@code ""}). Before a
+   *        recursion the {@code defaultIndent} will be appended.
+   * @throws IOException if thrown by {@link Appendable}.
+   */
+  void writeConstructor(CodeConstructor constructor, Appendable sink, String newline, String defaultIndent,
+      String currentIndent) throws IOException;
 
   /**
    * @return the " extends " keyword (May also be " : " for Kotlin).
@@ -101,8 +153,8 @@ public interface CodeLanguage {
   }
 
   /**
-   * @return the {@link String} used as suffix to terminate a {@link io.github.mmm.code.api.statement.CodeAtomicStatement}.
-   *         E.g. ";".
+   * @return the {@link String} used as suffix to terminate a
+   *         {@link io.github.mmm.code.api.statement.CodeAtomicStatement}. E.g. ";".
    */
   String getStatementTerminator();
 
@@ -116,9 +168,9 @@ public interface CodeLanguage {
 
   /**
    * @return the {@link String} to signal the end of an empty {@link io.github.mmm.code.api.annotation.CodeAnnotation}.
-   *         Here empty means that the {@link io.github.mmm.code.api.annotation.CodeAnnotation#getParameters() parameters}
-   *         are {@link java.util.Map#isEmpty() empty}. E.g. for TypeScript even an empty annotation has to be
-   *         terminated with "()".
+   *         Here empty means that the {@link io.github.mmm.code.api.annotation.CodeAnnotation#getParameters()
+   *         parameters} are {@link java.util.Map#isEmpty() empty}. E.g. for TypeScript even an empty annotation has to
+   *         be terminated with "()".
    */
   default String getAnnotationEndIfEmpty() {
 
@@ -162,14 +214,15 @@ public interface CodeLanguage {
   String getFileFilename(CodeFile file);
 
   /**
-   * @return {@code true} if this language natively supports {@link io.github.mmm.code.api.member.CodeProperty properties}
-   *         (in such case
+   * @return {@code true} if this language natively supports {@link io.github.mmm.code.api.member.CodeProperty
+   *         properties} (in such case
    *         {@link io.github.mmm.code.api.CodeFactory#createField(io.github.mmm.code.api.member.CodeFields, String, java.lang.reflect.Field)}
-   *         needs to provide an implementation that also implements {@link io.github.mmm.code.api.member.CodeProperty}),
-   *         {@code false} otherwise.
+   *         needs to provide an implementation that also implements
+   *         {@link io.github.mmm.code.api.member.CodeProperty}), {@code false} otherwise.
    */
   default boolean isSupportingNativeProperties() {
 
     return false;
   }
+
 }

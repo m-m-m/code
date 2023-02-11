@@ -16,7 +16,6 @@ import io.github.mmm.code.api.member.CodeMethods;
 import io.github.mmm.code.api.merge.CodeMergeStrategy;
 import io.github.mmm.code.api.merge.CodeMergeStrategyDecider;
 import io.github.mmm.code.api.modifier.CodeModifiers;
-import io.github.mmm.code.api.modifier.CodeVisibility;
 import io.github.mmm.code.api.type.CodeGenericType;
 import io.github.mmm.code.api.type.CodeSuperTypes;
 import io.github.mmm.code.api.type.CodeType;
@@ -178,7 +177,7 @@ public class BaseMethod extends BaseOperation implements CodeMethod {
     if (modifiers.isAbstract()) {
       return false;
     }
-    if (this.parent.getParent().getCategory().isInterface()) {
+    if (getDeclaringType().getCategory().isInterface() && !modifiers.isDefaultModifier()) {
       return false;
     }
     return true;
@@ -286,40 +285,10 @@ public class BaseMethod extends BaseOperation implements CodeMethod {
   }
 
   @Override
-  protected void doWriteSignature(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language)
-      throws IOException {
+  protected void doWrite(Appendable sink, String newline, String defaultIndent, String currentIndent,
+      CodeLanguage language) throws IOException {
 
-    sink.append(language.getMethodKeyword());
-    String start = language.getMethodReturnStart();
-    if (start != null) {
-      sink.append(start);
-      getReturns().write(sink, newline, defaultIndent, currentIndent, language);
-      sink.append(' ');
-    }
-    super.doWriteSignature(sink, newline, defaultIndent, currentIndent, language);
-  }
-
-  @Override
-  protected void doWriteParameters(Appendable sink, String newline, String defaultIndent, String currentIndent, CodeLanguage language)
-      throws IOException {
-
-    super.doWriteParameters(sink, newline, defaultIndent, currentIndent, language);
-    String end = language.getMethodReturnEnd();
-    if (end != null) {
-      sink.append(end);
-      getReturns().write(sink, newline, defaultIndent, currentIndent, language);
-    }
-  }
-
-  @Override
-  protected void doWriteModifiers(Appendable sink) throws IOException {
-
-    CodeModifiers modifiers = getModifiers();
-    if (getDeclaringType().isInterface() && CodeVisibility.PUBLIC.equals(modifiers.getVisibility())) {
-      modifiers.formatModifiers(sink);
-    } else {
-      sink.append(modifiers.toString());
-    }
+    language.writeMethod(this, sink, newline, defaultIndent, currentIndent);
   }
 
 }
