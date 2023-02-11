@@ -3,12 +3,12 @@
 package io.github.mmm.code.impl.java.expression.constant;
 
 /**
- * Implementation of {@link JavaFactoryConstant} for {@link Double} using {@link Double#valueOf(double)}.
+ * Implementation of {@link JavaConstant} for {@link Double} using {@link Double#valueOf(double)}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaConstantDouble extends JavaFactoryConstant<Double> {
+public class JavaConstantDouble extends JavaConstant<Double> {
 
   /**
    * The constructor.
@@ -29,7 +29,7 @@ public class JavaConstantDouble extends JavaFactoryConstant<Double> {
   @Override
   public String getSourceCode() {
 
-    return "Double.valueOf(" + getValue().toString() + "D)";
+    return "Double.valueOf(" + this.value.toString() + "D)";
   }
 
   /**

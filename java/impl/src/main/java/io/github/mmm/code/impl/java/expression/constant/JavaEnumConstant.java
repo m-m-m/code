@@ -22,15 +22,14 @@ public class JavaEnumConstant<T extends Enum<T>> extends JavaConstant<T> {
   @Override
   public String getSourceCode() {
 
-    T value = getValue();
-    Class<?> enumClass = value.getClass();
+    Class<?> enumClass = this.value.getClass();
     String name;
     if (this.unqualified) {
       name = enumClass.getSimpleName();
     } else {
       name = enumClass.getName();
     }
-    return name + "." + value.name();
+    return name + "." + this.value.name();
   }
 
   @Override
@@ -42,8 +41,8 @@ public class JavaEnumConstant<T extends Enum<T>> extends JavaConstant<T> {
   /**
    * @param <T> type of the {@link Enum} {@link #getValue() value}.
    * @param value the constant value.
-   * @param unqualified - {@code true} to use the {@link Class#getSimpleName() simple name}, {@code false}
-   *        otherwise (for {@link Class#getName() qualified name}).
+   * @param unqualified - {@code true} to use the {@link Class#getSimpleName() simple name}, {@code false} otherwise
+   *        (for {@link Class#getName() qualified name}).
    * @return the {@link JavaConstant} for the given {@code value}.
    */
   public static <T extends Enum<T>> JavaEnumConstant<T> of(T value, boolean unqualified) {

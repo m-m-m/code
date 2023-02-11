@@ -1,5 +1,7 @@
 package io.github.mmm.code.impl.java;
 
+import java.lang.annotation.Retention;
+
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -9,6 +11,7 @@ import io.github.mmm.code.api.type.CodeTypeCategory;
 import io.github.mmm.code.base.BaseFile;
 import io.github.mmm.code.base.member.BaseField;
 import io.github.mmm.code.base.member.BaseMethod;
+import io.github.mmm.code.base.type.BaseGenericType;
 import io.github.mmm.code.base.type.BaseType;
 
 /**
@@ -107,6 +110,20 @@ public class JavaCodeWriterTest extends Assertions {
         + "   *        See {@link God} for details.\n" //
         + "   */\n" //
         + "  void destroy(String masterKey);\n" //
+        + "}\n");
+  }
+
+  @Test
+  public void testWriteAnnotation() {
+
+    JavaRootContext context = JavaRootContext.get();
+    BaseGenericType retention = context.getType(Retention.class);
+    assertThat(retention.write()).isEqualTo("@Documented\n" //
+        + "@Retention(RetentionPolicy.RUNTIME)\n" //
+        + "@Target(ElementType.ANNOTATION_TYPE)\n" //
+        + "public @interface Retention {\n" //
+        + "\n" //
+        + "  RetentionPolicy value();\n" //
         + "}\n");
   }
 

@@ -241,7 +241,7 @@ public abstract class AbstractCodeLanguage implements CodeLanguage {
       String currentIndent) throws IOException {
 
     sink.append(currentIndent);
-    sink.append(type.getModifiers().toString());
+    sink.append(getTypeModifiers(type).toString());
     CodeTypeCategory category = type.getCategory();
     sink.append(getKeywordForCategory(category));
     sink.append(' ');
@@ -257,6 +257,15 @@ public abstract class AbstractCodeLanguage implements CodeLanguage {
       sink.append(')');
     }
     type.getSuperTypes().write(sink, null, null);
+  }
+
+  private CodeModifiers getTypeModifiers(CodeType type) {
+
+    CodeModifiers modifiers = type.getModifiers();
+    if (type.isAnnotation() || type.isInterface()) {
+      modifiers = modifiers.removeModifier(CodeModifiers.KEY_ABSTRACT);
+    }
+    return modifiers;
   }
 
   @Override
@@ -419,9 +428,8 @@ public abstract class AbstractCodeLanguage implements CodeLanguage {
   protected CodeModifiers getMethodModifiers(CodeMethod method) {
 
     CodeType declaringType = method.getDeclaringType();
-    CodeTypeCategory category = declaringType.getCategory();
     CodeModifiers modifiers = method.getModifiers();
-    if (category == CodeTypeCategory.INTERFACE) {
+    if (declaringType.getCategory().isInterfaceOrAnnotation()) {
       if (modifiers.isPublic()) {
         modifiers = modifiers.changeVisibility(CodeVisibility.DEFAULT);
       }

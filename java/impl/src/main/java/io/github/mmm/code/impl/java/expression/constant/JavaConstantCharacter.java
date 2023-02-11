@@ -5,12 +5,12 @@ package io.github.mmm.code.impl.java.expression.constant;
 import io.github.mmm.code.impl.java.expression.literal.JavaLiteralChar;
 
 /**
- * Implementation of {@link JavaFactoryConstant} for {@link Character} using {@link Character#valueOf(char)}.
+ * Implementation of {@link JavaConstant} for {@link Character} using {@link Character#valueOf(char)}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaConstantCharacter extends JavaFactoryConstant<Character> {
+public class JavaConstantCharacter extends JavaConstant<Character> {
 
   /**
    * The constructor.
@@ -31,7 +31,7 @@ public class JavaConstantCharacter extends JavaFactoryConstant<Character> {
   @Override
   public String getSourceCode() {
 
-    return "Character.valueOf(" + JavaLiteralChar.toCharLiteral(getValue().charValue()) + ")";
+    return "Character.valueOf(" + JavaLiteralChar.toCharLiteral(this.value.charValue()) + ")";
   }
 
   /**

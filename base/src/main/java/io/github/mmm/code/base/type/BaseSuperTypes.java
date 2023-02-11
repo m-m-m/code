@@ -70,9 +70,11 @@ public class BaseSuperTypes extends BaseNodeItemContainerHierarchical<CodeGeneri
       if (superclass != null) {
         addInternal(context.getType(superclass, this.parent));
       }
-      Type[] genericInterfaces = reflectiveObject.getGenericInterfaces();
-      for (Type superInterface : genericInterfaces) {
-        addInternal(context.getType(superInterface, this.parent));
+      if (!reflectiveObject.isAnnotation()) {
+        Type[] genericInterfaces = reflectiveObject.getGenericInterfaces();
+        for (Type superInterface : genericInterfaces) {
+          addInternal(context.getType(superInterface, this.parent));
+        }
       }
     }
   }

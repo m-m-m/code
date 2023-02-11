@@ -11,7 +11,7 @@ import io.github.mmm.code.impl.java.expression.constant.JavaConstant;
 /**
  * Implementation of {@link CodeLiteral} for Java.
  *
- * @author hohwille
+ * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @param <T> type of {@link #getValue()}.
  * @since 1.0.0
  */

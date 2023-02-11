@@ -13,18 +13,18 @@ import io.github.mmm.code.api.expression.CodeLiteral;
  */
 public final class JavaLiteralClass<T> extends JavaLiteral<Class<T>> {
 
-  private final boolean unqualified;
+  private final boolean qualified;
 
-  private JavaLiteralClass(Class<T> value, boolean unqualified) {
+  private JavaLiteralClass(Class<T> value, boolean qualified) {
 
     super(value);
-    this.unqualified = unqualified;
+    this.qualified = qualified;
   }
 
   @Override
   public JavaLiteralClass<T> withValue(Class<T> newValue) {
 
-    return new JavaLiteralClass<>(newValue, this.unqualified);
+    return new JavaLiteralClass<>(newValue, this.qualified);
   }
 
   @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -38,10 +38,10 @@ public final class JavaLiteralClass<T> extends JavaLiteral<Class<T>> {
   public String getSourceCode() {
 
     String name;
-    if (this.unqualified) {
-      name = getValue().getSimpleName();
+    if (this.qualified) {
+      name = this.value.getSimpleName();
     } else {
-      name = getValue().getName();
+      name = this.value.getName();
     }
     return name + ".class";
   }
@@ -65,12 +65,12 @@ public final class JavaLiteralClass<T> extends JavaLiteral<Class<T>> {
   /**
    * @param <T> the type of the {@link Class} {@code value}.
    * @param value the literal value. May not be {@code null}.
-   * @param unqualified - {@code true} to use the {@link Class#getSimpleName() simple name}, {@code false}
-   *        otherwise (for {@link Class#getName() qualified name}).
+   * @param qualified - {@code true} to use the {@link Class#getName() qualified name}, {@code false} otherwise (for
+   *        {@link Class#getSimpleName() simple name}).
    * @return the {@link CodeLiteral} for the given {@code value}.
    */
-  public static <T> JavaLiteralClass<T> of(Class<T> value, boolean unqualified) {
+  public static <T> JavaLiteralClass<T> of(Class<T> value, boolean qualified) {
 
-    return new JavaLiteralClass<>(value, unqualified);
+    return new JavaLiteralClass<>(value, qualified);
   }
 }

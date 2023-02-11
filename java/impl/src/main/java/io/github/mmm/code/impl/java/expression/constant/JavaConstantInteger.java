@@ -3,12 +3,12 @@
 package io.github.mmm.code.impl.java.expression.constant;
 
 /**
- * Implementation of {@link JavaFactoryConstant} for {@link Integer} using {@link Integer#valueOf(int)}.
+ * Implementation of {@link JavaConstant} for {@link Integer} using {@link Integer#valueOf(int)}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaConstantInteger extends JavaFactoryConstant<Integer> {
+public class JavaConstantInteger extends JavaConstant<Integer> {
 
   /**
    * The constructor.
@@ -29,7 +29,7 @@ public class JavaConstantInteger extends JavaFactoryConstant<Integer> {
   @Override
   public String getSourceCode() {
 
-    return "Integer.valueOf(" + getValue().toString() + ")";
+    return "Integer.valueOf(" + this.value.toString() + ")";
   }
 
   /**

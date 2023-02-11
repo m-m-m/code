@@ -3,12 +3,12 @@
 package io.github.mmm.code.impl.java.expression.constant;
 
 /**
- * Implementation of {@link JavaFactoryConstant} for {@link Float} using {@link Float#valueOf(float)}.
+ * Implementation of {@link JavaConstant} for {@link Float} using {@link Float#valueOf(float)}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaConstantFloat extends JavaFactoryConstant<Float> {
+public class JavaConstantFloat extends JavaConstant<Float> {
 
   /**
    * The constructor.
@@ -29,7 +29,7 @@ public class JavaConstantFloat extends JavaFactoryConstant<Float> {
   @Override
   public String getSourceCode() {
 
-    return "Float.valueOf(" + getValue().toString() + "F)";
+    return "Float.valueOf(" + this.value.toString() + "F)";
   }
 
   /**

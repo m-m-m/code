@@ -3,12 +3,12 @@
 package io.github.mmm.code.impl.java.expression.constant;
 
 /**
- * Implementation of {@link JavaFactoryConstant} for {@link Byte} using {@link Byte#valueOf(byte)}.
+ * Implementation of {@link JavaConstant} for {@link Byte} using {@link Byte#valueOf(byte)}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaConstantByte extends JavaFactoryConstant<Byte> {
+public class JavaConstantByte extends JavaConstant<Byte> {
 
   /**
    * The constructor.
@@ -29,7 +29,7 @@ public class JavaConstantByte extends JavaFactoryConstant<Byte> {
   @Override
   public String getSourceCode() {
 
-    return "Byte.valueOf((byte) " + getValue().toString() + ")";
+    return "Byte.valueOf((byte) " + this.value.toString() + ")";
   }
 
   /**

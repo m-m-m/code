@@ -58,6 +58,14 @@ public final class CodeTypeCategory {
   }
 
   /**
+   * @return {@code true} for {@link #INTERFACE} or {@link #ANNOTATION}, {@code false} otherwise.
+   */
+  public boolean isInterfaceOrAnnotation() {
+
+    return (this == INTERFACE) || (this == ANNOTATION);
+  }
+
+  /**
    * @return {@code true} for {@link #ENUMERAION}, {@code false} otherwise.
    */
   public boolean isEnumeration() {

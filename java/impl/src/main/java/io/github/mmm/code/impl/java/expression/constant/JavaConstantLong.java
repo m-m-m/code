@@ -3,12 +3,12 @@
 package io.github.mmm.code.impl.java.expression.constant;
 
 /**
- * Implementation of {@link JavaFactoryConstant} for {@link Long} using {@link Long#valueOf(long)}.
+ * Implementation of {@link JavaConstant} for {@link Long} using {@link Long#valueOf(long)}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaConstantLong extends JavaFactoryConstant<Long> {
+public class JavaConstantLong extends JavaConstant<Long> {
 
   /**
    * The constructor.
@@ -29,7 +29,7 @@ public class JavaConstantLong extends JavaFactoryConstant<Long> {
   @Override
   public String getSourceCode() {
 
-    return "Long.valueOf(" + getValue().toString() + "L)";
+    return "Long.valueOf(" + this.value.toString() + "L)";
   }
 
   /**

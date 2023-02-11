@@ -3,12 +3,12 @@
 package io.github.mmm.code.impl.java.expression.constant;
 
 /**
- * Implementation of {@link JavaFactoryConstant} for {@link Boolean} using {@link Boolean#valueOf(boolean)}.
+ * Implementation of {@link JavaConstant} for {@link Boolean} using {@link Boolean#valueOf(boolean)}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaConstantBoolean extends JavaFactoryConstant<Boolean> {
+public class JavaConstantBoolean extends JavaConstant<Boolean> {
 
   /** {@link JavaConstantBoolean} for {@link Boolean#TRUE}. */
   public static final JavaConstantBoolean TRUE = new JavaConstantBoolean(Boolean.TRUE);
@@ -35,7 +35,7 @@ public class JavaConstantBoolean extends JavaFactoryConstant<Boolean> {
   @Override
   public String getSourceCode() {
 
-    return "Boolean.valueOf(" + getValue().toString() + ")";
+    return "Boolean.valueOf(" + this.value.toString() + ")";
   }
 
   /**

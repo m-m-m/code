@@ -7,8 +7,10 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +24,8 @@ import io.github.mmm.code.api.expression.CodeExpression;
 import io.github.mmm.code.api.language.CodeLanguage;
 import io.github.mmm.code.api.type.CodeGenericType;
 import io.github.mmm.code.api.type.CodeType;
+import io.github.mmm.code.base.expression.BaseArrayInstatiation;
+import io.github.mmm.code.base.expression.BaseExpression;
 import io.github.mmm.code.base.node.BaseNodeItem;
 
 /**
@@ -183,8 +187,13 @@ public class BaseAnnotation extends BaseNodeItem implements CodeAnnotation {
           String key = method.getName();
           try {
             Object value = method.invoke(this.reflectiveObject, (Object[]) null);
-            Class<?> returnType = method.getReturnType();
-            this.parameters.put(key, getContext().getFactory().createExpression(value, returnType.isPrimitive()));
+            Object defaultValue = method.getDefaultValue();
+            if (value != defaultValue) {
+              Class<?> returnType = method.getReturnType();
+              BaseExpression valueExpression = getContext().getFactory().createExpression(value,
+                  returnType.isPrimitive());
+              map.put(key, valueExpression);
+            }
           } catch (Exception e) {
             LOG.warn("Failed to read attribute {} of annotation {}.", key, this.reflectiveObject, e);
           }
@@ -235,11 +244,18 @@ public class BaseAnnotation extends BaseNodeItem implements CodeAnnotation {
       sink.append(language.getAnnotationEndIfEmpty());
     } else {
       String prefix = "(";
-      for (Entry<String, CodeExpression> entry : this.parameters.entrySet()) {
+      Set<Entry<String, CodeExpression>> entrySet = this.parameters.entrySet();
+      int size = entrySet.size();
+      for (Entry<String, CodeExpression> entry : entrySet) {
         sink.append(prefix);
-        sink.append(entry.getKey());
-        sink.append(" = ");
-        sink.append(formatValue(entry.getValue()));
+        String key = entry.getKey();
+        // TODO move to CodeLanguage
+        if ((size > 1) || !"value".equals(key)) {
+          sink.append(key);
+          sink.append(" = ");
+        }
+        CodeExpression value = entry.getValue();
+        sink.append(formatValue(value));
         prefix = ", ";
       }
       sink.append(')');
@@ -249,6 +265,15 @@ public class BaseAnnotation extends BaseNodeItem implements CodeAnnotation {
 
   private String formatValue(CodeExpression value) {
 
+    if (value == null) {
+      return "null";
+    }
+    if (value instanceof BaseArrayInstatiation) {
+      List<CodeExpression> values = ((BaseArrayInstatiation) value).getValues();
+      if (values.size() == 1) {
+        return formatValue(values.get(0));
+      }
+    }
     return value.toString();
   }
 

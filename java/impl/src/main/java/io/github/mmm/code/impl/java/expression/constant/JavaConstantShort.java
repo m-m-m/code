@@ -3,12 +3,12 @@
 package io.github.mmm.code.impl.java.expression.constant;
 
 /**
- * Implementation of {@link JavaFactoryConstant} for {@link Short} using {@link Short#valueOf(short)}.
+ * Implementation of {@link JavaConstant} for {@link Short} using {@link Short#valueOf(short)}.
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaConstantShort extends JavaFactoryConstant<Short> {
+public class JavaConstantShort extends JavaConstant<Short> {
 
   /**
    * The constructor.
@@ -29,7 +29,7 @@ public class JavaConstantShort extends JavaFactoryConstant<Short> {
   @Override
   public String getSourceCode() {
 
-    return "Short.valueOf((short) " + getValue().toString() + ")";
+    return "Short.valueOf((short) " + this.value.toString() + ")";
   }
 
   /**

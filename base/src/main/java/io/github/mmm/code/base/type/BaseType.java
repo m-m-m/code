@@ -123,11 +123,11 @@ public class BaseType extends BaseGenericType implements CodeType {
     this.properties = new BaseProperties(this);
     if (this.reflectiveObject != null) {
       int mods = this.reflectiveObject.getModifiers();
-      this.modifiers = CodeModifiers.of(mods);
       this.category = getCategory(this.reflectiveObject);
+      this.modifiers = CodeModifiers.of(mods);
     } else {
-      this.modifiers = CodeModifiers.MODIFIERS_PUBLIC;
       this.category = CodeTypeCategory.CLASS;
+      this.modifiers = CodeModifiers.MODIFIERS_PUBLIC;
     }
   }
 
@@ -562,15 +562,15 @@ public class BaseType extends BaseGenericType implements CodeType {
   static CodeTypeCategory getCategory(Class<?> clazz) {
 
     CodeTypeCategory category;
-    if (clazz.isInterface()) {
+    if (clazz.isAnnotation()) {
+      category = CodeTypeCategory.ANNOTATION;
+    } else if (clazz.isInterface()) {
       category = CodeTypeCategory.INTERFACE;
     } else if (clazz.isEnum()) {
       category = CodeTypeCategory.ENUMERAION;
       // TODO requires Java 16+
       // } else if (clazz.isRecord()) {
       // category = CodeTypeCategory.RECORD;
-    } else if (clazz.isAnnotation()) {
-      category = CodeTypeCategory.ANNOTATION;
     } else {
       category = CodeTypeCategory.CLASS;
     }

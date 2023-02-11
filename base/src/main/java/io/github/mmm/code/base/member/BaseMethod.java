@@ -177,7 +177,8 @@ public class BaseMethod extends BaseOperation implements CodeMethod {
     if (modifiers.isAbstract()) {
       return false;
     }
-    if (getDeclaringType().getCategory().isInterface() && !modifiers.isDefaultModifier()) {
+    // TODO this is actually more a decision of CodeLanguage
+    if (getDeclaringType().getCategory().isInterfaceOrAnnotation() && !modifiers.isDefaultModifier()) {
       return false;
     }
     return true;
