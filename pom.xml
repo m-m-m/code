@@ -4,7 +4,7 @@
   <parent>
     <groupId>io.github.m-m-m</groupId>
     <artifactId>mmm</artifactId>
-    <version>18</version>
+    <version>20</version>
     <relativePath>../parent/pom.xml</relativePath>
   </parent>
   <artifactId>mmm-code-parent</artifactId>
@@ -16,7 +16,6 @@
   <properties>
     <java.version>11</java.version>
     <mmm.repository>code</mmm.repository>
-    <revision>0-SNAPSHOT</revision>
   </properties>
 
   <modules>
