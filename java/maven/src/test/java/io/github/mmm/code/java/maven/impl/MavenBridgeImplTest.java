@@ -90,8 +90,8 @@ public class MavenBridgeImplTest extends Assertions implements MavenConstants {
     assertThat(model.getVersion()).matches(VERSION_PATTERN);
     verifyDependencies(model, DependencyHelper.create(groupId, "mmm-code-base", "*"),
         DependencyHelper.create("org.apache.maven", "maven-core", "3.6.1"),
-        DependencyHelper.create("org.assertj", "assertj-core", "3.23.1", SCOPE_TEST),
-        DependencyHelper.create("org.junit.jupiter", "junit-jupiter", "5.9.1", SCOPE_TEST),
+        DependencyHelper.create("org.assertj", "assertj-core", "3.24.2", SCOPE_TEST),
+        DependencyHelper.create("org.junit.jupiter", "junit-jupiter", "5.9.2", SCOPE_TEST),
         DependencyHelper.create("org.mockito", "mockito-junit-jupiter", "4.9.0", SCOPE_TEST),
         DependencyHelper.create("ch.qos.logback", "logback-classic", "1.4.5", SCOPE_TEST));
   }
