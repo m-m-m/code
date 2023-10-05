@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
@@ -110,7 +111,8 @@ public class JavaSourceCodeParserImplTest extends AbstractBaseTypeTest {
         "@author Joerg Hohwiller (hohwille at users.sourceforge.net)");
     BaseFile file = type.getFile();
     verifyHeader(file);
-    List<String> imports = file.getImports().getDeclared().stream().map(i -> i.getReference()).toList();
+    List<String> imports = file.getImports().getDeclared().stream().map(i -> i.getReference())
+        .collect(Collectors.toList());
     assertThat(imports).contains("java.io.FileReader", "org.junit.jupiter.api.Test",
         "io.github.mmm.code.impl.java.JavaContext");
     assertThat(type.getFields().getDeclared()).isEmpty();
