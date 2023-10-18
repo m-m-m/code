@@ -14,7 +14,7 @@
   <description>Library to parse, analyze, transform and generate code with reflective support for both byte-code and source-code.</description>
 
   <properties>
-    <java.version>11</java.version>
+    <java.version>17</java.version>
     <mmm.repository>code</mmm.repository>
   </properties>
 
