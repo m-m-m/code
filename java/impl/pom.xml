@@ -64,6 +64,7 @@
           <executable>mvn</executable>
           <workingDirectory>${maven.test.path}</workingDirectory>
           <arguments>
+            <argument>-X</argument>
             <argument>install</argument>
           </arguments>
         </configuration>

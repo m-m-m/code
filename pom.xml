@@ -16,6 +16,7 @@
   <properties>
     <java.version>17</java.version>
     <mmm.repository>code</mmm.repository>
+    <maven.version>3.9.6</maven.version>
   </properties>
 
   <modules>
@@ -24,14 +25,6 @@
     <module>java</module>
   </modules>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-junit-jupiter</artifactId>
-      <version>4.9.0</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
   <dependencyManagement>
     <dependencies>
       <!-- BOM of mmm-scanner -->
@@ -42,7 +35,16 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-core</artifactId>
+        <version>${maven.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-junit-jupiter</artifactId>
+        <version>5.10.0</version>
+      </dependency>
       <!-- Internal dependencies -->
       <dependency>
         <groupId>${project.groupId}</groupId>

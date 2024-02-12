@@ -50,7 +50,7 @@ public class MavenBridgeImplTest extends Assertions implements MavenConstants {
     assertThat(model.getParent().getGroupId()).isEqualTo(groupId);
     assertThat(model.getParent().getVersion()).isEqualTo("${revision}");
     verifyDependencies(model, DependencyHelper.create(PROJECT_GROUP_ID, "mmm-code-base", null),
-        DependencyHelper.create("org.apache.maven", "maven-core", "${maven.version}"));
+        DependencyHelper.create("org.apache.maven", "maven-core", null));
   }
 
   /**
@@ -89,11 +89,10 @@ public class MavenBridgeImplTest extends Assertions implements MavenConstants {
     assertThat(model.getGroupId()).isEqualTo(groupId);
     assertThat(model.getVersion()).matches(VERSION_PATTERN);
     verifyDependencies(model, DependencyHelper.create(groupId, "mmm-code-base", "*"),
-        DependencyHelper.create("org.apache.maven", "maven-core", "3.6.1"),
-        DependencyHelper.create("org.assertj", "assertj-core", "3.24.2", SCOPE_TEST),
-        DependencyHelper.create("org.junit.jupiter", "junit-jupiter", "5.9.3", SCOPE_TEST),
-        DependencyHelper.create("org.mockito", "mockito-junit-jupiter", "4.9.0", SCOPE_TEST),
-        DependencyHelper.create("ch.qos.logback", "logback-classic", "1.4.5", SCOPE_TEST));
+        DependencyHelper.create("org.apache.maven", "maven-core", "3.9.6"),
+        DependencyHelper.create("org.assertj", "assertj-core", "3.25.3", SCOPE_TEST),
+        DependencyHelper.create("org.junit.jupiter", "junit-jupiter", "5.10.2", SCOPE_TEST),
+        DependencyHelper.create("ch.qos.logback", "logback-classic", "1.4.14", SCOPE_TEST));
   }
 
   private void verifyDependencies(Model model, Dependency... dependencies) {

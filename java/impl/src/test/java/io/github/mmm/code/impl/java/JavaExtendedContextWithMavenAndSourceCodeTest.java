@@ -61,7 +61,7 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
     assertThat(source.getSource()).isSameAs(source);
 
     List<? extends CodeSource> dependencies = source.getDependencies().getDeclared();
-    assertThat(dependencies).hasSize(5);
+    assertThat(dependencies).hasSize(4);
     CodeSource compileDependency = dependencies.get(0);
     verifyDependency(compileDependency, "target/classes", "src/main/java", "compile");
     assertThat(source.getParent()).isSameAs(compileDependency);
