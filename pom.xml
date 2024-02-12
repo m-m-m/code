@@ -4,7 +4,7 @@
   <parent>
     <groupId>io.github.m-m-m</groupId>
     <artifactId>mmm</artifactId>
-    <version>21</version>
+    <version>22</version>
     <relativePath>../parent/pom.xml</relativePath>
   </parent>
   <artifactId>mmm-code-parent</artifactId>
