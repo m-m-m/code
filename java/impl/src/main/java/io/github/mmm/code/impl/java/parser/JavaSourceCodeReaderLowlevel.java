@@ -175,12 +175,12 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
 
     // clearConsumeState();
     skipWhile(CharFilter.WHITESPACE);
-    char c = peek();
-    if (c == '/') { // comment or doc?
+    int cp = peek();
+    if (cp == '/') { // comment or doc?
       next();
       parseDocOrComment();
       consume();
-    } else if (c == '@') { // annotation?
+    } else if (cp == '@') { // annotation?
       next();
       getElementComment();
       parseAnnotations();
@@ -332,8 +332,8 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
     List<CodeExpression> expressions = null;
     while (true) {
       parseWhitespacesAndComments();
-      char c = peek();
-      if (CHAR_FILTER_OPERATOR.accept(c)) {
+      int cp = peek();
+      if (CHAR_FILTER_OPERATOR.accept(cp)) {
         String operatorName = readWhile(CHAR_FILTER_OPERATOR);
         CodeOperator nextOperator = BaseOperator.of(operatorName);
         if (operator == null) {
@@ -431,14 +431,14 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
 
   private void parseDocOrComment() {
 
-    char c = peek();
-    if (c == '/') {
+    int cp = peek();
+    if (cp == '/') {
       String docLine = readLine(true);
       this.comments.add(new BaseSingleLineComment(docLine));
-    } else if (c == '*') {
+    } else if (cp == '*') {
       next();
-      c = peek();
-      if (c == '*') { // JavaDoc or regular comment
+      cp = peek();
+      if (cp == '*') { // JavaDoc or regular comment
         next();
         if (!this.javaDocLines.isEmpty()) {
           LOG.warn("Duplicate JavaDoc in {}.", this.file);
@@ -451,7 +451,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
         this.comments.add(comment);
       }
     } else {
-      LOG.warn("Illegal language: {} in {}.", "/" + c, this.file);
+      LOG.warn("Illegal language: {} in {}.", "/" + cp, this.file);
     }
   }
 
@@ -466,11 +466,11 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
     }
     while (true) {
       skipWhile(CharFilter.WHITESPACE);
-      char c = peek();
-      if (c == '*') {
+      int cp = peek();
+      if (cp == '*') {
         next();
-        c = peek();
-        if (c == '/') {
+        cp = peek();
+        if (cp == '/') {
           next();
           skipWhile(CharFilter.WHITESPACE);
           return;
@@ -509,18 +509,18 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
     boolean found = true;
     while (found) {
       skipWhile(CharFilter.WHITESPACE);
-      char c = peek();
-      if (c == 'a') {
+      int cp = peek();
+      if (cp == 'a') {
         found = parseModifierKeyword(modifiers, CodeModifiers.KEY_ABSTRACT);
-      } else if (c == 'd') {
+      } else if (cp == 'd') {
         found = parseModifierKeyword(modifiers, CodeModifiers.KEY_DEFAULT);
-      } else if (c == 'n') {
+      } else if (cp == 'n') {
         found = parseModifierKeyword(modifiers, CodeModifiers.KEY_NATIVE);
-      } else if (c == 'f') {
+      } else if (cp == 'f') {
         found = parseModifierKeyword(modifiers, CodeModifiers.KEY_FINAL);
-      } else if (c == 'v') {
+      } else if (cp == 'v') {
         found = parseModifierKeyword(modifiers, CodeModifiers.KEY_VOLATILE);
-      } else if (c == 's') {
+      } else if (cp == 's') {
         found = parseModifierKeyword(modifiers, CodeModifiers.KEY_STATIC);
         if (!found) {
           found = parseModifierKeyword(modifiers, CodeModifiers.KEY_SYNCHRONIZED);
@@ -528,7 +528,7 @@ public abstract class JavaSourceCodeReaderLowlevel extends CharReaderScanner {
             found = parseModifierKeyword(modifiers, CodeModifiers.KEY_SYNCHRONIZED);
           }
         }
-      } else if (c == 't') {
+      } else if (cp == 't') {
         found = parseModifierKeyword(modifiers, CodeModifiers.KEY_TRANSIENT);
       } else {
         found = false;

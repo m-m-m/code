@@ -100,8 +100,8 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
 
     consume();
     String actualPkg = "";
-    char c = peek();
-    if ((c == 'p') && expect("package")) {
+    int cp = peek();
+    if ((cp == 'p') && expect("package")) {
       skipWhile(CharFilter.WHITESPACE);
       actualPkg = readUntil(';', true).trim();
     }
@@ -668,24 +668,24 @@ public class JavaSourceCodeReaderHighlevel extends JavaSourceCodeReaderLowlevel 
   private CodeTypeCategory parseCategory() {
 
     consume();
-    char c = peek();
-    if (c == 'c') {
+    int cp = peek();
+    if (cp == 'c') {
       if (expect("class")) {
         return CodeTypeCategory.CLASS;
       }
-    } else if (c == 'i') {
+    } else if (cp == 'i') {
       if (expect("interface")) {
         return CodeTypeCategory.INTERFACE;
       }
-    } else if (c == 'e') {
+    } else if (cp == 'e') {
       if (expect("enum")) {
         return CodeTypeCategory.ENUMERAION;
       }
-    } else if (c == 'r') {
+    } else if (cp == 'r') {
       if (expect("record")) {
         return CodeTypeCategory.RECORD;
       }
-    } else if (c == '@') {
+    } else if (cp == '@') {
       if (expect("@interface")) {
         return CodeTypeCategory.ANNOTATION;
       }
