@@ -140,12 +140,12 @@ public interface CodeType extends CodeGenericType, CodeElementWithModifiers, Cod
   CodeType getNonPrimitiveType();
 
   /**
-   * @return {@code true} if this type represents {@link void} or {@link Void}.
+   * @return {@code true} if this type represents {@code void} or {@link Void}.
    */
   boolean isVoid();
 
   /**
-   * @return {@code true} if this type represents {@link boolean} or {@link Boolean}.
+   * @return {@code true} if this type represents {@code boolean} or {@link Boolean}.
    */
   boolean isBoolean();
 

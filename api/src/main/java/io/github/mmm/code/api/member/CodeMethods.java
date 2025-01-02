@@ -27,7 +27,7 @@ public interface CodeMethods extends CodeOperations<CodeMethod>, CodeNodeItemCon
   /**
    * @param name the {@link CodeMethod#getName() method name}.
    * @return a new {@link CodeMethod} that has been added to {@link #getDeclared()}. The {@link CodeMethod#getReturns()
-   *         return type} will be initialized as {@link void}. It will not have any {@link CodeMethod#getParameters()
+   *         return type} will be initialized as {@code void}. It will not have any {@link CodeMethod#getParameters()
    *         parameters} or {@link CodeMethod#getExceptions() exceptions}. Simply add those afterwards as needed.
    * @throws io.github.mmm.base.exception.ReadOnlyException if {@link #isImmutable() immutable}.
    */
