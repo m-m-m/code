@@ -2,11 +2,21 @@
  * http://www.apache.org/licenses/LICENSE-2.0 */
 package io.github.mmm.code.api.language;
 
+import java.nio.charset.Charset;
+import java.nio.file.Path;
+
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
+import io.github.mmm.code.api.CodeContext;
 import io.github.mmm.code.api.CodePackage;
+import io.github.mmm.code.api.CodePathElements;
+import io.github.mmm.code.api.annotation.CodeAnnotations;
+import io.github.mmm.code.api.comment.CodeComment;
+import io.github.mmm.code.api.copy.CodeCopyMapper;
+import io.github.mmm.code.api.doc.CodeDoc;
+import io.github.mmm.code.api.node.CodeContainer;
+import io.github.mmm.code.api.source.CodeSource;
 import io.github.mmm.code.api.type.CodeTypeCategory;
 
 /**
@@ -53,9 +63,9 @@ public class JavaLanguageTest extends Assertions implements TestValues {
     CodeLanguage language = JavaLanguage.get();
 
     // when
-    CodePackage pkgRoot = Mockito.mock(CodePackage.class);
-    CodePackage pkg = Mockito.mock(CodePackage.class);
-    Mockito.when(pkg.getParentPackage()).thenReturn(pkgRoot);
+    CodePackage pkgRoot = new CodePackageMock("com");
+    CodePackage pkg = new CodePackageMock(pkgRoot, "foo");
+    // Mockito.when(pkg.getParentPackage()).thenReturn(pkgRoot);
 
     // then
     // valid package names
@@ -108,6 +118,160 @@ public class JavaLanguageTest extends Assertions implements TestValues {
         fail("Simple name '" + simpleName + "' was expected to be a valid for package.", e);
       }
     }
+  }
+
+  private class CodePackageMock implements CodePackage {
+
+    private CodePackage parent;
+
+    private String simpleName;
+
+    CodePackageMock(String simpleName) {
+
+      this(null, simpleName);
+    }
+
+    CodePackageMock(CodePackage parent, String simpleName) {
+
+      super();
+      this.parent = parent;
+      this.simpleName = simpleName;
+    }
+
+    @Override
+    public boolean isFile() {
+
+      return false;
+    }
+
+    @Override
+    public CodeDoc getDoc() {
+
+      return null;
+    }
+
+    @Override
+    public CodeAnnotations getAnnotations() {
+
+      return null;
+    }
+
+    @Override
+    public void removeFromParent() {
+
+    }
+
+    @Override
+    public void setComment(CodeComment comment) {
+
+    }
+
+    @Override
+    public CodeComment getComment() {
+
+      return null;
+    }
+
+    @Override
+    public CodePackageMock copy(CodeCopyMapper mapper) {
+
+      return null;
+    }
+
+    @Override
+    public void setImmutable() {
+
+    }
+
+    @Override
+    public void write(Appendable sink, String newline, String defaultIndent, String currentIndent,
+        CodeLanguage language) {
+
+    }
+
+    @Override
+    public String getSourceCode() {
+
+      return null;
+    }
+
+    @Override
+    public void write(Path targetFolder) {
+
+    }
+
+    @Override
+    public void write(Path targetFolder, Charset encoding) {
+
+    }
+
+    @Override
+    public CodePackage getParentPackage() {
+
+      return this.parent;
+    }
+
+    @Override
+    public String getSimpleName() {
+
+      return this.simpleName;
+    }
+
+    @Override
+    public CodeContext getContext() {
+
+      return null;
+    }
+
+    @Override
+    public CodeSource getSource() {
+
+      return null;
+    }
+
+    @Override
+    public boolean isImmutable() {
+
+      return false;
+    }
+
+    @Override
+    public CodeContainer getParent() {
+
+      return this.parent;
+    }
+
+    @Override
+    public CodePathElements getChildren() {
+
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public boolean isRequireImport() {
+
+      return false;
+    }
+
+    @Override
+    public boolean isRoot() {
+
+      return this.parent == null;
+    }
+
+    @Override
+    public Package getReflectiveObject() {
+
+      return null;
+    }
+
+    @Override
+    public CodePackage copy() {
+
+      return null;
+    }
+
   }
 
 }
