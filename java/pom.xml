@@ -14,7 +14,6 @@
   <description>The modules of mmm-code for Java.</description>
 
   <modules>
-    <module>parser</module>
     <module>maven</module>
     <module>impl</module>
   </modules>
