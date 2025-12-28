@@ -22,7 +22,7 @@ import io.github.mmm.code.api.type.CodeTypeCategory;
 /**
  * Test of {@link JavaLanguage}.
  */
-public class JavaLanguageTest extends Assertions implements TestValues {
+class JavaLanguageTest extends Assertions implements TestValues {
 
   static final String DIGITS_NOT_SUPPORTED_BY_JAVA_8 = "௰Ⅹ\ud835\udfe8";
 
@@ -30,7 +30,7 @@ public class JavaLanguageTest extends Assertions implements TestValues {
    * Tests the basics of {@link JavaLanguage}.
    */
   @Test
-  public void testBasics() {
+  void testBasics() {
 
     // arrange
     CodeLanguage language = JavaLanguage.get();
@@ -57,7 +57,7 @@ public class JavaLanguageTest extends Assertions implements TestValues {
    * {@link CodePackage}.
    */
   @Test
-  public void testPackageNaming() {
+  void testPackageNaming() {
 
     // arrange
     CodeLanguage language = JavaLanguage.get();

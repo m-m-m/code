@@ -10,13 +10,13 @@ import io.github.mmm.code.base.type.BaseType;
 /**
  * Test of {@link BaseFile}.
  */
-public class BaseFileTest extends BaseContextTest {
+class BaseFileTest extends BaseContextTest {
 
   /**
    * Test of {@link BasePackage#BasePackage(BasePackage, String)} with invalid names.
    */
   @Test
-  public void testInvalidNames() {
+  void testInvalidNames() {
 
     // arrange
     BaseContext context = createContext();
@@ -54,7 +54,7 @@ public class BaseFileTest extends BaseContextTest {
    * Test of {@link BaseFile} for {@link BaseContext#getRootType()}.
    */
   @Test
-  public void testObjectFile() {
+  void testObjectFile() {
 
     // arrange
     BaseContext context = createContext();
@@ -81,7 +81,7 @@ public class BaseFileTest extends BaseContextTest {
    * Test of {@link BasePathElements#createFile(String)}.
    */
   @Test
-  public void testCreatePackage() {
+  void testCreatePackage() {
 
     // arrange
     BaseContext context = createContext();

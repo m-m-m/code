@@ -10,13 +10,13 @@ import org.junit.jupiter.api.Test;
 /**
  * Test of {@link MavenLocalRepositoryLocator}.
  */
-public class MavenLocalRepositoryLocatorTest extends Assertions {
+class MavenLocalRepositoryLocatorTest extends Assertions {
 
   /**
    * Test of {@link MavenLocalRepositoryLocator#getDefaultLocalRepository()}
    */
   @Test
-  public void testReadModel() {
+  void testReadModel() {
 
     // act
     File defaultLocalRepository = MavenLocalRepositoryLocator.getDefaultLocalRepository();

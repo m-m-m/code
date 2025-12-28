@@ -23,7 +23,7 @@ import io.github.mmm.code.base.BaseContextTest;
 /**
  * Test of {@link CodeNodeItemCopyable} the entire AST.
  */
-public class CodeCopyTest extends BaseContextTest {
+class CodeCopyTest extends BaseContextTest {
 
   private static final String PKG_DETAIL = "x_detail_x";
 
@@ -45,7 +45,7 @@ public class CodeCopyTest extends BaseContextTest {
    * Test of {@link CodeNodeItemCopyable#copy()}.
    */
   @Test
-  public void testCopy() {
+  void testCopy() {
 
     // arrange
     CodeContext context = createContext();
@@ -242,7 +242,7 @@ public class CodeCopyTest extends BaseContextTest {
    * Test of {@link CodeNodeItemCopyable#copy(io.github.mmm.code.api.copy.CodeCopyMapper)}.
    */
   @Test
-  public void testCopyWithCustomMapper() {
+  void testCopyWithCustomMapper() {
 
     // arrange
     CodeContext context = createContext();

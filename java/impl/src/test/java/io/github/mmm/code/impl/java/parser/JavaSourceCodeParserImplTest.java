@@ -32,7 +32,7 @@ import io.github.mmm.code.java.maven.api.MavenConstants;
  *
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  */
-public class JavaSourceCodeParserImplTest extends AbstractBaseTypeTest {
+class JavaSourceCodeParserImplTest extends AbstractBaseTypeTest {
 
   SourceCodeParser getParser() {
 
@@ -95,7 +95,7 @@ public class JavaSourceCodeParserImplTest extends AbstractBaseTypeTest {
    * Test reading {@link JavaSourceCodeParserImplTest} itself.
    */
   @Test
-  public void testMyself() {
+  void testMyself() {
 
     // arrange
     Class<?> clazz = JavaSourceCodeParserImplTest.class;

@@ -13,10 +13,10 @@ import org.junit.jupiter.api.Test;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  */
 @SuppressWarnings("javadoc")
-public class JavaConstantsTest extends Assertions {
+class JavaConstantsTest extends Assertions {
 
   @Test
-  public void testUnboundedWildcard() {
+  void testUnboundedWildcard() {
 
     // arrange + act
     WildcardType unboundedWildcard = JavaConstants.UNBOUNDED_WILDCARD;

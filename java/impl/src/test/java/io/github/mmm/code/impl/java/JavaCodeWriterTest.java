@@ -17,10 +17,10 @@ import io.github.mmm.code.base.type.BaseType;
 /**
  * Test of writing Java source code.
  */
-public class JavaCodeWriterTest extends Assertions {
+class JavaCodeWriterTest extends Assertions {
 
   @Test
-  public void testWriteRecord() {
+  void testWriteRecord() {
 
     JavaRootContext context = JavaRootContext.get();
     BaseType object = context.getRootType();
@@ -36,7 +36,7 @@ public class JavaCodeWriterTest extends Assertions {
   }
 
   @Test
-  public void testWriteClass() {
+  void testWriteClass() {
 
     JavaRootContext context = JavaRootContext.get();
     BaseType object = context.getRootType();
@@ -84,7 +84,7 @@ public class JavaCodeWriterTest extends Assertions {
   }
 
   @Test
-  public void testWriteInterface() {
+  void testWriteInterface() {
 
     JavaRootContext context = JavaRootContext.get();
     BaseType object = context.getRootType();
@@ -114,7 +114,7 @@ public class JavaCodeWriterTest extends Assertions {
   }
 
   @Test
-  public void testWriteAnnotation() {
+  void testWriteAnnotation() {
 
     JavaRootContext context = JavaRootContext.get();
     BaseGenericType retention = context.getType(Retention.class);

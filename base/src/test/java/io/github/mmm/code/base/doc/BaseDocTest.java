@@ -13,13 +13,13 @@ import io.github.mmm.code.base.type.BaseType;
 /**
  * Test of {@link BaseDoc}.
  */
-public class BaseDocTest extends BaseContextTest {
+class BaseDocTest extends BaseContextTest {
 
   /**
    * Test of {@link BaseDoc} with links and markup including conversion to arbitary {@link CodeDocFormat}s.
    */
   @Test
-  public void testJavaDoc() {
+  void testJavaDoc() {
 
     // arrange
     BaseContext context = createContext();

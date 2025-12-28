@@ -6,13 +6,13 @@ import org.junit.jupiter.api.Test;
 /**
  * Test of {@link CodeModifiers}.
  */
-public class CodeModifiersTest extends Assertions {
+class CodeModifiersTest extends Assertions {
 
   /**
    * Test of {@link CodeModifiers#MODIFIERS_PRIVATE_STATIC_FINAL}.
    */
   @Test
-  public void testPrivateStaticFinal() {
+  void testPrivateStaticFinal() {
 
     // arrange
     CodeModifiers modifiers = CodeModifiers.MODIFIERS_PRIVATE_STATIC_FINAL;
@@ -36,7 +36,7 @@ public class CodeModifiersTest extends Assertions {
    * Test of {@link CodeModifiers#MODIFIERS_PUBLIC_STATIC_FINAL}.
    */
   @Test
-  public void testPublicStaticFinal() {
+  void testPublicStaticFinal() {
 
     // arrange
     CodeModifiers modifiers = CodeModifiers.MODIFIERS_PUBLIC_STATIC_FINAL;
@@ -62,7 +62,7 @@ public class CodeModifiersTest extends Assertions {
    * Test of {@link CodeModifiers#MODIFIERS_PROTECTED_STATIC_FINAL}.
    */
   @Test
-  public void testProtectedStaticFinal() {
+  void testProtectedStaticFinal() {
 
     // arrange
     CodeModifiers modifiers = CodeModifiers.MODIFIERS_PROTECTED_STATIC_FINAL;
@@ -85,7 +85,7 @@ public class CodeModifiersTest extends Assertions {
    * Test of {@link CodeModifiers#MODIFIERS_PUBLIC_DEFAULT}.
    */
   @Test
-  public void testPublicDefault() {
+  void testPublicDefault() {
 
     // arrange
     CodeModifiers modifiers = CodeModifiers.MODIFIERS_PUBLIC_DEFAULT;
@@ -108,7 +108,7 @@ public class CodeModifiersTest extends Assertions {
    * Test of {@link CodeModifiers#MODIFIERS_PUBLIC_ABSTRACT}.
    */
   @Test
-  public void testPublicAbstract() {
+  void testPublicAbstract() {
 
     // arrange
     CodeModifiers modifiers = CodeModifiers.MODIFIERS_PUBLIC_ABSTRACT;
@@ -131,7 +131,7 @@ public class CodeModifiersTest extends Assertions {
    * Test of {@link CodeModifiers#MODIFIERS_PRIVATE_ABSTRACT}.
    */
   @Test
-  public void testPrivateAbstract() {
+  void testPrivateAbstract() {
 
     // arrange
     CodeModifiers modifiers = CodeModifiers.MODIFIERS_PRIVATE_ABSTRACT;
@@ -154,7 +154,7 @@ public class CodeModifiersTest extends Assertions {
    * Test of {@link CodeModifiers#MODIFIERS_PROTECTED_ABSTRACT}.
    */
   @Test
-  public void testProtectedAbstract() {
+  void testProtectedAbstract() {
 
     // arrange
     CodeModifiers modifiers = CodeModifiers.MODIFIERS_PROTECTED_ABSTRACT;

@@ -17,7 +17,7 @@ import io.github.mmm.code.api.type.CodeType;
 /**
  * Test of {@link AbstractBaseContext} via {@link TestContext}.
  */
-public class AbstractBaseContextTest extends BaseContextTest {
+class AbstractBaseContextTest extends BaseContextTest {
 
   /**
    * Test of {@link CodeNodeWithFileWriting#write(Path)}.
@@ -25,7 +25,7 @@ public class AbstractBaseContextTest extends BaseContextTest {
    * @throws Exception on error.
    */
   @Test
-  public void testWrite() throws Exception {
+  void testWrite() throws Exception {
 
     // arrange
     CodeContext context = createContext();

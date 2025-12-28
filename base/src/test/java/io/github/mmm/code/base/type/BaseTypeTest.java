@@ -24,13 +24,13 @@ import io.github.mmm.code.base.member.BaseMethod;
 /**
  * Test of {@link BaseType}.
  */
-public class BaseTypeTest extends BaseContextTest {
+class BaseTypeTest extends BaseContextTest {
 
   /**
    * Test of {@link BaseType} for empty class.
    */
   @Test
-  public void testEmptyClass() {
+  void testEmptyClass() {
 
     // arrange
     BaseContext context = createContext();
@@ -67,7 +67,7 @@ public class BaseTypeTest extends BaseContextTest {
    */
   @SuppressWarnings("unchecked")
   @Test
-  public void testNestedTypesWithDoc() {
+  void testNestedTypesWithDoc() {
 
     // arrange
     BaseContext context = createContext();
@@ -167,7 +167,7 @@ public class BaseTypeTest extends BaseContextTest {
    * Test of {@link BaseType#getSuperTypes()}.
    */
   @Test
-  public void testSuperTypes() {
+  void testSuperTypes() {
 
     // arrange
     BaseContext context = createContext();
@@ -212,7 +212,7 @@ public class BaseTypeTest extends BaseContextTest {
    * Test of {@link BaseType#createGettersAndSetters()}, etc.
    */
   @Test
-  public void testBean() {
+  void testBean() {
 
     // arrange
     BaseContext context = createContext();
@@ -287,7 +287,7 @@ public class BaseTypeTest extends BaseContextTest {
    * Test of {@link BaseContext#getOrCreateType(String, boolean)}.
    */
   @Test
-  public void testGetOrCreateType() {
+  void testGetOrCreateType() {
 
     // arrange
     BaseContext context = createContext().createChildContext();

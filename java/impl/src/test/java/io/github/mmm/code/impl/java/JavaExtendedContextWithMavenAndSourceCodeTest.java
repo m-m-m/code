@@ -28,7 +28,7 @@ import io.github.mmm.code.impl.java.source.maven.MavenDependencyCollector;
  * @author Joerg Hohwiller (hohwille at users.sourceforge.net)
  * @since 1.0.0
  */
-public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseTypeTest {
+class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseTypeTest {
 
   private static final Pattern VERSION_PATTERN = Pattern.compile("[0-9]+(\\.[0-9]+)*(-beta[0-9]+)?(-SNAPSHOT)?");
 
@@ -49,7 +49,7 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
    * Test the very basic methods of {@link JavaContext}.
    */
   @Test
-  public void testBasics() {
+  void testBasics() {
 
     // arrange
     JavaContext context = getContext();
@@ -74,7 +74,7 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
    * Testing own maven project with own classloader.
    */
   @Test
-  public void testContextFromOwnMavenProject() {
+  void testContextFromOwnMavenProject() {
 
     // arrange
     File mavenProjectDirectory = new File(".");
@@ -94,7 +94,7 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
    * are able to retrieve a class from this local Maven project
    */
   @Test
-  public void testContextFromCustomMavenProject() {
+  void testContextFromCustomMavenProject() {
 
     // arrange
     String entityClass = "com.maven.project.sampledatamanagement.dataaccess.api.SampleDataEntity";
@@ -183,7 +183,7 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
    * filesystem).
    */
   @Test
-  public void testTypeWithSourceFromFilesystem() {
+  void testTypeWithSourceFromFilesystem() {
 
     // arrange
     JavaContext context = getContext();
@@ -206,7 +206,7 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
    * Test full integration of {@link JavaContext#getType(String)} from byte-code and source-code (from JAR files).
    */
   @Test
-  public void testTypeWithSourceFromJar() {
+  void testTypeWithSourceFromJar() {
 
     // arrange
     JavaContext context = getContext();

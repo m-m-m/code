@@ -17,13 +17,13 @@ import io.github.mmm.code.base.type.BaseType;
 /**
  * Test of {@link BasePackage} and {@link BasePathElements}.
  */
-public class BasePackageTest extends BaseContextTest {
+class BasePackageTest extends BaseContextTest {
 
   /**
    * Test of {@link BasePackage#BasePackage(BasePackage, String)} with invalid and valid simple names.
    */
   @Test
-  public void testSimpleNames() {
+  void testSimpleNames() {
 
     // arrange
     BaseContext context = createContext();
@@ -57,7 +57,7 @@ public class BasePackageTest extends BaseContextTest {
    * Test of {@link BasePathElements#createPackage(String)}.
    */
   @Test
-  public void testRootPackage() {
+  void testRootPackage() {
 
     // arrange
     BaseContext context = createContext();
@@ -82,7 +82,7 @@ public class BasePackageTest extends BaseContextTest {
    * Test of {@link BasePathElements#createPackage(String)}.
    */
   @Test
-  public void testCreatePackage() {
+  void testCreatePackage() {
 
     // arrange
     BaseContext context = createContext();
@@ -112,7 +112,7 @@ public class BasePackageTest extends BaseContextTest {
    * with factory to create packages but without adding.
    */
   @Test
-  public void testGetPackage() {
+  void testGetPackage() {
 
     testGetPackageParameterized(false, false);
     testGetPackageParameterized(false, true); // sick signature but protected so only internal and no API
@@ -124,7 +124,7 @@ public class BasePackageTest extends BaseContextTest {
    * with factory to create packages and with force adding.
    */
   @Test
-  public void testGetPackageForceAdd() {
+  void testGetPackageForceAdd() {
 
     testGetPackageParameterized(true, true);
   }
@@ -135,7 +135,7 @@ public class BasePackageTest extends BaseContextTest {
    * with factory to create packages and with adding failing because immutable.
    */
   @Test
-  public void testGetPackageAddFailImmutable() {
+  void testGetPackageAddFailImmutable() {
 
     try {
       testGetPackageParameterized(true, false);
@@ -201,7 +201,7 @@ public class BasePackageTest extends BaseContextTest {
    */
   @SuppressWarnings({ "unchecked", "rawtypes" })
   @Test
-  public void testJavaLang() {
+  void testJavaLang() {
 
     // arrange
     BaseContext context = createContext();

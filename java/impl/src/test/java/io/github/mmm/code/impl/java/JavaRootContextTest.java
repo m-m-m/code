@@ -27,7 +27,7 @@ import io.github.mmm.code.base.type.BaseParameterizedType;
 /**
  * Test of {@link JavaRootContext}.
  */
-public class JavaRootContextTest extends AbstractBaseTypeTest {
+class JavaRootContextTest extends AbstractBaseTypeTest {
 
   private JavaRootContext getContext() {
 
@@ -38,7 +38,7 @@ public class JavaRootContextTest extends AbstractBaseTypeTest {
    * Test the very basic methods of {@link JavaContext}.
    */
   @Test
-  public void testBasics() {
+  void testBasics() {
 
     // arrange
     JavaContext context = getContext();
@@ -61,7 +61,7 @@ public class JavaRootContextTest extends AbstractBaseTypeTest {
    * Test of {@link JavaContext#getLanguage()}.
    */
   @Test
-  public void testLanguage() {
+  void testLanguage() {
 
     // arrange
     JavaContext context = getContext();
@@ -92,7 +92,7 @@ public class JavaRootContextTest extends AbstractBaseTypeTest {
    * Test of {@link JavaContext#getRootType()}
    */
   @Test
-  public void testObject() {
+  void testObject() {
 
     // arrange
     JavaContext context = getContext();
@@ -108,7 +108,7 @@ public class JavaRootContextTest extends AbstractBaseTypeTest {
    * Test of {@link JavaContext#getRootExceptionType()}
    */
   @Test
-  public void testThrowable() {
+  void testThrowable() {
 
     // arrange
     JavaContext context = getContext();
@@ -124,7 +124,7 @@ public class JavaRootContextTest extends AbstractBaseTypeTest {
    * Test of {@link JavaContext#getRootEnumerationType()}.
    */
   @Test
-  public void testEnum() {
+  void testEnum() {
 
     // arrange
     JavaContext context = getContext();
@@ -171,7 +171,7 @@ public class JavaRootContextTest extends AbstractBaseTypeTest {
    * Test of {@link CodeType#getProperties() properties}.
    */
   @Test
-  public void testProperties() {
+  void testProperties() {
 
     // arrange
     JavaContext context = getContext();
@@ -190,7 +190,7 @@ public class JavaRootContextTest extends AbstractBaseTypeTest {
    * Test of {@link JavaContext#getClassLoader()}.
    */
   @Test
-  public void testGetClassLoader() {
+  void testGetClassLoader() {
 
     // arrange
     JavaContext context = getContext();

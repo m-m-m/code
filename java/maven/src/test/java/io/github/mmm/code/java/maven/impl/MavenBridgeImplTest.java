@@ -20,7 +20,7 @@ import io.github.mmm.code.java.maven.api.MavenConstants;
 /**
  * Test of {@link MavenBridgeImpl}.
  */
-public class MavenBridgeImplTest extends Assertions implements MavenConstants {
+class MavenBridgeImplTest extends Assertions implements MavenConstants {
 
   private static final File POM_XML = new File(MavenConstants.POM_XML);
 
@@ -35,7 +35,7 @@ public class MavenBridgeImplTest extends Assertions implements MavenConstants {
    * Test of {@link MavenBridgeImpl#readModel(File)}
    */
   @Test
-  public void testReadModel() {
+  void testReadModel() {
 
     // arrange
     MavenBridgeImpl reader = new MavenBridgeImpl();
@@ -57,7 +57,7 @@ public class MavenBridgeImplTest extends Assertions implements MavenConstants {
    * Tests if a valid child revision can be read from the maven.config
    */
   @Test
-  public void testResolveRevisionParameterOfMavenConfig() {
+  void testResolveRevisionParameterOfMavenConfig() {
 
     // arrange
     File mavenProjectDirectory = new File(ROOT_TEST_PATH, "localmavenproject/maven.project/core"); // test Maven project
@@ -74,7 +74,7 @@ public class MavenBridgeImplTest extends Assertions implements MavenConstants {
    * Test of {@link MavenBridgeImpl#readEffectiveModel(File)}
    */
   @Test
-  public void testReadProject() {
+  void testReadProject() {
 
     // arrange
     MavenBridgeImpl reader = new MavenBridgeImpl();

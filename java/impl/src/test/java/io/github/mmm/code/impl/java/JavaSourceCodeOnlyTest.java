@@ -21,11 +21,11 @@ import io.github.mmm.code.impl.java.loader.JavaSourceLoader;
 /**
  * Test of {@link JavaExtendedContext} with only source code available.
  */
-public class JavaSourceCodeOnlyTest extends AbstractBaseTypeTest {
+class JavaSourceCodeOnlyTest extends AbstractBaseTypeTest {
 
   /** Parse Demo.java where only source-code is available. */
   @Test
-  public void testSourceCodeOnly() {
+  void testSourceCodeOnly() {
 
     File sourceLocation = new File("src/test/resources/testdata/sourcecode");
     SourceCodeProvider sourceCodeProvider = new BaseSourceCodeProviderDirectory(sourceLocation);
