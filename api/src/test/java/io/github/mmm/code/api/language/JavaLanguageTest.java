@@ -32,10 +32,10 @@ public class JavaLanguageTest extends Assertions implements TestValues {
   @Test
   public void testBasics() {
 
-    // given
+    // arrange
     CodeLanguage language = JavaLanguage.get();
 
-    // then
+    // assert
     assertThat(language.getPackageSeparator()).isEqualTo('.');
     assertThat(language.getLanguageName()).isEqualTo("Java");
     assertThat(language.getKeywordForExtends()).isEqualTo(" extends ");
@@ -59,15 +59,15 @@ public class JavaLanguageTest extends Assertions implements TestValues {
   @Test
   public void testPackageNaming() {
 
-    // given
+    // arrange
     CodeLanguage language = JavaLanguage.get();
 
-    // when
+    // act
     CodePackage pkgRoot = new CodePackageMock("com");
     CodePackage pkg = new CodePackageMock(pkgRoot, "foo");
     // Mockito.when(pkg.getParentPackage()).thenReturn(pkgRoot);
 
-    // then
+    // assert
     // valid package names
     verifyPackageName(language, pkg, "pkg1", true);
     verifyPackageName(language, pkg, "m_m_m", true);

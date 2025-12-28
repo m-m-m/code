@@ -40,10 +40,10 @@ public class JavaRootContextTest extends AbstractBaseTypeTest {
   @Test
   public void testBasics() {
 
-    // given
+    // arrange
     JavaContext context = getContext();
 
-    // then
+    // assert
     assertThat(context.getRootContext()).isSameAs(context);
     BasePackage rootPackage = context.getSource().getRootPackage();
     assertThat(rootPackage).isNotNull();
@@ -63,12 +63,12 @@ public class JavaRootContextTest extends AbstractBaseTypeTest {
   @Test
   public void testLanguage() {
 
-    // given
+    // arrange
     JavaContext context = getContext();
     BaseSource source = context.getSource();
     CodeLanguage language = context.getLanguage();
 
-    // then
+    // assert
     assertThat(language.getPackageSeparator()).isEqualTo('.');
     assertThat(language.getLanguageName()).isEqualTo("Java");
     assertThat(language.getKeywordForExtends()).isEqualTo(" extends ");
@@ -94,13 +94,13 @@ public class JavaRootContextTest extends AbstractBaseTypeTest {
   @Test
   public void testObject() {
 
-    // given
+    // arrange
     JavaContext context = getContext();
 
-    // when
+    // act
     CodeType object = context.getRootType();
 
-    // then
+    // assert
     verifyClass(object, Object.class, context);
   }
 
@@ -110,13 +110,13 @@ public class JavaRootContextTest extends AbstractBaseTypeTest {
   @Test
   public void testThrowable() {
 
-    // given
+    // arrange
     JavaContext context = getContext();
 
-    // when
+    // act
     CodeType throwable = context.getRootExceptionType();
 
-    // then
+    // assert
     verifyClass(throwable, Throwable.class, context);
   }
 
@@ -126,13 +126,13 @@ public class JavaRootContextTest extends AbstractBaseTypeTest {
   @Test
   public void testEnum() {
 
-    // given
+    // arrange
     JavaContext context = getContext();
 
-    // when
+    // act
     CodeType enumeration = context.getRootEnumerationType();
 
-    // then
+    // assert
     verifyClass(enumeration, Enum.class, context);
     CodeSuperTypes superTypes = enumeration.getSuperTypes();
     assertThat(superTypes.getSuperClass()).isSameAs(context.getRootType());
@@ -173,13 +173,13 @@ public class JavaRootContextTest extends AbstractBaseTypeTest {
   @Test
   public void testProperties() {
 
-    // given
+    // arrange
     JavaContext context = getContext();
 
-    // when
+    // act
     CodeType yearMonth = context.getType("java.time.YearMonth");
 
-    // then
+    // assert
     CodeProperties properties = yearMonth.getProperties();
     assertThat(properties.getDeclared().size()).isGreaterThanOrEqualTo(2);
     checkProperty(properties, "year", int.class);
@@ -192,13 +192,13 @@ public class JavaRootContextTest extends AbstractBaseTypeTest {
   @Test
   public void testGetClassLoader() {
 
-    // given
+    // arrange
     JavaContext context = getContext();
 
-    // when
+    // act
     ClassLoader classLoader = context.getClassLoader();
 
-    // then
+    // assert
     assertThat(classLoader).isSameAs(ClassLoader.getSystemClassLoader());
   }
 

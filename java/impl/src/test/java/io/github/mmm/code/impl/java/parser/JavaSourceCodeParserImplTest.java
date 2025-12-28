@@ -97,11 +97,11 @@ public class JavaSourceCodeParserImplTest extends AbstractBaseTypeTest {
   @Test
   public void testMyself() {
 
-    // given
+    // arrange
     Class<?> clazz = JavaSourceCodeParserImplTest.class;
-    // when
+    // act
     BaseType type = parse(clazz);
-    // then
+    // assert
     assertThat(type).isNotNull();
     assertThat(type.getSimpleName()).isEqualTo(clazz.getSimpleName());
     assertThat(type.getQualifiedName()).isEqualTo(clazz.getName());

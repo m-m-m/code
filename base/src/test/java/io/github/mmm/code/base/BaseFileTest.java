@@ -18,13 +18,13 @@ public class BaseFileTest extends BaseContextTest {
   @Test
   public void testInvalidNames() {
 
-    // given
+    // arrange
     BaseContext context = createContext();
     BaseSource source = context.getSource();
     BasePackage rootPackage = source.getRootPackage();
     BasePackage pkg = new BasePackage(rootPackage, "pkg");
 
-    // when + then
+    // act + assert
     verifyFileSimpleName(rootPackage, null, false);
     verifyFileSimpleName(rootPackage, "", false);
     verifyFileSimpleName(pkg, "class", false);
@@ -56,15 +56,15 @@ public class BaseFileTest extends BaseContextTest {
   @Test
   public void testObjectFile() {
 
-    // given
+    // arrange
     BaseContext context = createContext();
     BaseSource source = context.getSource();
 
-    // when
+    // act
     BaseType type = context.getRootType();
     BaseFile file = type.getFile();
 
-    // then
+    // assert
     assertThat(type.getSimpleName()).isEqualTo("Object");
     assertThat(type.getQualifiedName()).isEqualTo("java.lang.Object");
     assertThat(type.isImmutable()).isTrue();
@@ -83,16 +83,16 @@ public class BaseFileTest extends BaseContextTest {
   @Test
   public void testCreatePackage() {
 
-    // given
+    // arrange
     BaseContext context = createContext();
     BaseSource source = context.getSource();
     BasePackage rootPackage = source.getRootPackage();
     String fileName = "MyFile";
 
-    // when
+    // act
     BaseFile file = rootPackage.getChildren().createFile(fileName);
 
-    // then
+    // assert
     assertThat(file.getSimpleName()).isEqualTo(fileName);
     assertThat(file.getQualifiedName()).isEqualTo(fileName);
     assertThat(file.getParentPackage()).isSameAs(rootPackage);

@@ -14,10 +14,10 @@ public class CodeModifiersTest extends Assertions {
   @Test
   public void testPrivateStaticFinal() {
 
-    // given
+    // arrange
     CodeModifiers modifiers = CodeModifiers.MODIFIERS_PRIVATE_STATIC_FINAL;
 
-    // when + then
+    // act + assert
     assertThat(modifiers.isAbstract()).isFalse();
     assertThat(modifiers.isDefaultModifier()).isFalse();
     assertThat(modifiers.isFinal()).isTrue();
@@ -38,10 +38,10 @@ public class CodeModifiersTest extends Assertions {
   @Test
   public void testPublicStaticFinal() {
 
-    // given
+    // arrange
     CodeModifiers modifiers = CodeModifiers.MODIFIERS_PUBLIC_STATIC_FINAL;
 
-    // when + then
+    // act + assert
     assertThat(modifiers.isAbstract()).isFalse();
     assertThat(modifiers.isDefaultModifier()).isFalse();
     assertThat(modifiers.isFinal()).isTrue();
@@ -64,10 +64,10 @@ public class CodeModifiersTest extends Assertions {
   @Test
   public void testProtectedStaticFinal() {
 
-    // given
+    // arrange
     CodeModifiers modifiers = CodeModifiers.MODIFIERS_PROTECTED_STATIC_FINAL;
 
-    // when + then
+    // act + assert
     assertThat(modifiers.isAbstract()).isFalse();
     assertThat(modifiers.isDefaultModifier()).isFalse();
     assertThat(modifiers.isFinal()).isTrue();
@@ -87,10 +87,10 @@ public class CodeModifiersTest extends Assertions {
   @Test
   public void testPublicDefault() {
 
-    // given
+    // arrange
     CodeModifiers modifiers = CodeModifiers.MODIFIERS_PUBLIC_DEFAULT;
 
-    // when + then
+    // act + assert
     assertThat(modifiers.isAbstract()).isFalse();
     assertThat(modifiers.isDefaultModifier()).isTrue();
     assertThat(modifiers.isFinal()).isFalse();
@@ -110,10 +110,10 @@ public class CodeModifiersTest extends Assertions {
   @Test
   public void testPublicAbstract() {
 
-    // given
+    // arrange
     CodeModifiers modifiers = CodeModifiers.MODIFIERS_PUBLIC_ABSTRACT;
 
-    // when + then
+    // act + assert
     assertThat(modifiers.isAbstract()).isTrue();
     assertThat(modifiers.isDefaultModifier()).isFalse();
     assertThat(modifiers.isFinal()).isFalse();
@@ -133,10 +133,10 @@ public class CodeModifiersTest extends Assertions {
   @Test
   public void testPrivateAbstract() {
 
-    // given
+    // arrange
     CodeModifiers modifiers = CodeModifiers.MODIFIERS_PRIVATE_ABSTRACT;
 
-    // when + then
+    // act + assert
     assertThat(modifiers.isAbstract()).isTrue();
     assertThat(modifiers.isDefaultModifier()).isFalse();
     assertThat(modifiers.isFinal()).isFalse();
@@ -156,10 +156,10 @@ public class CodeModifiersTest extends Assertions {
   @Test
   public void testProtectedAbstract() {
 
-    // given
+    // arrange
     CodeModifiers modifiers = CodeModifiers.MODIFIERS_PROTECTED_ABSTRACT;
 
-    // when + then
+    // act + assert
     assertThat(modifiers.isAbstract()).isTrue();
     assertThat(modifiers.isDefaultModifier()).isFalse();
     assertThat(modifiers.isFinal()).isFalse();

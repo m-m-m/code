@@ -21,7 +21,7 @@ public class BaseDocTest extends BaseContextTest {
   @Test
   public void testJavaDoc() {
 
-    // given
+    // arrange
     BaseContext context = createContext();
     BasePackage rootPackage = context.getSource().getRootPackage();
     String pkg1Name = "pkg1";
@@ -34,13 +34,13 @@ public class BaseDocTest extends BaseContextTest {
     BaseType class2 = pkg2.getChildren().createType(simpleName2);
     class1.getFile().getImports().add(class2);
 
-    // when
+    // act
     BaseDoc doc = class1.getDoc();
     doc.getLines().add("{@linkplain Foo} references {@link Bar#method()} and {@link Bar#method() link-title}.");
     doc.getLines().add("JavaDoc can contain markup like {@code code}, <em>italic</em>, <b>bold</b>, etc.");
     doc.getLines().add("Also lists may occur: <ul><li><strong>item1</strong></li><li>item2</li></ul>");
 
-    // then
+    // assert
     assertThat(doc.getFormatted(CodeDocFormat.RAW))
         .isEqualTo("{@linkplain Foo} references {@link Bar#method()} and {@link Bar#method() link-title}.\n" + //
             "JavaDoc can contain markup like {@code code}, <em>italic</em>, <b>bold</b>, etc.\n" + //

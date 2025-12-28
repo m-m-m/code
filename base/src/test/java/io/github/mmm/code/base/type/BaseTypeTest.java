@@ -32,17 +32,17 @@ public class BaseTypeTest extends BaseContextTest {
   @Test
   public void testEmptyClass() {
 
-    // given
+    // arrange
     BaseContext context = createContext();
     BasePackage rootPackage = context.getSource().getRootPackage();
     String pkgName = "mydomain";
     BasePackage pkg = rootPackage.getChildren().createPackage(pkgName);
     String simpleName = "MyClass";
 
-    // when
+    // act
     BaseType type = pkg.getChildren().createType(simpleName);
 
-    // then
+    // assert
     assertThat(type.getSimpleName()).isEqualTo(simpleName);
     assertThat(type.getQualifiedName()).isEqualTo(pkgName + "." + simpleName);
     assertThat(type.getParentPackage()).isSameAs(pkg);
@@ -69,7 +69,7 @@ public class BaseTypeTest extends BaseContextTest {
   @Test
   public void testNestedTypesWithDoc() {
 
-    // given
+    // arrange
     BaseContext context = createContext();
     BasePackage rootPackage = context.getSource().getRootPackage();
     String pkgName = "mydomain";
@@ -81,7 +81,7 @@ public class BaseTypeTest extends BaseContextTest {
     String simpleNameNested211 = "AnnotationNested2_1_1";
     String simpleNameNested212 = "EnumNested2_1_2";
 
-    // when
+    // act
     BaseType classTop = pkg.getChildren().createType(simpleNameTop);
     classTop.getTypeParameters().add("T").getDoc().getLines().add("generic type");
     BaseType classStaticNested1 = classTop.getNestedTypes().add(simpleNameNested1);
@@ -104,7 +104,7 @@ public class BaseTypeTest extends BaseContextTest {
     enumNested212.setCategory(CodeTypeCategory.ENUMERAION);
     addDummyDoc(classTop);
 
-    // then
+    // assert
     assertThat(classTop.getSimpleName()).isEqualTo(simpleNameTop);
     assertThat(classStaticNested1.getSimpleName()).isEqualTo(simpleNameNested1);
     assertThat(interfacetypeNested2.getSimpleName()).isEqualTo(simpleNameNested2);
@@ -169,7 +169,7 @@ public class BaseTypeTest extends BaseContextTest {
   @Test
   public void testSuperTypes() {
 
-    // given
+    // arrange
     BaseContext context = createContext();
     BasePackage rootPackage = context.getSource().getRootPackage();
     String pkgName1 = "pkg1";
@@ -179,7 +179,7 @@ public class BaseTypeTest extends BaseContextTest {
     BasePathElements children1 = pkg1.getChildren();
     BasePathElements children2 = pkg2.getChildren();
 
-    // when
+    // act
     BaseType interface1Other = children1.createType("Other");
     BaseType interface2Bar = children1.createType("Bar");
     BaseType interface3Some = children2.createType("Some");
@@ -194,7 +194,7 @@ public class BaseTypeTest extends BaseContextTest {
     class2Foo.getSuperTypes().add(class1Other);
     class2Foo.getSuperTypes().add(interface4Foo);
 
-    // then
+    // assert
     assertThat(getAllSuperTypesAsList(class2Foo)).containsExactly(class1Other, interface1Other, interface2Bar,
         interface4Foo, interface3Some);
   }
@@ -214,7 +214,7 @@ public class BaseTypeTest extends BaseContextTest {
   @Test
   public void testBean() {
 
-    // given
+    // arrange
     BaseContext context = createContext();
     BasePackage rootPackage = context.getSource().getRootPackage();
     BasePackage pkg = rootPackage.getChildren().createPackage("mydomain");
@@ -232,10 +232,10 @@ public class BaseTypeTest extends BaseContextTest {
     age.setType(context.getType(int.class));
     BaseField human = myBean.getFields().add("human");
     human.setType(context.getType(boolean.class));
-    // when
+    // act
     myBean.createGettersAndSetters();
 
-    // then
+    // assert
     assertThat(myBean.getFile().getSourceCode()).isEqualTo("package mydomain;\n" + //
         "\n" + //
         "import java.io.Serializable;\n" + //
@@ -289,17 +289,17 @@ public class BaseTypeTest extends BaseContextTest {
   @Test
   public void testGetOrCreateType() {
 
-    // given
+    // arrange
     BaseContext context = createContext().createChildContext();
     BasePackage rootPackage = context.getSource().getRootPackage();
     String pkgName = "mydomain";
     BasePackage pkg = rootPackage.getChildren().getOrCreatePackage(context.parseName(pkgName), true);
     String simpleName = "MyClass";
 
-    // when
+    // act
     BaseType type = pkg.getChildren().getOrCreateFile(context.parseName(simpleName), true).getType();
 
-    // then
+    // assert
     assertThat(context.getType("mydomain.MyClass")).isSameAs(type);
     assertThat(context.getOrCreateType("mydomain.MyClass", false)).isSameAs(type);
     String qualifiedName = "mydomain.subpkg.MyClass";

@@ -51,11 +51,11 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
   @Test
   public void testBasics() {
 
-    // given
+    // arrange
     JavaContext context = getContext();
-    // when
+    // act
     CodeSource source = context.getSource();
-    // then
+    // assert
     verifyDependency(source, "target/test-classes", "src/test/java", "test");
     assertThat(source.getId()).contains("/code/java/impl");
     assertThat(source.getSource()).isSameAs(source);
@@ -76,14 +76,14 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
   @Test
   public void testContextFromOwnMavenProject() {
 
-    // given
+    // arrange
     File mavenProjectDirectory = new File(".");
     JavaContext context = JavaSourceProviderUsingMaven.createFromLocalMavenProject(mavenProjectDirectory, true);
 
-    // when
+    // act
     CodeType type = context.getRequiredType(CodeItem.class.getName());
 
-    // then
+    // assert
     assertThat(type.getContext()).isSameAs(context);
     assertThat(type.getDoc().getLines()).contains(
         "Abstract top-level interface for any item of code as defined by this API. It reflects code structure.");
@@ -96,16 +96,16 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
   @Test
   public void testContextFromCustomMavenProject() {
 
-    // given
+    // arrange
     String entityClass = "com.maven.project.sampledatamanagement.dataaccess.api.SampleDataEntity";
     File mavenProjectDirectory = new File(ROOT_TEST_PATH, "localmavenproject/maven.project/core"); // test Maven project
     MavenDependencyCollector dependencyCollector = new MavenDependencyCollector(true, true, "eclipse-target");
 
-    // when
+    // act
     JavaContext context = JavaSourceProviderUsingMaven.createFromLocalMavenProject(mavenProjectDirectory,
         dependencyCollector);
 
-    // then
+    // assert
     CodeGenericType objectType = context.getType(Object.class);
     assertThat(objectType.getContext()).isSameAs(JavaRootContext.get());
     assertThat(context.getType(JavaContext.class.getName())).isNull();
@@ -185,14 +185,14 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
   @Test
   public void testTypeWithSourceFromFilesystem() {
 
-    // given
+    // arrange
     JavaContext context = getContext();
     Class<JavaContext> clazz = JavaContext.class;
 
-    // when
+    // act
     CodeType type = context.getType(clazz.getName());
 
-    // then
+    // assert
     verifyHeader(type.getFile());
     verifyClass(type, clazz, context);
     assertThat(type.getDoc().getLines()).containsExactly(
@@ -208,15 +208,15 @@ public class JavaExtendedContextWithMavenAndSourceCodeTest extends AbstractBaseT
   @Test
   public void testTypeWithSourceFromJar() {
 
-    // given
+    // arrange
     JavaContext context = getContext();
     // javax.inject (JSR-330) is expected to be stable so the test will not break
     Class<?> clazz = Named.class;
 
-    // when
+    // act
     CodeType type = context.getType(clazz.getName());
 
-    // then
+    // assert
     assertThat(type.getFile().getComment().getCommentLines()).containsExactly(
         "Copyright (C) 2009 The JSR-330 Expert Group", "",
         "Licensed under the Apache License, Version 2.0 (the \"License\");",

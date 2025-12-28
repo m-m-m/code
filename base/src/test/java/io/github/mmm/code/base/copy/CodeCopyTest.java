@@ -47,7 +47,7 @@ public class CodeCopyTest extends BaseContextTest {
   @Test
   public void testCopy() {
 
-    // given
+    // arrange
     CodeContext context = createContext();
     CodeType override = context.getType(Override.class).asType();
     CodeGenericType string = context.getType(String.class);
@@ -126,10 +126,10 @@ public class CodeCopyTest extends BaseContextTest {
     apiImplSome.getFile().getImports().add(apiImplBar);
     apiMethodImplSome.getBody().addText("return new ApiImplBar().getSomething(value);");
 
-    // when
+    // act
     CodePackage pkg1Copy = pkg1.copy();
 
-    // then
+    // assert
     assertThat(pkg1Copy).isNotNull().isNotSameAs(pkg1);
     assertThat(pkg1Copy.getSimpleName()).isEqualTo(pkg1.getSimpleName());
     assertThat(pkg1Copy.getParentPackage()).isSameAs(pkg1.getParentPackage());
@@ -244,7 +244,7 @@ public class CodeCopyTest extends BaseContextTest {
   @Test
   public void testCopyWithCustomMapper() {
 
-    // given
+    // arrange
     CodeContext context = createContext();
 
     CodeGenericType longType = context.getType(Long.class);
@@ -296,10 +296,10 @@ public class CodeCopyTest extends BaseContextTest {
     find.getReturns().setType(entityEto);
     find.getParameters().add("id").setType(longType);
 
-    // when
+    // act
     CodePackage pkgRootCopy = mapper.map(pkgRoot, CodeCopyType.CHILD);
 
-    // then
+    // assert
     assertThat(pkgRootCopy).isNotNull().isNotSameAs(pkgRoot);
     assertThat(pkgRootCopy.getQualifiedName()).isEqualTo(rootPackage);
     assertThat(pkgRootCopy.getChildren()).hasSize(1);

@@ -37,14 +37,14 @@ public class MavenBridgeImplTest extends Assertions implements MavenConstants {
   @Test
   public void testReadModel() {
 
-    // given
+    // arrange
     MavenBridgeImpl reader = new MavenBridgeImpl();
     String groupId = "io.github.m-m-m";
 
-    // when
+    // act
     Model model = reader.readModel(POM_XML);
 
-    // then
+    // assert
     assertThat(model).isNotNull();
     assertThat(model.getArtifactId()).isEqualTo("mmm-code-java-maven");
     assertThat(model.getParent().getGroupId()).isEqualTo(groupId);
@@ -59,14 +59,14 @@ public class MavenBridgeImplTest extends Assertions implements MavenConstants {
   @Test
   public void testResolveRevisionParameterOfMavenConfig() {
 
-    // given
+    // arrange
     File mavenProjectDirectory = new File(ROOT_TEST_PATH, "localmavenproject/maven.project/core"); // test Maven project
 
-    // when
+    // act
     MavenBridgeImpl reader = new MavenBridgeImpl();
     Model model = reader.readEffectiveModel(new File(mavenProjectDirectory, "pom.xml"));
 
-    // then
+    // assert
     assertThat(model.getVersion()).isEqualTo("1.0.0-SNAPSHOT");
   }
 
@@ -76,14 +76,14 @@ public class MavenBridgeImplTest extends Assertions implements MavenConstants {
   @Test
   public void testReadProject() {
 
-    // given
+    // arrange
     MavenBridgeImpl reader = new MavenBridgeImpl();
     String groupId = "io.github.m-m-m";
 
-    // when
+    // act
     Model model = reader.readEffectiveModel(POM_XML);
 
-    // then
+    // assert
     assertThat(model).isNotNull();
     assertThat(model.getArtifactId()).isEqualTo("mmm-code-java-maven");
     assertThat(model.getGroupId()).isEqualTo(groupId);

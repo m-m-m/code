@@ -27,10 +27,10 @@ public class AbstractBaseContextTest extends BaseContextTest {
   @Test
   public void testWrite() throws Exception {
 
-    // given
+    // arrange
     CodeContext context = createContext();
 
-    // when
+    // act
     CodePackage rootPkg = context.getSource().getRootPackage();
     CodePackage fooPkg = rootPkg.getChildren().createPackage("foo");
     CodeFile fooFile = fooPkg.getChildren().getOrCreateFile("Foo");
@@ -47,7 +47,7 @@ public class AbstractBaseContextTest extends BaseContextTest {
     targetDir.toFile().deleteOnExit();
     fooPkg.write(targetDir);
 
-    // then
+    // assert
     int childCount = 0;
     Iterator<Path> childIterator = Files.list(targetDir).iterator();
     while (childIterator.hasNext()) {

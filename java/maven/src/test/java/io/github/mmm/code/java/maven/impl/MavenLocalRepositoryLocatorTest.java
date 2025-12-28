@@ -18,10 +18,10 @@ public class MavenLocalRepositoryLocatorTest extends Assertions {
   @Test
   public void testReadModel() {
 
-    // when
+    // act
     File defaultLocalRepository = MavenLocalRepositoryLocator.getDefaultLocalRepository();
 
-    // then
+    // assert
     assertThat(defaultLocalRepository).isEqualTo(new File(System.getProperty("user.home"), ".m2/repository"))
         .isDirectory();
   }

@@ -25,12 +25,12 @@ public class BasePackageTest extends BaseContextTest {
   @Test
   public void testSimpleNames() {
 
-    // given
+    // arrange
     BaseContext context = createContext();
     BaseSource source = context.getSource();
     BasePackage rootPackage = source.getRootPackage();
 
-    // when + then
+    // act + assert
     verifyPackageSimpleName(rootPackage, null, false);
     verifyPackageSimpleName(rootPackage, "", false);
     verifyPackageSimpleName(rootPackage, "package", false);
@@ -59,14 +59,14 @@ public class BasePackageTest extends BaseContextTest {
   @Test
   public void testRootPackage() {
 
-    // given
+    // arrange
     BaseContext context = createContext();
     BaseSource source = context.getSource();
 
-    // when
+    // act
     BasePackage rootPackage = source.getRootPackage();
 
-    // then
+    // assert
     assertThat(rootPackage.getSimpleName()).isEmpty();
     assertThat(rootPackage.getQualifiedName()).isEmpty();
     assertThat(rootPackage.getParentPackage()).isNull();
@@ -84,16 +84,16 @@ public class BasePackageTest extends BaseContextTest {
   @Test
   public void testCreatePackage() {
 
-    // given
+    // arrange
     BaseContext context = createContext();
     BaseSource source = context.getSource();
     BasePackage rootPackage = source.getRootPackage();
     String pkgName = "mydomain";
 
-    // when
+    // act
     BasePackage pkg = rootPackage.getChildren().createPackage(pkgName);
 
-    // then
+    // assert
     assertThat(pkg.getSimpleName()).isEqualTo(pkgName);
     assertThat(pkg.getQualifiedName()).isEqualTo(pkgName);
     assertThat(pkg.getParentPackage()).isSameAs(rootPackage);
@@ -149,17 +149,17 @@ public class BasePackageTest extends BaseContextTest {
   @SuppressWarnings("unchecked")
   private void testGetPackageParameterized(boolean add, boolean forceAdd) {
 
-    // given
+    // arrange
     BaseContext context = createContext();
     BaseSource source = context.getSource();
     BasePackage rootPackage = source.getRootPackage();
     String pkgName = "com.foo.bar.some";
     CodeName pkgQName = context.parseName(pkgName);
 
-    // when
+    // act
     BasePackage pkg = rootPackage.getChildren().getPackage(pkgQName, false, this::createPackage, add, forceAdd);
 
-    // then
+    // assert
     assertThat(pkg.getQualifiedName()).isEqualTo(pkgName);
     assertThat(pkg.getSimpleName()).isEqualTo("some");
     assertThat(pkg.getComment()).isSameAs(TEST_COMMENT);
@@ -203,13 +203,13 @@ public class BasePackageTest extends BaseContextTest {
   @Test
   public void testJavaLang() {
 
-    // given
+    // arrange
     BaseContext context = createContext();
     BaseSource source = context.getSource();
     Class<String> stringClass = String.class;
     Class<List> listClass = List.class;
 
-    // when
+    // act
     BaseType stringType = getClassType(context, stringClass);
     BaseType integerType = getClassType(context, Integer.class);
     BaseType listType = getClassType(context, listClass);
@@ -225,7 +225,7 @@ public class BasePackageTest extends BaseContextTest {
     assertThat(javaUtilPackage.isJavaLang()).isFalse();
     assertThat(javaUtilPackage.isImmutable()).isTrue();
 
-    // then
+    // assert
     BasePathElements rootPackageChildren = source.getRootPackage().getChildren();
     BasePackage javaPackage = rootPackageChildren.getPackage("java");
     assertThat(javaPackage.getChildren().getPackage("lang")).isSameAs(javaLangPackage);

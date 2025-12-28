@@ -18,9 +18,9 @@ public class JavaConstantsTest extends Assertions {
   @Test
   public void testUnboundedWildcard() {
 
-    // given / when
+    // arrange + act
     WildcardType unboundedWildcard = JavaConstants.UNBOUNDED_WILDCARD;
-    // then
+    // assert
     assertThat(unboundedWildcard).isNotNull();
     assertThat(unboundedWildcard.getUpperBounds()).hasSize(1).containsExactly(Object.class);
     assertThat(unboundedWildcard.getLowerBounds()).isEmpty();
