@@ -106,7 +106,7 @@ class JavaSourceCodeParserImplTest extends AbstractBaseTypeTest {
     assertThat(type.getSimpleName()).isEqualTo(clazz.getSimpleName());
     assertThat(type.getQualifiedName()).isEqualTo(clazz.getName());
     assertThat(type.getCategory()).isSameAs(CodeTypeCategory.CLASS);
-    assertThat(type.getModifiers().getVisibility()).isSameAs(CodeVisibility.PUBLIC);
+    assertThat(type.getModifiers().getVisibility()).isSameAs(CodeVisibility.DEFAULT);
     assertThat(type.getDoc().getLines()).containsExactly("Test of {@link JavaSourceCodeParserImpl}.", "",
         "@author Joerg Hohwiller (hohwille at users.sourceforge.net)");
     BaseFile file = type.getFile();
@@ -132,7 +132,7 @@ class JavaSourceCodeParserImplTest extends AbstractBaseTypeTest {
             "BasePackage pkg = createPackage(context.getSource(), qName.getParent());",
             "return new BaseFile(pkg, qName.getSimpleName());");
       } else if (method.getName().equals("testMyself")) {
-        assertThat(method.getModifiers().getVisibility()).isEqualTo(CodeVisibility.PUBLIC);
+        assertThat(method.getModifiers().getVisibility()).isEqualTo(CodeVisibility.DEFAULT);
         assertThat(method.getModifiers().getModifiers()).isEmpty();
         assertThat(method.getParameters()).isEmpty();
         assertThat(method.getExceptions()).isEmpty();
