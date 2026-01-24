@@ -1,6 +1,6 @@
 image:https://m-m-m.github.io/logo.svg[logo,width="150",link="https://m-m-m.github.io"]
 
-image:https://img.shields.io/github/license/m-m-m/code.svg?label=License["Apache License, Version 2.0",link=https://github.com/m-m-m/code/blob/master/LICENSE]
+image:https://img.shields.io/github/license/m-m-m/code.svg?label=License["Apache License, Version 2.0",link=https://github.com/m-m-m/code/blob/main/LICENSE]
 image:https://github.com/m-m-m/code/actions/workflows/build.yml/badge.svg["Build Status",link="https://github.com/m-m-m/code/actions/workflows/build.yml"]
 
 = mmm-code-api
